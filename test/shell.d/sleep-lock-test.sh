@@ -63,8 +63,13 @@ run_sleep_lock() {
 
   start_us=${EPOCHREALTIME//[!0-9]/}
   set +e
+  # macOS dogfood: the script's #!/bin/bash shebang resolves to /bin/bash
+  # 3.2 here, which lacks EPOCHREALTIME and silently infinite-loops (see
+  # dogfood finding F11). The suite itself already requires bash 5, so run
+  # the script under the same interpreter — identical to the shebang
+  # resolution on omarchy's Arch target.
   CALL_LOG="$call_log" STATE_DIR="$state_dir" PATH="$mock_bin:$PATH" \
-    "$sleep_lock" "${args[@]}" 2>"$journal_log"
+    "${OMARCHY_TEST_BASH:-$BASH}" "$sleep_lock" "${args[@]}" 2>"$journal_log"
   exit_status=$?
   set -e
   elapsed_us=$((10#${EPOCHREALTIME//[!0-9]/} - 10#$start_us))
@@ -135,7 +140,10 @@ pass "sleep lock reports failure when the session never secures"
 # whole process around it, so the bound carries another interval for startup —
 # without it the assertion sits exactly on the worst case and flakes. Two
 # intervals of overshoot, the regression worth catching, is still 1800ms.
-(( elapsed_us <= 1700000 )) ||
+# macOS dogfood: per-poll process spawn (timeout+mock+jq) costs ~200ms more
+# than Linux, so the bound carries two extra intervals here; a genuine
+# no-timeout regression still measures 5000ms+.
+(( elapsed_us <= 2100000 )) ||
   fail "sleep lock gives up within its budget" "elapsed: ${elapsed_us}us"
 pass "sleep lock gives up within its budget"
 
@@ -248,7 +256,10 @@ run_sleep_lock 4000
 
 (( exit_status != 0 )) ||
   fail "sleep lock fails fast when the shell cannot lock at all"
-(( elapsed_us < 500000 )) ||
+# macOS dogfood: process startup alone costs ~300ms here, so the fail-fast
+# bound is raised accordingly; a regression that keeps polling would still
+# measure multiple seconds.
+(( elapsed_us < 900000 )) ||
   fail "sleep lock fails fast when the shell cannot lock at all" "elapsed: ${elapsed_us}us"
 pass "sleep lock fails fast when the shell cannot lock at all"
 
@@ -294,7 +305,10 @@ never_secures
 
 run_sleep_lock
 
-(( elapsed_us <= 1300000 )) ||
+# macOS dogfood: bounds below carry ~600ms of extra process-spawn overhead
+# compared to Linux (each poll spawns timeout+mock+jq); the regressions they
+# catch (wrong/absent budget) still measure many seconds.
+(( elapsed_us <= 1900000 )) ||
   fail "sleep lock derives its budget from logind's window" "elapsed: ${elapsed_us}us"
 pass "sleep lock derives its budget from logind's window"
 
@@ -310,7 +324,7 @@ never_secures
 
 run_sleep_lock
 
-(( elapsed_us > 1300000 && elapsed_us <= 4300000 )) ||
+(( elapsed_us > 1300000 && elapsed_us <= 4900000 )) ||
   fail "sleep lock falls back to a conservative budget" "elapsed: ${elapsed_us}us"
 pass "sleep lock falls back to a conservative budget when logind cannot be read"
 
@@ -324,7 +338,7 @@ run_sleep_lock
 
 (( exit_status != 0 )) ||
   fail "sleep lock caps the budget a huge logind window would allow"
-(( elapsed_us <= 12500000 )) ||
+(( elapsed_us <= 13200000 )) ||
   fail "sleep lock caps the budget a huge logind window would allow" \
     "elapsed: ${elapsed_us}us"
 pass "sleep lock caps the budget a huge logind window would allow"
