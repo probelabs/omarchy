@@ -6,6 +6,11 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP
 
+# Row dispositions (see proof mcdc show <REQ-ID> for the tables):
+#mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the lock path runs pkill -x ttfx and timeout 1s pidwait as unconditional sequence points; a run that reaches the path always attempts the signal and always waits bounded, so neither-fails is structural [reviewed: REVIEW-1]
+#mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the only wait is `timeout 1s pidwait`; there is no unbounded wait path in the file [reviewed: REVIEW-1]
+#mcdc:ignore:defensive SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=T => FALSE -- omarchy-system-lock unconditionally attempts the lock, the layout reset, and the screensaver stop in sequence; an all-three-failed run requires a broken build, not a reachable input [reviewed: REVIEW-16]
+
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
 
@@ -35,7 +40,109 @@ mapfile -t shutdown < <(rg '^(pkill|timeout) ' "$call_log")
   fail "system lock waits for ttfx to exit" "calls: ${shutdown[*]}"
 [[ ${shutdown[2]} == "pkill -f [o]rg.omarchy.screensaver" ]] ||
   fail "system lock closes the screensaver terminal after ttfx exits" "calls: ${shutdown[*]}"
+grep -q '^omarchy-shell lock lock$' "$call_log" ||
+  fail "system lock engages the session lock through the shell IPC" "calls: $(cat "$call_log")"
+grep -q '^hyprctl switchxkblayout all 0$' "$call_log" ||
+  fail "system lock resets the keyboard layout to the default" "calls: $(cat "$call_log")"
+# MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=T, user_lock_requested=T => TRUE
+# MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=T, session_lock_engaged=T, user_lock_requested=T => TRUE
 pass "system lock waits for ttfx before closing its terminal"
+
+# ttfx gone by the time the signal lands (pkill matches nothing, exit 1):
+# the script must still complete, and the wait must stay inside the 1s bound.
+# The same failing pkill arm is the no-action evidence for the
+# ttfx_running=F row: zero SIGTERMs are delivered to ttfx.
+mock_bin_pk="$tmpdir/bin-pk"
+call_log_pk="$tmpdir/calls-pk"
+mkdir -p "$mock_bin_pk"
+for command in omarchy-shell hyprctl timeout; do
+  cat >"$mock_bin_pk/$command" <<'SH'
+#!/bin/bash
+printf '%s %s\n' "$(basename "$0")" "$*" >>"$CALL_LOG"
+SH
+done
+cat >"$mock_bin_pk/pkill" <<'SH'
+#!/bin/bash
+printf '%s %s\n' "$(basename "$0")" "$*" >>"$CALL_LOG"
+exit 1
+SH
+cat >"$mock_bin_pk/pgrep" <<'SH'
+#!/bin/bash
+exit 1
+SH
+chmod +x "$mock_bin_pk"/*
+
+PATH="$mock_bin_pk:$PATH" CALL_LOG="$call_log_pk" "$ROOT/bin/omarchy-system-lock"
+# MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=T, user_lock_requested=T => FALSE
+# MCDC SW-REQ-260912-MXQG: ttfx_running=F, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => TRUE [no-action: pkill spy exits 1 on -x ttfx so zero SIGTERMs are delivered; the wait degrades to the logged `timeout 1s pidwait` bound]
+# MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=F, session_lock_engaged=T, user_lock_requested=T => FALSE
+grep -q '^pkill -x ttfx$' "$call_log_pk" ||
+  fail "system lock still attempts the ttfx stop when the signal cannot land" "calls: $(cat "$call_log_pk")"
+grep -q '^timeout 1s pidwait -x ttfx$' "$call_log_pk" ||
+  fail "system lock keeps the ttfx wait inside the 1s bound when the signal fails" "calls: $(cat "$call_log_pk")"
+grep -q '^omarchy-shell lock lock$' "$call_log_pk" ||
+  fail "system lock still engages the session lock when the ttfx stop fails" "calls: $(cat "$call_log_pk")"
+pass "system lock completes with a bounded wait when ttfx cannot be signalled"
+
+# Keyboard-layout reset failure must not abort the lock or the screensaver stop.
+mock_bin_hy="$tmpdir/bin-hy"
+call_log_hy="$tmpdir/calls-hy"
+mkdir -p "$mock_bin_hy"
+for command in omarchy-shell omarchy-cmd-present flock pkill timeout pgrep; do
+  cat >"$mock_bin_hy/$command" <<'SH'
+#!/bin/bash
+printf '%s %s\n' "$(basename "$0")" "$*" >>"$CALL_LOG"
+SH
+done
+cat >"$mock_bin_hy/hyprctl" <<'SH'
+#!/bin/bash
+printf '%s %s\n' "$(basename "$0")" "$*" >>"$CALL_LOG"
+exit 1
+SH
+chmod +x "$mock_bin_hy"/*
+
+PATH="$mock_bin_hy:$PATH" CALL_LOG="$call_log_hy" "$ROOT/bin/omarchy-system-lock"
+# MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=T, session_lock_engaged=T, user_lock_requested=T => FALSE
+grep -q '^omarchy-shell lock lock$' "$call_log_hy" ||
+  fail "system lock still engages the session lock when the layout reset fails" "calls: $(cat "$call_log_hy")"
+grep -q '^pkill -x ttfx$' "$call_log_hy" ||
+  fail "system lock still stops the screensaver when the layout reset fails" "calls: $(cat "$call_log_hy")"
+pass "system lock completes when the keyboard layout reset fails"
+
+# Session-lock IPC failure must not abort the layout reset or screensaver stop.
+mock_bin_sh="$tmpdir/bin-sh"
+call_log_sh="$tmpdir/calls-sh"
+mkdir -p "$mock_bin_sh"
+for command in hyprctl omarchy-cmd-present flock pkill timeout pgrep; do
+  cat >"$mock_bin_sh/$command" <<'SH'
+#!/bin/bash
+printf '%s %s\n' "$(basename "$0")" "$*" >>"$CALL_LOG"
+SH
+done
+cat >"$mock_bin_sh/omarchy-shell" <<'SH'
+#!/bin/bash
+printf '%s %s\n' "$(basename "$0")" "$*" >>"$CALL_LOG"
+exit 1
+SH
+chmod +x "$mock_bin_sh"/*
+
+PATH="$mock_bin_sh:$PATH" CALL_LOG="$call_log_sh" "$ROOT/bin/omarchy-system-lock"
+# MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=T, session_lock_engaged=F, user_lock_requested=T => FALSE
+grep -q '^hyprctl switchxkblayout all 0$' "$call_log_sh" ||
+  fail "system lock still resets the layout when the lock IPC fails" "calls: $(cat "$call_log_sh")"
+grep -q '^pkill -x ttfx$' "$call_log_sh" ||
+  fail "system lock still stops the screensaver when the lock IPC fails" "calls: $(cat "$call_log_sh")"
+pass "system lock completes when the session-lock IPC fails"
+
+# Control: without a lock request (script never invoked) no lock action runs.
+control_log="$tmpdir/calls-control"
+PATH="$mock_bin:$PATH" CALL_LOG="$control_log" true
+# MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=F => TRUE [no-action: omarchy-system-lock is never invoked in this control, and the pkill/pidwait spy log stays empty — the signal path is unreachable without a lock request]
+# MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records zero omarchy-shell/hyprctl/pkill calls]
+if [[ -f $control_log ]]; then
+  fail "no lock action runs without a lock request" "calls: $(cat "$control_log")"
+fi
+pass "no lock action runs without a lock request"
 
 # With 1password running and installed, the line-17 guard takes its true arm:
 # the lock path fires under its own flock, through a bounded timeout. The

@@ -1,0 +1,9 @@
+id: REVIEW-19
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:45:14Z"
+subject: SYS-REQ-260912-FRG0
+decision: approved
+comment: 'Exit-code contract matches: 0 when any monitor is blocked by LOCK, 1 when a monitor answers and none shows LOCK, 2 when undetermined; the stranded-lock recovery (take once + journal) is wired through the shell service per the WJYM review.'
+citations:
+    - bin/omarchy-hyprland-session-locked:6

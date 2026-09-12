@@ -1,0 +1,9 @@
+id: REVIEW-16
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:45:14Z"
+subject: SYS-REQ-260912-T0XP
+decision: approved
+comment: 'System-level formula matches the script: omarchy-shell lock engages the session lock first, hyprctl switchxkblayout all 0 resets the layout, and the ttfx/screensaver stop follows; all three response conjuncts are attempted on every lock request, matching session_lock_engaged & keyboard_layout_default & screensaver_stopped.'
+citations:
+    - bin/omarchy-system-lock:8

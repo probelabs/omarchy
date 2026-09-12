@@ -1,0 +1,9 @@
+id: REVIEW-20
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:45:14Z"
+subject: SYS-REQ-260912-H8A5
+decision: approved
+comment: 'Update-lock contract matches: run holds an exclusive flock on a dedicated fd exported to the child, a second run is refused with a diagnostic before the snapshot, and held answers ownership by descriptor identity.'
+citations:
+    - bin/omarchy-update-lock:7

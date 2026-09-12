@@ -1,0 +1,9 @@
+id: REVIEW-18
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:45:14Z"
+subject: SYS-REQ-260912-JW2J
+decision: approved
+comment: 'PAM installation matches: password stack installed always; fingerprint stack installed only when fprintd-list (absolute /usr/bin path, PATH restricted under EUID 0) reports an enrolled print, removed otherwise.'
+citations:
+    - bin/omarchy-apply-lock:7

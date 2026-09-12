@@ -1,0 +1,9 @@
+id: REVIEW-17
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:45:14Z"
+subject: SYS-REQ-260912-HC86
+decision: approved
+comment: 'Suspend path matches: the lock request precedes clamshell reconciliation, the wait budget derives from InhibitDelayMaxUSec with a one-fifth reserve (>=1000 ms, fallback 5000 ms) capped at 12000 ms, and budget expiry reports an unsecured suspend and exits 1.'
+citations:
+    - bin/omarchy-system-sleep-lock:7
