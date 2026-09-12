@@ -61,6 +61,34 @@ project:
             production_exclude:
                 - '**/*_test.go'
                 - '**/testdata/**'
+                # Omitted production roots, intentionally out of the dogfood
+                # universe (lock screen authentication component only):
+                - test/**
+                - migrations/**
+                - install/**
+                - default/**
+                # shell/ is partially in scope (plugins/lock); exclude every
+                # other shell sub-root so the root is fully dispositioned:
+                - shell/Commons/**
+                - shell/Ui/**
+                - shell/services/**
+                - shell/shell.qml
+                - shell/README.md
+                - shell/plugins/README.md
+                - shell/plugins/agents/**
+                - shell/plugins/background/**
+                - shell/plugins/bar/**
+                - shell/plugins/clipboard/**
+                - shell/plugins/dev-gallery/**
+                - shell/plugins/emojis/**
+                - shell/plugins/image-picker/**
+                - shell/plugins/menu/**
+                - shell/plugins/notifications/**
+                - shell/plugins/osd/**
+                - shell/plugins/panels/**
+                - shell/plugins/polkit/**
+                - shell/plugins/reminders/**
+                - shell/plugins/services/**
             rationale: Scoped to the omarchy lock screen authentication component for bash/qml dogfooding.
     commands:
         build: >-
@@ -70,7 +98,7 @@ project:
                 language: bash
                 command: >-
                     set -e; B=/opt/homebrew/bin/bash;
-                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery; do "$B" "test/shell.d/$t-test.sh"; done;
+                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do "$B" "test/shell.d/$t-test.sh"; done;
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/update-lock-test.sh; else echo "SKIP update-lock-test.sh: requires Linux flock and /proc"; fi
     tools:
         probe:

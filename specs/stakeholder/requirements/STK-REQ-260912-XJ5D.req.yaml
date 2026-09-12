@@ -42,6 +42,9 @@ stakeholder:
             - SYS-REQ-260912-FRG0
             - SYS-REQ-260912-JW2J
             - SYS-REQ-260912-H8A5
+          witness_deferred:
+              reason: A true end-to-end acceptance run needs an integrated Hyprland session (compositor-reported lock state); the dogfood harness on macOS has no compositor, so only per-requirement verification exists. Deferred, not waived.
+              tracking: dogfood-harness:no-compositor
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:24Z"
