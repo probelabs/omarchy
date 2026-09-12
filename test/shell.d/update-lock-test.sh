@@ -59,6 +59,14 @@ write_stub pkexec 'exec "$@"'
 update_snapshot_marker="$test_tmp/update-snapshot-started"
 write_stub omarchy-snapshot 'echo started >"$TEST_MARKER"; sleep 2; exit 0'
 
+# MC/DC witness: the first omarchy-update queries the held state without
+# owning the lock (row 2: held_state_queried=T, held_true_only_for_owning_fd=F
+# -> requirement false, so `held` exits 1 and the update re-execs under
+# omarchy-update-lock run), then the re-exec'd child queries the held state
+# while owning the lock descriptor (row 3: held_true_only_for_owning_fd=T ->
+# true), which is what lets it reach the snapshot marker asserted below.
+# MCDC SW-REQ-260912-0Y70: held_state_queried=T, held_true_only_for_owning_fd=F => FALSE
+# MCDC SW-REQ-260912-0Y70: held_state_queried=T, held_true_only_for_owning_fd=T => TRUE
 OMARCHY_UPDATE_LOGGED=1 TEST_MARKER="$update_snapshot_marker" run_with_lock_env "$ROOT/bin/omarchy-update" -y >"$test_tmp/update-first.out" 2>&1 &
 update_pid=$!
 
@@ -214,3 +222,19 @@ kill -0 "$unrelated_pid" 2>/dev/null ||
 kill "$unrelated_pid"
 wait "$unrelated_pid" 2>/dev/null || true
 pass "stale inhibitor state does not terminate a reused PID"
+
+# MC/DC witness row 1 (trigger-false): invoking omarchy-update-lock run
+# directly never queries the held state, so the requirement holds vacuously.
+# A PATH-level spy stub logs every subcommand the caller asks for and then
+# execs the real binary; the assertion below proves `held` was never invoked.
+# MCDC SW-REQ-260912-0Y70: held_state_queried=F, held_true_only_for_owning_fd=F => TRUE [no-action: spy stub logs every omarchy-update-lock subcommand and the grep below proves no held call during run]
+update_lock_calls="$test_tmp/update-lock-calls"
+write_stub omarchy-update-lock 'printf "%s\n" "${1:-}" >>"$UPDATE_LOCK_CALLS"; exec "$REAL_UPDATE_LOCK" "$@"'
+UPDATE_LOCK_CALLS="$update_lock_calls" REAL_UPDATE_LOCK="$ROOT/bin/omarchy-update-lock" \
+  run_with_lock_env omarchy-update-lock run true
+[[ -f $update_lock_calls ]] || fail "spy stub saw the direct run invocation"
+grep -qx run "$update_lock_calls" || fail "spy stub logged the run subcommand"
+if grep -qx held "$update_lock_calls"; then
+  fail "direct omarchy-update-lock run never queries the held state"
+fi
+pass "direct omarchy-update-lock run never queries the held state"
