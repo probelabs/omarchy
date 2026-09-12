@@ -355,6 +355,7 @@ Item {
     }
 
     MouseArea {
+      id: previewDismissMouseArea
       anchors.fill: parent
       acceptedButtons: Qt.LeftButton | Qt.RightButton
       onClicked: root.previewVisible = false
@@ -536,6 +537,7 @@ Item {
   }
 
   Connections {
+    id: screensChangedConnections
     target: Quickshell
     function onScreensChanged() {
       // A panel coming back is a display turning on that runWake did not ask
@@ -557,6 +559,7 @@ Item {
   }
 
   FileView {
+    id: passwordPamFileView
     path: "/etc/pam.d/omarchy-lock-password"
     watchChanges: true
     printErrors: false
@@ -583,6 +586,7 @@ Item {
   }
 
   IpcHandler {
+    id: lockIpcHandler
     target: "lock"
 
     function lock(): string {

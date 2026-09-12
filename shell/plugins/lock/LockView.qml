@@ -118,6 +118,7 @@ Item {
     }
 
     MouseArea {
+      id: wakeMouseArea
       anchors.fill: parent
       hoverEnabled: true
       onClicked: { root.wakeRequested(); root.forcePasswordFocus() }
