@@ -16,14 +16,19 @@ hyprctl switchxkblayout all 0 > /dev/null 2>&1
 # otherwise leave a full Electron helper tree running after each lock.
 if pgrep -x "1password" >/dev/null && omarchy-cmd-present 1password; then
   (
+    # mcdc:ignore:tooling-limit both arms exit 0 by design (acquired -> proceed; contended -> exit 0), so the exit-status outcome is constant and no MC/DC independence pair exists (masking); the contended arm is behaviorally tested by the flock-fails scenario
     flock -n 9 || exit 0
+    # mcdc:ignore:tooling-limit "|| true" never fails by construction, so the exit-status outcome is constant and no MC/DC independence pair exists (masking)
     timeout --kill-after=1s 3s 1password --lock >/dev/null 2>&1 || true
   ) 9>"${XDG_RUNTIME_DIR:-/tmp}/omarchy-1password-lock.lock" &
 fi
 
 # Implements: SW-REQ-260912-MXQG
 # Avoid running screensaver when locked
+# mcdc:ignore:tooling-limit "|| true" never fails by construction, so the exit-status outcome is constant and no MC/DC independence pair exists (masking)
 pkill -x ttfx 2>/dev/null || true
 # ttfx handles SIGTERM asynchronously, so keep its terminal alive until it exits.
+# mcdc:ignore:tooling-limit "|| true" never fails by construction, so the exit-status outcome is constant and no MC/DC independence pair exists (masking)
 timeout 1s pidwait -x ttfx 2>/dev/null || true
+# mcdc:ignore:tooling-limit "|| true" never fails by construction, so the exit-status outcome is constant and no MC/DC independence pair exists (masking)
 pkill -f '[o]rg.omarchy.screensaver' 2>/dev/null || true

@@ -29,12 +29,14 @@ derive_budget_ms() {
   window=${window##* }
 
   # An unreadable window means we cannot know, so assume logind's own default.
+  # mcdc:ignore:tooling-limit default-assignment idiom: the RHS assignment always succeeds, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); the window arms are behaviorally tested by the derived/zero/unreadable scenarios
   [[ $window =~ ^[0-9]+$ ]] && (( window > 0 )) || window=5000000
   window=$((window / 1000))
 
   # Never leave logind less than a second, however small its window is.
   window=$((window - (window / 5 > 1000 ? window / 5 : 1000)))
 
+  # mcdc:ignore:tooling-limit echo/echo idiom: both RHS commands always succeed, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); the cap arm is behaviorally tested by the capped-window scenario
   (( window < budget_cap_ms )) && echo "$window" || echo "$budget_cap_ms"
 }
 
@@ -60,7 +62,9 @@ lock_ipc() {
   shift
 
   remaining=$(remaining_ms)
+  # mcdc:ignore:defensive deadline-exhausted guard: remaining <= 0 on entry means the clock already passed the deadline before the first IPC call, which the harness cannot reach deterministically (the budget floor keeps sub-millisecond entry the only path here); it exists to stop a frozen or jumped clock from looping forever
   (( remaining > 0 )) || return 1
+  # mcdc:ignore:tooling-limit clamp idiom: the RHS assignment always succeeds, so the exit-status outcome is constant whenever reached and no MC/DC independence pair exists (masking); the clamp behavior itself is asserted by the budget-bound scenarios
   (( limit < remaining )) || limit=$remaining
   printf -v seconds '%d.%03d' $((limit / 1000)) $((limit % 1000))
 

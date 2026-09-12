@@ -343,6 +343,35 @@ run_sleep_lock
     "elapsed: ${elapsed_us}us"
 pass "sleep lock caps the budget a huge logind window would allow"
 
+# A zero-length logind window is readable but useless, so it takes the same
+# conservative fallback as an unreadable one (the (( window > 0 )) arm of the
+# line-32 guard, which the unreadable scenario short-circuits past).
+setup_scenario zero_window
+mock_logind_window 0
+never_secures
+
+run_sleep_lock
+
+(( elapsed_us > 3000000 && elapsed_us <= 7000000 )) ||
+  fail "sleep lock falls back when logind reports a zero window" "elapsed: ${elapsed_us}us"
+pass "sleep lock falls back when logind reports a zero window"
+
+# A budget argument that is not a number, or one outside the cap, must not
+# become the deadline: both take the derived fallback (4000ms from the mocked
+# 5s window) instead. The two values flip the two line-43 conditions
+# independently: non-numeric trips the regex arm, over-cap trips the range arm.
+for bad_budget in not-a-number 99999999; do
+  setup_scenario "invalid_budget_$bad_budget"
+  never_secures
+
+  run_sleep_lock "$bad_budget"
+
+  (( elapsed_us > 3000000 && elapsed_us <= 7000000 )) ||
+    fail "sleep lock ignores an out-of-contract budget argument" \
+      "budget: $bad_budget elapsed: ${elapsed_us}us"
+  pass "sleep lock ignores an out-of-contract budget argument: $bad_budget"
+done
+
 # The cap is only reachable because the shipped drop-in widens logind's window
 # past it. Ship one without the other and the cap is dead weight.
 inhibit_delay=$(sed -n 's/^InhibitDelayMaxSec=//p' "$ROOT/etc/systemd/logind.conf.d/20-inhibit-delay.conf")
