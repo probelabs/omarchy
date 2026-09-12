@@ -8,8 +8,11 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 apply_lock="$ROOT/bin/omarchy-apply-lock"
 
+# Match both the raw source and the MC/DC-instrumented form
+# (`if { { (( EUID == 0 )); __reqproof_mcdc_cond ...; }; ...; }; then`), which
+# the bash engine produces when this suite runs under `proof mcdc measure`.
 root_path_guard=$(awk '
-  /^if \(\( EUID == 0 \)\); then$/ { inside = 1 }
+  /^if / && /EUID == 0/ && /; then$/ { inside = 1 }
   inside { print }
   inside && /^fi$/ { exit }
 ' "$apply_lock")
