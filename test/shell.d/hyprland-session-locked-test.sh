@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Verifies: SW-REQ-260912-EH0K, SYS-REQ-260912-FRG0
+
 require_command jq
 
 test_tmp=$(mktemp -d)

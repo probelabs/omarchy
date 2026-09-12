@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Verifies: SW-REQ-260912-WBS3
+
 TMPDIR=""
 QS_PID=""
 

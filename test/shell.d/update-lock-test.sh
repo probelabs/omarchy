@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$(dirname "$0")/base-test.sh"
 
+# Verifies: SW-REQ-260912-FVHS, SW-REQ-260912-0Y70, SYS-REQ-260912-H8A5
+
 test_tmp=$(mktemp -d)
 trap 'rm -rf "$test_tmp"' EXIT
 

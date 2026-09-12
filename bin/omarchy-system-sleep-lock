@@ -3,6 +3,8 @@
 # omarchy:summary=Lock before suspend and wait for the session lock to become secure
 # omarchy:group=system
 # omarchy:hidden=true
+#
+# Implements: SYS-REQ-260912-HC86
 
 # Overrunning the budget is the failure this whole path exists to prevent:
 # logind stops honouring the inhibitor and suspends mid-lock. Every call below
@@ -18,6 +20,7 @@ poll_interval=0.1
 # assume. Leaving logind a fifth of its own window to deliver PrepareForSleep
 # and act on the release gives 4s at the 5s default and 12s at the shipped 15s.
 # The cap keeps a hand-raised window from stranding a closed laptop in a bag.
+# Implements: SW-REQ-260912-FAWV
 derive_budget_ms() {
   local window
   window=$(timeout --kill-after=0.1s 1s busctl get-property \
@@ -35,6 +38,7 @@ derive_budget_ms() {
   (( window < budget_cap_ms )) && echo "$window" || echo "$budget_cap_ms"
 }
 
+# Implements: SW-REQ-260912-FAWV
 budget_ms=${1:-$(derive_budget_ms)}
 if [[ ! $budget_ms =~ ^[0-9]+$ ]] || (( budget_ms < 1 || budget_ms > budget_cap_ms )); then
   budget_ms=$(derive_budget_ms)
@@ -93,6 +97,7 @@ sync_clamshell() {
 # logind suspends whether or not this wait succeeded, so a failure here means
 # the machine slept with the session exposed. The notification is the only way
 # anyone finds out, and it lands on the screen they unlock into.
+# Implements: SW-REQ-260912-H2YF
 report_unsecured() {
   printf 'omarchy-system-sleep-lock: suspending without a secure lock (%s)\n' \
     "$1" >&2
@@ -104,6 +109,7 @@ report_unsecured() {
   exit 1
 }
 
+# Implements: SW-REQ-260912-GGGS
 # Request the lock before touching monitor state, so a stuck Hyprland IPC call
 # cannot consume the window before Quickshell has begun securing the session.
 request_lock

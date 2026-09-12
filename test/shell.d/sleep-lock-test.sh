@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Verifies: SW-REQ-260912-GGGS, SW-REQ-260912-FAWV, SW-REQ-260912-H2YF, SYS-REQ-260912-HC86
+
 sleep_lock="$ROOT/bin/omarchy-system-sleep-lock"
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT

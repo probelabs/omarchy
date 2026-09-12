@@ -2,6 +2,8 @@
 
 # omarchy:summary=Returns true when the compositor holds a session lock
 # omarchy:hidden=true
+#
+# Implements: SYS-REQ-260912-FRG0, SW-REQ-260912-EH0K
 
 # Hyprland reports no lock state directly, but an active ext-session-lock is one
 # of the reasons a monitor cannot go solitary: LOCK in solitaryBlockedBy. It

@@ -5,6 +5,7 @@ import Quickshell.Services.Pam
 import Quickshell.Wayland
 import qs.Commons
 
+// Implements: SYS-REQ-260912-T0XP, SYS-REQ-260912-FRG0 — on-demand lock; session-lock state
 Item {
   id: root
 
@@ -89,6 +90,7 @@ Item {
   // ext-session-lock outlives its client, and a restart carries no lock over, so
   // a session locked this early is an orphan behind Hyprland's failsafe. Outputs
   // are often still absent here, so ask until the answer means something.
+  // Implements: SW-REQ-260912-WJYM
   function checkStrandedLock() {
     if (strandedLockResolved || strandedLockCheckProc.running) return
 
@@ -101,6 +103,7 @@ Item {
     strandedLockCheckProc.running = true
   }
 
+  // Implements: SW-REQ-260912-WJYM
   function recoverStrandedLock() {
     if (!strandedLock || locked || !passwordPamConfigured) return
 
@@ -135,6 +138,7 @@ Item {
     if (fingerprintPam.active) fingerprintPam.abort()
   }
 
+  // Implements: SW-REQ-260912-J8SX
   function beginLock() {
     if (!passwordPamConfigured) {
       logEvent("lock-denied: missing-pam")
@@ -477,6 +481,7 @@ Item {
     }
   }
 
+  // Implements: SW-REQ-260912-ND55
   Timer {
     id: idleBlankTimer
     interval: 5000
@@ -581,6 +586,7 @@ Item {
     target: "lock"
 
     function lock(): string {
+      // Implements: SW-REQ-260912-J8SX
       if (!root.passwordPamConfigured) return "missing-pam"
       if (!root.locked && !root.beginLock()) return "failed"
       return "ok"

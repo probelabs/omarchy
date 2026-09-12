@@ -3,6 +3,7 @@ import QtQuick.Effects
 import qs.Commons
 import qs.Ui
 
+// Implements: SYS-REQ-260912-T0XP (lock view for the on-demand lock)
 Item {
   id: root
 
@@ -29,9 +30,11 @@ Item {
   readonly property int fieldFontSize: Math.round(Style.font.heading * 1.125)
   readonly property int passwordDotFontSize: Math.round(Style.font.heading * 1.33)
   readonly property int passwordDotLetterSpacing: Math.round(Style.font.heading * 0.19)
+  // Implements: SW-REQ-260912-41VV
   // Space to keep clear on each side of the field for the fingerprint icon
   // (icon width plus a gap) so the centered dots never run under it.
   readonly property real fingerprintReserve: fingerprintConfigured ? Math.round(fingerprintIcon.implicitWidth + 12) : 0
+  // Implements: SW-REQ-260912-WBS3
   // Shrink the dots to fit once the password outgrows the field, so every
   // keystroke stays visible — otherwise long passwords clip with no feedback.
   readonly property real passwordDotScale: dotMetrics.advanceWidth > 0

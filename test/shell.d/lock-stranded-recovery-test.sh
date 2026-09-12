@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Verifies: SW-REQ-260912-WJYM, SYS-REQ-260912-FRG0
+
 run_node_test <<'JS'
 const fs = require('fs')
 const serviceQml = fs.readFileSync(path.join(root, 'shell/plugins/lock/Service.qml'), 'utf8')

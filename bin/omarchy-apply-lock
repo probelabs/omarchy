@@ -3,9 +3,12 @@
 # omarchy:summary=Configure Quickshell lock screen authentication
 # omarchy:requires-sudo=true
 # omarchy:hidden=true
+#
+# Implements: SYS-REQ-260912-JW2J
 
 set -e
 
+# Implements: SW-REQ-260912-EKJP
 # Install and upgrade callers can start this helper as root. Ignore their PATH
 # so optional commands never fall through to a user-writable directory.
 if (( EUID == 0 )); then
@@ -40,6 +43,7 @@ auth       required                    pam_faillock.so authsucc
 account    include                     system-local-login
 EOF
 
+# Implements: SW-REQ-260912-S154, SW-REQ-260912-Y0WT — absolute-path fprintd-list; else-branch removal
 if [[ -x /usr/bin/fprintd-list ]] &&
   /usr/bin/fprintd-list "$target_user" 2>/dev/null | grep -qi finger; then
   echo "Configuring lock screen fingerprint authentication..."

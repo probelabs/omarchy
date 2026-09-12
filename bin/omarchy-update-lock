@@ -3,12 +3,15 @@
 # omarchy:summary=Run a command while holding the Omarchy update lock
 # omarchy:args=<held|run> [command] [args...]
 # omarchy:hidden=true
+#
+# Implements: SYS-REQ-260912-H8A5
 
 set -e
 
 lock_dir="${XDG_RUNTIME_DIR:-/tmp}"
 lock_path="$lock_dir/omarchy-update.lock"
 
+# Implements: SW-REQ-260912-0Y70
 lock_is_held() {
   local lock_fd_path=""
 
@@ -23,6 +26,7 @@ case "${1:-}" in
   held)
     lock_is_held
     ;;
+  # Implements: SW-REQ-260912-FVHS
   run)
     shift
     if (( $# == 0 )); then

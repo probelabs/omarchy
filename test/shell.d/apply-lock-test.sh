@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Verifies: SW-REQ-260912-EKJP, SW-REQ-260912-S154, SW-REQ-260912-Y0WT, SYS-REQ-260912-JW2J
+
 apply_lock="$ROOT/bin/omarchy-apply-lock"
 
 root_path_guard=$(awk '
