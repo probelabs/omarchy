@@ -1,0 +1,9 @@
+id: REVIEW-10
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-S154
+decision: approved
+comment: Enrollment query invokes /usr/bin/fprintd-list by absolute path only; PATH resolution is never used, matching fprintd_absolute_path_only.
+citations:
+    - bin/omarchy-apply-lock:46

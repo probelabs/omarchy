@@ -1,0 +1,9 @@
+id: REVIEW-7
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-FAWV
+decision: approved
+comment: 'Budget derivation matches: InhibitDelayMaxUSec is read, one fifth (>=1000 ms) is reserved for logind, and an invalid/unreadable property falls back to 5000 ms — budget_fallback_on_invalid. Tested with zero-window and not-a-number/99999999 scenarios.'
+citations:
+    - bin/omarchy-system-sleep-lock:23

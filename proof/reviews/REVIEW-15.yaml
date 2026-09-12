@@ -1,0 +1,9 @@
+id: REVIEW-15
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-0Y70
+decision: approved
+comment: held exits 0 only when OMARCHY_UPDATE_LOCK_FD is an open descriptor resolving to the lock path and flock can take it on that descriptor; descriptor identity (not path existence) is the ownership proof, matching held_true_only_for_owning_fd. All three MC/DC rows are witnessed in update-lock-test.sh.
+citations:
+    - bin/omarchy-update-lock:14

@@ -1,0 +1,9 @@
+id: REVIEW-2
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-J8SX
+decision: approved
+comment: Lock IPC handler checks /etc/pam.d/omarchy-lock-password before engaging; on missing PAM it answers missing-pam and does not lock, matching lock_denied_missing_pam. When PAM is configured the denial branch is not taken — the antecedent !password_pam_configured gates exactly the code's config check.
+citations:
+    - shell/plugins/lock/Service.qml:141

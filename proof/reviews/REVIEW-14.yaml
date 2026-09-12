@@ -1,0 +1,9 @@
+id: REVIEW-14
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-FVHS
+decision: approved
+comment: run subcommand opens the lock file on a dedicated fd; when flock fails it prints the diagnostic and exits 1 without entering the snapshot, and exports the fd to the executed command otherwise — run_refused_with_diagnostic.
+citations:
+    - bin/omarchy-update-lock:29

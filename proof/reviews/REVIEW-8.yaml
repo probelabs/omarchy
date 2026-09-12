@@ -1,0 +1,9 @@
+id: REVIEW-8
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-H2YF
+decision: approved
+comment: 'Expiry path matches: when the budget expires before the session reports secure, the script prints the unsecured-suspend diagnostic on stderr, sends a critical notification, and exits 1; the secure path skips all three. Matches unsecured_reported & exit_failure.'
+citations:
+    - bin/omarchy-system-sleep-lock:104

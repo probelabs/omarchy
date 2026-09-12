@@ -1,0 +1,9 @@
+id: REVIEW-12
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-EH0K
+decision: approved
+comment: 'Exit-code triage matches the conjunction: 0 when any monitor lists LOCK in solitaryBlockedBy, 1 when none shows LOCK and at least one monitor answers (not blocked by WORKSPACE), 2 when the state cannot be determined. The sole decision is an exit-status-constant idiom, dispositioned via tooling-limit ignore.'
+citations:
+    - bin/omarchy-hyprland-session-locked:6

@@ -1,0 +1,9 @@
+id: REVIEW-11
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-Y0WT
+decision: approved
+comment: 'Else-branch matches: no enrolled fingerprint (or non-executable fprintd-list) removes /etc/pam.d/omarchy-lock-fingerprint; enrolled fingerprint installs/keeps it. fingerprint_pam_removed is the removal branch.'
+citations:
+    - bin/omarchy-apply-lock:46

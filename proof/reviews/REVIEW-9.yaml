@@ -1,0 +1,9 @@
+id: REVIEW-9
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-EKJP
+decision: approved
+comment: 'Root branch matches: with EUID 0 the script replaces PATH with /usr/share/omarchy/bin:/usr/local/bin:/usr/bin:/bin before any optional command runs, matching trusted_path_only; non-root leaves PATH untouched.'
+citations:
+    - bin/omarchy-apply-lock:11

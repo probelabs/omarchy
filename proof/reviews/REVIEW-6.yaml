@@ -1,0 +1,9 @@
+id: REVIEW-6
+kind: spec_conformance
+reviewer: agent:kimi-dogfood
+reviewed_at: "2026-09-12T23:30:38Z"
+subject: SW-REQ-260912-GGGS
+decision: approved
+comment: 'Ordering guarantee holds: the session-lock request is issued before the clamshell reconciliation helper is called; code order matches lock_requested_before_clamshell_sync.'
+citations:
+    - bin/omarchy-system-sleep-lock:116
