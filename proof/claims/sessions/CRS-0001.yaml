@@ -1,0 +1,18 @@
+id: CRS-0001
+spec_reqids:
+    - SW-REQ-260912-EKJP
+state: abandoned
+backend: grok
+cells:
+    - req_id: SW-REQ-260912-EKJP
+      dir: .proof/defect-sessions/CRS-0001/cells/SW-REQ-260912-EKJP
+      status: planned
+input_fingerprint:
+    spec_yaml_sha: sha256:f63a35fc44be5f3b79374cca8faa6704b5365ffa7885283bdfa169b193ee593d
+    spec_projection: semantic-v1
+    code_fingerprints:
+        bin/omarchy-apply-lock: sha256:064e31eec0312eaf4713ce35a3920564f7532b3e148993b0da85c389779673cf
+    claims_sha: sha256:b41e83eeb7b76169b941dfda683d860f24b4853b935b3fe6f400ff7f8bf56f1f
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-12T20:27:14Z"
+updated_at: "2026-09-12T21:40:58Z"

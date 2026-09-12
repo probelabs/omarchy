@@ -1,0 +1,32 @@
+id: SYS-REQ-260912-FRG0
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when lock_state_queried the lock_component shall always satisfy lock_state_reported & stranded_lock_recovered
+description: 'The system shall report the compositor session-lock state as an exit code: 0 when any monitor is blocked by LOCK, 1 when a monitor can answer and none shows LOCK, and 2 when the state cannot be determined. When the shell detects a stranded lock left by a dead client and password PAM is configured, the shell shall take the lock once and record the recovery in the journal.'
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: STK-REQ-260912-XJ5D
+component: lock
+rationale: ext-session-lock outlives its client. A restart leaves an orphan lock behind the Hyprland failsafe that nobody can unlock, so the shell must detect and reclaim it.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-12T19:42:00Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-12T19:42:00Z"

@@ -1,0 +1,32 @@
+id: SYS-REQ-260912-H8A5
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when update_run_requested the update_lock shall always satisfy update_lock_exclusive & held_state_reported
+description: While an Omarchy update runs, the system shall hold an exclusive update lock. A second update shall not enter its pre-update snapshot while the lock is held. The system shall answer whether the caller holds the update lock.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: STK-REQ-260912-XJ5D
+component: lock
+rationale: Two concurrent updates can interleave snapshots and package transactions. The lock makes the second update fail before it can snapshot.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-12T19:49:43Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-12T19:49:43Z"

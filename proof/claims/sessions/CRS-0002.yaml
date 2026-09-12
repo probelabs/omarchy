@@ -1,0 +1,18 @@
+id: CRS-0002
+spec_reqids:
+    - SW-REQ-260912-FAWV
+state: abandoned
+backend: grok
+cells:
+    - req_id: SW-REQ-260912-FAWV
+      dir: .proof/defect-sessions/CRS-0002/cells/SW-REQ-260912-FAWV
+      status: planned
+input_fingerprint:
+    spec_yaml_sha: sha256:898a3d1970d54ff4f870f3ba7cd7a74739ec27ec0364d508e9cef7367c07e18a
+    spec_projection: semantic-v1
+    code_fingerprints:
+        bin/omarchy-system-sleep-lock: sha256:8006481090a85a913a12c2f8b2b1cd388fef71ea1ec850ba4e10625d0ea41149
+    claims_sha: sha256:dd6bad7cf73bc835fffe4d97b93475d6476f0b6828674f9afb6f793d2167d622
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-12T20:27:14Z"
+updated_at: "2026-09-12T21:40:58Z"

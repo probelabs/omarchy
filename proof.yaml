@@ -1,0 +1,156 @@
+project:
+    name: Omarchy Lock Dogfood
+    purpose: External codebase audit
+    scope: Incrementally model externally-owned source code, tests, and documentation before enforcing release gates.
+    specs:
+        - path: specs/stakeholder
+          prefix: STK-REQ
+          type: stakeholder
+        - path: specs/system
+          prefix: SYS-REQ
+          type: system
+          parent_spec: specs/stakeholder
+        - path: specs/software
+          prefix: SW-REQ
+          type: subsystem
+          parent_spec: specs/system
+        - path: specs/integration
+          prefix: INT-REQ
+          type: integration
+          parent_spec: specs/system
+          cross_component: true
+    id_format:
+        pattern: '{prefix}-{date:YYMMDD}-{rand:4}'
+        auto_increment: false
+    default_assurance_level: C
+    obligation_classes:
+        - nominal
+        - error_handling
+        - malformed_input
+        - boundary
+        - empty_input
+        - edge_case
+        - concurrent
+        - access_denied
+        - determinism
+        - idempotency
+        - commutativity
+        - monotonicity
+        - totality
+        - atomicity
+        - invariant_preservation
+        - nil_safety
+        - overflow_safety
+        - encoding_safety
+    signals:
+        defaults: auto
+    evidence_classes:
+        - example
+        - boundary
+        - malformed
+        - property
+        - fuzz
+        - differential
+        - review
+        - formal
+    verification_scope:
+        include:
+            - bin/omarchy-*lock*
+            - shell/plugins/lock/**
+            - test/shell.d/*lock*-test.sh
+            - test/shell.d/apply-lock-test.sh
+        completeness:
+            production_include:
+                - bin/omarchy-*lock*
+                - shell/plugins/lock/**
+            production_exclude:
+                - '**/*_test.go'
+                - '**/testdata/**'
+            rationale: Scoped to the omarchy lock screen authentication component for bash/qml dogfooding.
+    commands:
+        build: >-
+            for f in bin/omarchy-apply-lock bin/omarchy-system-lock bin/omarchy-update-lock bin/omarchy-hyprland-session-locked bin/omarchy-system-sleep-lock; do /opt/homebrew/bin/bash -n "$f" || exit 1; done
+        tests:
+            lock-shell:
+                language: bash
+                command: >-
+                    set -e; B=/opt/homebrew/bin/bash;
+                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery; do "$B" "test/shell.d/$t-test.sh"; done;
+                    if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/update-lock-test.sh; else echo "SKIP update-lock-test.sh: requires Linux flock and /proc"; fi
+    tools:
+        probe:
+            path: /Users/buger/go/src/probe-wt-bashqml/target/debug/probe
+    lint:
+        exclude:
+            - .git/**
+            - vendor/**
+            - third_party/**
+            - node_modules/**
+            - dist/**
+            - build/**
+            - coverage/**
+            - .proof/**
+    checks:
+        slow_tests:
+            enabled: true
+        code_mcdc:
+            advisory: false
+            min_statement_percent: 100
+            min_decision_percent: 100
+            min_condition_percent: 100
+            targets:
+                - id: lock-bash-apply
+                  enabled: true
+                  language: bash
+                  scope: bin/omarchy-apply-lock
+                  test_command: lock-shell
+                - id: lock-bash-system
+                  enabled: true
+                  language: bash
+                  scope: bin/omarchy-system-lock
+                  test_command: lock-shell
+                - id: lock-bash-update
+                  enabled: true
+                  language: bash
+                  scope: bin/omarchy-update-lock
+                  test_command: lock-shell
+                - id: lock-bash-session
+                  enabled: true
+                  language: bash
+                  scope: bin/omarchy-hyprland-session-locked
+                  test_command: lock-shell
+                - id: lock-bash-sleep
+                  enabled: true
+                  language: bash
+                  scope: bin/omarchy-system-sleep-lock
+                  test_command: lock-shell
+                - id: lock-qml
+                  enabled: true
+                  language: qml
+                  scope: shell/plugins/lock
+        property_fixtures_exist:
+            enabled: true
+        flip_fixtures_exist:
+            enabled: true
+        fixture_staleness_clean:
+            enabled: true
+        code_signal_obligations_reviewed:
+            enabled: true
+        code_signal_unbindable:
+            enabled: true
+        change_evidence_complete:
+            enabled: true
+        plan_of_record_current:
+            enabled: true
+        disabled:
+            - documentation_coverage
+    approval:
+        agent_autonomous_for:
+            all: true
+    documentation:
+        sources:
+            - path: docs/
+              type: manual
+        threshold: 80
+    trace_policy:
+        mode: source_native

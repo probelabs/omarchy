@@ -1,0 +1,214 @@
+component: lock
+variables:
+    - name: user_lock_requested
+      type: bool
+      direction: input
+      description: The user invoked the session lock entry point.
+    - name: session_lock_engaged
+      type: bool
+      direction: output
+      description: The shell lock plugin engaged the ext-session-lock.
+    - name: keyboard_layout_default
+      type: bool
+      direction: output
+      description: The keyboard layout was reset to the first layout.
+    - name: screensaver_stopped
+      type: bool
+      direction: output
+      description: The ttfx screensaver was signalled and waited out.
+    - name: ttfx_running
+      type: bool
+      direction: input
+      description: The ttfx screensaver process is running.
+    - name: ttfx_signalled
+      type: bool
+      direction: output
+      description: SIGTERM was delivered to ttfx.
+    - name: ttfx_wait_bounded
+      type: bool
+      direction: output
+      description: The wait for ttfx exit is bounded at 1 s.
+    - name: suspend_imminent
+      type: bool
+      direction: input
+      description: logind signalled PrepareForSleep and the delay inhibitor is held.
+    - name: lock_requested_first
+      type: bool
+      direction: output
+      description: The session lock was requested before clamshell reconciliation.
+    - name: lock_requested_before_clamshell_sync
+      type: bool
+      direction: output
+      description: The lock IPC request precedes the clamshell helper call.
+    - name: session_secure
+      type: bool
+      direction: output
+      description: The compositor reports the session lock as secure.
+    - name: unsecured_suspend_reported
+      type: bool
+      direction: output
+      description: An unsecured suspend was diagnosed on stderr and notified as critical.
+    - name: budget_bounded
+      type: bool
+      direction: output
+      description: The wait budget is derived from logind InhibitDelayMaxUSec, reserves a fifth or at least 1000 ms, and is capped at 12000 ms.
+    - name: budget_fallback_on_invalid
+      type: bool
+      direction: output
+      description: A missing or invalid budget argument falls back to the derived budget.
+    - name: budget_expired_without_secure
+      type: bool
+      direction: input
+      description: The wait budget expired before the session reported secure.
+    - name: unsecured_reported
+      type: bool
+      direction: output
+      description: The unsecured-suspend diagnostic and critical notification were emitted.
+    - name: exit_failure
+      type: bool
+      direction: output
+      description: The script exits with status 1.
+    - name: lock_auth_config_run
+      type: bool
+      direction: input
+      description: omarchy-apply-lock was invoked to configure lock authentication.
+    - name: running_as_root
+      type: bool
+      direction: input
+      description: The helper runs with EUID 0.
+    - name: trusted_path_only
+      type: bool
+      direction: output
+      description: PATH is replaced with trusted system directories before optional commands run.
+    - name: password_pam_installed
+      type: bool
+      direction: output
+      description: The PAM password stack for the lock screen is installed.
+    - name: fingerprint_enrollment_queried
+      type: bool
+      direction: input
+      description: The helper tests whether the target user has an enrolled fingerprint.
+    - name: fprintd_absolute_path_only
+      type: bool
+      direction: output
+      description: fprintd-list is invoked only as /usr/bin/fprintd-list.
+    - name: fingerprint_not_enrolled
+      type: bool
+      direction: input
+      description: No enrolled fingerprint exists or /usr/bin/fprintd-list is not executable.
+    - name: fingerprint_pam_installed
+      type: bool
+      direction: output
+      description: The PAM fingerprint stack is installed.
+    - name: fingerprint_pam_removed
+      type: bool
+      direction: output
+      description: /etc/pam.d/omarchy-lock-fingerprint is removed.
+    - name: lock_state_queried
+      type: bool
+      direction: input
+      description: A caller asked for the compositor session-lock state.
+    - name: lock_state_reported
+      type: bool
+      direction: output
+      description: The lock state is reported as exit 0 locked, 1 unlocked, or 2 undetermined.
+    - name: exit_zero_on_lock
+      type: bool
+      direction: output
+      description: Exit 0 when any monitor lists LOCK in solitaryBlockedBy.
+    - name: exit_one_on_answerable_unlocked
+      type: bool
+      direction: output
+      description: Exit 1 when no monitor shows LOCK and a monitor is not blocked by WORKSPACE.
+    - name: exit_two_on_undetermined
+      type: bool
+      direction: output
+      description: Exit 2 when hyprctl fails or no monitor answer is determined.
+    - name: stranded_lock_detected
+      type: bool
+      direction: input
+      description: The stranded-lock probe found a lock this shell did not take.
+    - name: stranded_lock_recovered
+      type: bool
+      direction: output
+      description: A stranded compositor lock is reclaimed by the shell.
+    - name: stranded_lock_recovered_once
+      type: bool
+      direction: output
+      description: The service takes the stranded lock exactly once.
+    - name: recovery_logged
+      type: bool
+      direction: output
+      description: A lock-stranded recovery event is written to the journal log.
+    - name: password_pam_configured
+      type: bool
+      direction: input
+      description: /etc/pam.d/omarchy-lock-password loaded successfully.
+    - name: lock_requested
+      type: bool
+      direction: input
+      description: The lock IPC handler received a lock request.
+    - name: lock_denied_missing_pam
+      type: bool
+      direction: output
+      description: The lock request is answered missing-pam and no session lock engages.
+    - name: idle_timeout_expired
+      type: bool
+      direction: input
+      description: The idle blank timer expired.
+    - name: blank_displays
+      type: bool
+      direction: output
+      description: The displays are blanked behind the lock.
+    - name: password_auth_in_flight
+      type: bool
+      direction: input
+      description: A password authentication is in progress.
+    - name: timer_rearmed_after_suspend
+      type: bool
+      direction: output
+      description: The blank timer is re-armed because wall-clock time shows a suspend gap.
+    - name: password_text_overflows
+      type: bool
+      direction: input
+      description: The entered password dot row is wider than the password field.
+    - name: dots_scaled_within_field
+      type: bool
+      direction: output
+      description: The password dots are scaled so the row stays inside the field.
+    - name: update_run_requested
+      type: bool
+      direction: input
+      description: A caller asked omarchy-update-lock to run a command under the update lock.
+    - name: update_lock_exclusive
+      type: bool
+      direction: output
+      description: Only one update holds the update lock at a time.
+    - name: held_state_reported
+      type: bool
+      direction: output
+      description: The held subcommand reports whether the caller holds the update lock.
+    - name: lock_unavailable
+      type: bool
+      direction: input
+      description: Another process holds the update lock.
+    - name: run_refused_with_diagnostic
+      type: bool
+      direction: output
+      description: The run is refused with a diagnostic and exit 1 when the lock is taken.
+    - name: held_state_queried
+      type: bool
+      direction: input
+      description: A caller asked whether it holds the update lock.
+    - name: held_true_only_for_owning_fd
+      type: bool
+      direction: output
+      description: held exits 0 only for the descriptor that owns the lock.
+    - name: fingerprint_sensor_configured
+      type: bool
+      direction: input
+      description: A fingerprint sensor is enrolled and its PAM stack is installed.
+    - name: fingerprint_indicator_tracks_sensor
+      type: bool
+      direction: output
+      description: The lock view shows the fingerprint indicator exactly when a sensor is configured.

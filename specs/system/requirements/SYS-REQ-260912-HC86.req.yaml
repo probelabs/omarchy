@@ -1,0 +1,32 @@
+id: SYS-REQ-260912-HC86
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when suspend_imminent the sleep_lock shall eventually satisfy lock_requested_first & (session_secure | unsecured_suspend_reported)
+description: When suspend is imminent, the system shall request the session lock before it reconciles clamshell state. The system shall bound the wait by a budget derived from the logind inhibitor window and capped at 12000 ms. The system shall report an unsecured suspend and fail when the budget expires before the session is secure.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: STK-REQ-260912-XJ5D
+component: lock
+rationale: logind stops honouring the delay inhibitor after its window. A suspend that beats the lock leaves the session exposed, so the deadline must enforce itself.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-12T19:42:00Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-12T19:42:00Z"

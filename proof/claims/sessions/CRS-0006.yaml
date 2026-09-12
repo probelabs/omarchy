@@ -1,0 +1,18 @@
+id: CRS-0006
+spec_reqids:
+    - SW-REQ-260912-J8SX
+state: planned
+backend: grok
+cells:
+    - req_id: SW-REQ-260912-J8SX
+      dir: .proof/defect-sessions/CRS-0006/cells/SW-REQ-260912-J8SX
+      status: planned
+input_fingerprint:
+    spec_yaml_sha: sha256:2079b32fd8e1460c948e003cb178eda0124a64696ae25c6cdc16ab1d9ef78422
+    spec_projection: semantic-v1
+    code_fingerprints:
+        shell/plugins/lock/Service.qml: sha256:298f96b75930a617e8716519ad60c253c8ab84ec1d63e8826b64bcb7d415d73d
+    claims_sha: sha256:0eb4d9f8ff947e6a1e825115f7845e148ff1aab71ac92293de89241174b442c0
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-12T21:40:26Z"
+updated_at: "2026-09-12T21:40:26Z"

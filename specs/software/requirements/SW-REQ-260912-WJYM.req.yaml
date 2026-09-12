@@ -1,0 +1,32 @@
+id: SW-REQ-260912-WJYM
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when stranded_lock_detected & password_pam_configured the lock_service shall eventually satisfy stranded_lock_recovered_once & recovery_logged
+description: When the stranded-lock probe exits 0, the shell lock service holds no lock of its own, and password PAM is configured, the lock service shall take the session lock once and shall log a lock-stranded recovery event.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-FRG0
+component: lock
+rationale: ext-session-lock outlives its client. Without recovery, a shell restart leaves an orphan lock that only the Hyprland failsafe covers and nobody can unlock.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-12T19:43:26Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-12T19:43:26Z"

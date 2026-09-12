@@ -1,0 +1,32 @@
+id: SW-REQ-260912-41VV
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when fingerprint_sensor_configured the lock_view shall always satisfy fingerprint_indicator_tracks_sensor
+description: When a fingerprint sensor is configured, the lock view shall show the fingerprint indicator next to the password field. When no sensor is configured, the lock view shall reserve no space for the indicator.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-T0XP
+component: lock
+rationale: An indicator without a working sensor invites a touch that can never authenticate. Space reserved for a missing sensor shifts the password field.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-12T19:51:16Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-12T19:51:16Z"

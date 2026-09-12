@@ -1,0 +1,32 @@
+id: SW-REQ-260912-FVHS
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when update_run_requested & lock_unavailable the update_lock shall always satisfy run_refused_with_diagnostic
+description: omarchy-update-lock run shall open the update lock file on a dedicated file descriptor, shall print a diagnostic and exit 1 when flock cannot take the lock, and shall export the descriptor to the executed command.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-H8A5
+component: lock
+rationale: The executed update must hold the lock for its whole lifetime, so the descriptor is exported rather than released after acquisition.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-12T19:49:43Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-12T19:49:43Z"
