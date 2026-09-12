@@ -13,6 +13,7 @@
 # on a monitor with no workspace yet, before it ever reaches the lock, so a
 # missing LOCK there means nothing was asked. Callers branching only on success
 # treat 2 as unlocked.
+# mcdc:ignore:tooling-limit the RHS exit 2 always exits with the same status, so the exit-status outcome is constant whenever reached and no MC/DC independence pair exists (masking); the hyprctl-failure arm is behaviorally tested by the unreachable-compositor scenario
 monitors=$(hyprctl -j monitors 2>/dev/null) || exit 2
 
 state=$(jq '
