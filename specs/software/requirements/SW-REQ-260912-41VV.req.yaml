@@ -16,7 +16,9 @@ component: lock
 rationale: An indicator without a working sensor invites a touch that can never authenticate. Space reserved for a missing sensor shifts the password field.
 tags: []
 variables: []
-traces: {}
+traces:
+    satisfies:
+        - SYS-REQ-260912-T0XP
 verification:
     assurance_level: C
     formalization_status: valid
@@ -29,4 +31,4 @@ history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:51:16Z"
     last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T19:51:16Z"
+    last_modified_at: "2026-09-12T22:39:30Z"

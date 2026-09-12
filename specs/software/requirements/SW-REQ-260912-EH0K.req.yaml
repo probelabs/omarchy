@@ -16,7 +16,9 @@ component: lock
 rationale: Hyprland stops at the first solitary blocker on a monitor with no workspace yet, so a missing LOCK there means nothing was asked. Callers that branch only on success treat 2 as unlocked.
 tags: []
 variables: []
-traces: {}
+traces:
+    satisfies:
+        - SYS-REQ-260912-FRG0
 verification:
     assurance_level: C
     formalization_status: valid
@@ -29,7 +31,7 @@ history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T21:39:07Z"
+    last_modified_at: "2026-09-12T22:39:30Z"
 obligation_suppressions:
     - id: error_handling
       reason: 'bin/omarchy-hyprland-session-locked is a 3-state status probe (exit 0/1/2 per its contract); set -e/pipefail would abort on the deliberate nonzero exits it exists to report. Pipeline failures are handled explicitly: hyprctl failure exits 2, jq failure yields empty state which also exits 2.'

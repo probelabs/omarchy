@@ -16,7 +16,9 @@ component: lock
 rationale: ext-session-lock outlives its client. Without recovery, a shell restart leaves an orphan lock that only the Hyprland failsafe covers and nobody can unlock.
 tags: []
 variables: []
-traces: {}
+traces:
+    satisfies:
+        - SYS-REQ-260912-FRG0
 verification:
     assurance_level: C
     formalization_status: valid
@@ -29,4 +31,4 @@ history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T19:43:26Z"
+    last_modified_at: "2026-09-12T22:39:30Z"

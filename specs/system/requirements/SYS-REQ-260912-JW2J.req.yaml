@@ -16,7 +16,9 @@ component: lock
 rationale: Install and upgrade callers start this helper as root. A user-writable PATH entry or a PATH-resolved fprintd-list would run attacker-controlled code with root privileges.
 tags: []
 variables: []
-traces: {}
+traces:
+    satisfies:
+        - STK-REQ-260912-XJ5D
 verification:
     assurance_level: C
     formalization_status: valid
@@ -29,4 +31,4 @@ history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:42:00Z"
     last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T19:42:00Z"
+    last_modified_at: "2026-09-12T22:39:29Z"

@@ -16,7 +16,9 @@ component: lock
 rationale: A stuck Hyprland IPC call during a lid transition must not consume the lock window before Quickshell has begun securing the session.
 tags: []
 variables: []
-traces: {}
+traces:
+    satisfies:
+        - SYS-REQ-260912-HC86
 verification:
     assurance_level: C
     formalization_status: valid
@@ -29,4 +31,4 @@ history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T19:43:26Z"
+    last_modified_at: "2026-09-12T22:39:30Z"
