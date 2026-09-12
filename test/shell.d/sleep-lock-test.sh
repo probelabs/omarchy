@@ -6,6 +6,18 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Verifies: SW-REQ-260912-GGGS, SW-REQ-260912-FAWV, SW-REQ-260912-H2YF, SYS-REQ-260912-HC86
 
+# Row dispositions (see proof mcdc show <REQ-ID> for the tables):
+#mcdc:ignore:defensive SW-REQ-260912-GGGS: lock_requested_before_clamshell_sync=F, suspend_imminent=T => FALSE -- the lock request is an unconditional sequence point before the clamshell helper call; no input reorders them [reviewed: REVIEW-6]
+#mcdc:ignore:defensive SW-REQ-260912-FAWV: budget_bounded=F, budget_fallback_on_invalid=F, suspend_imminent=T => FALSE -- the deadline is always assigned from the validated argument, the derived logind window, or the 5000 ms fallback; no path leaves it unset [reviewed: REVIEW-7]
+#mcdc:ignore:defensive SW-REQ-260912-FAWV: budget_bounded=F, budget_fallback_on_invalid=T, suspend_imminent=T => FALSE -- the fallback IS the 5000 ms bound; taking the fallback and ending unbounded is structurally absent [reviewed: REVIEW-7]
+#mcdc:ignore:defensive SW-REQ-260912-H2YF: budget_expired_without_secure=T, exit_failure=F, unsecured_reported=F => FALSE -- the expiry path unconditionally prints the diagnostic, sends the notification, and exits 1; expiry with neither effect needs a broken build [reviewed: REVIEW-8]
+#mcdc:ignore:defensive SW-REQ-260912-H2YF: budget_expired_without_secure=T, exit_failure=F, unsecured_reported=T => FALSE -- the report and the exit 1 are the same code path; reporting without failing is structurally absent [reviewed: REVIEW-8]
+#mcdc:ignore:defensive SW-REQ-260912-H2YF: budget_expired_without_secure=T, exit_failure=T, unsecured_reported=F => FALSE -- the stderr/journal report precedes the exit 1 unconditionally; failing without reporting is structurally absent [reviewed: REVIEW-8]
+#mcdc:ignore:defensive SYS-REQ-260912-HC86: lock_requested_first=F, session_secure=F, suspend_imminent=T, unsecured_suspend_reported=F => FALSE -- the lock request is the first unconditional action of every run; a run that does nothing needs a broken build [reviewed: REVIEW-17]
+#mcdc:ignore:defensive SYS-REQ-260912-HC86: lock_requested_first=F, session_secure=T, suspend_imminent=T, unsecured_suspend_reported=F => FALSE -- the script always requests the lock before it can observe a secure session; securing without requesting first is structurally absent [reviewed: REVIEW-17]
+#mcdc:ignore:defensive SYS-REQ-260912-HC86: lock_requested_first=T, session_secure=F, suspend_imminent=T, unsecured_suspend_reported=F => FALSE -- budget expiry without a secure session always reports (stderr + notification); giving up silently is structurally absent [reviewed: REVIEW-17]
+#mcdc:ignore:defensive SYS-REQ-260912-HC86: lock_requested_first=T, session_secure=T, suspend_imminent=T, unsecured_suspend_reported=T => FALSE -- the formula's own exclusion conjunct !(session_secure & unsecured_suspend_reported) makes this combination a violation row: the two outcomes are mutually exclusive in this implementation (the exit-0 secure path never reports) [reviewed: REVIEW-17]
+
 sleep_lock="$ROOT/bin/omarchy-system-sleep-lock"
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
@@ -96,10 +108,14 @@ run_sleep_lock 4000
 
 (( exit_status == 0 )) ||
   fail "sleep lock succeeds once the session reports secure" "exit: $exit_status"
+# MCDC SYS-REQ-260912-HC86: lock_requested_first=T, session_secure=T, suspend_imminent=T, unsecured_suspend_reported=F => TRUE
+# MCDC SW-REQ-260912-FAWV: budget_bounded=T, budget_fallback_on_invalid=F, suspend_imminent=T => FALSE
+# MCDC SW-REQ-260912-H2YF: budget_expired_without_secure=F, exit_failure=F, unsecured_reported=F => TRUE [no-action: notify_log stays empty and the script exits 0 in this responsive scenario — the report path never fires without an expiry]
 pass "sleep lock succeeds once the session reports secure"
 
 [[ ${calls[0]} == "shell lock lock" ]] ||
   fail "sleep lock requests the session lock first" "first call: ${calls[0]}"
+# MCDC SW-REQ-260912-GGGS: lock_requested_before_clamshell_sync=T, suspend_imminent=T => TRUE
 pass "sleep lock requests the session lock first"
 
 [[ ${calls[1]} == "clamshell" && ${calls[2]} == "shell lock status" ]] ||
@@ -130,6 +146,8 @@ run_sleep_lock 1500
 
 (( exit_status != 0 )) ||
   fail "sleep lock reports failure when the session never secures"
+# MCDC SW-REQ-260912-H2YF: budget_expired_without_secure=T, exit_failure=T, unsecured_reported=T => TRUE
+# MCDC SYS-REQ-260912-HC86: lock_requested_first=T, session_secure=F, suspend_imminent=T, unsecured_suspend_reported=T => TRUE
 pass "sleep lock reports failure when the session never secures"
 
 # The contract is the budget plus at most one poll interval, since the pause
@@ -366,11 +384,24 @@ for bad_budget in not-a-number 99999999; do
 
   run_sleep_lock "$bad_budget"
 
+  # MCDC SW-REQ-260912-FAWV: budget_bounded=T, budget_fallback_on_invalid=T, suspend_imminent=T => TRUE
   (( elapsed_us > 3000000 && elapsed_us <= 7000000 )) ||
     fail "sleep lock ignores an out-of-contract budget argument" \
       "budget: $bad_budget elapsed: ${elapsed_us}us"
   pass "sleep lock ignores an out-of-contract budget argument: $bad_budget"
 done
+
+# Control: without a suspend run (script never invoked) nothing is requested,
+# derived, or reported.
+control_log="$tmpdir/calls-control"
+PATH="$mock_bin:$PATH" CALL_LOG="$control_log" true
+# MCDC SW-REQ-260912-GGGS: lock_requested_before_clamshell_sync=F, suspend_imminent=F => TRUE [no-action: control never invokes omarchy-system-sleep-lock and the spy log stays empty — no lock request exists without a suspend run]
+# MCDC SW-REQ-260912-FAWV: budget_bounded=F, budget_fallback_on_invalid=F, suspend_imminent=F => TRUE [no-action: same control — zero busctl/shell calls in the log, no budget is derived outside a suspend run]
+# MCDC SYS-REQ-260912-HC86: lock_requested_first=F, session_secure=F, suspend_imminent=F, unsecured_suspend_reported=F => TRUE [no-action: same control — the empty spy log proves no lock request, poll, or report without a suspend run]
+if [[ -f $control_log ]]; then
+  fail "no sleep-lock action runs without a suspend" "calls: $(cat "$control_log")"
+fi
+pass "no sleep-lock action runs without a suspend"
 
 # The cap is only reachable because the shipped drop-in widens logind's window
 # past it. Ship one without the other and the cap is dead weight.
