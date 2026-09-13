@@ -6,6 +6,9 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Verifies: SW-REQ-260912-41VV
 
+# Row dispositions (see proof mcdc show SW-REQ-260912-41VV for the table):
+#mcdc:ignore:defensive SW-REQ-260912-41VV: fingerprint_indicator_tracks_sensor=F, fingerprint_sensor_configured=T => FALSE -- the indicator visibility is a declarative binding on the sensor-configured state; an untracked indicator needs a broken binding, not a reachable input [reviewed: REVIEW-5]
+
 TMPDIR=""
 QS_PID=""
 
@@ -72,4 +75,8 @@ if ! jq -e '.ok == true' "$result" >/dev/null; then
   fail "fingerprint indicator tracks the configured sensor"
 fi
 
+# The fixture asserts both arms: hidden + zero reserved space with no sensor,
+# visible with a sensor configured (fixtures/lock-fingerprint-indicator/shell.qml).
+# MCDC SW-REQ-260912-41VV: fingerprint_indicator_tracks_sensor=T, fingerprint_sensor_configured=T => TRUE
+# MCDC SW-REQ-260912-41VV: fingerprint_indicator_tracks_sensor=F, fingerprint_sensor_configured=F => TRUE [no-action: the fixture's no-sensor arm asserts !indicator.visible and fingerprintReserve === 0 — no indicator space exists without a sensor]
 pass "fingerprint indicator tracks the configured sensor"

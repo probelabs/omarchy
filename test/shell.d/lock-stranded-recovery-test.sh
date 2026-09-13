@@ -6,6 +6,11 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Verifies: SW-REQ-260912-WJYM, SYS-REQ-260912-FRG0
 
+# Row dispositions (see proof mcdc show <REQ-ID> for the tables):
+#mcdc:ignore:defensive SW-REQ-260912-WJYM: password_pam_configured=T, recovery_logged=F, stranded_lock_detected=T, stranded_lock_recovered_once=F => FALSE -- the recovery guard (strandedLock && !locked && passwordPamConfigured) routes every detected+configured stranded lock into recoverStrandedLock; ignoring it needs a broken build [reviewed: REVIEW-13]
+#mcdc:ignore:defensive SW-REQ-260912-WJYM: password_pam_configured=T, recovery_logged=F, stranded_lock_detected=T, stranded_lock_recovered_once=T => FALSE -- logEvent("lock-stranded: recovering") sits inside the recovery block next to beginLock(); recovering without logging is structurally absent [reviewed: REVIEW-13]
+#mcdc:ignore:defensive SW-REQ-260912-WJYM: password_pam_configured=T, recovery_logged=T, stranded_lock_detected=T, stranded_lock_recovered_once=F => FALSE -- the journal entry is emitted only by the recovery path; logging without recovering is structurally absent [reviewed: REVIEW-13]
+
 run_node_test <<'JS'
 const fs = require('fs')
 const serviceQml = fs.readFileSync(path.join(root, 'shell/plugins/lock/Service.qml'), 'utf8')
@@ -31,6 +36,8 @@ assert(
   /if \(exitCode === 2\) return\s*\n\s*root\.strandedLockResolved = true/.test(serviceQml),
   'only a compositor that reports a lock counts as a stranded lock'
 )
+// MCDC SW-REQ-260912-WJYM: password_pam_configured=F, recovery_logged=F, stranded_lock_detected=T, stranded_lock_recovered_once=F => TRUE [no-action: the recoverStrandedLock guard returns early when !passwordPamConfigured — the source assertion above pins recovery behind the PAM gate, so no recovery or log runs without it]
+// MCDC SW-REQ-260912-WJYM: password_pam_configured=T, recovery_logged=F, stranded_lock_detected=F, stranded_lock_recovered_once=F => TRUE [no-action: the exitCode === 2 return and the exitCode === 0 gate prove no recovery path runs when the probe does not report a stranded lock]
 
 // omarchy-restart-shell re-locks a fresh shell, possibly mid-question.
 assert(
@@ -88,4 +95,6 @@ assert(
   /strandedLock = false\s*\n\s*logEvent\("lock-stranded: recovering"\)\s*\n\s*beginLock\(\)/.test(serviceQml),
   'recovery takes the lock once and records it in the journal'
 )
+// MCDC SW-REQ-260912-WJYM: password_pam_configured=T, recovery_logged=T, stranded_lock_detected=T, stranded_lock_recovered_once=T => TRUE
+// MCDC SYS-REQ-260912-FRG0: lock_state_queried=T, lock_state_reported=T, stranded_lock_recovered=T => TRUE
 JS

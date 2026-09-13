@@ -6,6 +6,9 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Verifies: SW-REQ-260912-WBS3
 
+# Row dispositions (see proof mcdc show SW-REQ-260912-WBS3 for the table):
+#mcdc:ignore:defensive SW-REQ-260912-WBS3: dots_scaled_within_field=F, password_text_overflows=T => FALSE -- the dot scale is a declarative binding on the width comparison; an overflowing row that stays unscaled needs a broken binding [reviewed: REVIEW-4]
+
 TMPDIR=""
 QS_PID=""
 
@@ -72,4 +75,8 @@ if ! jq -e '.ok == true' "$result" >/dev/null; then
   fail "lock password dots shrink to fit the field"
 fi
 
+# The fixture asserts both arms: short passwords keep passwordDotScale === 1,
+# overflowing passwords shrink the dots (fixtures/lock-password-overflow/shell.qml).
+# MCDC SW-REQ-260912-WBS3: dots_scaled_within_field=T, password_text_overflows=T => TRUE
+# MCDC SW-REQ-260912-WBS3: dots_scaled_within_field=F, password_text_overflows=F => TRUE [no-action: the fixture's short-password arm asserts passwordDotScale === 1 — no scaling runs without an overflow]
 pass "lock password dots shrink to fit the field"
