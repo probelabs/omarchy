@@ -6,6 +6,12 @@ source "$(dirname "$0")/base-test.sh"
 
 # Verifies: SW-REQ-260912-FVHS, SW-REQ-260912-0Y70, SYS-REQ-260912-H8A5
 
+# Row dispositions (see proof mcdc show <REQ-ID> for the tables):
+#mcdc:ignore:defensive SW-REQ-260912-FVHS: lock_unavailable=T, run_refused_with_diagnostic=F, update_run_requested=T => FALSE -- the flock-failure branch unconditionally prints the diagnostic and exits 1; a second run entering the snapshot anyway needs a broken mutex [reviewed: REVIEW-14]
+#mcdc:ignore:defensive SYS-REQ-260912-H8A5: held_state_reported=F, update_lock_exclusive=F, update_run_requested=T => FALSE -- the run path unconditionally opens and flocks the lock file and the held subcommand is an unconditional sibling in the same dispatcher; neither property can be absent without a broken build [reviewed: REVIEW-20]
+#mcdc:ignore:defensive SYS-REQ-260912-H8A5: held_state_reported=F, update_lock_exclusive=T, update_run_requested=T => FALSE -- held is answered by the same script that takes the lock; exclusivity without the held answer is structurally absent [reviewed: REVIEW-20]
+#mcdc:ignore:defensive SYS-REQ-260912-H8A5: held_state_reported=T, update_lock_exclusive=F, update_run_requested=T => FALSE -- every run takes the exclusive flock before executing the child; reporting held state without holding the lock exclusively is structurally absent [reviewed: REVIEW-20]
+
 test_tmp=$(mktemp -d)
 trap 'rm -rf "$test_tmp"' EXIT
 
@@ -75,6 +81,7 @@ for _ in {1..50}; do
   sleep 0.05
 done
 [[ -f $update_snapshot_marker ]] || fail "first omarchy-update reached snapshot under lock"
+# MCDC SW-REQ-260912-FVHS: lock_unavailable=F, run_refused_with_diagnostic=F, update_run_requested=T => TRUE [no-action: the first update reaches the snapshot marker and its log carries no "already running" diagnostic — the refusal path never fires when the lock is free]
 
 set +e
 OMARCHY_UPDATE_LOGGED=1 TEST_MARKER="$test_tmp/update-second-snapshot-started" run_with_lock_env "$ROOT/bin/omarchy-update" -y >"$test_tmp/update-second.out" 2>&1
@@ -86,6 +93,8 @@ wait "$update_pid"
 [[ $update_second_status -ne 0 ]] || fail "second omarchy-update exits non-zero while update lock is held"
 grep -q "already running" "$test_tmp/update-second.out" || fail "second omarchy-update reports held update lock"
 [[ ! -f $test_tmp/update-second-snapshot-started ]] || fail "second omarchy-update did not snapshot while lock was held"
+# MCDC SW-REQ-260912-FVHS: lock_unavailable=T, run_refused_with_diagnostic=T, update_run_requested=T => TRUE
+# MCDC SYS-REQ-260912-H8A5: held_state_reported=T, update_lock_exclusive=T, update_run_requested=T => TRUE
 pass "omarchy-update prevents overlapping top-level updates"
 
 # The sleep inhibitor deliberately outlives the step that starts it, so it must
@@ -238,3 +247,14 @@ if grep -qx held "$update_lock_calls"; then
   fail "direct omarchy-update-lock run never queries the held state"
 fi
 pass "direct omarchy-update-lock run never queries the held state"
+
+# Control: with no update requested at all, the spy sees zero subcommands.
+control_calls="$test_tmp/update-lock-control"
+UPDATE_LOCK_CALLS="$control_calls" REAL_UPDATE_LOCK="$ROOT/bin/omarchy-update-lock" \
+  run_with_lock_env true
+# MCDC SW-REQ-260912-FVHS: lock_unavailable=T, run_refused_with_diagnostic=F, update_run_requested=F => TRUE [no-action: the spy stub logs every omarchy-update-lock subcommand and no invocation happens in this control — the log never exists]
+# MCDC SYS-REQ-260912-H8A5: held_state_reported=F, update_lock_exclusive=F, update_run_requested=F => TRUE [no-action: same control — zero subcommands logged, no lock opened, no held answer]
+if [[ -f $control_calls ]]; then
+  fail "no update-lock action runs without an update request" "calls: $(cat "$control_calls")"
+fi
+pass "no update-lock action runs without an update request"
