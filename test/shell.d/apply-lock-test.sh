@@ -6,6 +6,12 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Verifies: SW-REQ-260912-EKJP, SW-REQ-260912-S154, SW-REQ-260912-Y0WT, SYS-REQ-260912-JW2J
 
+# Row dispositions (see proof mcdc show <REQ-ID> for the tables):
+#mcdc:ignore:defensive SW-REQ-260912-Y0WT: fingerprint_not_enrolled=T, fingerprint_pam_removed=F => FALSE -- the not-enrolled arm unconditionally removes the fingerprint PAM file; leaving it in place needs a broken build [reviewed: REVIEW-11]
+#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=F => FALSE -- the password PAM stack is written unconditionally at the top of every run [reviewed: REVIEW-18]
+#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_pam_installed=T, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=F => FALSE -- the password stack is written before the fingerprint branch is evaluated; fingerprint PAM without password PAM is structurally absent [reviewed: REVIEW-18]
+#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_pam_installed=T, fingerprint_pam_removed=T, lock_auth_config_run=T, password_pam_installed=T => FALSE -- the formula's exclusion conjunct !(installed & removed) makes this a violation row: the if/else installs or removes, never both [reviewed: REVIEW-18]
+
 apply_lock="$ROOT/bin/omarchy-apply-lock"
 
 # Match both the raw source and the MC/DC-instrumented form
@@ -21,6 +27,7 @@ grep -Fx '  export PATH=/usr/share/omarchy/bin:/usr/local/bin:/usr/bin:/bin' <<<
 if grep -E '(\.local/bin|target_user|target_home)' <<<"$root_path_guard" >/dev/null; then
   fail "the root lock helper does not retain a user-controlled command directory"
 fi
+# MCDC SW-REQ-260912-EKJP: running_as_root=F, trusted_path_only=F => TRUE [no-action: the awk extraction proves the PATH export exists only inside the EUID==0 guard — outside the root trigger no PATH mutation exists in the file]
 pass "the root lock helper uses only trusted command directories"
 
 grep -F '[[ -x /usr/bin/fprintd-list ]]' "$apply_lock" >/dev/null ||
@@ -186,6 +193,10 @@ grep -Fx '0' "$trusted_uid" >/dev/null || fail "the trusted fprintd-list probe r
 grep -Fx "$target_user" "$trusted_args" >/dev/null || fail "the trusted fprintd-list probe receives the target user"
 [[ -s $password_pam && -s $fingerprint_pam ]] ||
   fail "the isolated root lock-helper run writes both scratch PAM fixtures"
+# MCDC SW-REQ-260912-EKJP: running_as_root=T, trusted_path_only=T => TRUE
+# MCDC SW-REQ-260912-S154: fingerprint_enrollment_queried=T, fprintd_absolute_path_only=T => TRUE
+# MCDC SW-REQ-260912-Y0WT: fingerprint_not_enrolled=F, fingerprint_pam_removed=F => TRUE [no-action: the trusted probe reports an enrolled print and the -s fingerprint_pam assertion proves the removal path never fires]
+# MCDC SYS-REQ-260912-JW2J: fingerprint_pam_installed=T, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=T => TRUE
 pass "the hardened root lock helper uses the trusted fingerprint probe"
 
 reset_runtime_files
@@ -197,6 +208,9 @@ pass "the absolute fprintd-list path independently blocks the user-planted comma
 reset_runtime_files
 run_as_root "$root_path_only_helper" "the root-PATH-only lock helper runs in an isolated root context"
 [[ ! -e $attack_marker ]] || fail "the trusted root path permits the user-planted fprintd-list"
+[[ ! -e $trusted_args ]] ||
+  fail "the root-PATH-only helper never runs an enrollment probe without a trusted fprintd-list"
+# MCDC SW-REQ-260912-S154: fingerprint_enrollment_queried=F, fprintd_absolute_path_only=F => TRUE [no-action: command -v finds no fprintd-list in the trusted root PATH, so no probe runs — both probe-arg files stay absent]
 pass "the trusted root path independently blocks the user-planted command"
 
 # Mutation control: removing both protections must execute the planted command
@@ -208,4 +222,34 @@ grep -Fx '0' "$attack_marker" >/dev/null ||
 grep -Fx "$target_user" "$attack_args" >/dev/null ||
   fail "the planted fprintd-list receives the target user"
 [[ -s $fingerprint_pam ]] || fail "the planted fprintd-list controls the fingerprint PAM branch"
+# MCDC SW-REQ-260912-EKJP: running_as_root=T, trusted_path_only=F => FALSE
+# MCDC SW-REQ-260912-S154: fingerprint_enrollment_queried=T, fprintd_absolute_path_only=F => FALSE
 pass "the root lock-helper matrix rejects the vulnerable PATH lookup"
+
+# The not-enrolled path: the trusted probe reports no prints, so the helper
+# keeps the password stack and removes the fingerprint stack.
+reset_runtime_files
+cat >"$trusted_fprintd" <<'EOF'
+#!/bin/bash
+
+printf '%s\n' "$EUID" >"$TEST_TRUSTED_UID"
+printf '%s\n' "$*" >"$TEST_TRUSTED_ARGS"
+echo "no prints on file"
+EOF
+run_as_root "$patched_helper" "the lock helper runs against a user with no enrolled prints"
+grep -Fx "$target_user" "$trusted_args" >/dev/null || fail "the not-enrolled probe still receives the target user"
+[[ -s $password_pam ]] ||
+  fail "the not-enrolled run still writes the password PAM fixture"
+[[ ! -e $fingerprint_pam ]] ||
+  fail "the not-enrolled run removes the fingerprint PAM fixture"
+# MCDC SW-REQ-260912-Y0WT: fingerprint_not_enrolled=T, fingerprint_pam_removed=T => TRUE
+# MCDC SYS-REQ-260912-JW2J: fingerprint_pam_installed=F, fingerprint_pam_removed=T, lock_auth_config_run=T, password_pam_installed=T => TRUE
+pass "the lock helper removes the fingerprint PAM stack when no print is enrolled"
+
+# Control: after a reset and no helper run, no install, removal, or probe side
+# effect exists.
+reset_runtime_files
+# MCDC SYS-REQ-260912-JW2J: fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=F, password_pam_installed=F => TRUE [no-action: post-reset with zero helper invocations, all four side-effect files are absent — nothing is installed, removed, or queried without a run]
+[[ ! -e $password_pam && ! -e $fingerprint_pam && ! -e $trusted_args && ! -e $attack_marker ]] ||
+  fail "no lock-config side effect exists without a helper run"
+pass "no lock-config side effect exists without a helper run"
