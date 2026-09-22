@@ -1,0 +1,34 @@
+id: SW-REQ-260922-KRBH
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when picker_verb_given the plugin_picker shall eventually satisfy verb_filter_applied
+description: enable offers disabled plugins; disable offers enabled canDisable plugins; clone offers first-party plugins no installed clone points back at; remove offers non-first-party plugins.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: bin/omarchy-menu-plugin lines 12-21; menu-plugin-test.sh pins each filter.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-22T13:34:05Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-22T13:34:05Z"

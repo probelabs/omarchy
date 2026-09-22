@@ -1,0 +1,412 @@
+component: menu
+variables:
+- name: verb_known
+  type: bool
+  direction: input
+  description: The verb is one of toggle, summon, close, refresh, ping, or help.
+- name: ipc_call_executed
+  type: bool
+  direction: output
+  description: The matching omarchy-shell IPC call was exec'd with the route payload.
+- name: verb_unknown
+  type: bool
+  direction: input
+  description: The verb matches none of the known verbs.
+- name: diagnostic_printed
+  type: bool
+  direction: output
+  description: An unknown-verb diagnostic naming the verb is written to stderr.
+- name: exit_two
+  type: bool
+  direction: output
+  description: The script exits with status 2.
+- name: route_input
+  type: bool
+  direction: input
+  description: A non-empty route string was supplied.
+- name: exact_id_match
+  type: bool
+  direction: input
+  description: The normalized route equals an existing item id.
+- name: alias_match
+  type: bool
+  direction: input
+  description: The normalized route equals an alias of a non-app item.
+- name: route_is_exact_id
+  type: bool
+  direction: output
+  description: The route resolves to the exact id, ahead of any alias.
+- name: route_is_alias_target
+  type: bool
+  direction: output
+  description: The route resolves to the id of the item declaring the alias.
+- name: route_is_literal_input
+  type: bool
+  direction: output
+  description: The route resolves to the literal input string.
+- name: resolved_kind_action
+  type: bool
+  direction: input
+  description: The resolved item is an action with a non-empty action.
+- name: action_runs_directly
+  type: bool
+  direction: output
+  description: The action executes without opening the menu.
+- name: menu_not_opened
+  type: bool
+  direction: output
+  description: No menu card opens for the invocation.
+- name: resolved_kind_link
+  type: bool
+  direction: input
+  description: The resolved item is a link with a non-empty target.
+- name: link_target_followed
+  type: bool
+  direction: output
+  description: The menu opens at the link target.
+- name: jsonc_has_comments_or_commas
+  type: bool
+  direction: input
+  description: The JSONC source carries // comments or trailing commas.
+- name: items_parsed
+  type: bool
+  direction: output
+  description: The item set parses to the declared entries.
+- name: json_invalid
+  type: bool
+  direction: input
+  description: The source is not parseable JSON after stripping.
+- name: empty_item_set
+  type: bool
+  direction: output
+  description: The parse yields an empty item set.
+- name: parse_error_raised
+  type: bool
+  direction: output
+  description: A parse exception escapes to the caller.
+- name: entry_shape_declared
+  type: bool
+  direction: input
+  description: An entry carries action, target, or neither.
+- name: kind_and_parent_inferred
+  type: bool
+  direction: output
+  description: Kind is action/target/menu by shape; parent derives from the dotted id; root's parent is empty.
+- name: user_entry_overrides
+  type: bool
+  direction: input
+  description: The user source re-declares an id from the default source.
+- name: per_key_override_applied
+  type: bool
+  direction: output
+  description: Only the re-declared keys change; the row keeps its original order slot.
+- name: root_injected
+  type: bool
+  direction: output
+  description: A root item exists even when no source declares it.
+- name: orphan_id_present
+  type: bool
+  direction: input
+  description: itemOrder lists an id with no item behind it.
+- name: orphans_dropped
+  type: bool
+  direction: output
+  description: Orphan ids and previous app rows are absent from the merged result.
+- name: duplicate_row_id
+  type: bool
+  direction: input
+  description: Two incoming rows claim the same id.
+- name: id_listed_once
+  type: bool
+  direction: output
+  description: The id appears exactly once in the merged order.
+- name: inputs_not_mutated
+  type: bool
+  direction: output
+  description: The merge writes no key into the maps it was handed.
+- name: provider_reran
+  type: bool
+  direction: input
+  description: The provider for a submenu produced a new batch.
+- name: previous_batch_replaced
+  type: bool
+  direction: output
+  description: Rows from the provider's previous batch are gone; other items are untouched.
+- name: guards_declared
+  type: bool
+  direction: input
+  description: Items declare when, checked, or disabled expressions.
+- name: one_line_per_guard
+  type: bool
+  direction: output
+  description: The guard script holds exactly one tagged if-line per declared guard.
+- name: no_guards_declared
+  type: bool
+  direction: input
+  description: No item declares any guard expression.
+- name: empty_guard_script
+  type: bool
+  direction: output
+  description: The guard script is empty.
+- name: reader_value_reused
+  type: bool
+  direction: input
+  description: Several guards read the same value command.
+- name: reader_read_once
+  type: bool
+  direction: output
+  description: The value command runs once per batch, captured before any guard.
+- name: pkg_presence_asked
+  type: bool
+  direction: input
+  description: A guard asks omarchy-pkg-present or omarchy-pkg-missing.
+- name: shadow_matches_pacman
+  type: bool
+  direction: output
+  description: The prelude's answer equals pacman -Q, including provides and the no-argument case.
+- name: plain_substitution_form
+  type: bool
+  direction: input
+  description: A guard reads a value as plain $(reader).
+- name: only_plain_form_substituted
+  type: bool
+  direction: output
+  description: Only the plain $(reader) form is substituted; every other form runs the real command.
+- name: batch_killed
+  type: bool
+  direction: input
+  description: The guard batch exited nonzero or by signal.
+- name: last_complete_set_kept
+  type: bool
+  direction: output
+  description: The previous complete guard results stay in effect.
+- name: pending_reeval_runs
+  type: bool
+  direction: output
+  description: An evaluation that stood aside runs after the in-flight batch exits.
+- name: query_terms_given
+  type: bool
+  direction: input
+  description: The user typed one or more query terms.
+- name: all_terms_matched
+  type: bool
+  direction: output
+  description: Every term matches the name text or a whole description word.
+- name: row_hidden_from_results
+  type: bool
+  direction: output
+  description: Invisible and disabled rows are absent from search results.
+- name: match_quality_varies
+  type: bool
+  direction: input
+  description: Rows match by exact label, prefix, substring, name text, or description.
+- name: better_match_ranks_first
+  type: bool
+  direction: output
+  description: Exact beats prefix beats substring beats name beats description; apps demote within a tier; ties break by depth
+    then order.
+- name: matches_span_menus
+  type: bool
+  direction: input
+  description: Matches exist both in the active menu and in deeper submenus.
+- name: sections_divided
+  type: bool
+  direction: output
+  description: Current-menu rows list before drilldown rows with a divider between.
+- name: cursor_moves
+  type: bool
+  direction: input
+  description: The user moves the cursor up or down.
+- name: disabled_rows_skipped
+  type: bool
+  direction: output
+  description: The cursor lands on the next selectable row in the direction of travel, wrapping at the ends.
+- name: all_rows_disabled
+  type: bool
+  direction: input
+  description: Every row in the list is disabled.
+- name: no_cursor_parked
+  type: bool
+  direction: output
+  description: No cursor is shown (selectedIndex reset, cursor inactive).
+- name: submenu_entered
+  type: bool
+  direction: input
+  description: The user drilled into a submenu.
+- name: back_retraces_path
+  type: bool
+  direction: output
+  description: Back pops the navigation stack, or falls back to the parent menu; the filter clears.
+- name: dmenu_option_picked
+  type: bool
+  direction: input
+  description: The user picked a dmenu option.
+- name: glyph_stripped
+  type: bool
+  direction: output
+  description: The leading glyph is shown but never returned.
+- name: subtext_returned
+  type: bool
+  direction: output
+  description: A subtext-bearing option returns label TAB subtext.
+- name: select_invoked
+  type: bool
+  direction: input
+  description: omarchy-menu-select was called with a prompt and options.
+- name: payload_shape_correct
+  type: bool
+  direction: output
+  description: The summon payload carries mode, prompt, options, selectionFile, doneFile, and integer width/maxHeight when
+    given.
+- name: no_options_given
+  type: bool
+  direction: input
+  description: No options were passed and stdin is not a terminal with zero lines.
+- name: usage_error_exit_one
+  type: bool
+  direction: output
+  description: A usage diagnostic prints to stderr and the script exits 1.
+- name: answer_file_written
+  type: bool
+  direction: input
+  description: The menu wrote the selection and done files.
+- name: selection_printed
+  type: bool
+  direction: output
+  description: The selection content is printed to stdout.
+- name: empty_selection
+  type: bool
+  direction: input
+  description: The selection file is empty at done time.
+- name: exit_one_on_empty
+  type: bool
+  direction: output
+  description: The script exits 1 without printing.
+- name: finish_requested
+  type: bool
+  direction: input
+  description: The QML side finishes an active request with a selection or null.
+- name: selection_and_done_written
+  type: bool
+  direction: output
+  description: The selection file holds the value and the done file is created.
+- name: done_only_written
+  type: bool
+  direction: output
+  description: Only the done file is created (cancellation).
+- name: no_active_request
+  type: bool
+  direction: input
+  description: finishRequest runs with no active request or no done file.
+- name: menu_closes_silently
+  type: bool
+  direction: output
+  description: The menu closes without touching any file.
+- name: picker_verb_given
+  type: bool
+  direction: input
+  description: omarchy-menu-plugin was called with enable, disable, clone, or remove.
+- name: verb_filter_applied
+  type: bool
+  direction: output
+  description: Only plugins matching the verb's rule are offered.
+- name: same_named_plugins
+  type: bool
+  direction: input
+  description: Two offered plugins share a display name.
+- name: pick_resolves_by_id
+  type: bool
+  direction: output
+  description: The pick acts on the row's id, not its name.
+- name: nothing_actionable
+  type: bool
+  direction: input
+  description: No plugin matches the verb's rule.
+- name: notification_and_exit_zero
+  type: bool
+  direction: output
+  description: A 'No plugin to <verb>' notification is sent and the script exits 0.
+- name: share_clipboard
+  type: bool
+  direction: input
+  description: omarchy-menu-share runs in clipboard mode.
+- name: clipboard_saved_to_temp
+  type: bool
+  direction: output
+  description: The clipboard is written to a temp .txt file that outlives the script.
+- name: chooser_failed
+  type: bool
+  direction: input
+  description: The file chooser exited with status above 1.
+- name: critical_notification_exit_one
+  type: bool
+  direction: output
+  description: A critical notification is sent and the script exits 1.
+- name: send_detached
+  type: bool
+  direction: output
+  description: LocalSend runs detached via systemd-run --user.
+- name: timezone_pick_cancelled
+  type: bool
+  direction: input
+  description: The timezone picker was cancelled.
+- name: timezone_not_set
+  type: bool
+  direction: output
+  description: timedatectl set-timezone is not invoked.
+- name: timezone_picked
+  type: bool
+  direction: input
+  description: A timezone was picked.
+- name: timezone_set_and_refreshed
+  type: bool
+  direction: output
+  description: The timezone is set, the clock plugin refreshes, and a confirmation notification is sent.
+- name: dirs_unchanged
+  type: bool
+  direction: input
+  description: The image directories' fast signature (path + mtime) matches the cache.
+- name: cached_rows_reused
+  type: bool
+  direction: output
+  description: Cached rows are used without rescanning image files.
+- name: signature_mismatch
+  type: bool
+  direction: input
+  description: The fast signature differs from the cache.
+- name: rows_rebuilt_and_cached
+  type: bool
+  direction: output
+  description: Rows are rebuilt from a full scan and the cache is rewritten.
+- name: lua_binds_present
+  type: bool
+  direction: input
+  description: Hyprland reports Lua binds as dispatcher __lua.
+- name: lua_binds_dispatchable
+  type: bool
+  direction: output
+  description: Lua binds appear with resolved keys and can be dispatched.
+- name: keycode_binding
+  type: bool
+  direction: input
+  description: A binding is reported as an XKB keycode (code:N).
+- name: symbol_resolved
+  type: bool
+  direction: output
+  description: The key shows as a symbol from the compiled keymap, or the built-in fallback; GRAVE shows as ~.
+- name: paths_given
+  type: bool
+  direction: input
+  description: omarchy-menu-file was given label, colon-separated paths, and formats.
+- name: missing_path_rejected
+  type: bool
+  direction: output
+  description: A nonexistent path is rejected on stderr with exit 1.
+- name: listing_shape
+  type: bool
+  direction: output
+  description: Files match the formats, dotfiles and dot-directories are pruned, and rows sort by mtime descending.
+- name: prompt_dismissed
+  type: bool
+  direction: input
+  description: The user cancelled the prompt without picking (mirrors the system-layer variable).

@@ -59,7 +59,7 @@ pick() {
     FAKE_CALLS="$TMPDIR/calls" \
     FAKE_ROWS="$TMPDIR/rows" \
     FAKE_PICK="$choice" \
-    "$ROOT/bin/omarchy-menu-plugin" "$verb" >/dev/null 2>&1
+    "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-plugin" "$verb" >/dev/null 2>&1
 
   ROWS=$(cat "$TMPDIR/rows")
   CALLS=$(cat "$TMPDIR/calls")

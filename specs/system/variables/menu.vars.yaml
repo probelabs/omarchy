@@ -1,0 +1,82 @@
+component: menu
+variables:
+- name: menu_invoked
+  type: bool
+  direction: input
+  description: A keybind or CLI invocation asked for the menu.
+- name: menu_presented
+  type: bool
+  direction: output
+  description: The menu card is visible with rows for the active route.
+- name: route_given
+  type: bool
+  direction: input
+  description: The caller passed a route string (item id or alias).
+- name: routed_to_intended_item
+  type: bool
+  direction: output
+  description: The menu opens at the item the route denotes.
+- name: menu_sources_loaded
+  type: bool
+  direction: input
+  description: The default and user JSONC menu sources were (re)loaded.
+- name: item_tree_merged
+  type: bool
+  direction: output
+  description: One ordered item tree exists with user overrides applied.
+- name: provider_rows_arrive
+  type: bool
+  direction: input
+  description: A provider (apps, fonts, power-profiles) delivered a new row batch.
+- name: dynamic_rows_swapped
+  type: bool
+  direction: output
+  description: The provider's rows replaced its previous batch atomically.
+- name: guards_evaluated
+  type: bool
+  direction: input
+  description: The guard batch ran for the current item set.
+- name: system_state_reflected
+  type: bool
+  direction: output
+  description: Row visibility, checkmarks, and dimming match the guard results.
+- name: search_entered
+  type: bool
+  direction: input
+  description: The user typed a filter query.
+- name: matching_rows_ranked
+  type: bool
+  direction: output
+  description: Visible matching rows are ranked by match quality.
+- name: selection_made
+  type: bool
+  direction: input
+  description: The user activated a row or answered a prompt.
+- name: action_executed_or_submenu_opened
+  type: bool
+  direction: output
+  description: A leaf action ran or the target submenu opened.
+- name: picker_active
+  type: bool
+  direction: input
+  description: The menu is answering a script's select/input prompt.
+- name: picker_answer_returned
+  type: bool
+  direction: output
+  description: The picked value was delivered to the calling script.
+- name: prompt_dismissed
+  type: bool
+  direction: input
+  description: The user cancelled the prompt without picking.
+- name: dismissal_signalled
+  type: bool
+  direction: output
+  description: The caller observes the cancellation (no selection).
+- name: action_script_invoked
+  type: bool
+  direction: input
+  description: A menu action script (share, timezone, picker, images, keybindings, file) was invoked.
+- name: intended_side_effect
+  type: bool
+  direction: output
+  description: The script performed its documented side effect or refusal.

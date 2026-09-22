@@ -1,0 +1,34 @@
+id: SW-REQ-260922-JREH
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when chooser_failed the share_script shall eventually satisfy critical_notification_exit_one
+description: A file chooser exit status above 1 sends a critical 'Could not share' notification and exits 1; an empty pick exits 0 silently.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: bin/omarchy-menu-share lines 28-38; command substitution preserves the chooser's real exit status.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-22T13:34:06Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-22T13:34:06Z"

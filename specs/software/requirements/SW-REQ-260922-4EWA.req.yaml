@@ -1,0 +1,34 @@
+id: SW-REQ-260922-4EWA
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when same_named_plugins the plugin_picker shall eventually satisfy pick_resolves_by_id
+description: Every picker row carries the plugin id as tab subtext, so same-named plugins are told apart on screen and the pick resolves to the id, which the verb command receives.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: bin/omarchy-menu-plugin lines 25-37 and 45.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-22T13:34:05Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-22T13:34:06Z"

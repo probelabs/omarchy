@@ -1,0 +1,34 @@
+id: SW-REQ-260922-3T3F
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when json_invalid the menu_model shall eventually satisfy empty_item_set & !parse_error_raised
+description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-PPDW
+component: menu
+rationale: MenuModel.js parseMenuJsonc lines 44-61; a crashing parser would take the whole menu down on a user edit.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-PPDW
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-22T13:34:00Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-22T13:34:00Z"

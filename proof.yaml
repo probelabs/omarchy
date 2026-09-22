@@ -54,19 +54,62 @@ project:
             - shell/plugins/lock/**
             - test/shell.d/*lock*-test.sh
             - test/shell.d/apply-lock-test.sh
+            - bin/omarchy-menu*
+            - shell/plugins/menu/**
+            - default/omarchy/omarchy-menu.jsonc
+            - test/shell.d/*menu*-test.sh
+            - test/shell.d/keybindings-menu-test.sh
         completeness:
             production_include:
                 - bin/omarchy-*lock*
                 - shell/plugins/lock/**
+                - bin/omarchy-menu*
+                - shell/plugins/menu/**
+                - default/omarchy/omarchy-menu.jsonc
             production_exclude:
                 - '**/*_test.go'
                 - '**/testdata/**'
                 # Omitted production roots, intentionally out of the dogfood
-                # universe (lock screen authentication component only):
+                # universe (lock + menu components only):
                 - test/**
                 - migrations/**
                 - install/**
-                - default/**
+                # default/ is in scope only for omarchy-menu.jsonc; exclude the
+                # rest of the tree so the root is fully dispositioned:
+                - default/omarchy/launcher.hides
+                - default/agents/**
+                - default/alacritty/**
+                - default/applications/**
+                - default/audio/**
+                - default/bash/**
+                - default/bashrc
+                - default/chromium/**
+                - default/environment.d/**
+                - default/firefox/**
+                - default/fontconfig/**
+                - default/fonts/**
+                - default/foot/**
+                - default/ghostty/**
+                - default/gpg/**
+                - default/hypr/**
+                - default/libalpm/**
+                - default/limine/**
+                - default/nautilus-python/**
+                - default/pacman/**
+                - default/plymouth/**
+                - default/sddm/**
+                - default/snapper/**
+                - default/systemd/**
+                - default/tensaku/**
+                - default/themed/**
+                - default/udev/**
+                - default/uwsm/**
+                - default/v4l2-relayd/**
+                - default/voxtype/**
+                - default/wayland-sessions/**
+                - default/wireplumber/**
+                - default/xcompose
+                - default/xdg-terminal-exec/**
                 # shell/ is partially in scope (plugins/lock); exclude every
                 # other shell sub-root so the root is fully dispositioned:
                 - shell/Commons/**
@@ -82,17 +125,16 @@ project:
                 - shell/plugins/dev-gallery/**
                 - shell/plugins/emojis/**
                 - shell/plugins/image-picker/**
-                - shell/plugins/menu/**
                 - shell/plugins/notifications/**
                 - shell/plugins/osd/**
                 - shell/plugins/panels/**
                 - shell/plugins/polkit/**
                 - shell/plugins/reminders/**
                 - shell/plugins/services/**
-            rationale: Scoped to the omarchy lock screen authentication component for bash/qml dogfooding.
+            rationale: Scoped to the omarchy lock screen authentication and menu components for bash/qml dogfooding.
     commands:
         build: >-
-            for f in bin/omarchy-apply-lock bin/omarchy-system-lock bin/omarchy-update-lock bin/omarchy-hyprland-session-locked bin/omarchy-system-sleep-lock; do /opt/homebrew/bin/bash -n "$f" || exit 1; done
+            for f in bin/omarchy-apply-lock bin/omarchy-system-lock bin/omarchy-update-lock bin/omarchy-hyprland-session-locked bin/omarchy-system-sleep-lock bin/omarchy-menu bin/omarchy-menu-select bin/omarchy-menu-input bin/omarchy-menu-plugin bin/omarchy-menu-share bin/omarchy-menu-timezone bin/omarchy-menu-file bin/omarchy-menu-emoji-insert; do /opt/homebrew/bin/bash -n "$f" || exit 1; done; node --check shell/plugins/menu/MenuModel.js
         tests:
             lock-shell:
                 language: bash
@@ -100,6 +142,16 @@ project:
                     set -e; B=/opt/homebrew/bin/bash;
                     for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do "$B" "test/shell.d/$t-test.sh"; done;
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/update-lock-test.sh; else echo "SKIP update-lock-test.sh: requires Linux flock and /proc"; fi
+            menu-shell:
+                language: bash
+                command: >-
+                    set -e; B=/opt/homebrew/bin/bash;
+                    "$B" test/shell.d/menu-test.sh;
+                    "$B" test/shell.d/tray-menu-test.sh;
+                    "$B" test/shell.d/menu-plugin-test.sh;
+                    if command -v pacman >/dev/null 2>&1; then "$B" test/shell.d/menu-guards-test.sh; else echo "SKIP menu-guards-test.sh: pacman parity assertion requires Arch"; fi;
+                    if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/menu-images-test.sh; else echo "SKIP menu-images-test.sh: requires Linux flock and /proc"; fi;
+                    if command -v lua >/dev/null 2>&1; then "$B" test/shell.d/keybindings-menu-test.sh; else echo "SKIP keybindings-menu-test.sh: requires lua"; fi
     tools:
         probe:
             path: /Users/buger/go/src/probe-wt-bashqml/target/debug/probe
