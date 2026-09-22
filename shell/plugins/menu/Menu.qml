@@ -1012,6 +1012,7 @@ Item {
   }
 
   Connections {
+    id: appLibraryConnections
     target: root.appLibrary
     function onAppsChanged() {
       if (root.providersLoaded["apps"]) root.mergeAppRows()
@@ -1157,6 +1158,7 @@ Item {
     }
 
     MouseArea {
+      id: scrimDismissArea
       anchors.fill: parent
       onClicked: root.cancel()
     }
@@ -1172,7 +1174,7 @@ Item {
       borderSpec: root.borderSpec
       padding: root.contentMargin
 
-      MouseArea { anchors.fill: parent; onClicked: {} }
+      MouseArea { id: clickSwallower; anchors.fill: parent; onClicked: {} }
 
       Item {
         id: keyCatcher
