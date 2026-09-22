@@ -1,0 +1,34 @@
+id: SW-REQ-260922-50RE
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when menu_open_called the menu_lifecycle shall eventually satisfy lifecycle_answered
+description: 'open(payload) dispatches on mode: select/input open the dmenu flow, anything else opens the resolved route; close() cancels; refresh() reloads both JSONC files and returns ok; ping() returns ok.'
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-J0AN
+component: menu
+rationale: Menu.qml open/close/refresh/ping lines 21-44 and openExistingMenu/openDmenu lines 837-881; this is the plugin lifecycle the dispatcher IPC reaches.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-J0AN
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-22T15:09:54Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-22T15:09:56Z"

@@ -18,6 +18,7 @@ Item {
   // `omarchy-shell shell summon omarchy.menu ...` and close() when hidden.
   property string pendingInitialMenu: "root"
 
+  // Implements: SW-REQ-260922-50RE
   function open(payloadJson) {
     var payload = ({})
     try { payload = JSON.parse(payloadJson || "{}") } catch (e) { payload = ({}) }
@@ -31,16 +32,19 @@ Item {
     }
   }
 
+  // Implements: SW-REQ-260922-50RE
   function close() {
     root.cancel()
   }
 
+  // Implements: SW-REQ-260922-50RE
   function refresh() {
     defaultMenuFile.reload()
     userMenuFile.reload()
     return "ok"
   }
 
+  // Implements: SW-REQ-260922-50RE
   function ping() { return "ok" }
 
   property string fontFamily: Style.font.menuFamily
@@ -80,6 +84,7 @@ Item {
   readonly property var appLibrary: root.shell ? root.shell.appLibrary : null
   property bool deleteConfirmOpen: false
   property var deleteTarget: null
+  // Implements: SW-REQ-260922-50RE
   onOpenedChanged: if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
   // Bound to the central [menu] section in shell.toml via Color.qml.
   // Each color already includes its alpha companion (composed in the
@@ -114,6 +119,7 @@ Item {
     ? Math.min(contentMargin * 2 + headerHeight + (mode === "input" ? 0 : contentSpacing + visibleRowsHeight), panel.height - Style.gapsOut * 2)
     : Math.min(contentMargin * 2 + headerHeight + contentSpacing + visibleRowsHeight, panel.height - Style.gapsOut * 2)
 
+  // Implements: SW-REQ-260922-FGZQ, SW-REQ-260922-C8HX, SW-REQ-260922-3VTN
   function finishRequest(selection) {
     if (!root.requestActive || !root.doneFile) {
       root.opened = false
@@ -134,6 +140,7 @@ Item {
     resultProc.running = true
   }
 
+  // Implements: SW-REQ-260922-N3RM
   function runAction(action) {
     var command = String(action || "")
     if (!command) return
@@ -143,6 +150,7 @@ Item {
 
   // Menu rows only surface their detail while a search is narrowing them;
   // dmenu rows carry caller-supplied subtext that must always be visible.
+  // Implements: SW-REQ-260922-B757
   function rowHeightForDetail(detail) {
     return (root.filterText || root.dmenuActive) && detail ? root.detailRowHeight : root.baseRowHeight
   }
@@ -151,6 +159,7 @@ Item {
   // past the frozen top edge once a search has pinned the card in place.
   // Uses panel.cardTop rather than effectiveCardTop: the centered top is
   // derived from the card height, which this value feeds.
+  // Implements: SW-REQ-260922-B757
   function availableRowsHeight() {
     var top = panel.cardTop >= 0 ? panel.cardTop : Style.gapsOut
     var available = panel.height - top - Style.gapsOut - root.contentMargin * 2 - root.headerHeight - root.contentSpacing
@@ -164,6 +173,7 @@ Item {
   // When every row fits, the list gets its full height. When they don't,
   // the card must end mid-row: a clipped row is what tells the eye there is
   // more below the fold, so never come out even on a row boundary.
+  // Implements: SW-REQ-260922-B757
   function foldedListHeight(totals, available) {
     var count = totals.length
     if (count === 0) return root.baseRowHeight
@@ -178,6 +188,7 @@ Item {
     return totals[full - 1] + root.rowSpacing + peek
   }
 
+  // Implements: SW-REQ-260922-B757
   function rowListHeight(_serial, _count, _filter, _divider) {
     if (displayModel.count === 0) return root.baseRowHeight
 
@@ -197,6 +208,7 @@ Item {
     return foldedListHeight(totals, availableRowsHeight())
   }
 
+  // Implements: SW-REQ-260922-B757
   function dmenuRowListHeight(_serial, _count, _filter) {
     if (root.mode === "input") return 0
     if (displayModel.count === 0) return root.baseRowHeight
@@ -224,18 +236,22 @@ Item {
   // the on-disk authoring format stays untouched.
   // ------------------------------------------------------------------
 
+  // Implements: SW-REQ-260922-E4J2
   function stripJsonc(raw) {
     return MenuModel.stripJsonc(raw)
   }
 
+  // Implements: SW-REQ-260922-46HY
   function normalizeAliases(value) {
     return MenuModel.normalizeAliases(value)
   }
 
+  // Implements: SW-REQ-260922-46HY
   function normalizeItem(id, raw) {
     return MenuModel.normalizeItem(id, raw)
   }
 
+  // Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
   function parseMenuJsonc(raw) {
     return MenuModel.parseMenuJsonc(raw)
   }
@@ -280,6 +296,7 @@ Item {
     }
   })
 
+  // Implements: SW-REQ-260922-Z680
   function slugify(value) {
     return MenuModel.slugify(value)
   }
@@ -287,6 +304,7 @@ Item {
   // The apps provider is QML-native: rows come from the shared AppLibrary
   // (DesktopEntries) instead of a bash enumeration, so they carry image
   // icons, launch feedback, and uninstall support like the launcher.
+  // Implements: SW-REQ-260922-Z680
   function mergeAppRows() {
     if (!root.appLibrary) return
 
@@ -328,6 +346,7 @@ Item {
     if (root.opened) root.rebuildDisplay()
   }
 
+  // Implements: SW-REQ-260922-EFNR
   function startProviderForMenu(id) {
     var entry = root.item(id)
     if (!entry || !entry.provider || root.providersLoaded[id]) return
@@ -348,6 +367,7 @@ Item {
     providerProc.running = true
   }
 
+  // Implements: SW-REQ-260922-Z680, SW-REQ-260922-EFNR
   function mergeProviderRows(rows, menuId, providerKey) {
     var spec = root.providers[providerKey]
     if (!spec) return
@@ -393,6 +413,7 @@ Item {
     if (root.opened) root.rebuildDisplay()
   }
 
+  // Implements: SW-REQ-260922-EFNR
   function startNextProvider() {
     if (providerProc.running) return
 
@@ -409,12 +430,14 @@ Item {
   // Entering a submenu is the one moment a volatile list is worth paying for
   // again: it may have been reshaped by the last pick from it. Search doesn't
   // invalidate, or every keystroke would restart the same enumeration.
+  // Implements: SW-REQ-260922-EFNR
   function invalidateVolatileProvider(id) {
     var entry = root.item(id)
     var spec = entry && entry.provider ? root.providers[entry.provider] : null
     if (spec && spec.volatile) root.providersLoaded[id] = false
   }
 
+  // Implements: SW-REQ-260922-EFNR
   function loadProviderForMenu(id) {
     var entry = root.item(id)
     if (!entry || !entry.provider || root.providersLoaded[id]) return
@@ -433,6 +456,7 @@ Item {
     root.startProviderForMenu(id)
   }
 
+  // Implements: SW-REQ-260922-EFNR
   function loadProvidersForSearch() {
     var active = root.item(root.activeMenu) ? root.activeMenu : "root"
 
@@ -445,22 +469,27 @@ Item {
     }
   }
 
+  // Implements: SW-REQ-260922-SJ7P
   function depthFor(id) {
     return MenuModel.depthFor(root.items, id)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function pathFor(id) {
     return MenuModel.pathFor(root.items, id)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function parentPathFor(id) {
     return MenuModel.parentPathFor(root.items, id)
   }
 
+  // Implements: SW-REQ-260922-TKDP
   function isDescendantOf(id, ancestorId) {
     return MenuModel.isDescendantOf(root.items, id, ancestorId)
   }
 
+  // Implements: SW-REQ-260922-JRW1
   function childCount(id) {
     return MenuModel.childCount(root.items, root.itemOrder, id)
   }
@@ -468,38 +497,46 @@ Item {
   // Guarded items are hidden when their `when:` evaluates false. Static
   // submenus are also hidden when none of their descendants are visible;
   // provider-backed menus stay visible because their rows load on demand.
+  // Implements: SW-REQ-260922-JRW1
   function isVisible(entry) {
     return MenuModel.isVisible(root.items, root.itemOrder, root.whenResults, entry)
   }
 
   // Label with the ✓ marker baked in when `checked:` or `disabled:` evaluated
   // truthy.
+  // Implements: SW-REQ-260922-JRW1
   function labelFor(entry) {
     return MenuModel.labelFor(entry, root.checkedResults, root.disabledResults)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function searchableToken(value) {
     return MenuModel.searchableToken(value)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function leafIdFor(id) {
     return MenuModel.leafIdFor(id)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function nameSearchText(entry) {
     return MenuModel.nameSearchText(entry)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function termInSearchWords(term, text) {
     return MenuModel.termInSearchWords(term, text)
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function descriptionTextMatches(query, text) {
     return MenuModel.descriptionTextMatches(query, text)
   }
 
   // Rows whose `disabled:` evaluated truthy stay listed but dimmed, and the
   // cursor steps over them.
+  // Implements: SW-REQ-260922-JRW1
   function isDisabled(entry) {
     return MenuModel.isDisabled(root.disabledResults, entry)
   }
@@ -507,18 +544,22 @@ Item {
   // A disabled row earns its place in the submenu it belongs to, where the
   // list around it is the point. Search is a list of what you can do, so it
   // leaves them out.
+  // Implements: SW-REQ-260922-DQ9P
   function matchesQuery(entry, query) {
     return MenuModel.matchesQuery(entry, query, root.isVisible(entry) && !root.isDisabled(entry))
   }
 
+  // Implements: SW-REQ-260922-SJ7P
   function searchScore(entry, query) {
     return MenuModel.searchScore(root.items, entry, query)
   }
 
+  // Implements: SW-REQ-260922-JRW1
   function displayRow(entry, detail, score, section) {
     return MenuModel.displayRow(root.items, root.itemOrder, root.checkedResults, root.disabledResults, entry, detail, score, section)
   }
 
+  // Implements: SW-REQ-260922-Z48F
   function rowSelectable(index) {
     if (index < 0 || index >= displayModel.count) return false
     return !displayModel.get(index).disabled
@@ -527,6 +568,7 @@ Item {
   // First selectable row at or past `from`, continuing in the direction of
   // travel and wrapping. -1 when every row is disabled, which leaves the menu
   // with no cursor at all rather than one parked on a row Enter won't run.
+  // Implements: SW-REQ-260922-Z48F, SW-REQ-260922-3JG5
   function nextSelectable(from, direction) {
     var count = displayModel.count
     if (count === 0) return -1
@@ -544,12 +586,14 @@ Item {
   // Park the cursor on a selectable row after the rows underneath it changed.
   // A menu with nothing selectable in it -- every app in it already installed
   // -- shows no cursor at all, and grows one the moment a row can take it.
+  // Implements: SW-REQ-260922-3JG5
   function settleCursor() {
     var target = root.nextSelectable(root.selectedIndex, 1)
     root.selectedIndex = target >= 0 ? target : 0
     root.cursorActive = target >= 0
   }
 
+  // Implements: SW-REQ-260922-NM45
   function rebuildDmenuDisplay() {
     displayModel.clear()
     root.searchDivider = false
@@ -602,6 +646,7 @@ Item {
     })
   }
 
+  // Implements: SW-REQ-260922-TKDP
   function rebuildDisplay() {
     if (root.dmenuActive) {
       root.rebuildDmenuDisplay()
@@ -684,6 +729,7 @@ Item {
   // Contain alone parks the cursor row flush with the viewport edge, hiding
   // the neighbor entirely and losing the fold affordance. Keep the next
   // hidden row peeking past the cursor in the direction of travel.
+  // Implements: SW-REQ-260922-Z48F
   function revealCursor() {
     if (displayModel.count === 0) return
     resultList.positionViewAtIndex(root.selectedIndex, ListView.Contain)
@@ -703,6 +749,7 @@ Item {
     }
   }
 
+  // Implements: SW-REQ-260922-Z48F
   function select(delta) {
     if (displayModel.count === 0) return
 
@@ -716,6 +763,7 @@ Item {
     revealCursor()
   }
 
+  // Implements: SW-REQ-260922-DQ9P
   function setFilter(nextFilter) {
     panel.freezeCardTop()
     root.filterText = nextFilter
@@ -726,6 +774,7 @@ Item {
     root.rebuildDisplay()
   }
 
+  // Implements: SW-REQ-260922-DE93
   function setActiveMenu(id, pushHistory, fromPointer) {
     panel.freezeCardTop()
     if (!root.item(id)) id = "root"
@@ -741,6 +790,7 @@ Item {
     root.loadProviderForMenu(id)
   }
 
+  // Implements: SW-REQ-260922-DE93
   function goBack() {
     if (root.activeMenu === "root") return false
 
@@ -756,6 +806,7 @@ Item {
     return true
   }
 
+  // Implements: SW-REQ-260922-NM45
   function activateIndex(index, fromPointer) {
     if (root.deleteConfirmOpen) return
     if (root.dmenuActive) {
@@ -786,6 +837,7 @@ Item {
     }
   }
 
+  // Implements: SW-REQ-260922-8CQ4
   function requestDeleteSelected() {
     if (!root.cursorActive || root.selectedIndex < 0 || root.selectedIndex >= displayModel.count) return
     var row = displayModel.get(root.selectedIndex)
@@ -795,6 +847,7 @@ Item {
     root.deleteConfirmOpen = true
   }
 
+  // Implements: SW-REQ-260922-8CQ4
   function cancelDelete() {
     root.deleteConfirmOpen = false
     root.deleteTarget = null
@@ -803,6 +856,7 @@ Item {
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
 
+  // Implements: SW-REQ-260922-8CQ4
   function confirmDelete() {
     var target = root.deleteTarget
     root.deleteConfirmOpen = false
@@ -812,6 +866,7 @@ Item {
     if (root.appLibrary) root.appLibrary.remove(target.appId, target.label)
   }
 
+  // Implements: SW-REQ-260922-FGZQ, SW-REQ-260922-C8HX
   function applyDmenuSelection(value) {
     applySerial = requestSerial
     opened = false
@@ -828,12 +883,14 @@ Item {
     root.runAction(action)
   }
 
+  // Implements: SW-REQ-260922-C8HX, SW-REQ-260922-3VTN
   function cancel() {
     if (root.dmenuActive) root.finishRequest(null)
     opened = false
     filterText = ""
   }
 
+  // Implements: SW-REQ-260922-50RE
   function openExistingMenu(initialMenu) {
     requestSerial += 1
     mode = "menu"
@@ -858,6 +915,7 @@ Item {
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
 
+  // Implements: SW-REQ-260922-50RE
   function openDmenu(payload) {
     requestSerial += 1
     mode = payload.mode === "input" ? "input" : "select"
@@ -892,6 +950,7 @@ Item {
     return MenuModel.resolveRoute(root.items, root.itemOrder, input)
   }
 
+  // Implements: SW-REQ-260922-N3RM, SW-REQ-260922-XW52
   function openRoute(initialMenu) {
     var id = root.resolveRoute(initialMenu)
     var entry = root.items[id]
@@ -993,6 +1052,7 @@ Item {
   property var disabledResults: ({})   // id → true|false (dim, skip cursor)
   property bool guardsPending: false
 
+  // Implements: SW-REQ-260922-4079
   function evaluateGuards() {
     // Process ignores a command change while it is running, and `collected`
     // belongs to the run in flight, so a second evaluation cannot overwrite
@@ -1024,6 +1084,7 @@ Item {
     stdout: SplitParser {
       onRead: function(data) { guardProc.collected += data + "\n" }
     }
+    // Implements: SW-REQ-260922-4079
     onExited: function(exitCode, exitStatus) {
       // A batch that was killed rather than finished has only told us about
       // the rows it reached, and a row whose `when:` went unanswered shows.
@@ -1120,6 +1181,7 @@ Item {
         focus: true
 
         Keys.priority: Keys.BeforeItem
+        // Implements: SW-REQ-260922-DE93, SW-REQ-260922-Z48F, SW-REQ-260922-NM45, SW-REQ-260922-8CQ4
         Keys.onPressed: function(event) {
           if (root.deleteConfirmOpen) {
             if (deleteConfirm.handleKey(event)) event.accepted = true

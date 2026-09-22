@@ -1,3 +1,4 @@
+// Implements: SW-REQ-260922-E4J2
 function stripJsonc(raw) {
   return String(raw || "")
     .replace(/^\s*\/\/[^\n]*(\n|$)/gm, "")
@@ -10,6 +11,7 @@ function normalizeAliases(value) {
   return []
 }
 
+// Implements: SW-REQ-260922-46HY
 function normalizeItem(id, raw) {
   var value = raw || {}
   var aliases = normalizeAliases(value.aliases)
@@ -39,6 +41,7 @@ function normalizeItem(id, raw) {
   }
 }
 
+// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
 function parseMenuJsonc(raw) {
   var stripped = stripJsonc(raw)
   if (!stripped.trim()) return []
@@ -63,6 +66,7 @@ function parseMenuJsonc(raw) {
   return out
 }
 
+// Implements: SW-REQ-260922-7NPE
 function mergeMenuSources(defaultItems, userItems) {
   var nextItems = ({})
   var nextOrder = []
@@ -105,6 +109,7 @@ function mergeMenuSources(defaultItems, userItems) {
 
 // Swaps every app row for the current set. Rows keep the order they arrive in;
 // ids already claimed (including duplicate desktop ids) are listed once.
+// Implements: SW-REQ-260922-Z680
 function mergeAppRows(items, itemOrder, appRows) {
   var source = items || ({})
   var order = Array.isArray(itemOrder) ? itemOrder : []
@@ -137,6 +142,7 @@ function mergeAppRows(items, itemOrder, appRows) {
 // Rows carry the id of the submenu that produced them, so a provider that runs
 // again drops its previous batch — a plugin that was just enabled disappears
 // from the Enable list — without disturbing static children declared in JSONC.
+// Implements: SW-REQ-260922-Z680, SW-REQ-260922-EFNR
 function swapProviderRows(items, itemOrder, menuId, rows) {
   var source = items || ({})
   var order = Array.isArray(itemOrder) ? itemOrder : []
@@ -174,6 +180,7 @@ function item(items, id) {
 // for search, so an installed application could otherwise shadow a menu route
 // (htop ships `Keywords=system;...`). Unknown strings fall through as the
 // literal input so misspellings still attempt to open that id.
+// Implements: SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ
 function resolveRoute(items, itemOrder, input) {
   var raw = String(input || "").toLowerCase().replace(/_/g, "-")
   if (!raw || raw === "go" || raw === "menu") return "root"
@@ -252,6 +259,7 @@ function childCount(items, itemOrder, id) {
   return count
 }
 
+// Implements: SW-REQ-260922-JRW1
 function isVisible(items, itemOrder, whenResults, entry, depth) {
   if (!entry) return false
   if (entry.when && whenResults && whenResults[entry.id] === false) return false
@@ -274,6 +282,7 @@ function isVisible(items, itemOrder, whenResults, entry, depth) {
 // A `disabled:` row stays listed but goes dim and unselectable. The
 // Install submenus use it so software already on the machine reads as
 // installed rather than disappearing from the list it was installed from.
+// Implements: SW-REQ-260922-JRW1
 function isDisabled(disabledResults, entry) {
   if (!entry || !entry.disabled) return false
   return !!(disabledResults && disabledResults[entry.id])
@@ -281,6 +290,7 @@ function isDisabled(disabledResults, entry) {
 
 // A disabled row is software you already have, which is the same thing the ✓
 // says everywhere else in the menu, so it earns the same marker.
+// Implements: SW-REQ-260922-JRW1
 function labelFor(entry, checkedResults, disabledResults) {
   if (!entry) return ""
   var marked = (entry.checked && checkedResults && checkedResults[entry.id]) || isDisabled(disabledResults, entry)
@@ -320,6 +330,7 @@ function descriptionTextMatches(query, text) {
   return true
 }
 
+// Implements: SW-REQ-260922-DQ9P
 function matchesQuery(entry, query, visible) {
   if (!entry || entry.id === "root") return false
   if (!visible) return false
@@ -338,6 +349,7 @@ function matchesQuery(entry, query, visible) {
   return true
 }
 
+// Implements: SW-REQ-260922-SJ7P
 function searchScore(items, entry, query) {
   var needle = String(query || "").toLowerCase().trim()
   var label = entry.label.toLowerCase()
@@ -419,6 +431,7 @@ var GUARD_READERS = [
 // is set in the environment, which a login shell may well have done, so the
 // parser follows the indented lines rather than reading the first one and
 // dropping half of what is installed.
+// Implements: SW-REQ-260922-RGCV
 function guardHelpers() {
   return 'declare -A __omarchy_pkgs=()\n'
     + 'mapfile -t __omarchy_pkg_names < <({ pacman -Qq; LC_ALL=C pacman -Qi'
@@ -440,6 +453,7 @@ function guardHelpers() {
 // same way unquoted -- while a function would also catch `command -v reader`,
 // `VAR=x reader`, and every other form, and answer those wrong. Anything but
 // the plain substitution is left alone to run the real command.
+// Implements: SW-REQ-260922-W17G
 function guardPrelude(guards) {
   var prelude = guardHelpers()
 
@@ -459,6 +473,7 @@ function guardReaderSlot(index) {
   return "${__omarchy_read_" + index + "}"
 }
 
+// Implements: SW-REQ-260922-2JZT
 function substituteGuardReaders(expression) {
   for (var i = 0; i < GUARD_READERS.length; i++)
     expression = expression.split("$(" + GUARD_READERS[i] + ")").join(guardReaderSlot(i))
@@ -466,6 +481,7 @@ function substituteGuardReaders(expression) {
   return expression
 }
 
+// Implements: SW-REQ-260922-MQ37
 function guardLine(id, tag, expression) {
   return "if { " + substituteGuardReaders(expression) + "; } >/dev/null 2>&1; then echo "
     + id + ":" + tag + ":1; else echo " + id + ":" + tag + ":0; fi\n"
@@ -475,6 +491,7 @@ function guardLine(id, tag, expression) {
 // reporting `<id>:<w|c|d>:<0|1>` per line. Speed is the whole point: the menu
 // opens on the last evaluation's answers, so however long this takes is how
 // long a row can contradict the state it describes.
+// Implements: SW-REQ-260922-MQ37, SW-REQ-260922-Y58B
 function guardScript(items) {
   var guards = ""
   var ids = Object.keys(items || {})

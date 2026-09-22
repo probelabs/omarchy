@@ -5,6 +5,8 @@
 # omarchy:name=plugin
 # omarchy:args=<enable|disable|clone|remove>
 
+# Implements: SW-REQ-260922-KRBH, SW-REQ-260922-4EWA, SW-REQ-260922-QMWP
+
 set -euo pipefail
 
 PLUGIN_ICON=$'\U000f0431'

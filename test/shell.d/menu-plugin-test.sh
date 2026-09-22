@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-260922-KRBH, SW-REQ-260922-4EWA, SW-REQ-260922-QMWP
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 require_command jq

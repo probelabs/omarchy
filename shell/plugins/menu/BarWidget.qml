@@ -15,6 +15,7 @@ BarWidget {
     text: "\ue900"
     fontFamily: "omarchy"
     horizontalMargin: 7.5
+    // Implements: SW-REQ-260922-T257 (left-click executes the toggle IPC at route root)
     onPressed: function(button) {
       if (!root.bar) return
       if (button === Qt.RightButton) root.bar.run("xdg-terminal-exec")

@@ -6,6 +6,8 @@
 # omarchy:args=prompt [menu args...]
 # omarchy:examples=omarchy menu input Reminder|omarchy-menu-input "Reminder in minutes" --width 400
 
+# Implements: SW-REQ-260922-MP00, SW-REQ-260922-9ABD
+
 set -euo pipefail
 
 prompt="${1:-Input}"

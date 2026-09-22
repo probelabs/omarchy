@@ -7,6 +7,8 @@
 # Thin wrapper around the standard plugin IPC surface. The menu is the
 # first-party `omarchy.menu` plugin; routes are passed as JSON payload.
 
+# Implements: SW-REQ-260922-T257, SW-REQ-260922-SNZG
+
 set -euo pipefail
 
 verb="${1-toggle}"

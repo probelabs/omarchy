@@ -6,6 +6,8 @@
 # omarchy:args=<clipboard|file|folder> [path...]
 # omarchy:examples=omarchy share clipboard | omarchy share file ~/Downloads/example.txt
 
+# Implements: SW-REQ-260922-8ERH, SW-REQ-260922-JREH
+
 if (($# == 0)); then
   echo "Usage: omarchy-menu-share [clipboard|file|folder]"
   exit 1

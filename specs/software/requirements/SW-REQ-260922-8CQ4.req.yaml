@@ -1,0 +1,34 @@
+id: SW-REQ-260922-8CQ4
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when delete_key_on_app the menu_actions shall eventually satisfy uninstall_confirmed_flow
+description: Delete with the cursor on an app row opens an uninstall confirmation naming the app; confirming removes the app through the shared app library and closes the menu; cancelling closes the dialog and returns focus without removing anything. Non-app rows ignore the key.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: Menu.qml requestDeleteSelected/cancelDelete/confirmDelete lines 789-813 and Keys.onPressed line 1129.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:kimi-dogfood
+    created_at: "2026-09-22T15:09:55Z"
+    last_modified_by: agent:kimi-dogfood
+    last_modified_at: "2026-09-22T15:09:57Z"

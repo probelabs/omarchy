@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 require_command flock

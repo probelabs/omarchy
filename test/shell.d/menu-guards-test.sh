@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-260922-MQ37, SW-REQ-260922-Y58B, SW-REQ-260922-W17G, SW-REQ-260922-RGCV, SW-REQ-260922-2JZT
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 run_node_test <<'JS'

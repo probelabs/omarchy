@@ -3,6 +3,8 @@
 # omarchy:summary=Open a generic image selector menu
 # omarchy:args=[--selected <image>] [--print-name] [--show-labels] [--filterable] [--lazy-thumbnails] [--preload] [--cache-only] <image-dir>...
 
+# Implements: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B
+
 selected_image=""
 print_name=false
 show_labels=false

@@ -1,4 +1,5 @@
 {
+  // Implements: STK-REQ-260922-XTNR
   // Omarchy menu definition.
   // JSONC is used for Neovim-friendly highlighting, comments, and trailing commas.
   // IDs are object keys. Dotted IDs imply hierarchy: trigger.share.file belongs

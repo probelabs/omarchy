@@ -4,6 +4,8 @@
 # omarchy:group=menu
 # omarchy:name=timezone
 
+# Implements: SW-REQ-260922-4VAV, SW-REQ-260922-SWFT
+
 set -e
 
 timezone=$(timedatectl list-timezones | omarchy-menu-select "Set timezone" -- --width 520 --maxheight 520) || exit 1

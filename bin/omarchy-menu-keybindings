@@ -5,6 +5,8 @@
 # Hyprland's Lua config provider currently reports Lua binds as dispatcher
 # __lua in `hyprctl binds`. Keep a lightweight source-derived cache so the
 # menu can still show and dispatch those bindings.
+# Implements: SW-REQ-260922-0W96, SW-REQ-260922-9DMS
+
 declare -A LUA_BIND_KEY_MAP
 declare -A LUA_BIND_DISPATCHER_MAP
 declare -A LUA_BIND_ARG_MAP

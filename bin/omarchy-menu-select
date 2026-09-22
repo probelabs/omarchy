@@ -12,6 +12,8 @@
 # alone; an option with a subtext returns "<label><TAB><subtext>", so callers
 # with same-named rows get the subtext back as the stable key.
 
+# Implements: SW-REQ-260922-Q6ZS, SW-REQ-260922-B839, SW-REQ-260922-MP00, SW-REQ-260922-9ABD
+
 set -euo pipefail
 
 if (( $# < 1 )); then

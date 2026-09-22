@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Verifies: SW-REQ-260922-0W96, SW-REQ-260922-9DMS
+
 source "$(dirname "${BASH_SOURCE[0]}")/base-test.sh"
 
 require_command lua
