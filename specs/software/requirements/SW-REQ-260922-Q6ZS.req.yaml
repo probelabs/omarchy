@@ -40,3 +40,11 @@ defect_review:
     counts:
         emitted: 3
         verified: 1
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-23T17:28:27Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=1; known_issue:KI-MENU-SELECT-POLL-DEADLOCK=failing
+          changed_by: agent:auto-derive

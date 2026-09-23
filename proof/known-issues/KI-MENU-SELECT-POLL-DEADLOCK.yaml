@@ -13,7 +13,8 @@ affected_api: bin/omarchy-menu-select (dmenu select protocol)
 reproducer_command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
 introduced_in: inception
 defect_class: latent
-status: open
+review_date: "2026-12-23"
+status: reviewed
 history:
     - at: "2026-09-23T16:21:31Z"
       by: agent:kimi-dogfood
@@ -34,4 +35,8 @@ history:
       by: agent:kimi-dogfood
       action: capture-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-09-23T17:28:52Z"
+      by: agent:kimi-dogfood
+      action: review
+      detail: reviewer=agent:kimi-dogfood,new_review_date=2026-12-23
 source_claim: CRS-0014/C01

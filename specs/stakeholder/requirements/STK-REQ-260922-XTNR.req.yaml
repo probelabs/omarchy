@@ -50,6 +50,12 @@ stakeholder:
             - SYS-REQ-260922-J0AN
             - SYS-REQ-260922-X6Z5
             - SYS-REQ-260922-47T8
+            - SYS-REQ-260922-0M8A
+            - SYS-REQ-260922-6642
+            - SYS-REQ-260922-P708
+            - SYS-REQ-260922-PPDW
+            - SYS-REQ-260922-R8DQ
+            - SYS-REQ-260922-V7W6
           witness_deferred:
             reason: A true end-to-end acceptance run needs an integrated quickshell session (compositor-presented menu UI); the dogfood harness on macOS has no quickshell runtime, so only per-requirement verification exists (dispatcher IPC, dmenu protocol, and guard evaluation are covered by shell suites). Deferred, not waived.
             tracking: dogfood-harness:no-quickshell
