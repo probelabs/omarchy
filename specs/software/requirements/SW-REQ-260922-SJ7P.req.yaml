@@ -32,3 +32,11 @@ history:
     created_at: "2026-09-22T13:34:03Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-22T13:34:03Z"
+defect_review:
+    reviewed_at: "2026-09-23T17:08:38Z"
+    session: CRS-0013
+    fingerprint_sha: sha256:8c779321595dac6896863d973aee66c473feeff6261a97ea18bcfc7c49452414
+    via: agent-review
+    counts:
+        emitted: 1
+        dismissed: 1

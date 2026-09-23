@@ -1,0 +1,21 @@
+id: CRS-0014
+spec_reqids:
+    - SW-REQ-260922-Q6ZS
+state: complete
+backend: grok
+model: kimi-k2.5 (Moonshot AI), Route B agent-as-reviewer, no dispatch
+cells:
+    - req_id: SW-REQ-260922-Q6ZS
+      dir: .proof/defect-sessions/CRS-0014/cells/SW-REQ-260922-Q6ZS
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:bec0dfd815d3811e07e199bb391d1f0fa65f4bd7dc0367c260ff649123f9c866
+input_fingerprint:
+    spec_yaml_sha: sha256:31c9ba883033e9cbe7c9cc3cedf41e1c28b0ae3bfcc68093f35830f18796ceb1
+    spec_projection: semantic-v1
+    code_fingerprints:
+        bin/omarchy-menu-select: sha256:09780db2607970dfa8e9edce38a490b5468994f31e89156ba5f7460e033908b9
+    claims_sha: sha256:91313fbd20aeccb829f46bd6c3b6b2d52b2fccbc146e6e212db9e98e42da685b
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-23T15:38:38Z"
+updated_at: "2026-09-23T16:08:44Z"

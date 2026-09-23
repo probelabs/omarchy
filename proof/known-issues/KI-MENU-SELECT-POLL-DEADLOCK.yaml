@@ -1,0 +1,37 @@
+id: KI-MENU-SELECT-POLL-DEADLOCK
+title: omarchy-menu-select hangs forever when the summoned menu dies before writing done_file
+description: 'The done_file poll in bin/omarchy-menu-select (lines 93-95) is unbounded: `while [[ ! -e $done_file ]]; do sleep 0.05; done` carries no deadline, no peer-liveness probe, and no signal beyond the EXIT trap. If the menu process dies after the summon IPC succeeds (Quickshell crash, compositor restart), nothing ever writes the done file and the script loops forever, hanging every caller that invokes it synchronously. The protocol covers user cancel (the cancel path writes done_file) but not peer death. Reproduced live: with omarchy-shell stubbed to exit 0 and nothing writing the done file, the script was killed by an external 3s timeout (repro exits 1 = defect present). The spec gap rides with it: no requirement pins a bounded wait for the poll, so the defect had no contract to violate — the negative-state half of the dmenu protocol was never specified.'
+affected_requirements:
+    - SW-REQ-260922-Q6ZS
+evidence_manifests:
+    - test/shell.d/menu-select-poll-deadlock-repro.sh
+    - proof/evidence/ki-menu-select-poll-deadlock.yaml
+severity: medium
+severity_basis: reproducer
+cve_surface: none
+affected_api: bin/omarchy-menu-select (dmenu select protocol)
+reproducer_command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
+introduced_in: inception
+defect_class: latent
+status: open
+history:
+    - at: "2026-09-23T16:21:31Z"
+      by: agent:kimi-dogfood
+      action: created
+    - at: "2026-09-23T16:26:57Z"
+      by: agent:kimi-dogfood
+      action: edit
+      detail: add-source-claim=CRS-0014/C01,add-evidence-manifest
+    - at: "2026-09-23T16:44:35Z"
+      by: agent:kimi-dogfood
+      action: edit
+      detail: set-severity-basis=reproducer
+    - at: "2026-09-23T16:45:17Z"
+      by: agent:kimi-dogfood
+      action: edit
+      detail: set-reproducer-command
+    - at: "2026-09-23T16:45:20Z"
+      by: agent:kimi-dogfood
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+source_claim: CRS-0014/C01

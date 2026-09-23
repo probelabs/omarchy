@@ -1,0 +1,21 @@
+id: CRS-0009
+spec_reqids:
+    - SW-REQ-260922-PRNV
+state: complete
+backend: grok
+model: kimi-k2.5 (Moonshot AI), Route B agent-as-reviewer, no dispatch
+cells:
+    - req_id: SW-REQ-260922-PRNV
+      dir: .proof/defect-sessions/CRS-0009/cells/SW-REQ-260922-PRNV
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:88809b52a591ee3021ac3ed5420098d72cdc8b0c2ff6cf8c10d586850fd19ff8
+input_fingerprint:
+    spec_yaml_sha: sha256:ebc0bc2b45a1128fbd52475c65754b1a177e5f198ea5ead70441d9168c64ae32
+    spec_projection: semantic-v1
+    code_fingerprints:
+        shell/plugins/menu/MenuModel.js: sha256:92deeef190848d6827aa2ccd8be66114b12ca86baeb4ea0d4ebd453d49f22a70
+    claims_sha: sha256:6e7f2758c3bb16235f1cc16f68202fbf015b8f8c202e689e2ce4c53bb953e20b
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-23T15:38:38Z"
+updated_at: "2026-09-23T16:08:43Z"
