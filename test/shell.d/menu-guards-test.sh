@@ -11,6 +11,12 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Run generated guard scripts under the same bash that runs this suite: the
+# prelude uses mapfile/assoc arrays (bash >=4), and a bare `bash` can resolve to
+# /bin/bash 3.2 when PATH lacks homebrew (observed: parity assertion failing with
+# an empty shadow inventory). Same pattern as menu-plugin-test.sh.
+TEST_BASH="${OMARCHY_TEST_BASH:-$BASH}"
+
 run_node_test <<'JS'
 const menu = requireFromRoot('shell/plugins/menu/MenuModel.js')
 
@@ -158,7 +164,7 @@ assert_helper_agrees() {
 
   local real=0 shadowed=0
   PATH="$stub_dir:$PATH" "$ROOT/bin/$helper" "$@" >/dev/null 2>&1 || real=$?
-  PATH="$stub_dir:$PATH" bash -c "$guard_prelude"$'\n'"$helper \"\$@\"" "$helper" "$@" >/dev/null 2>&1 || shadowed=$?
+  PATH="$stub_dir:$PATH" "$TEST_BASH" -c "$guard_prelude"$'\n'"$helper \"\$@\"" "$helper" "$@" >/dev/null 2>&1 || shadowed=$?
   ((real == shadowed)) || fail "$description" "$helper $*: real=$real shadowed=$shadowed"
 }
 
@@ -185,7 +191,7 @@ printf '#!/bin/bash\ncase "$1" in -Q) exit 0 ;; *) exit 0 ;; esac\n' >"$broken_d
 chmod +x "$broken_dir/pacman"
 b_real=0 b_shadowed=0
 PATH="$broken_dir:$PATH" "$ROOT/bin/omarchy-pkg-present" bash >/dev/null 2>&1 || b_real=$?
-PATH="$broken_dir:$PATH" PACMAN_CALLS=/dev/null bash -c "$guard_prelude"$'\n'"omarchy-pkg-present bash" >/dev/null 2>&1 || b_shadowed=$?
+PATH="$broken_dir:$PATH" PACMAN_CALLS=/dev/null "$TEST_BASH" -c "$guard_prelude"$'\n'"omarchy-pkg-present bash" >/dev/null 2>&1 || b_shadowed=$?
 [[ $b_real -eq 0 && $b_shadowed -eq 1 ]] ||
   fail "a shadow built from a stale inventory disagrees with pacman -Q" "real=$b_real shadowed=$b_shadowed"
 # MCDC SW-REQ-260922-RGCV: pkg_presence_asked=T, shadow_matches_pacman=F => FALSE
@@ -219,7 +225,7 @@ reader_script=$(node -e '
     miss: { id: "miss", checked: "[[ \"$(omarchy-dns)\" == \"Google\" ]]" }
   }))
 ')
-reader_result=$(bash -c '
+reader_result=$("$TEST_BASH" -c '
 omarchy-dns() { printf "Cloudflare\n"; }
 export -f omarchy-dns
 '"$reader_script")
