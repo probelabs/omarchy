@@ -161,9 +161,6 @@ project:
                 language: js
                 command: >-
                     node --test test/node/menumodel-replay.test.mjs
-    tools:
-        probe:
-            path: /Users/buger/go/src/probe-wt-bashqml/target/debug/probe
     lint:
         exclude:
             - .git/**
