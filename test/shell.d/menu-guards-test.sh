@@ -237,7 +237,7 @@ pass "guard prelude compares a captured reader exactly as the substitution it re
 
 # The batch inherits whatever a login shell left set. A reader that exits
 # nonzero must not take the rest of the menu's rows down with it.
-errexit_result=$(bash -e -c '
+errexit_result=$("$TEST_BASH" -e -c '
 omarchy-dns() { printf "Cloudflare\n"; return 3; }
 export -f omarchy-dns
 '"$reader_script"'
@@ -276,10 +276,10 @@ assert_themes_guard_agrees() {
   local description="$1" home="$2" expected="$3"
   local guarded=0 updated=0
 
-  HOME="$home" PATH="$ROOT/bin:$PATH" bash -e -c "{ $themes_guard; } >/dev/null 2>&1" || guarded=$?
+  HOME="$home" PATH="$ROOT/bin:$PATH" "$TEST_BASH" -e -c "{ $themes_guard; } >/dev/null 2>&1" || guarded=$?
   # bash explicitly, not the shebang: the script needs bash 4 mapfile and the
   # host's /bin/bash can be older (macOS ships 3.2; Arch, the target, ships 5).
-  [[ -n $(HOME="$home" PATH="$ROOT/bin:$stub_dir:$PATH" bash "$ROOT/bin/omarchy-theme-update" 2>/dev/null) ]] || updated=1
+  [[ -n $(HOME="$home" PATH="$ROOT/bin:$stub_dir:$PATH" "$TEST_BASH" "$ROOT/bin/omarchy-theme-update" 2>/dev/null) ]] || updated=1
   ((guarded == expected)) || fail "$description" "$home: guard=$guarded expected=$expected"
   ((updated == expected)) || fail "$description" "$home: update=$updated expected=$expected"
 }
@@ -334,7 +334,7 @@ pass "omarchy-theme-extras lists every clone and nothing else"
 git_calls=$(mktemp)
 trap 'rm -rf "$stub_dir" "$themes_home" "$git_calls"' EXIT
 HOME="$themes_home/many" LC_ALL=C GIT_CALLS="$git_calls" PATH="$ROOT/bin:$stub_dir:$PATH" \
-  bash "$ROOT/bin/omarchy-theme-update" >/dev/null 2>&1
+  "$TEST_BASH" "$ROOT/bin/omarchy-theme-update" >/dev/null 2>&1
 pulled=$(<"$git_calls")
 [[ $pulled == "<-C><$many/tokyo night><pull>"$'\n'"<-C><$many/zen><pull>" ]] ||
   fail "omarchy-theme-update pulls each clone by its whole path" "got: $pulled"

@@ -134,18 +134,18 @@ project:
             rationale: Scoped to the omarchy lock screen authentication and menu components for bash/qml dogfooding.
     commands:
         build: >-
-            for f in bin/omarchy-apply-lock bin/omarchy-system-lock bin/omarchy-update-lock bin/omarchy-hyprland-session-locked bin/omarchy-system-sleep-lock bin/omarchy-menu bin/omarchy-menu-select bin/omarchy-menu-input bin/omarchy-menu-plugin bin/omarchy-menu-share bin/omarchy-menu-timezone bin/omarchy-menu-file bin/omarchy-menu-emoji-insert; do /opt/homebrew/bin/bash -n "$f" || exit 1; done; node --check shell/plugins/menu/MenuModel.js
+            for f in bin/omarchy-apply-lock bin/omarchy-system-lock bin/omarchy-update-lock bin/omarchy-hyprland-session-locked bin/omarchy-system-sleep-lock bin/omarchy-menu bin/omarchy-menu-select bin/omarchy-menu-input bin/omarchy-menu-plugin bin/omarchy-menu-share bin/omarchy-menu-timezone bin/omarchy-menu-file bin/omarchy-menu-emoji-insert; do /usr/bin/bash -n "$f" || exit 1; done; node --check shell/plugins/menu/MenuModel.js
         tests:
             lock-shell:
                 language: bash
                 command: >-
-                    set -e; B=/opt/homebrew/bin/bash;
+                    set -e; B=/usr/bin/bash;
                     for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do "$B" "test/shell.d/$t-test.sh"; done;
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/update-lock-test.sh; else echo "SKIP update-lock-test.sh: requires Linux flock and /proc"; fi
             menu-shell:
                 language: bash
                 command: >-
-                    set -e; B=/opt/homebrew/bin/bash;
+                    set -e; B=/usr/bin/bash;
                     "$B" test/shell.d/menu-test.sh;
                     "$B" test/shell.d/tray-menu-test.sh;
                     "$B" test/shell.d/menu-plugin-test.sh;
