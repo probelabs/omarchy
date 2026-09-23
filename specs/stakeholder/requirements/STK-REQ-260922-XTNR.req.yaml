@@ -29,3 +29,17 @@ history:
     created_at: "2026-09-22T13:33:45Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-22T13:33:45Z"
+stakeholder:
+    persona: Omarchy user
+    story: As an Omarchy user, I want every system action, setting, and application reachable through one menu whose rows reflect the machine's current state, so that I never hunt for a command or act on a stale, misleading row.
+    acceptance_criteria:
+        - id: AC-001
+          text: Opening the menu (omarchy menu toggle) presents the menu UI, routes summon/close verbs to the correct plugin targets, and a pick in a script-driven select or input prompt returns the chosen answer to the calling script.
+          verification_method: test
+          derived_reqs:
+            - SYS-REQ-260922-J0AN
+            - SYS-REQ-260922-X6Z5
+            - SYS-REQ-260922-47T8
+          witness_deferred:
+              reason: A true end-to-end acceptance run needs an integrated quickshell session (compositor-presented menu UI); the dogfood harness on macOS has no quickshell runtime, so only per-requirement verification exists (dispatcher IPC, dmenu protocol, and guard evaluation are covered by shell suites). Deferred, not waived.
+              tracking: dogfood-harness:no-quickshell

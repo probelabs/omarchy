@@ -3,6 +3,10 @@
 set -euo pipefail
 
 # Verifies: SW-REQ-260922-KRBH, SW-REQ-260922-4EWA, SW-REQ-260922-QMWP
+#mcdc:ignore:defensive SW-REQ-260922-4EWA: pick_resolves_by_id=F, same_named_plugins=T => FALSE -- the picker cuts field 2 of the selection line as the id unconditionally; resolving by name needs that cut removed [reviewed: REVIEW-M9]
+#mcdc:ignore:defensive SW-REQ-260922-KRBH: picker_verb_given=T, verb_filter_applied=F => FALSE -- the case maps every verb to its jq filter and the rows come from select($filter) unconditionally; an unfiltered list needs the select removed [reviewed: REVIEW-M9]
+#mcdc:ignore:defensive SW-REQ-260922-QMWP: nothing_actionable=T, notification_and_exit_zero=F => FALSE -- the empty-rows path is an unconditional notification plus exit 0; anything else needs that line removed [reviewed: REVIEW-M9]
+# mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
@@ -55,13 +59,14 @@ pick() {
 
   : >"$TMPDIR/calls"
   : >"$TMPDIR/rows"
+  STATUS=0
   HOME="$TMPDIR/home" \
     PATH="$STUB_DIR:$PATH" \
     FAKE_PLUGINS="$TMPDIR/plugins.json" \
     FAKE_CALLS="$TMPDIR/calls" \
     FAKE_ROWS="$TMPDIR/rows" \
     FAKE_PICK="$choice" \
-    "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-plugin" "$verb" >/dev/null 2>&1
+    "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-plugin" "$verb" >/dev/null 2>&1 || STATUS=$?
 
   ROWS=$(cat "$TMPDIR/rows")
   CALLS=$(cat "$TMPDIR/calls")
@@ -82,6 +87,7 @@ pick enable "$(printf 'Clock\ttester.clock')"
 pass "picker offers the id as subtext on every row"
 [[ $CALLS == *"omarchy-plugin-enable tester.clock"* ]] \
   || fail "picker acts on the row that was picked, not the one that shares its name" "$CALLS"
+# MCDC SW-REQ-260922-4EWA: pick_resolves_by_id=T, same_named_plugins=T => TRUE
 pass "picker acts on the row that was picked, not the one that shares its name"
 
 pick remove "$(printf 'Clock\ttester.clock')"
@@ -98,6 +104,8 @@ JSON
 pick enable "$(printf 'Weather\tacme.weather')"
 [[ $CALLS == *"omarchy-plugin-enable acme.weather"* ]] \
   || fail "picker delegates plugin enablement to the plugin command" "$CALLS"
+# MCDC SW-REQ-260922-4EWA: pick_resolves_by_id=F, same_named_plugins=F => TRUE [no-action: the offered list carries one uniquely-named row -- no name collision needs resolving]
+# MCDC SW-REQ-260922-QMWP: nothing_actionable=F, notification_and_exit_zero=F => TRUE [no-action: rows are offered and the pick is acted on -- the nothing-actionable path is not taken]
 pass "picker delegates plugin enablement to the plugin command"
 
 # Clone offers only first-party plugins that no installed clone points back at,
@@ -112,6 +120,7 @@ JSON
 pick clone "$(printf 'Clock\tomarchy.clock')"
 [[ $ROWS == *"Clock"* && $ROWS != *"Weather"* ]] ||
   fail "clone picker offers only built-in plugins" "$ROWS"
+# MCDC SW-REQ-260922-KRBH: picker_verb_given=T, verb_filter_applied=T => TRUE
 pass "clone picker offers built-in plugins"
 [[ $CALLS == *"terminal: omarchy-plugin-clone omarchy.clock --edit"* ]] ||
   fail "clone picker delegates cloning and editing to the clone command" "$CALLS"
@@ -182,6 +191,24 @@ cat >"$TMPDIR/plugins.json" <<'JSON'
 JSON
 
 pick enable ""
+[[ $STATUS -eq 0 ]] ||
+  fail "picker exits zero when a verb has nothing to act on" "status: $STATUS"
 [[ $CALLS == *"notification: No plugin to enable"* ]] \
   || fail "picker says when a verb has nothing to act on" "$CALLS"
+# MCDC SW-REQ-260922-QMWP: nothing_actionable=T, notification_and_exit_zero=T => TRUE
 pass "picker says when a verb has nothing to act on"
+
+# No verb at all is a usage error before any list is filtered or offered.
+: >"$TMPDIR/calls"
+: >"$TMPDIR/rows"
+status=0
+HOME="$TMPDIR/home" PATH="$STUB_DIR:$PATH" FAKE_PLUGINS="$TMPDIR/plugins.json" \
+  FAKE_CALLS="$TMPDIR/calls" FAKE_ROWS="$TMPDIR/rows" FAKE_PICK="" \
+  "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-plugin" >/dev/null 2>"$TMPDIR/err" || status=$?
+[[ $status -eq 1 ]] || fail "picker without a verb exits one" "status: $status"
+[[ $(<"$TMPDIR/err") == "Usage: omarchy-menu-plugin <enable|disable|clone|remove>" ]] ||
+  fail "picker without a verb prints usage" "err: $(cat "$TMPDIR/err")"
+[[ ! -s $TMPDIR/rows ]] ||
+  fail "picker without a verb never offers rows" "rows: $(cat "$TMPDIR/rows")"
+# MCDC SW-REQ-260922-KRBH: picker_verb_given=F, verb_filter_applied=F => TRUE [no-action: the menu-select spy captured no rows -- no filter runs without a verb]
+pass "picker refuses a missing verb with usage and exit one"

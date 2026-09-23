@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Verifies: SW-REQ-260922-0W96, SW-REQ-260922-9DMS
+# mcdc:witness-out-of-process
 
 source "$(dirname "${BASH_SOURCE[0]}")/base-test.sh"
 
@@ -61,6 +62,7 @@ $(exec_bind 73 "SUPER SHIFT ALT + 0" "Move window silently to workspace 10" "tru
 BINDS
 
 rendered=$(keybindings)
+# MCDC SW-REQ-260922-9DMS: keycode_binding=F, symbol_resolved=F => TRUE [no-action: every stubbed bind reports keycode: 0 and the rendered rows name their keys -- no keycode is resolved]
 [[ -n $rendered ]] || fail "the keybindings menu renders with a stubbed Hyprland"
 
 grep -q 'SUPER + F  *→ Full screen' <<<"$rendered" ||
@@ -71,6 +73,7 @@ pass "the keybindings menu renders its entries"
   fail "an alternative chord joins the row of the first one" "$rendered"
 grep -q 'SUPER + W / SUPER + Q  *→ Close window' <<<"$rendered" ||
   fail "a shared row names both chords" "$rendered"
+# MCDC SW-REQ-260922-0W96: lua_binds_dispatchable=T, lua_binds_present=T => TRUE
 pass "an alternative chord joins the row of the first one"
 
 # Which chord leads is the whole point of keeping Hyprland's order: SUPER + W is
@@ -112,6 +115,7 @@ rendered=$(keybindings)
 (( $(grep -n '→ Calculator$' <<<"$rendered" | cut -d: -f1) <
    $(grep -n '→ Reveal active window on top$' <<<"$rendered" | cut -d: -f1) )) ||
   fail "a shared chord does not change where its entry ranks" "$rendered"
+# MCDC SW-REQ-260922-0W96: lua_binds_dispatchable=F, lua_binds_present=F => TRUE [no-action: the stubbed bind list carries only exec binds -- no Lua dispatch needs resolving]
 pass "a shared chord does not change where its entry ranks"
 
 # The same key written as a keycode arrives by the other road: Hyprland reports
@@ -131,7 +135,28 @@ BINDS
 rendered=$(keybindings)
 grep -q 'SUPER + ~  *→ Toggle scratchpad' <<<"$rendered" ||
   fail "a keycode resolves to the symbol printed on the key too" "$rendered"
+# MCDC SW-REQ-260922-9DMS: keycode_binding=T, symbol_resolved=T => TRUE
 pass "a keycode resolves to the symbol printed on the key too"
+
+# A keycode the keymap cannot name keeps its raw code:N form rather than
+# vanishing or guessing: the row stays readable and the miss stays visible.
+stub_hyprctl <<'BINDS'
+bind
+	modmask: 64
+	submap: 
+	key: 
+	keycode: 9999
+	catchall: false
+	description: Mystery action
+	dispatcher: exec
+	arg: true
+BINDS
+
+rendered=$(keybindings)
+grep -q 'SUPER + code:9999  *→ Mystery action' <<<"$rendered" ||
+  fail "an unresolvable keycode keeps its raw code:N form" "$rendered"
+# MCDC SW-REQ-260922-9DMS: keycode_binding=T, symbol_resolved=F => FALSE
+pass "an unresolvable keycode keeps its raw code:N form"
 
 # A chord refused for width opens a row of its own, and the next chord tries
 # that row rather than reaching back past it and printing out of order.
@@ -195,6 +220,7 @@ BINDS
 rendered=$(keybindings)
 (( $(grep -c '→ Close window$' <<<"$rendered") == 2 )) ||
   fail "chords whose dispatch is unknown stay apart" "$rendered"
+# MCDC SW-REQ-260922-0W96: lua_binds_dispatchable=F, lua_binds_present=T => FALSE
 pass "chords whose dispatch is unknown stay apart"
 
 # What the menu is expected to pair up, written out here rather than read from

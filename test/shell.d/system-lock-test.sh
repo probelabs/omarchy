@@ -32,7 +32,7 @@ SH
 chmod +x "$mock_bin"/*
 
 PATH="$mock_bin:$PATH" CALL_LOG="$call_log" "$ROOT/bin/omarchy-system-lock"
-mapfile -t shutdown < <(rg '^(pkill|timeout) ' "$call_log")
+mapfile -t shutdown < <(grep -E '^(pkill|timeout) ' "$call_log")
 
 [[ ${shutdown[0]} == "pkill -x ttfx" ]] ||
   fail "system lock stops ttfx before closing its terminal" "calls: ${shutdown[*]}"

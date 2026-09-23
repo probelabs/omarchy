@@ -2,7 +2,35 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P
+# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP
+#mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=T, parse_error_raised=F => FALSE -- a failed parse hits the catch that returns [] unconditionally; invalid input yielding items needs a broken catch [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=T => FALSE -- the same catch swallows the parse error by construction; a raised error needs the try/catch removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=F => FALSE -- normalizeItem derives parent from the id and kind from the declared shape unconditionally; skipping the inference needs those assignments removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-7NPE: per_key_override_applied=F, root_injected=F, user_entry_overrides=T => FALSE -- the merge copies every key of every user entry and injects root when missing, both unconditionally; an override that applies nothing needs the copy loop removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-7NPE: per_key_override_applied=F, root_injected=T, user_entry_overrides=T => FALSE -- same unconditional per-key copy; root injection without the override needs the copy loop removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-7NPE: per_key_override_applied=T, root_injected=F, user_entry_overrides=T => FALSE -- root injection runs whenever the merged map lacks root; an applied override without it needs the injection removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SYS-REQ-260922-PPDW: item_tree_merged=F, menu_sources_loaded=T => FALSE -- mergeMenuSources always returns the rebuilt items/order map; loaded sources without a merged tree needs the build loop removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-Z680: id_listed_once=F, inputs_not_mutated=F, orphan_id_present=F, orphans_dropped=F, provider_reran=T => FALSE -- the merge rebuilds fresh maps from the incoming rows on every run; a rerun that duplicates or mutates needs the rebuild loops broken [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-Z680: id_listed_once=F, inputs_not_mutated=F, orphan_id_present=T, orphans_dropped=F, provider_reran=F => FALSE -- the rebuild skips any order id with no item behind it unconditionally; carrying an orphan forward needs that check removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-Z680: id_listed_once=F, inputs_not_mutated=T, orphan_id_present=T, orphans_dropped=T, provider_reran=T => FALSE -- the incoming loop skips any id already in the next map; a duplicate row needs that check removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-Z680: id_listed_once=T, inputs_not_mutated=F, orphan_id_present=T, orphans_dropped=T, provider_reran=T => FALSE -- the merge writes only into the fresh maps it created; mutating the inputs needs a write into the source that does not exist [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-Z680: id_listed_once=T, inputs_not_mutated=T, orphan_id_present=T, orphans_dropped=F, provider_reran=T => FALSE -- same unconditional orphan skip; keeping the orphan needs that check removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-EFNR: previous_batch_replaced=F, provider_reran=T => FALSE -- the swap drops every row tagged with the rerunning provider's menu id unconditionally; keeping the previous batch needs that filter removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SYS-REQ-260922-0M8A: dynamic_rows_swapped=F, provider_rows_arrive=T => FALSE -- the incoming loop appends every new provider row unconditionally; arrived rows that never appear need that loop removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-PRNV: exact_id_match=T, route_input=T, route_is_exact_id=F => FALSE -- an exact id hit returns the input itself at the first check; routing it elsewhere needs that return removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-CYB9: alias_match=T, exact_id_match=F, route_input=T, route_is_alias_target=F => FALSE -- the alias loop returns the matching entry's id unconditionally; an alias routing elsewhere needs that return removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-74BZ: alias_match=F, exact_id_match=F, route_input=T, route_is_literal_input=F => FALSE -- the fallthrough returns the literal input as the last statement; losing it needs that return removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SYS-REQ-260922-R8DQ: route_given=T, routed_to_intended_item=F => FALSE -- resolveRoute always returns the exact id, the alias target, or the literal input; an unintended destination needs all three returns broken [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-XW52: link_target_followed=F, resolved_kind_link=T => FALSE -- displayRow resolves a link row's target from entry.target unconditionally; ignoring the target needs the kind ternary removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-N3RM: action_runs_directly=F, menu_not_opened=F, resolved_kind_action=T => FALSE -- displayRow copies the entry's action and resolves target by kind unconditionally; an action row that opens a menu needs the kind ternary removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-N3RM: action_runs_directly=F, menu_not_opened=T, resolved_kind_action=T => FALSE -- same unconditional action copy; an action row without its action needs the copy removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-N3RM: action_runs_directly=T, menu_not_opened=F, resolved_kind_action=T => FALSE -- the action row's target is its own id by the same ternary, so activation never navigates; opening a menu needs the ternary removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-JRW1: guard_results_applied=T, rows_hidden_or_marked_per_results=F => FALSE -- isVisible and isDisabled consult the result maps on every row; a false guard leaving its row up needs that lookup removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-DQ9P: all_terms_matched=F, query_terms_given=T, row_hidden_from_results=F => FALSE -- matchesQuery returns false on the first unmatched term and the view only lists rows it answers true for; an unmatched row staying listed needs that return removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-SJ7P: better_match_ranks_first=F, match_quality_varies=T => FALSE -- searchScore is a pure function of the match tier; a weaker match outscoring a stronger one needs the tier ladder reordered [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SYS-REQ-260922-V7W6: matching_rows_ranked=F, search_entered=T => FALSE -- every search row carries its searchScore and the QML search model sorts by it; an unranked result list needs the sort removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260922-TKDP: matches_span_menus=T, sections_divided=F => FALSE -- displayRow copies the caller's section onto every row unconditionally; search rows arriving without their section needs that assignment removed [reviewed: REVIEW-M8]
+# mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
@@ -28,7 +56,10 @@ const parsed = menu.parseMenuJsonc(`
 }
 `)
 
+// MCDC SW-REQ-260922-E4J2: items_parsed=T, jsonc_has_comments_or_commas=T => TRUE
+// MCDC SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=F, parse_error_raised=F => TRUE [no-action: the valid JSONC parses to its items -- the invalid path is not taken]
 assertEqual(parsed.length, 3, 'menu parses JSONC with comments and trailing commas')
+// MCDC SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=T => TRUE
 assertDeepEqual(
   parsed.find(item => item.id === 'style.theme'),
   {
@@ -51,14 +82,44 @@ assertDeepEqual(
   'menu normalizes parsed items'
 )
 
+// Invalid input never throws and never yields items: comments present or
+// not, a broken document parses to an empty set.
+// MCDC SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=F => TRUE
+assertEqual(menu.parseMenuJsonc('{broken').length, 0, 'menu parses invalid JSON to an empty item set without raising')
+// MCDC SW-REQ-260922-E4J2: items_parsed=F, jsonc_has_comments_or_commas=T => FALSE
+assertEqual(menu.parseMenuJsonc('{\n// comment\n"items":').length, 0, 'menu parses broken JSONC with comments to an empty item set')
+// MCDC SW-REQ-260922-E4J2: items_parsed=F, jsonc_has_comments_or_commas=F => TRUE [no-action: empty input parses to zero items -- the JSONC handling parses nothing]
+// MCDC SW-REQ-260922-46HY: entry_shape_declared=F, kind_and_parent_inferred=F => TRUE [no-action: an empty item set declares zero entries -- nothing is normalized]
+assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}').length, 0, 'menu parses empty input and an empty item set to zero entries')
+
 const user = [
   menu.normalizeItem('style.theme', { label: 'Theme picker', aliases: ['theme', 'colors'], action: 'custom-theme' }),
   menu.normalizeItem('tools', { label: 'Tools' })
 ]
 const merged = menu.mergeMenuSources(parsed, user)
+// MCDC SYS-REQ-260922-PPDW: item_tree_merged=T, menu_sources_loaded=T => TRUE
 assertEqual(merged.items['style.theme'].label, 'Theme picker', 'menu user entries override default entries')
 assertEqual(merged.items['style.theme'].order, 2, 'menu preserves original order on override')
 assert(merged.items.root, 'menu injects root when merging sources')
+
+// MCDC SW-REQ-260922-7NPE: per_key_override_applied=T, root_injected=T, user_entry_overrides=T => TRUE
+const overrideMerge = menu.mergeMenuSources(
+  [menu.normalizeItem('a.b', { label: 'Default' })],
+  [menu.normalizeItem('a.b', { label: 'Override' })]
+)
+assertEqual(overrideMerge.items['a.b'].label, 'Override', 'menu applies a user override per key')
+assert(
+  overrideMerge.items.root && overrideMerge.itemOrder[0] === 'root',
+  'menu injects root when the sources lack it'
+)
+
+// MCDC SW-REQ-260922-7NPE: per_key_override_applied=F, root_injected=F, user_entry_overrides=F => TRUE [no-action: merging zero user entries applies zero overrides -- the tree equals the defaults and root needs no injection]
+const noUserMerge = menu.mergeMenuSources(parsed, [])
+assertEqual(noUserMerge.items['style.theme'].label, 'Themes', 'menu leaves default entries untouched without user entries')
+
+// MCDC SYS-REQ-260922-PPDW: item_tree_merged=F, menu_sources_loaded=F => TRUE [no-action: with no sources loaded the merged tree holds only the injected root -- no items are merged]
+const emptyMerge = menu.mergeMenuSources([], [])
+assertDeepEqual(Object.keys(emptyMerge.items), ['root'], 'menu merges empty sources to just the injected root')
 
 assertEqual(menu.slugify('Power Saver!'), 'power-saver', 'menu slugifies provider rows')
 assertEqual(menu.pathFor(merged.items, 'style.theme'), 'Style › Theme picker', 'menu builds item paths')
@@ -78,10 +139,13 @@ const visibilityItems = {
   dynamic: menu.normalizeItem('dynamic', { label: 'Dynamic', provider: 'items' })
 }
 const visibilityOrder = Object.keys(visibilityItems)
+// MCDC SW-REQ-260922-JRW1: guard_results_applied=T, rows_hidden_or_marked_per_results=T => TRUE
 assert(!menu.isVisible(visibilityItems, visibilityOrder, { 'hardware.laptop': false }, visibilityItems.hardware), 'menu hides a submenu with no visible children')
 assert(menu.isVisible(visibilityItems, visibilityOrder, { 'hardware.laptop': true }, visibilityItems.hardware), 'menu shows a submenu with a visible child')
 assert(!menu.isVisible(visibilityItems, visibilityOrder, { 'nested.branch.leaf': false }, visibilityItems.nested), 'menu hides recursively empty submenus')
 assert(menu.isVisible(visibilityItems, visibilityOrder, {}, visibilityItems.dynamic), 'menu keeps provider-backed submenus visible')
+// MCDC SW-REQ-260922-JRW1: guard_results_applied=F, rows_hidden_or_marked_per_results=F => TRUE [no-action: with empty guard results the nested submenu stays visible -- nothing is hidden or marked]
+assert(menu.isVisible(visibilityItems, visibilityOrder, {}, visibilityItems.nested), 'menu leaves rows untouched when no guard results exist')
 
 // `disabled:` is the softer guard: the row stays listed and only loses the
 // cursor, which is how an already-installed app keeps its place in Install.
@@ -90,6 +154,9 @@ assert(menu.isVisible({ 'install.browser.zen': installed }, ['install.browser.ze
 assert(menu.isDisabled({ 'install.browser.zen': true }, installed), 'menu disables a row whose disabled: succeeded')
 assert(!menu.isDisabled({ 'install.browser.zen': false }, installed), 'menu leaves a row selectable when its disabled: failed')
 assert(!menu.isDisabled({ 'install.browser.zen': true }, visibilityItems.laptop), 'menu never disables a row that declares no disabled:')
+// MCDC SW-REQ-260922-DQ9P: all_terms_matched=F, query_terms_given=F, row_hidden_from_results=F => TRUE [no-action: the browse row is built without a query -- no term matching runs and nothing is hidden]
+// MCDC SYS-REQ-260922-V7W6: matching_rows_ranked=F, search_entered=F => TRUE [no-action: the browse row carries score 0 -- no search ranking runs outside search]
+// MCDC SW-REQ-260922-TKDP: matches_span_menus=F, sections_divided=F => TRUE [no-action: the browse row carries an empty section -- no search sections exist to divide]
 assert(
   menu.displayRow({ 'install.browser.zen': installed }, ['install.browser.zen'], {}, { 'install.browser.zen': true }, installed, '', 0).disabled,
   'menu display rows carry their disabled state'
@@ -100,12 +167,19 @@ assert(
 )
 
 const entry = merged.items['style.theme']
+// MCDC SW-REQ-260922-DQ9P: all_terms_matched=T, query_terms_given=T, row_hidden_from_results=F => FALSE
 assert(menu.matchesQuery(entry, 'theme', true), 'menu matches labels and aliases')
 assert(menu.matchesQuery(entry, 'colors', true), 'menu matches aliases')
+// MCDC SW-REQ-260922-DQ9P: all_terms_matched=F, query_terms_given=T, row_hidden_from_results=T => FALSE
 assert(!menu.matchesQuery(entry, 'missing', true), 'menu rejects missing terms')
+// MCDC SW-REQ-260922-DQ9P: all_terms_matched=T, query_terms_given=T, row_hidden_from_results=T => TRUE
 assert(!menu.matchesQuery(entry, 'theme', false), 'menu hides invisible matches')
+// MCDC SW-REQ-260922-SJ7P: better_match_ranks_first=T, match_quality_varies=T => TRUE
 assert(menu.searchScore(merged.items, entry, 'theme') < menu.searchScore(merged.items, entry, 'appearance'), 'menu scores name matches above description matches')
 
+// MCDC SW-REQ-260922-N3RM: action_runs_directly=T, menu_not_opened=T, resolved_kind_action=T => TRUE
+// MCDC SW-REQ-260922-XW52: link_target_followed=F, resolved_kind_link=F => TRUE [no-action: the action row's target is its own id -- no link target is followed]
+// MCDC SW-REQ-260922-TKDP: matches_span_menus=T, sections_divided=T => TRUE
 assertDeepEqual(
   menu.displayRow(merged.items, merged.itemOrder, {}, {}, entry, 'Style', 12, 'search'),
   {
@@ -129,6 +203,22 @@ assertDeepEqual(
   'menu builds display rows'
 )
 
+// A link row routes its activation to the target menu; a menu-kind row opens
+// its submenu and runs nothing itself.
+const linkEntry = menu.normalizeItem('go.setup', { label: 'Setup', target: 'setup' })
+// MCDC SW-REQ-260922-XW52: link_target_followed=T, resolved_kind_link=T => TRUE
+assertEqual(
+  menu.displayRow(merged.items, merged.itemOrder, {}, {}, linkEntry, '', 0).target,
+  'setup',
+  'menu follows a link row to its target'
+)
+// MCDC SW-REQ-260922-N3RM: action_runs_directly=F, menu_not_opened=F, resolved_kind_action=F => TRUE [no-action: the menu-kind row carries no action -- nothing runs directly]
+const menuRow = menu.displayRow(merged.items, merged.itemOrder, {}, {}, merged.items.style, '', 0)
+assert(
+  menuRow.kind === 'menu' && menuRow.action === '' && menuRow.target === 'style',
+  'menu kind rows open their submenu instead of running an action'
+)
+
 const defaultItems = menu.parseMenuJsonc(defaultMenuJsonc)
 const defaultById = Object.fromEntries(defaultItems.map(item => [item.id, item]))
 
@@ -141,6 +231,7 @@ const ranked = menu.mergeAppRows(rankBase.items, rankBase.itemOrder, [
   { id: 'apps.zen', parent: 'apps', kind: 'app', label: 'Zen Browser', description: '', aliases: [] }
 ])
 const rankScore = (id, query) => menu.searchScore(ranked.items, ranked.items[id], query)
+// MCDC SYS-REQ-260922-V7W6: matching_rows_ranked=T, search_entered=T => TRUE
 assert(
   ['install.browser.brave', 'remove.browser.brave', 'setup.default.browser.brave'].every(
     id => rankScore('apps.brave', 'brave') < rankScore(id, 'brave')
@@ -158,17 +249,43 @@ assert(
   'menu keeps a better-matching menu entry above a weaker app match'
 )
 
+// Ranking only engages when match quality varies: two whole-word app matches
+// of identical quality keep declaration order and nothing more.
+const equalApps = menu.mergeAppRows(rankBase.items, rankBase.itemOrder, [
+  { id: 'apps.zen-a', parent: 'apps', kind: 'app', label: 'Zen A', description: '', aliases: [] },
+  { id: 'apps.zen-b', parent: 'apps', kind: 'app', label: 'Zen B', description: '', aliases: [] }
+])
+// MCDC SW-REQ-260922-SJ7P: better_match_ranks_first=F, match_quality_varies=F => TRUE [no-action: two whole-word app matches of identical quality differ only by declaration order -- the quality ranking never engages]
+assert(
+  menu.searchScore(equalApps.items, equalApps.items['apps.zen-b'], 'zen')
+    - menu.searchScore(equalApps.items, equalApps.items['apps.zen-a'], 'zen') === 1,
+  'menu orders equal-quality matches by declaration order alone'
+)
+
 // Routing: htop ships `Keywords=system;...`, which app rows carry as aliases.
 // An installed app must never capture a menu route (SUPER+ESCAPE opens the
 // `system` menu), while its keywords keep working for search.
 const routed = menu.mergeAppRows(rankBase.items, rankBase.itemOrder, [
   { id: 'apps.htop', parent: 'apps', kind: 'app', label: 'Htop', description: 'Process Viewer', aliases: ['Process Viewer', 'system', 'process'] }
 ])
+// MCDC SW-REQ-260922-PRNV: exact_id_match=T, route_input=T, route_is_exact_id=T => TRUE
+// MCDC SW-REQ-260922-CYB9: alias_match=T, exact_id_match=T, route_input=T, route_is_alias_target=F => TRUE [no-action: the exact id returns before the alias loop runs]
+// MCDC SW-REQ-260922-74BZ: alias_match=F, exact_id_match=T, route_input=T, route_is_literal_input=F => TRUE [no-action: the exact id returns before any fallthrough]
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'system'), 'system', 'menu routes an exact id even when an app keyword matches it')
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'process'), 'process', 'menu never routes to an app row through its keywords')
+// MCDC SW-REQ-260922-CYB9: alias_match=T, exact_id_match=F, route_input=T, route_is_alias_target=T => TRUE
+// MCDC SW-REQ-260922-PRNV: exact_id_match=F, route_input=T, route_is_exact_id=F => TRUE [no-action: the alias matches no item id -- the exact-id path is not taken]
+// MCDC SW-REQ-260922-74BZ: alias_match=T, exact_id_match=F, route_input=T, route_is_literal_input=F => TRUE [no-action: the alias match routes to its target -- the literal fallthrough is not taken]
+// MCDC SYS-REQ-260922-R8DQ: route_given=T, routed_to_intended_item=T => TRUE
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'power-menu'), 'system', 'menu routes declared aliases to their item')
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'power_menu'), 'system', 'menu normalizes underscores in routes')
+// MCDC SW-REQ-260922-PRNV: exact_id_match=T, route_input=F, route_is_exact_id=F => TRUE [no-action: empty input routes to root before any id lookup runs]
+// MCDC SW-REQ-260922-CYB9: alias_match=T, exact_id_match=F, route_input=F, route_is_alias_target=F => TRUE [no-action: empty input routes to root before any alias lookup runs]
+// MCDC SW-REQ-260922-74BZ: alias_match=F, exact_id_match=F, route_input=F, route_is_literal_input=F => TRUE [no-action: empty input routes to root -- the literal fallthrough is not taken]
+// MCDC SYS-REQ-260922-R8DQ: route_given=F, routed_to_intended_item=F => TRUE [no-action: empty input routes to root -- no route is given]
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, ''), 'root', 'menu routes empty input to root')
+// MCDC SW-REQ-260922-74BZ: alias_match=F, exact_id_match=F, route_input=T, route_is_literal_input=T => TRUE
+// MCDC SW-REQ-260922-CYB9: alias_match=F, exact_id_match=F, route_input=T, route_is_alias_target=F => TRUE [no-action: no alias matches -- the alias loop finds nothing and the input falls through]
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'no-such-route'), 'no-such-route', 'menu falls through to the literal input')
 assert(menu.matchesQuery(routed.items['apps.htop'], 'system', true), 'menu still finds an app by its keywords in search')
 assert(
@@ -519,6 +636,7 @@ const nonAppOrder = ['root', 'apps']
 const appRowsFor = ids => ids.map(id => ({ id: `apps.${id}`, kind: 'app', parent: 'apps', label: id, appId: id }))
 
 const firstMerge = menu.mergeAppRows(nonAppItems, nonAppOrder, appRowsFor(['alacritty', 'youtube']))
+// MCDC SW-REQ-260922-Z680: id_listed_once=F, inputs_not_mutated=F, orphan_id_present=F, orphans_dropped=F, provider_reran=F => TRUE [no-action: the first merge starts from a clean map and order -- no orphan exists to drop and no provider batch is rerun]
 assert(
   firstMerge.itemOrder.join(',') === 'root,apps,apps.alacritty,apps.youtube',
   'app merge appends app rows after the static menu items'
@@ -546,9 +664,12 @@ const orphanedItems = {}
 for (const key in firstMerge.items) orphanedItems[key] = firstMerge.items[key]
 delete orphanedItems['apps.youtube']
 const healed = menu.mergeAppRows(orphanedItems, firstMerge.itemOrder, appRowsFor(['alacritty', 'youtube']))
+// MCDC SW-REQ-260922-Z680: id_listed_once=T, inputs_not_mutated=T, orphan_id_present=T, orphans_dropped=T, provider_reran=T => TRUE
 assert(
   healed.itemOrder.join(',') === 'root,apps,apps.alacritty,apps.youtube'
-    && !!healed.items['apps.youtube'],
+    && !!healed.items['apps.youtube']
+    && Object.keys(orphanedItems).length === 3
+    && !orphanedItems['apps.youtube'],
   'app merge heals an order entry whose item went missing instead of duplicating it'
 )
 
@@ -564,6 +685,8 @@ assert(
 
 const providerRowsFor = values => values.map(value => ({ id: `style.font.${value}`, kind: 'action', parent: 'style.font', label: value }))
 const firstProviderMerge = menu.swapProviderRows(nonAppItems, nonAppOrder, 'style.font', providerRowsFor(['mono', 'serif']))
+// MCDC SW-REQ-260922-EFNR: previous_batch_replaced=F, provider_reran=F => TRUE [no-action: the first provider merge starts from a map with no style.font rows -- no previous batch exists to replace]
+// MCDC SYS-REQ-260922-0M8A: dynamic_rows_swapped=T, provider_rows_arrive=T => TRUE
 assert(
   firstProviderMerge.itemOrder.join(',') === 'root,apps,style.font.mono,style.font.serif',
   'provider merge appends its rows'
@@ -576,10 +699,12 @@ assert(
 // A plugin drops out of the Enable list the moment it is enabled, so a
 // provider that runs again has to lose the rows it contributed last time.
 const rerunProviderMerge = menu.swapProviderRows(firstProviderMerge.items, firstProviderMerge.itemOrder, 'style.font', providerRowsFor(['serif']))
+// MCDC SW-REQ-260922-EFNR: previous_batch_replaced=T, provider_reran=T => TRUE
 assert(
   rerunProviderMerge.itemOrder.join(',') === 'root,apps,style.font.serif',
   'provider merge drops rows the provider no longer lists'
 )
+// MCDC SYS-REQ-260922-0M8A: dynamic_rows_swapped=F, provider_rows_arrive=F => TRUE [no-action: an empty batch swaps zero rows -- the existing rows pass through untouched]
 assert(
   menu.swapProviderRows(firstProviderMerge.items, firstProviderMerge.itemOrder, 'style.other', providerRowsFor([]))
     .itemOrder.join(',') === 'root,apps,style.font.mono,style.font.serif',

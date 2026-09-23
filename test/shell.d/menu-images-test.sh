@@ -3,6 +3,9 @@
 set -euo pipefail
 
 # Verifies: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B
+#mcdc:ignore:defensive SW-REQ-260922-43HQ: cached_rows_reused=F, dirs_unchanged=T => FALSE -- a matching fast signature loads the rows file before any rebuild path runs, and rows plus signatures are published together under one lock; unchanged dirs with the reuse skipped needs a broken signature compare [reviewed: REVIEW-M6]
+#mcdc:ignore:defensive SW-REQ-260922-MH9B: rows_rebuilt_and_cached=F, signature_mismatch=T => FALSE -- a full-signature mismatch falls unconditionally into the rebuild branch that rewrites and re-signs the rows; a mismatch without a rebuild needs a broken branch [reviewed: REVIEW-M6]
+# mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
@@ -75,6 +78,8 @@ PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
   fail "image menu invalidates stale row caches"
 [[ ! -e $stale_tmp ]] ||
   fail "image menu clears partial thumbnails left by killed generators"
+# MCDC SW-REQ-260922-MH9B: rows_rebuilt_and_cached=T, signature_mismatch=T => TRUE
+# MCDC SW-REQ-260922-43HQ: cached_rows_reused=F, dirs_unchanged=F => TRUE [no-action: every row is rebuilt and re-signed after the stale signature -- the reuse path is never entered]
 pass "image menu recovers stranded locks and stale rows"
 
 rm -rf "$cache_home"
@@ -114,6 +119,21 @@ PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
 (( $(awk 'END { print NR }' "$cache_dir/$cache_key.rows") == 3 )) ||
   fail "image menu caches every row after retry"
 pass "image menu completes and caches a later retry"
+
+# With the cache warm and the directory untouched, the next run answers from
+# the rows file alone: the fast signature matches, so no thumbnail generator
+# runs at all.
+: >"$tmp/calls"
+PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" \
+  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+
+[[ ! -s $tmp/calls ]] ||
+  fail "image menu reuses cached rows without regenerating thumbnails" "calls: $(cat "$tmp/calls")"
+(( $(awk 'END { print NR }' "$cache_dir/$cache_key.rows") == 3 )) ||
+  fail "image menu keeps the cached rows across a reuse run"
+# MCDC SW-REQ-260922-43HQ: cached_rows_reused=T, dirs_unchanged=T => TRUE
+# MCDC SW-REQ-260922-MH9B: rows_rebuilt_and_cached=F, signature_mismatch=F => TRUE [no-action: the vipsthumbnail spy log is empty across the whole run -- no rebuild happens while the signature matches]
+pass "image menu reuses cached rows for unchanged directories"
 
 rm -rf "$cache_home"
 mkdir -p "$cache_home"

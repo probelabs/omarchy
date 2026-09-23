@@ -2,7 +2,12 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-MQ37, SW-REQ-260922-Y58B, SW-REQ-260922-W17G, SW-REQ-260922-RGCV, SW-REQ-260922-2JZT
+# Verifies: SW-REQ-260922-MQ37, SW-REQ-260922-Y58B, SW-REQ-260922-W17G, SW-REQ-260922-RGCV, SW-REQ-260922-2JZT, SYS-REQ-260922-47T8
+#mcdc:ignore:defensive SW-REQ-260922-MQ37: guards_declared=T, one_line_per_guard=F => FALSE -- guardLine is appended exactly once per declared guard; a guard answered by zero or two lines needs a broken string build [reviewed: REVIEW-M5]
+#mcdc:ignore:defensive SW-REQ-260922-Y58B: empty_guard_script=F, no_guards_declared=T => FALSE -- guardScript returns "" exactly when the built guards string is empty; a non-empty script from guardless items needs broken concatenation [reviewed: REVIEW-M5]
+#mcdc:ignore:defensive SW-REQ-260922-W17G: reader_read_once=F, reader_value_reused=T => FALSE -- the global substitution leaves no plain $(reader) call behind, so a reused reader has nothing left to read twice [reviewed: REVIEW-M5]
+#mcdc:ignore:defensive SW-REQ-260922-2JZT: only_plain_form_substituted=F, plain_substitution_form=T => FALSE -- the substitution is a global replace of the exact plain form; an occurrence left behind needs a broken replace [reviewed: REVIEW-M5]
+# mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
@@ -18,6 +23,8 @@ const items = {
 const script = menu.guardScript(items)
 const browserSlot = `\${__omarchy_read_${menu.guardReaders.indexOf('omarchy-default-browser')}}`
 
+// MCDC SW-REQ-260922-MQ37: guards_declared=T, one_line_per_guard=T => TRUE
+// MCDC SW-REQ-260922-Y58B: empty_guard_script=F, no_guards_declared=F => TRUE [no-action: the script for guarded items is non-empty -- the empty-script guarantee is not invoked]
 assert(
   script.includes('if { omarchy-pkg-present brave-bin; } >/dev/null 2>&1; then echo setup.default.browser.brave:w:1; else echo setup.default.browser.brave:w:0; fi'),
   'guard script reports a when: as <id>:w:<0|1>'
@@ -31,15 +38,20 @@ assert(
   'guard script reports a disabled: as <id>:d:<0|1>'
 )
 assert(!/\bplain:[wcd]:/.test(script), 'guard script skips items with nothing to evaluate')
+// MCDC SW-REQ-260922-Y58B: empty_guard_script=T, no_guards_declared=T => TRUE
+// MCDC SW-REQ-260922-MQ37: guards_declared=F, one_line_per_guard=F => TRUE [no-action: the script is empty -- zero guard lines are emitted for guardless items]
+// MCDC SYS-REQ-260922-47T8: guards_evaluated=F, system_state_reflected=F => TRUE [no-action: the empty batch evaluates zero guards -- nothing is asked of the system]
 assertEqual(menu.guardScript({ plain: items.plain }), '', 'guard script is empty when no item carries a guard')
 
 // The cost the menu is paying is per fork, not per expression, so what makes
 // the batch fast is asking each command once however many rows want it.
+// MCDC SW-REQ-260922-W17G: reader_read_once=T, reader_value_reused=T => TRUE
 assertEqual(
   (script.match(/^__omarchy_read_\d+=\$\(omarchy-default-browser /gm) || []).length,
   1,
   'guard script reads a value command once for the whole batch'
 )
+// MCDC SW-REQ-260922-2JZT: only_plain_form_substituted=T, plain_substitution_form=T => TRUE
 assert(
   script.includes(`[[ "${browserSlot}" == "brave" ]]`) && !script.includes('"$(omarchy-default-browser)"'),
   'guard script substitutes the captured answer into the expression'
@@ -56,12 +68,14 @@ const untouched = menu.guardScript({
   b: { id: 'b', when: '[[ "$(OMARCHY_PATH=/usr/share/omarchy omarchy-channel-current)" == "stable" ]]' },
   c: { id: 'c', when: '(( $(omarchy-default-browser | wc -l) == 1 ))' }
 })
+// MCDC SW-REQ-260922-2JZT: only_plain_form_substituted=F, plain_substitution_form=F => TRUE [no-action: every non-plain form is left to run the real command -- the substitution path is not taken]
 assert(
   untouched.includes('command -v omarchy-dns')
     && untouched.includes('$(OMARCHY_PATH=/usr/share/omarchy omarchy-channel-current)')
     && untouched.includes('$(omarchy-default-browser | wc -l)'),
   'guard script leaves every form but the plain substitution to run the real command'
 )
+// MCDC SW-REQ-260922-W17G: reader_read_once=F, reader_value_reused=F => TRUE [no-action: no reader slot appears in the script -- nothing is captured, so nothing is reused]
 assert(
   !/^__omarchy_read_/m.test(untouched),
   'guard script captures nothing when no guard uses the plain substitution'
@@ -104,6 +118,7 @@ trap 'rm -rf "$stub_dir"' EXIT
 # set, so gvim's provides arrive the way a wrapped terminal would emit them.
 cat >"$stub_dir/pacman" <<'STUB'
 #!/bin/bash
+printf '%s\n' "$*" >>"${PACMAN_CALLS:-/dev/null}"
 case "$1" in
 -Qq)
   printf '%s\n' bash gvim
@@ -150,15 +165,34 @@ assert_helper_agrees() {
 # vim, sh and xxd are provided rather than installed, and xxd only appears on a
 # wrapped continuation line; bash>=1 is a version constraint no set can answer.
 pkg_cases=("bash" "vim" "sh" "xxd" "absent" "bash vim" "bash absent" "bash>=1" "vim>=1" "")
+export PACMAN_CALLS="$stub_dir/pacman-calls"
 for helper in omarchy-pkg-present omarchy-pkg-missing; do
   for case in "${pkg_cases[@]}"; do
     read -r -a argv <<<"$case"
     assert_helper_agrees "guard prelude resolves packages as pacman does" "$helper" "${argv[@]}"
   done
 done
+# MCDC SW-REQ-260922-RGCV: pkg_presence_asked=T, shadow_matches_pacman=T => TRUE
 pass "guard prelude resolves packages through provides, wrapping, and constraints as pacman does"
 
+# The parity above holds because both sides read the same pacman. A pacman
+# whose -Qq/-Qi inventory drops an installed package leaves the shadow
+# disagreeing with -Q -- which is exactly the drift the parity assertion
+# exists to catch, so prove the assertion can fail.
+broken_dir=$(mktemp -d)
+trap 'rm -rf "$stub_dir" "$broken_dir"' EXIT
+printf '#!/bin/bash\ncase "$1" in -Q) exit 0 ;; *) exit 0 ;; esac\n' >"$broken_dir/pacman"
+chmod +x "$broken_dir/pacman"
+b_real=0 b_shadowed=0
+PATH="$broken_dir:$PATH" "$ROOT/bin/omarchy-pkg-present" bash >/dev/null 2>&1 || b_real=$?
+PATH="$broken_dir:$PATH" PACMAN_CALLS=/dev/null bash -c "$guard_prelude"$'\n'"omarchy-pkg-present bash" >/dev/null 2>&1 || b_shadowed=$?
+[[ $b_real -eq 0 && $b_shadowed -eq 1 ]] ||
+  fail "a shadow built from a stale inventory disagrees with pacman -Q" "real=$b_real shadowed=$b_shadowed"
+# MCDC SW-REQ-260922-RGCV: pkg_presence_asked=T, shadow_matches_pacman=F => FALSE
+pass "package parity fails when the shadow inventory misses what pacman -Q resolves"
+
 # cd is a shell builtin `command -v` finds and a PATH search does not.
+: >"$PACMAN_CALLS"
 cmd_cases=("gvim" "cd" "absent" "gvim absent" "gvim cd" "")
 for helper in omarchy-cmd-present omarchy-cmd-missing; do
   for case in "${cmd_cases[@]}"; do
@@ -167,6 +201,13 @@ for helper in omarchy-cmd-present omarchy-cmd-missing; do
   done
 done
 pass "guard prelude resolves commands as omarchy-cmd-present and omarchy-cmd-missing do"
+# The prelude snapshots the package inventory up front, so -Qq/-Qi lines are
+# expected; what command presence must never issue is a -Q package query.
+if command grep -q '^-Q ' "$PACMAN_CALLS"; then
+  fail "command presence never asks pacman" "calls: $(cat "$PACMAN_CALLS")"
+fi
+# MCDC SW-REQ-260922-RGCV: pkg_presence_asked=F, shadow_matches_pacman=F => TRUE [no-action: the pacman stub call log across the command-presence loop holds only -Qq/-Qi inventory snapshots -- zero package queries]
+pass "command presence never asks pacman"
 
 # A reader is replaced by what it printed, which has to compare identically to
 # the substitution it stood in for -- including the trailing newline $() drops.
@@ -228,7 +269,9 @@ assert_themes_guard_agrees() {
   local guarded=0 updated=0
 
   HOME="$home" PATH="$ROOT/bin:$PATH" bash -e -c "{ $themes_guard; } >/dev/null 2>&1" || guarded=$?
-  [[ -n $(HOME="$home" PATH="$ROOT/bin:$stub_dir:$PATH" "$ROOT/bin/omarchy-theme-update" 2>/dev/null) ]] || updated=1
+  # bash explicitly, not the shebang: the script needs bash 4 mapfile and the
+  # host's /bin/bash can be older (macOS ships 3.2; Arch, the target, ships 5).
+  [[ -n $(HOME="$home" PATH="$ROOT/bin:$stub_dir:$PATH" bash "$ROOT/bin/omarchy-theme-update" 2>/dev/null) ]] || updated=1
   ((guarded == expected)) || fail "$description" "$home: guard=$guarded expected=$expected"
   ((updated == expected)) || fail "$description" "$home: update=$updated expected=$expected"
 }
@@ -252,7 +295,20 @@ for shape in missing:1 empty:1 copied:1 cloned:0 linked:1 worktree:1; do
     "Extra Themes shows exactly when omarchy-theme-update has something to pull" \
     "$themes_home/${shape%:*}" "${shape#*:}"
 done
+# MCDC SYS-REQ-260922-47T8: guards_evaluated=T, system_state_reflected=T => TRUE
 pass "Extra Themes shows exactly when omarchy-theme-update has something to pull"
+
+# And the violation arm is drivable: evaluate the same guard with its reader
+# off PATH. The capture comes back empty, the guard hides the row, and the
+# clone on disk says it should show -- the answer no longer reflects the
+# system. `command -v bash` first: the stripped PATH must still find a bash 4.
+bash4=$(command -v bash)
+no_reader=0
+HOME="$themes_home/cloned" PATH="$stub_dir:/usr/bin:/bin" "$bash4" -e -c "{ $themes_guard; } >/dev/null 2>&1" || no_reader=$?
+[[ $no_reader -ne 0 ]] ||
+  fail "guard hides Extra Themes when its reader cannot run" "guard=$no_reader want=nonzero (hidden) over a cloned theme"
+# MCDC SYS-REQ-260922-47T8: guards_evaluated=T, system_state_reflected=F => FALSE
+pass "guard batch reflects nothing when its reader cannot run"
 
 # Which themes get pulled, not just that something did: a name with a space in
 # it is the one that goes missing the moment a path is split rather than passed
@@ -270,7 +326,7 @@ pass "omarchy-theme-extras lists every clone and nothing else"
 git_calls=$(mktemp)
 trap 'rm -rf "$stub_dir" "$themes_home" "$git_calls"' EXIT
 HOME="$themes_home/many" LC_ALL=C GIT_CALLS="$git_calls" PATH="$ROOT/bin:$stub_dir:$PATH" \
-  "$ROOT/bin/omarchy-theme-update" >/dev/null 2>&1
+  bash "$ROOT/bin/omarchy-theme-update" >/dev/null 2>&1
 pulled=$(<"$git_calls")
 [[ $pulled == "<-C><$many/tokyo night><pull>"$'\n'"<-C><$many/zen><pull>" ]] ||
   fail "omarchy-theme-update pulls each clone by its whole path" "got: $pulled"
