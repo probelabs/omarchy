@@ -63,6 +63,8 @@ run_dmenu() {
 FAKE_ANSWER=selection
 FAKE_SELECTION=$(printf 'Brave\tbrowser')
 run_dmenu omarchy-menu-select "Pick a browser" Brave Firefox Zen -- --width 520 --maxheight 520
+# SW-REQ-260922-MP00:error_handling:nominal
+# SW-REQ-260922-B839:error_handling:negative
 [[ $STATUS -eq 0 ]] || fail "menu select exits zero on a pick" "status: $STATUS err: $ERR"
 [[ $OUT == "$FAKE_SELECTION" ]] || fail "menu select prints the answer file" "out: $OUT"
 printf '%s' "$PAYLOAD" | jq -e '
@@ -105,6 +107,8 @@ pass "menu select closes silently with exit one on a dismissal"
 FAKE_ANSWER=selection
 run_dmenu omarchy-menu-select "Pick a browser"
 [[ $STATUS -eq 1 ]] || fail "menu select without options exits one" "status: $STATUS"
+# SW-REQ-260922-B839:error_handling:nominal
+# SW-REQ-260922-MP00:error_handling:negative
 [[ $ERR == "Usage: omarchy-menu-select <prompt> [option...] [-- menu args...]" ]] ||
   fail "menu select without options prints usage" "err: $ERR"
 [[ -z $PAYLOAD ]] || fail "menu select without options never summons" "payload: $PAYLOAD"

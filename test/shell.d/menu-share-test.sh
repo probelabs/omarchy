@@ -78,6 +78,7 @@ send_line=$(grep '^systemd-run ' <<<"$CALLS" || true)
 [[ $send_line == *"localsend --headless send "* ]] ||
   fail "menu share clipboard sends through a detached localsend" "calls: $CALLS"
 sent_file="${send_line##*send }"
+# SW-REQ-260922-8ERH:error_handling:nominal
 [[ -f $sent_file && $(cat "$sent_file") == "clip contents" ]] ||
   fail "menu share clipboard saves the clipboard to the temp file it sends" "file: $sent_file"
 # MCDC SW-REQ-260922-8ERH: clipboard_saved_to_temp=T, send_detached=T, share_clipboard=T => TRUE
@@ -94,6 +95,7 @@ send_line=$(grep '^systemd-run ' <<<"$CALLS" || true)
 [[ $send_line == *"localsend --headless send "* ]] ||
   fail "menu share clipboard still sends when the paste fails" "calls: $CALLS"
 sent_file="${send_line##*send }"
+# SW-REQ-260922-8ERH:error_handling:negative
 [[ -f $sent_file && ! -s $sent_file ]] ||
   fail "menu share clipboard sends an empty temp file when the paste fails" "file: $sent_file"
 # MCDC SW-REQ-260922-8ERH: clipboard_saved_to_temp=F, send_detached=T, share_clipboard=T => FALSE
@@ -114,6 +116,7 @@ pass "menu share file skips the clipboard path"
 FAKE_CHOOSER=fail
 run_share file
 [[ $STATUS -eq 1 ]] || fail "menu share exits one when the chooser fails" "status: $STATUS"
+# SW-REQ-260922-JREH:error_handling:nominal
 [[ $CALLS == *"notification: -g  -u critical Could not share The file chooser did not open"* ]] ||
   fail "menu share notifies critically when the chooser fails" "calls: $CALLS"
 # MCDC SW-REQ-260922-JREH: chooser_failed=T, critical_notification_exit_one=T => TRUE
@@ -125,6 +128,7 @@ pass "menu share reports a failed chooser critically"
 FAKE_CHOOSER=cancel
 run_share file
 [[ $STATUS -eq 0 ]] || fail "menu share exits zero on a cancelled chooser" "status: $STATUS"
+# SW-REQ-260922-JREH:error_handling:negative
 [[ $CALLS != *"notification"* && $CALLS != *"systemd-run"* ]] ||
   fail "menu share does nothing on a cancelled chooser" "calls: $CALLS"
 # MCDC SW-REQ-260922-JREH: chooser_failed=F, critical_notification_exit_one=F => TRUE [no-action: the spy log shows zero notification calls -- a cancel is not a failure]

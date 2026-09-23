@@ -40,6 +40,7 @@ mapfile -t shutdown < <(grep -E '^(pkill|timeout) ' "$call_log")
   fail "system lock waits for ttfx to exit" "calls: ${shutdown[*]}"
 [[ ${shutdown[2]} == "pkill -f [o]rg.omarchy.screensaver" ]] ||
   fail "system lock closes the screensaver terminal after ttfx exits" "calls: ${shutdown[*]}"
+# SW-REQ-260912-MXQG:error_handling:nominal
 grep -q '^omarchy-shell lock lock$' "$call_log" ||
   fail "system lock engages the session lock through the shell IPC" "calls: $(cat "$call_log")"
 grep -q '^hyprctl switchxkblayout all 0$' "$call_log" ||
@@ -78,6 +79,7 @@ PATH="$mock_bin_pk:$PATH" CALL_LOG="$call_log_pk" "$ROOT/bin/omarchy-system-lock
 # MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=F, session_lock_engaged=T, user_lock_requested=T => FALSE
 grep -q '^pkill -x ttfx$' "$call_log_pk" ||
   fail "system lock still attempts the ttfx stop when the signal cannot land" "calls: $(cat "$call_log_pk")"
+# SW-REQ-260912-MXQG:error_handling:negative
 grep -q '^timeout 1s pidwait -x ttfx$' "$call_log_pk" ||
   fail "system lock keeps the ttfx wait inside the 1s bound when the signal fails" "calls: $(cat "$call_log_pk")"
 grep -q '^omarchy-shell lock lock$' "$call_log_pk" ||

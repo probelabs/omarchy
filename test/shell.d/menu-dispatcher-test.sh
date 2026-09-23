@@ -43,6 +43,9 @@ run_menu() {
 # A known verb reaches the omarchy.menu plugin over IPC with the route as a
 # JSON payload. The default verb is toggle at root.
 run_menu
+# SW-REQ-260922-T257:error_handling:nominal
+# SW-REQ-260922-SNZG:error_handling:negative
+# STK-REQ-260922-XTNR:nominal:nominal
 [[ $STATUS -eq 0 ]] || fail "menu default invocation exits zero" "status: $STATUS err: $ERR"
 [[ $CALLS == "shell toggle omarchy.menu {\"menu\":\"root\"}" ]] ||
   fail "menu default invocation toggles the menu plugin at root" "calls: $CALLS"
@@ -74,6 +77,9 @@ pass "menu dispatcher help reaches no IPC"
 
 # An unknown verb is a diagnostic on stderr and exit 2, with zero IPC calls.
 run_menu bogus-verb
+# SW-REQ-260922-SNZG:error_handling:nominal
+# SW-REQ-260922-T257:error_handling:negative
+# SYS-REQ-260922-J0AN:error_handling:negative
 [[ $STATUS -eq 2 ]] || fail "menu unknown verb exits two" "status: $STATUS"
 [[ $ERR == "omarchy-menu: unknown verb 'bogus-verb'. Try 'omarchy menu --help'." ]] ||
   fail "menu unknown verb prints a diagnostic" "err: $ERR"

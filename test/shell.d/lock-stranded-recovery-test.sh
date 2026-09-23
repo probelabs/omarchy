@@ -16,6 +16,7 @@ const fs = require('fs')
 const serviceQml = fs.readFileSync(path.join(root, 'shell/plugins/lock/Service.qml'), 'utf8')
 
 // The compositor holds the lock past its client, so a fresh shell must retake it.
+// SW-REQ-260912-WJYM:error_handling:nominal
 assert(
   /Component\.onCompleted:[\s\S]*checkStrandedLock\(\)/.test(serviceQml),
   'the lock service asks the compositor whether the session is locked at startup'
@@ -27,6 +28,7 @@ assert(
 )
 
 // "No output to read" taken for "unlocked" leaves the failsafe up for good.
+// SW-REQ-260912-WJYM:error_handling:negative
 assert(
   /onExited: function\(exitCode\) \{[\s\S]*if \(exitCode === 2\) return/.test(serviceQml),
   'an undetermined answer never resolves the check'

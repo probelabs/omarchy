@@ -175,7 +175,8 @@ export PACMAN_CALLS="$stub_dir/pacman-calls"
 for helper in omarchy-pkg-present omarchy-pkg-missing; do
   for case in "${pkg_cases[@]}"; do
     read -r -a argv <<<"$case"
-    assert_helper_agrees "guard prelude resolves packages as pacman does" "$helper" "${argv[@]}"
+        # SW-REQ-260922-RGCV:error_handling:nominal
+assert_helper_agrees "guard prelude resolves packages as pacman does" "$helper" "${argv[@]}"
   done
 done
 # MCDC SW-REQ-260922-RGCV: pkg_presence_asked=T, shadow_matches_pacman=T => TRUE
@@ -192,6 +193,7 @@ chmod +x "$broken_dir/pacman"
 b_real=0 b_shadowed=0
 PATH="$broken_dir:$PATH" "$ROOT/bin/omarchy-pkg-present" bash >/dev/null 2>&1 || b_real=$?
 PATH="$broken_dir:$PATH" PACMAN_CALLS=/dev/null "$TEST_BASH" -c "$guard_prelude"$'\n'"omarchy-pkg-present bash" >/dev/null 2>&1 || b_shadowed=$?
+# SW-REQ-260922-RGCV:error_handling:negative
 [[ $b_real -eq 0 && $b_shadowed -eq 1 ]] ||
   fail "a shadow built from a stale inventory disagrees with pacman -Q" "real=$b_real shadowed=$b_shadowed"
 # MCDC SW-REQ-260922-RGCV: pkg_presence_asked=T, shadow_matches_pacman=F => FALSE

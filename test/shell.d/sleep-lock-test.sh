@@ -106,6 +106,8 @@ mock_clamshell 2
 
 run_sleep_lock 4000
 
+# SW-REQ-260912-H2YF:error_handling:negative
+# STK-REQ-260912-XJ5D:nominal:nominal
 (( exit_status == 0 )) ||
   fail "sleep lock succeeds once the session reports secure" "exit: $exit_status"
 # MCDC SYS-REQ-260912-HC86: lock_requested_first=T, session_secure=T, suspend_imminent=T, unsecured_suspend_reported=F => TRUE
@@ -144,6 +146,8 @@ mock_clamshell
 
 run_sleep_lock 1500
 
+# SW-REQ-260912-H2YF:error_handling:nominal
+# SYS-REQ-260912-HC86:error_handling:negative
 (( exit_status != 0 )) ||
   fail "sleep lock reports failure when the session never secures"
 # MCDC SW-REQ-260912-H2YF: budget_expired_without_secure=T, exit_failure=T, unsecured_reported=T => TRUE
@@ -385,6 +389,7 @@ for bad_budget in not-a-number 99999999; do
   run_sleep_lock "$bad_budget"
 
   # MCDC SW-REQ-260912-FAWV: budget_bounded=T, budget_fallback_on_invalid=T, suspend_imminent=T => TRUE
+  # SW-REQ-260912-FAWV:boundary:nominal
   (( elapsed_us > 3000000 && elapsed_us <= 7000000 )) ||
     fail "sleep lock ignores an out-of-contract budget argument" \
       "budget: $bad_budget elapsed: ${elapsed_us}us"

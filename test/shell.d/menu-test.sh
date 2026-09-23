@@ -58,6 +58,7 @@ const parsed = menu.parseMenuJsonc(`
 
 // MCDC SW-REQ-260922-E4J2: items_parsed=T, jsonc_has_comments_or_commas=T => TRUE
 // MCDC SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=F, parse_error_raised=F => TRUE [no-action: the valid JSONC parses to its items -- the invalid path is not taken]
+// SW-REQ-260922-3T3F:error_handling:nominal
 assertEqual(parsed.length, 3, 'menu parses JSONC with comments and trailing commas')
 // MCDC SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=T => TRUE
 assertDeepEqual(
@@ -85,11 +86,13 @@ assertDeepEqual(
 // Invalid input never throws and never yields items: comments present or
 // not, a broken document parses to an empty set.
 // MCDC SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=F => TRUE
+// SW-REQ-260922-3T3F:error_handling:negative
 assertEqual(menu.parseMenuJsonc('{broken').length, 0, 'menu parses invalid JSON to an empty item set without raising')
 // MCDC SW-REQ-260922-E4J2: items_parsed=F, jsonc_has_comments_or_commas=T => FALSE
 assertEqual(menu.parseMenuJsonc('{\n// comment\n"items":').length, 0, 'menu parses broken JSONC with comments to an empty item set')
 // MCDC SW-REQ-260922-E4J2: items_parsed=F, jsonc_has_comments_or_commas=F => TRUE [no-action: empty input parses to zero items -- the JSONC handling parses nothing]
 // MCDC SW-REQ-260922-46HY: entry_shape_declared=F, kind_and_parent_inferred=F => TRUE [no-action: an empty item set declares zero entries -- nothing is normalized]
+// SW-REQ-260922-3T3F:boundary:nominal
 assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}').length, 0, 'menu parses empty input and an empty item set to zero entries')
 
 const user = [
