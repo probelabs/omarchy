@@ -623,13 +623,56 @@ assert(
   'menu filter changes disarm pointer selection'
 )
 assert(
-  /function setActiveMenu\(id, pushHistory, fromPointer\)[\s\S]*if \(fromPointer\) pointerGate\.allowInitialSample\(\)\s*else root\.disarmPointer\(\)/.test(menuQml),
+  /function setActiveMenu\(id, pushHistory, fromPointer, restoreSelection\)[\s\S]*if \(fromPointer\) pointerGate\.allowInitialSample\(\)\s*else root\.disarmPointer\(\)/.test(menuQml),
   'menu route changes only accept an initial pointer sample for mouse activation'
 )
 assert(
   /\(event\.key === Qt\.Key_Backspace \|\| event\.key === Qt\.Key_Left\) && !root\.filterText[\s\S]*root\.goBack\(\)/.test(menuQml),
   'menu Left key follows empty-filter Backspace navigation'
 )
+// Exercise the navigation functions with a small model. The selected row may
+// move while a submenu is open, so restoring its id matters more than its index.
+const vm = require('vm')
+// REVIEW-FIX (re-audit comment 1): extract each function independently and
+// fail loudly when absent -- the PR's single-regex extraction null-derefs on
+// trees carrying annotation comments between the two functions.
+const extractFn = (name) => {
+  const m = menuQml.match(new RegExp('  function ' + name + '\\([\\s\\S]*?\\n  \\}'))
+  assert(m !== null, 'menu-test can extract ' + name + ' from Menu.qml')
+  return m[0]
+}
+const navigationFunctions = extractFn('setActiveMenu') + '\n' + extractFn('goBack')
+const menuRows = {
+  root: [{ itemId: 'apps' }, { itemId: 'learn' }, { itemId: 'style' }],
+  style: [{ itemId: 'style.theme' }]
+}
+let visibleRows = menuRows.root
+const displayModel = {
+  get count() { return visibleRows.length },
+  get(index) { return visibleRows[index] }
+}
+const navRoot = {
+  activeMenu: 'root', navStack: [], selectedIndex: 2, filterText: '', cursorActive: true,
+  item(id) { return id === 'root' ? { parent: '' } : id === 'style' ? { parent: 'root' } : null },
+  rowSelectable(index) { return !!visibleRows[index] },
+  rebuildDisplay() {
+    visibleRows = menuRows[this.activeMenu]
+    this.selectedIndex = Math.min(this.selectedIndex, visibleRows.length - 1)
+  },
+  disarmPointer() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {}
+}
+const navigation = vm.runInNewContext(`(function() { ${navigationFunctions}; return { setActiveMenu, goBack }; })()`, {
+  root: navRoot, displayModel, panel: { freezeCardTop() {} }, pointerGate: { allowInitialSample() {} }
+})
+navRoot.setActiveMenu = navigation.setActiveMenu
+navRoot.goBack = navigation.goBack
+navRoot.setActiveMenu('style', true)
+navRoot.goBack()
+assertEqual(navRoot.selectedIndex, 2, 'menu Back restores the selected parent row')
+navRoot.setActiveMenu('style', true)
+menuRows.root = [{ itemId: 'style' }, { itemId: 'apps' }, { itemId: 'learn' }]
+navRoot.goBack()
+assertEqual(navRoot.selectedIndex, 0, 'menu Back follows the selected row after parent rows reorder')
 assert(
   /PointerMoveGate\s*\{[\s\S]*id: pointerGate[\s\S]*referenceItem: card[\s\S]*\}/.test(menuQml),
   'menu uses shared pointer movement gate in card coordinates'

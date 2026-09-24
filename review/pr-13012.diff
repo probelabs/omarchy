@@ -1,0 +1,103 @@
+diff --git a/shell/plugins/menu/Menu.qml b/shell/plugins/menu/Menu.qml
+index aa879c188fd..045c56f5fd0 100644
+--- a/shell/plugins/menu/Menu.qml
++++ b/shell/plugins/menu/Menu.qml
+@@ -726,17 +726,32 @@ Item {
+     root.rebuildDisplay()
+   }
+ 
+-  function setActiveMenu(id, pushHistory, fromPointer) {
++  function setActiveMenu(id, pushHistory, fromPointer, restoreSelection) {
+     panel.freezeCardTop()
+     if (!root.item(id)) id = "root"
+-    if (pushHistory && id !== root.activeMenu) root.navStack = root.navStack.concat([root.activeMenu])
++    if (pushHistory && id !== root.activeMenu) {
++      var selectedRow = root.selectedIndex >= 0 && root.selectedIndex < displayModel.count ? displayModel.get(root.selectedIndex) : null
++      root.navStack = root.navStack.concat([{
++        menu: root.activeMenu,
++        index: root.selectedIndex,
++        itemId: selectedRow ? selectedRow.itemId : ""
++      }])
++    }
+     root.activeMenu = id
+     root.filterText = ""
+-    root.selectedIndex = 0
++    root.selectedIndex = restoreSelection ? restoreSelection.index : 0
+     root.cursorActive = true
+     if (fromPointer) pointerGate.allowInitialSample()
+     else root.disarmPointer()
+     root.rebuildDisplay()
++    if (restoreSelection && restoreSelection.itemId) {
++      for (var i = 0; i < displayModel.count; i++) {
++        if (displayModel.get(i).itemId === restoreSelection.itemId && root.rowSelectable(i)) {
++          root.selectedIndex = i
++          break
++        }
++      }
++    }
+     root.invalidateVolatileProvider(id)
+     root.loadProviderForMenu(id)
+   }
+@@ -747,7 +762,7 @@ Item {
+     if (root.navStack.length > 0) {
+       var previous = root.navStack[root.navStack.length - 1]
+       root.navStack = root.navStack.slice(0, root.navStack.length - 1)
+-      root.setActiveMenu(previous, false)
++      root.setActiveMenu(previous.menu, false, false, previous)
+       return true
+     }
+ 
+diff --git a/test/shell.d/menu-test.sh b/test/shell.d/menu-test.sh
+index a424379b1af..ef8fda8879a 100644
+--- a/test/shell.d/menu-test.sh
++++ b/test/shell.d/menu-test.sh
+@@ -491,13 +491,48 @@ assert(
+   'menu filter changes disarm pointer selection'
+ )
+ assert(
+-  /function setActiveMenu\(id, pushHistory, fromPointer\)[\s\S]*if \(fromPointer\) pointerGate\.allowInitialSample\(\)\s*else root\.disarmPointer\(\)/.test(menuQml),
++  /function setActiveMenu\(id, pushHistory, fromPointer, restoreSelection\)[\s\S]*if \(fromPointer\) pointerGate\.allowInitialSample\(\)\s*else root\.disarmPointer\(\)/.test(menuQml),
+   'menu route changes only accept an initial pointer sample for mouse activation'
+ )
+ assert(
+   /\(event\.key === Qt\.Key_Backspace \|\| event\.key === Qt\.Key_Left\) && !root\.filterText[\s\S]*root\.goBack\(\)/.test(menuQml),
+   'menu Left key follows empty-filter Backspace navigation'
+ )
++// Exercise the navigation functions with a small model. The selected row may
++// move while a submenu is open, so restoring its id matters more than its index.
++const vm = require('vm')
++const navigationFunctions = menuQml.match(/  function setActiveMenu\([\s\S]*?\n  \}\n\n  function goBack\([\s\S]*?\n  \}/)[0]
++const menuRows = {
++  root: [{ itemId: 'apps' }, { itemId: 'learn' }, { itemId: 'style' }],
++  style: [{ itemId: 'style.theme' }]
++}
++let visibleRows = menuRows.root
++const displayModel = {
++  get count() { return visibleRows.length },
++  get(index) { return visibleRows[index] }
++}
++const navRoot = {
++  activeMenu: 'root', navStack: [], selectedIndex: 2, filterText: '', cursorActive: true,
++  item(id) { return id === 'root' ? { parent: '' } : id === 'style' ? { parent: 'root' } : null },
++  rowSelectable(index) { return !!visibleRows[index] },
++  rebuildDisplay() {
++    visibleRows = menuRows[this.activeMenu]
++    this.selectedIndex = Math.min(this.selectedIndex, visibleRows.length - 1)
++  },
++  disarmPointer() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {}
++}
++const navigation = vm.runInNewContext(`(function() { ${navigationFunctions}; return { setActiveMenu, goBack }; })()`, {
++  root: navRoot, displayModel, panel: { freezeCardTop() {} }, pointerGate: { allowInitialSample() {} }
++})
++navRoot.setActiveMenu = navigation.setActiveMenu
++navRoot.goBack = navigation.goBack
++navRoot.setActiveMenu('style', true)
++navRoot.goBack()
++assertEqual(navRoot.selectedIndex, 2, 'menu Back restores the selected parent row')
++navRoot.setActiveMenu('style', true)
++menuRows.root = [{ itemId: 'style' }, { itemId: 'apps' }, { itemId: 'learn' }]
++navRoot.goBack()
++assertEqual(navRoot.selectedIndex, 0, 'menu Back follows the selected row after parent rows reorder')
+ assert(
+   /PointerMoveGate\s*\{[\s\S]*id: pointerGate[\s\S]*referenceItem: card[\s\S]*\}/.test(menuQml),
+   'menu uses shared pointer movement gate in card coordinates'

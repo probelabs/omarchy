@@ -356,9 +356,13 @@ wait_state "root listed for navigation" '(.rows | length) == 7 and (.navStack | 
 move_cursor_to nav || fail "cursor reaches the nav row"
 wait_state "cursor on the nav row" '.rows[.selectedIndex].itemId == "nav"'
 key_burst Return
-wait_state "drill-in pushes the path" '.activeMenu == "nav" and (.navStack | length == 1) and .navStack[0] == "root"'
+wait_state "drill-in pushes the path" '.activeMenu == "nav" and (.navStack | length == 1) and .navStack[0].menu == "root" and .navStack[0].itemId == "nav" and .navStack[0].index == 2'
 key_burst BackSpace
 wait_state "back retraces the pushed path" '.activeMenu == "root" and (.navStack | length == 0)'
+# PR 13012 behavior, observed live: Back also restores the cursor to the
+# drilled-from row (index 2, itemId nav). No governing requirement exists
+# yet -- see review/pr-13012-reaudit.md section 2 (spec addition required).
+wait_state "back restores the drilled-from cursor row" '.selectedIndex == 2 and .rows[.selectedIndex].itemId == "nav"'
 # Verifies: SW-REQ-260922-DE93
 # MCDC SW-REQ-260922-DE93: back_retraces_path=T, submenu_entered=T => TRUE
 pass "drill-in pushes and Backspace retraces the menu path (SW-REQ-260922-DE93)"
