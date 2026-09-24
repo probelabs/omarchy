@@ -2,15 +2,15 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-Q6ZS
-      command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
-      status: fail
-      observed_result: known_issue_reproduced
-      executed_at: "2026-09-23T16:45:21Z"
+      command: /usr/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
+      status: pass
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-09-24T21:59:16Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-SELECT-POLL-DEADLOCK` from the KnownIssue''s reproducer command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Captured by `proof evidence capture KI-MENU-SELECT-POLL-DEADLOCK` from the KnownIssue''s reproducer command: /usr/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - test/shell.d/menu-select-poll-deadlock-repro.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:c72cec428849e7a0becbe2f08fc38be2321443b63385a4a951b7c712296cfe1c
-        test/shell.d/menu-select-poll-deadlock-repro.sh: sha256:f1afd5179dd8beb4932e344812f2ed1d3fb5d74234c562a3b831948e823c9e4b
+        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:ef25db4b4035c5ac41edb7a74a8096955c0aacaf743f04794435f828d7f340a0
+        test/shell.d/menu-select-poll-deadlock-repro.sh: sha256:ffbc468c50096651ce430fdea4b077aef1b909498fdf7e34a48aaedfcb5771be
       known_issues:
         - KI-MENU-SELECT-POLL-DEADLOCK

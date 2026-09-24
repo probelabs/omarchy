@@ -90,7 +90,15 @@ payload=$(perl -MEncode=decode -MJSON::PP=encode_json,decode_json -e '
 
 omarchy-shell shell summon omarchy.menu "$payload" >/dev/null
 
+# Bounded wait: if the menu never writes the done file (peer died, or the
+# request was superseded without an answer), give up loudly instead of
+# polling forever. OMARCHY_MENU_SELECT_TIMEOUT overrides the 30s default.
+deadline=$((SECONDS + ${OMARCHY_MENU_SELECT_TIMEOUT:-30}))
 while [[ ! -e $done_file ]]; do
+  if (( SECONDS >= deadline )); then
+    echo "omarchy-menu-select: menu did not answer within ${OMARCHY_MENU_SELECT_TIMEOUT:-30}s (peer dead or request superseded); giving up" >&2
+    exit 1
+  fi
   sleep 0.05
 done
 

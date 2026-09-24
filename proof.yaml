@@ -153,7 +153,7 @@ project:
                     "$B" test/shell.d/menu-dmenu-test.sh;
                     "$B" test/shell.d/menu-timezone-test.sh;
                     "$B" test/shell.d/menu-share-test.sh;
-                    "$B" test/shell.d/menu-guards-test.sh;
+                    "$B" test/shell.d/menu-guards-test.sh; "$B" test/shell.d/menu-select-poll-deadlock-repro.sh;
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/menu-images-test.sh; else echo "SKIP menu-images-test.sh: requires Linux flock and /proc"; fi;
                     if command -v lua >/dev/null 2>&1; then "$B" test/shell.d/keybindings-menu-test.sh; else echo "SKIP keybindings-menu-test.sh: requires lua"; fi;
                     if find /dev/null -printf '' >/dev/null 2>&1; then "$B" test/shell.d/menu-file-test.sh; else echo "SKIP menu-file-test.sh: requires GNU find (-printf)"; fi

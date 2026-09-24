@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-Q6ZS, SW-REQ-260922-B839, SW-REQ-260922-MP00, SW-REQ-260922-9ABD, SW-REQ-260922-FGZQ, SW-REQ-260922-C8HX, SW-REQ-260922-3VTN, SYS-REQ-260922-X6Z5
+# Verifies: SW-REQ-260922-Q6ZS, SW-REQ-260922-B839, SW-REQ-260922-MP00, SW-REQ-260922-9ABD, SW-REQ-260922-FGZQ, SW-REQ-260922-C8HX, SW-REQ-260922-3VTN, SYS-REQ-260922-X6Z5, SW-REQ-260924-AK4Z
 #mcdc:ignore:defensive SW-REQ-260922-Q6ZS: payload_shape_correct=F, select_invoked=T => FALSE -- the payload is one deterministic perl encode ahead of the single summon; a malformed payload means perl died and set -e kills the script before any summon, so invoked-with-bad-shape is structural [reviewed: REVIEW-M2]
 #mcdc:ignore:defensive SW-REQ-260922-B839: no_options_given=T, usage_error_exit_one=F => FALSE -- both empty-option paths (argv and stdin mapfile) fall through to the same unconditional usage+exit 1 [reviewed: REVIEW-M2]
 #mcdc:ignore:defensive SW-REQ-260922-MP00: answer_file_written=T, selection_printed=F => FALSE -- the only read of the answer file is `[[ -s $selection_file ]] && cat`; a non-empty answer is always printed [reviewed: REVIEW-M2]
@@ -81,6 +81,7 @@ printf '%s' "$PAYLOAD" | jq -e '
 # MCDC SW-REQ-260922-MP00: answer_file_written=T, selection_printed=T => TRUE
 # MCDC SW-REQ-260922-FGZQ: finish_requested=T, selection_and_done_written=T => TRUE
 # MCDC SW-REQ-260922-9ABD: empty_selection=F, exit_one_on_empty=F => TRUE [no-action: the run exits zero with its selection printed -- the empty-selection path is not taken]
+# MCDC SW-REQ-260924-AK4Z: caller_exits_bounded=F, peer_unresponsive=F => TRUE [no-action: the stub answers every summon, so the deadline never engages -- no bounded-exit event occurs]
 # MCDC SW-REQ-260922-3VTN: menu_closes_silently=F, no_active_request=F => TRUE [no-action: the run answers its request -- the silent-close path is not taken while a request is active]
 # MCDC SW-REQ-260922-C8HX: done_only_written=F, finish_requested=T, prompt_dismissed=F => TRUE [no-action: the answered prompt writes both selection and done files -- the done-only dismissal path is not taken]
 # MCDC SW-REQ-260922-B839: no_options_given=F, usage_error_exit_one=F => TRUE [no-action: stderr is empty -- no usage error when options are given]

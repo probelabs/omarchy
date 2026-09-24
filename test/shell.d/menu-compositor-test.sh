@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-3JG5, SW-REQ-260922-4079, SW-REQ-260922-50RE, SW-REQ-260922-8CQ4, SW-REQ-260922-B757, SW-REQ-260922-DE93, SW-REQ-260922-NM45, SW-REQ-260922-Z48F, SYS-REQ-260922-P708
+# Verifies: SW-REQ-260922-3JG5, SW-REQ-260922-4079, SW-REQ-260922-50RE, SW-REQ-260922-8CQ4, SW-REQ-260922-B757, SW-REQ-260922-DE93, SW-REQ-260922-NM45, SW-REQ-260922-Z48F, SYS-REQ-260922-P708, SW-REQ-260924-CV8S, SW-REQ-260922-3VTN
 #
 # Compositor-bound menu behavior, driven end-to-end against a live shell:
 # real IPC summons (omarchy-shell shell summon omarchy.menu ...) and real key
@@ -445,6 +445,48 @@ for _ in {1..50}; do [[ -e $done2 ]] && break; sleep 0.1; done
 # Verifies: SW-REQ-260922-NM45
 # MCDC SW-REQ-260922-NM45: dmenu_option_picked=F, glyph_stripped=F, subtext_returned=F => TRUE [no-action: Escape cancels with only the done file touched -- no selection is produced]
 pass "dmenu cancel produces no selection (SW-REQ-260922-NM45)"
+
+# --------------------------------------------------- supersession (CV8S)
+# Verifies: SW-REQ-260924-CV8S
+#mcdc:ignore:defensive SW-REQ-260924-CV8S: prior_request_answered_as_cancelled=F, summon_supersedes_active_request=T => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set; a supersession that strands the earlier caller needs that call removed [reviewed: REVIEW-MC1]
+# MCDC SW-REQ-260924-CV8S: prior_request_answered_as_cancelled=F, summon_supersedes_active_request=F => TRUE [no-action: every dmenu summon above was answered or cancelled before the next arrived -- no supersession occurred]
+selA="$TMPDIR/selA"; doneA="$TMPDIR/doneA"
+payloadA=$(jq -nc --arg sf "$selA" --arg df "$doneA" \
+  '{mode:"select",prompt:"First",options:["A1","A2"],selectionFile:$sf,doneFile:$df}')
+reopen_menu "$payloadA" || fail_with_log "summon select A"
+wait_state "select A active and unanswered" '.mode == "select" and .rows[0].label == "A1"'
+[[ ! -e $doneA ]] || fail "A's done file must not exist while A is unanswered"
+
+# A second summon arrives while A is unanswered: open() must resolve A as
+# cancelled (done file only) before replacing it with B.
+selB="$TMPDIR/selB"; doneB="$TMPDIR/doneB"
+payloadB=$(jq -nc --arg sf "$selB" --arg df "$doneB" \
+  '{mode:"select",prompt:"Second",options:["B1"],selectionFile:$sf,doneFile:$df}')
+superseded=false
+for (( i = 0; i < 40; i++ )); do
+  out=$(shell_ipc shell summon omarchy.menu "$payloadB" 2>/dev/null || true)
+  if [[ $out == "ok" ]]; then superseded=true; break; fi
+  sleep 0.25
+done
+$superseded || fail "second summon is accepted while A is open"
+wait_state "B shows after superseding A" '.mode == "select" and .rows[0].label == "B1"'
+for _ in {1..50}; do [[ -e $doneA ]] && break; sleep 0.1; done
+# MCDC SW-REQ-260924-CV8S: prior_request_answered_as_cancelled=T, summon_supersedes_active_request=T => TRUE
+[[ -e $doneA && ! -s $selA ]] ||
+  fail "a superseded request is answered as cancelled (done file only, no selection)"
+pass "a superseded select request is answered as cancelled (SW-REQ-260924-CV8S)"
+
+# 3VTN regression guard: once B is answered, requestActive is false, and the
+# next open() must not write or truncate any file -- the new finishRequest
+# call stays conditional.
+key_burst Return
+for _ in {1..50}; do [[ -e $doneB ]] && break; sleep 0.1; done
+[[ -e $doneB ]] || fail "B answers normally after superseding A"
+before=$(ls "$TMPDIR"/done* 2>/dev/null | wc -l)
+reopen_menu '{"menu":"root"}' || fail_with_log "summon root after dmenu"
+after=$(ls "$TMPDIR"/done* 2>/dev/null | wc -l)
+[[ $before == "$after" ]] || fail "open() with no active request writes no done file"
+pass "open() with nothing active writes no done file (SW-REQ-260922-3VTN)"
 
 # ------------------------------------------------------------ fold: overflow
 reopen_menu '{"menu":"long"}' || fail_with_log "summon long menu"
