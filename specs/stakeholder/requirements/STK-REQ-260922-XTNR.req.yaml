@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: ""
-description: Users reach system actions, settings, and applications through the Omarchy menu; scripts pose picker and input prompts and read back the answer; menu rows reflect current system state (visibility guards, checkmarks, installed-dimmed rows) without stale or contradictory display.
+description: "Users reach system actions, settings, and applications through the Omarchy menu; scripts pose picker and input prompts and read back the answer; menu rows reflect current system state (visibility guards, checkmarks, installed-dimmed rows) without stale or contradictory display. Search ranking prefers launch targets over configuration actions for ambiguous queries: typing in the menu is overwhelmingly launch intent, so an installed application ranks above menu entries even when a menu entry matches the query better textually (issue #10340)."
 formalization_strategy: informal
 informal_verification:
     method: ""

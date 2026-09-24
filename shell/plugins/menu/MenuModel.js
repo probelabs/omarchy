@@ -349,6 +349,13 @@ function matchesQuery(entry, query, visible) {
   return true
 }
 
+// INVARIANT: APP_RANK_BIAS must exceed every match tier in searchScore
+// below (tiers currently top out at 80, the no-match floor) so the apps-first
+// policy holds ACROSS tiers while apps still sort by tier among themselves.
+// Adding a tier >= APP_RANK_BIAS silently breaks the policy -- keep tiers
+// below the bias or raise it. (Review comment, PR #12223 re-audit.)
+const APP_RANK_BIAS = 100
+
 // Implements: SW-REQ-260922-SJ7P
 function searchScore(items, entry, query) {
   var needle = String(query || "").toLowerCase().trim()
@@ -367,9 +374,11 @@ function searchScore(items, entry, query) {
   else if (descriptionTextMatches(needle, descriptionText)) score = 60
 
   if (entry.kind === "menu" || entry.kind === "link") score -= 2
-  // App rows sort after all menu items, so they lose the tiebreak below to an
-  // equal match. Outrank those, but stay inside the tier so better ones win.
-  if (entry.kind === "app") score -= 5
+  // Installed apps always rank above menu entries in search. Typing in the
+  // menu is overwhelmingly an intent to launch, so even a menu entry that
+  // matches the query better textually (Setup > Defaults > Editor > VSCode
+  // for "vsc") must not sit above the app itself.
+  if (entry.kind === "app") score -= APP_RANK_BIAS
 
   return score * 1000 + depthFor(items, entry.id) * 25 + entry.order
 }

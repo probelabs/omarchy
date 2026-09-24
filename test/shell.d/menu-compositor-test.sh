@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-3JG5, SW-REQ-260922-4079, SW-REQ-260922-50RE, SW-REQ-260922-8CQ4, SW-REQ-260922-B757, SW-REQ-260922-DE93, SW-REQ-260922-NM45, SW-REQ-260922-Z48F, SYS-REQ-260922-P708
+# Verifies: SW-REQ-260922-3JG5, SW-REQ-260922-4079, SW-REQ-260922-50RE, SW-REQ-260922-8CQ4, SW-REQ-260922-B757, SW-REQ-260922-DE93, SW-REQ-260922-NM45, SW-REQ-260922-Z48F, SYS-REQ-260922-P708, SW-REQ-260922-TKDP
 #
 # Compositor-bound menu behavior, driven end-to-end against a live shell:
 # real IPC summons (omarchy-shell shell summon omarchy.menu ...) and real key
@@ -192,7 +192,7 @@ probe = anchor + """
       for (var i = 0; i < displayModel.count; i++) {
         var r = displayModel.get(i)
         rows.push({ index: i, itemId: r.itemId, kind: r.kind, disabled: r.disabled,
-                    label: r.label, detail: r.detail, appId: r.appId })
+                    label: r.label, detail: r.detail, appId: r.appId, section: r.section })
       }
       return JSON.stringify({
         opened: root.opened, mode: root.mode, activeMenu: root.activeMenu,
@@ -466,6 +466,31 @@ jq -e '
 # Verifies: SW-REQ-260922-B757
 # MCDC SW-REQ-260922-B757: fold_signals_more=T, rows_overflow=T => TRUE
 pass "overflowing rows end mid-row under the panel ceiling (SW-REQ-260922-B757)"
+
+# ------------------------------------------- search sections: one divider
+# Verifies: SW-REQ-260922-TKDP
+# Query "a" matches all three groups in the fixture: the proof-fake app,
+# current-menu rows (Apps/Act/Nav/AllD), and deeper rows (Leaf, Last, GA).
+# The list must render exactly ONE divider boundary: app rows pinned first,
+# then current-menu rows, then deeper rows (the issue-10340 policy).
+# MCDC SW-REQ-260922-TKDP: matches_span_menus=T, sections_divided=T => TRUE
+reopen_menu '{"menu":"root"}' || fail_with_log "summon root for the divider witness"
+wait_state "root listed for the divider witness" '.rows | length == 7'
+key_burst a
+wait_state "app row arrives from the provider" '[.rows[] | select(.kind == "app")] | length >= 1' 120
+jq -e '
+  .rows as $r |
+  ($r[0].kind == "app") and
+  ([range(1; ($r | length)) |
+    select((($r[. - 1].section // "") != "drilldown") and
+           (($r[.].section // "") == "drilldown"))] | length) == 1 and
+  ([$r[] | select(.kind == "app")] | length) >= 1 and
+  ([$r[] | select(.kind != "app")] | length) >= 2
+' <<<"$LAST_STATE" >/dev/null ||
+  { jq '{rows: [.rows[] | {itemId, kind, section}]}' <<<"$LAST_STATE" >&2;     fail "apps + current + deeper rows render exactly one divider boundary"; }
+# Verifies: SW-REQ-260922-TKDP
+# MCDC SW-REQ-260922-TKDP: matches_span_menus=T, sections_divided=T => TRUE (duplicate witness of the menu-test.sh regex row; live, with provider rows)
+pass "apps-first search renders exactly one divider boundary (SW-REQ-260922-TKDP)"
 
 # ------------------------------------------------------- guard batch discard
 # Complete set #1: grd.ga visible, grd.gb hidden.
