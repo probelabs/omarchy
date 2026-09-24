@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-J0AN
 component: menu
-rationale: Menu.qml foldedListHeight lines 167-179, availableRowsHeight lines 154-162, rowListHeight/dmenuRowListHeight lines 181-216; comments at 150-166 state the intent.
+rationale: "Menu.qml foldedListHeight lines 180-194, availableRowsHeight lines 166-178, rowListHeight/dmenuRowListHeight lines 196-234; comments at 162-165 state the intent. Fold cost is linear in row count: one walk per finished model (see SW-REQ-260924-84E4, issue #10601)."
 tags: []
 variables: []
 traces:

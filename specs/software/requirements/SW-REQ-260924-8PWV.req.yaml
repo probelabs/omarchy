@@ -1,0 +1,34 @@
+id: SW-REQ-260924-8PWV
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when display_model_mutated the menu_layout shall always satisfy layout_serial_bumped_before_exit
+description: Every displayModel mutation (row appends in rebuildDisplay and rebuildDmenuDisplay, and the clear-with-rows-not-loaded early return) ends with a layoutSerial bump before the function exits, so height bindings re-evaluate exactly once per finished model rather than once per appended row.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-J0AN
+component: menu
+rationale: "Menu.qml: rebuildDisplay bumps layoutSerial after its append loop (line 729) and in the !rowsLoaded early return (line 665, comment at 662-663); rebuildDmenuDisplay bumps in the mode==input early return (line 606) and after its append loop (line 642). Every mutation path exits through a bump (issue #10601)."
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-J0AN
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: false
+history:
+    created_by: human:Leonid Bugaev
+    created_at: "2026-09-24T22:18:36Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-24T22:18:36Z"
