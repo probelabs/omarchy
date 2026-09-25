@@ -11,4 +11,8 @@ related_obligation_classes:
 stacks:
     - qml
     - bash
+related_known_issues:
+    - KI-MENU-SELECT-POLL-DEADLOCK
+related_residuals:
+    - L-MENU-001
 notes_path: proof/surfaces/threat-surface.md

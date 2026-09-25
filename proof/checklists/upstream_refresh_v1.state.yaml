@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T10:58:30Z"
+updated_at: "2026-09-25T11:01:04Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -41,6 +41,12 @@ steps:
         confirmed_at: "2026-09-25T08:51:32Z"
         confirmed_by: agent
         note: 'Studied Menu.qml open/finishRequest/openDmenu/openExistingMenu/cancel + bin/omarchy-menu-select + docs/menu.md. Findings in review/pr-9056-research-delta.md: requestActive lifecycle, finishRequest(null)=done-file-only cancelled answer, unbounded doneFile poll in omarchy-menu-select/input, pre-delta abandoned-request path into KI-MENU-SELECT-POLL-DEADLOCK; peer-death gap remains out of delta scope.'
+        scope_key: menu
+    residual:
+        status: confirmed
+        confirmed_at: "2026-09-25T11:01:04Z"
+        confirmed_by: agent
+        note: 'Theme residual delta dispositioned as L-MENU-001 (provisional_kill, low): concurrent-summon abandoned-caller angle parked under declared sample domain (both backends, open() as sole summon entry, 5 sample pairs), exclusions = deferred CRS-0017/C01 resultProc race + KI peer-death gap. Fix-sibling sweep: ImagePicker.qml is the only isomorphic request/done-file site and already carries the same mitigation shape (:211, cancel/closeSelector) — no sibling fix needed. Vector V-MENU-SUMMON-WHILE-ACTIVE linked to residual + KI; residual_kill_hygiene passes.'
         scope_key: menu
     skeleton-patch:
         status: confirmed
