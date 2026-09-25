@@ -1,0 +1,94 @@
+schema_version: 1
+campaign: upstream_refresh_v1
+delta: ce925cb1..baf7aaf0   # PR #9056, package: menu
+synthesized_by: agent:kimi-upstream-refresh
+synthesized_at: "2026-09-25"
+narrative: proof/surfaces/threat-surface.md
+
+surfaces:
+
+  - id: dmenu-select-ipc
+    kind: protocol
+    summary: >
+      File-handshake request/answer protocol between the bash callers
+      (bin/omarchy-menu-select, bin/omarchy-menu-input) and the Quickshell
+      plugin (shell/plugins/menu/Menu.qml requestActive / finishRequest).
+      The PR #9056 hunk (Menu.qml:32) adds the recover path for
+      summon-while-request-active: the prior request is answered as
+      cancelled (done file only, empty selection) before the new open
+      dispatches. This is the delta surface of the refresh.
+    entrypoints:
+      - bin/omarchy-menu-select
+      - bin/omarchy-menu-input
+      - shell/plugins/menu/Menu.qml (open, finishRequest, cancel, openDmenu)
+    error_posture: recover        # L1
+    boundaries: [request-issue, qml-state, fs-artifacts, bash-poll]   # L2
+    invariants:                   # L3
+      - "every issued select/input request eventually receives exactly one answer: a selection (done file + selection payload) or a cancellation (done file only, empty selection)"
+      - "cancel-before-open ordering: the prior request's answer is fully written before the new open mutates any shared path (SW-REQ-260925-XTGG, property/atomicity)"
+    equivalence_contract:         # L4 — hard gate for any relational oracle
+      version: 1
+      comparison_surface: "done-file answer kind (selection text vs cancelled-empty) plus menu-visible model content for a fixed summon/input sequence"
+      sanctioned_normalizations:
+        - "poll timing / done-file observation latency (caller-side sleep cadence is not semantics)"
+        - "temporary directory paths and pid-dependent file names"
+        - "compositor focus event ordering relative to the answer write (layer-shell delivery timing)"
+    oracle_families_armed:
+      - sequence-fuzzing (L8: idle -> active -> answered state machine; summon interleavings)
+      - conservation ledger asserts (L3: one answer per request, zero abandoned callers)
+      - metamorphic pairs (L7: summon;cancel;summon == summon for identical item lists)
+    oracle_families_blocked:
+      - crash oracles — DEAD on this recovery-posture surface (L1); the mitigation is defined as graceful cancellation
+      - differential compare — BLOCKED until Phase 2 runs the equivalence contract on the live shell (no alternative implementation exists; recorded expectations only)
+    candidate_vectors:
+      - V-MENU-SUMMON-WHILE-ACTIVE
+    ladder:
+      - {q: L1,  tag: domain_parameterized, answer: "recover: summon-while-active answers the prior request cancelled and continues (Menu.qml:32); invalid spawn args are ignored by the caller scripts; crash oracles are dead here"}
+      - {q: L2,  tag: universal, answer: "one-way transformation chain qml-state -> done/selection files -> bash read; no re-parse cycle, so fixpoint/idempotence families do not arm"}
+      - {q: L3,  tag: universal, answer: "conservation: exactly one answer per issued request; completeness: no reachable summon path leaves a caller polling forever (KI-MENU-SELECT-POLL-DEADLOCK tracks the residual peer-death gap)"}
+      - {q: L4,  tag: universal, answer: "equivalence_contract v1 above; defined BEFORE any relational oracle is armed"}
+      - {q: L5,  tag: domain_parameterized, answer: "no alternative implementation; recorded expectations live in test/shell.d/menu-select-poll-deadlock-repro.sh and the dmenu test suites"}
+      - {q: L6,  tag: domain_parameterized, answer: "valid input grammar: newline-separated dmenu item lines on stdin plus argv prompt/options; summon == spawning the caller script; invalid-superset degrades per L1 (recover)"}
+      - {q: L7,  tag: domain_parameterized, answer: "metamorphic: duplicate summon after cancel yields identical menu content; answer-after-cancel equals cancelled-empty regardless of subsequent user action"}
+      - {q: L8,  tag: universal, answer: "requestActive lifecycle idle->active->answered(cancelled|selected); sequence fuzzing over summon/cancel/select/peer-death interleavings is the armed family"}
+      - {q: L9,  tag: universal, answer: "findings governed by proof/known-issues ledger (KI-MENU-SELECT-POLL-DEADLOCK) and defect-claim sessions (CRS-0017..0031); intake gate is the claims lifecycle"}
+      - {q: L10, tag: domain_parameterized, answer: "environment-dependent: wayland vs X11 dmenu backends (openDmenu/openExistingMenu), compositor focus delivery, bash/flock/timeout availability; env-parameterized runs are Phase 2 (Linux)"}
+      - {q: L11, tag: domain_parameterized, answer: "resource bounds: doneFile poll is unbounded by design (caller has no timeout) — graceful-degradation assert AT the limit is exactly the KI reproducer; item-list size unbounded, no depth recursion"}
+      - {q: L12, tag: na, na_reason: "menu visual rendering is the only user-visible surface unregulated by spec; snapshot/determinism tiers for pixels are out of campaign scope (no rendering oracle exists in the harness)"}
+
+  - id: menu-jsonc-config
+    kind: parser
+    summary: >
+      JSONC menu-definition parsing via stripJsonc + JSON.parse in Menu.qml.
+      Not touched by the delta, but defect-review (CRS-0025) surfaced two
+      pre-existing strip edges that shape this surface's posture, so the row
+      is recorded here rather than re-discovered next campaign.
+    entrypoints:
+      - shell/plugins/menu/Menu.qml (stripJsonc, menu definition load)
+    error_posture: recover        # L1 — parse failure yields an empty menu, never a crash
+    boundaries: [parse, model]    # L2
+    equivalence_contract:         # L4
+      version: 1
+      comparison_surface: "parsed menu model (item list + structure) for a fixed config byte stream"
+      sanctioned_normalizations:
+        - "insignificant whitespace and formatting"
+        - "key ordering inside JSON objects"
+    oracle_families_armed:
+      - valid-subset-survives / invalid-superset-degrades (L6)
+    oracle_families_blocked:
+      - differential compare — no second JSONC parser in the component to diff against
+    candidate_vectors:
+      - V-MENU-JSONC-STRIP-EDGES
+    ladder:
+      - {q: L1,  tag: universal, answer: "recover: malformed config degrades to empty menu; crash oracles dead by posture"}
+      - {q: L2,  tag: universal, answer: "parse -> model only; the model is never serialized back, so no fixpoint cycle arms"}
+      - {q: L3,  tag: na, na_reason: "no conservation invariant over arbitrary config bytes beyond 'valid input survives'; covered by L6 family"}
+      - {q: L4,  tag: universal, answer: "equivalence_contract v1 above; relational oracles remain unarmed (single parser)"}
+      - {q: L5,  tag: na, na_reason: "no alternative implementation or recorded golden corpus exists for menu configs"}
+      - {q: L6,  tag: domain_parameterized, answer: "grammar: JSONC (JSON + // and block comments + trailing commas). Known strip edges from CRS-0025: comma-inside-string corruption and inline comments emptying the whole menu — deferred, PoC review/poc-jsonc-strip-edges.mjs"}
+      - {q: L7,  tag: domain_parameterized, answer: "metamorphic: adding/removing comments and trailing commas outside strings must not change the parsed model — this pair currently FAILS on the deferred edges, which is why they are claims, not theory"}
+      - {q: L8,  tag: na, na_reason: "parser is stateless per load; no object lifecycle"}
+      - {q: L9,  tag: universal, answer: "edges tracked as deferred claims CRS-0025/C01+C02 with a runnable PoC; promotion to KI is a Phase 2 decision"}
+      - {q: L10, tag: na, na_reason: "parsing is locale/tz/fs independent"}
+      - {q: L11, tag: na, na_reason: "config files are small operator-authored files; no depth/size limit is enforced or needed at current scale"}
+      - {q: L12, tag: na, na_reason: "config parse results are spec-regulated through the menu model requirements; no unregulated user-visible output"}

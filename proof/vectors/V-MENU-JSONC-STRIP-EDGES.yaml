@@ -1,0 +1,9 @@
+id: V-MENU-JSONC-STRIP-EDGES
+title: 'stripJsonc pre-existing edges: comma-in-string corruption, inline comments empty whole menu'
+description: 'Pre-existing parser surface (not delta). Deferred claims CRS-0025/C01+C02, reproduced by review/poc-jsonc-strip-edges.mjs. Hunt: characterize full edge set of the comment/trailing-comma stripper and decide KI vs residual in Phase 2.'
+priority: P2
+status: partial
+related_obligation_classes:
+    - malformed_input
+stacks:
+    - qml

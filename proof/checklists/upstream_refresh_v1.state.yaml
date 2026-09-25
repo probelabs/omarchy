@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T10:51:34Z"
+updated_at: "2026-09-25T10:58:30Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -60,6 +60,16 @@ steps:
         confirmed_by: agent
         note: 'Re-ran surfaces extract/matrix/check/gap-queue: 0 surfaces (no surfaces packages configured in proof.yaml; ledger empty by configuration). Delta adds NO new surface - the summon-cancels-prior-request path reuses the existing summon IPC entry (open(payloadJson)) and the existing doneFile/selectionFile filesystem protocol; no new IPC verb, file, or env input. surface_coverage OK, 0 GAP items. Nothing to close.'
         scope_key: menu
+    threat_surface_synthesis:
+        status: confirmed
+        confirmed_at: "2026-09-25T10:58:30Z"
+        confirmed_by: agent
+        note: 'Wrote proof/surfaces/threat-surface.yaml (schema_version 1) + narrative .md: 12-question ladder answered for dmenu-select-ipc (delta surface; L1=recover, L4 equivalence contract v1 defined before relational oracles; crash/differential families recorded as blocked) and menu-jsonc-config (pre-existing parser, CRS-0025 edges). Candidate vectors V-MENU-SUMMON-WHILE-ACTIVE (P1, partial — residual resultProc race to Phase-2 live PoC) and V-MENU-JSONC-STRIP-EDGES (P2, partial) created; spec_lint_threat_surface_present, vector_campaign_hygiene, unresearched_p0_vectors all pass.'
+        scope_key: menu
+        check_results:
+            - id: spec_lint_threat_surface_present
+              status: pass
+              at: "2026-09-25T10:58:30Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-25T09:10:25Z"

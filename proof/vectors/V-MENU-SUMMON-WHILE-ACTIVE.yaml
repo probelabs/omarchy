@@ -1,0 +1,14 @@
+id: V-MENU-SUMMON-WHILE-ACTIVE
+title: 'Summon-while-request-active: repeated/hostile summon IPC interleaved with an in-flight dmenu request'
+description: 'Delta surface of PR#9056 (Menu.qml:32): hunt any interleaving that still abandons a polling caller or answers one request twice. Static hunt executed via claims sessions CRS-0017/0018 (4 dismissed, 1 deferred): surviving residual race is resultProc busy dropping a finishRequest answer mid-write (QML Process ignores command changes while running, Menu.qml:1067-1072) — needs live-harness PoC in Phase 2 (Linux) before KI-promotion or residual kill.'
+priority: P1
+status: partial
+axes:
+    - control-plane
+related_obligation_classes:
+    - concurrent
+    - atomicity
+stacks:
+    - qml
+    - bash
+notes_path: proof/surfaces/threat-surface.md
