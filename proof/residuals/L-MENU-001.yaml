@@ -1,10 +1,10 @@
 id: L-MENU-001
 title: Concurrent-summon abandoned-caller angle residual after PR#9056 cancel-prior guard
-description: 'Theme residual delta for hazard classes concurrent+atomicity (XTGG). Fix-sibling sweep 2026-09-25: the only isomorphic request/done-file site, shell/plugins/image-picker/ImagePicker.qml, ALREADY carries the same mitigation shape (openSelector finishes the prior doneFile before re-arming, :211; cancel()/closeSelector() finishDoneFile too) — no sibling fix needed. Reopen if the Phase-2 live harness reaches the resultProc busy-drop (promote to KI) or a new summon entry bypasses open().'
+description: 'Theme residual delta for hazard classes concurrent+atomicity (XTGG). Fix-sibling sweep 2026-09-25: the only isomorphic request/done-file site, shell/plugins/image-picker/ImagePicker.qml, ALREADY carries the same mitigation shape (openSelector finishes the prior doneFile before re-arming, :211; cancel()/closeSelector() finishDoneFile too) — no sibling fix needed. Reopen if a new summon entry bypasses open(). The resultProc busy-drop angle is CLOSED: the Phase-2 live harness ran 2026-09-25 and refuted it (CRS-0017/C01 dismissed: 0/20 same-turn drops, 20/20 real callers answered; regression witness pinned in test/shell.d/menu-compositor-test.sh).'
 status: provisional_kill
 severity: low
-kill_number: 0 abandoned-caller interleavings reachable in 50 attacked claims (48 dismissed with refutations, 2 declared exclusions); 15/15 fold-complete sessions
-kill_domain: 'Summon-while-request-active interleavings reaching Menu.qml open() (the single summon entry; openDmenu/openExistingMenu dispatch only after the :32 guard) on both dmenu backends (wayland 1072-1073, X11 1094-1095); caller side bin/omarchy-menu-select|input done-file poll. Excludes: (a) resultProc busy-drop race (deferred claim CRS-0017/C01, Phase-2 live PoC), (b) compositor peer-death (KI-MENU-SELECT-POLL-DEADLOCK)'
+kill_number: 0 abandoned-caller interleavings reachable in 50 attacked claims (49 dismissed with refutations incl. CRS-0017/C01 refuted live in Phase 2, 1 declared exclusion); 15/15 fold-complete sessions
+kill_domain: 'Summon-while-request-active interleavings reaching Menu.qml open() (the single summon entry; openDmenu/openExistingMenu dispatch only after the :32 guard) on both dmenu backends (wayland 1072-1073, X11 1094-1095); caller side bin/omarchy-menu-select|input done-file poll. Excludes: compositor peer-death (KI-MENU-SELECT-POLL-DEADLOCK). Former exclusion (a), the resultProc busy-drop race, is lifted: refuted by the Phase-2 live witness 2026-09-25 (CRS-0017/C01 dismissed).'
 sample_table:
     - pair: summon_during_active_select
       notes: wayland
@@ -16,7 +16,7 @@ sample_table:
       notes: wayland
     - pair: resummon_new_donefile
       notes: x11
-kill_method: analytic (spec+code inspection) + defect-claims sessions CRS-0017..0031 + KI reproducer
+kill_method: analytic (spec+code inspection) + defect-claims sessions CRS-0017..0031 + KI reproducer + Phase-2 live-harness witness (menu-compositor-test.sh CRS-0017/C01, N=20+20 trials)
 related_known_issues:
     - KI-MENU-SELECT-POLL-DEADLOCK
 source_vector: V-MENU-SUMMON-WHILE-ACTIVE

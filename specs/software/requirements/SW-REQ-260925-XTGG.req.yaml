@@ -79,4 +79,4 @@ defect_review:
     via: agent-review
     counts:
         emitted: 5
-        dismissed: 4
+        dismissed: 5

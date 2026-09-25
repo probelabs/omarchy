@@ -10,7 +10,9 @@ set -euo pipefail
 # observed through a read-only IpcHandler the test injects into its private
 # copy of shell/plugins/menu/Menu.qml (the shipped tree is never modified;
 # the probe only reads state and calls the product's own refresh /
-# evaluateGuards, the same functions the lifecycle and file watcher call).
+# evaluateGuards, the same functions the lifecycle and file watcher call;
+# the CRS-0017/C01 witness below additionally drives the product's own open /
+# cancel entries through the probe for deterministic race timing).
 # Defensive dispositions below cover the guarantee-violation rows whose
 # assignments are structurally unreachable in the shipped code.
 #mcdc:ignore:defensive SW-REQ-260922-3JG5: all_rows_disabled=T, no_cursor_parked=F => FALSE -- settleCursor sets cursorActive from nextSelectable, which returns -1 exactly when every row is disabled; a parked cursor with all rows disabled needs that assignment removed [reviewed: REVIEW-MC1]
@@ -26,7 +28,7 @@ set -euo pipefail
 #mcdc:ignore:defensive SW-REQ-260922-NM45: dmenu_option_picked=T, glyph_stripped=T, subtext_returned=F => FALSE -- a subtext-bearing pick returns label + TAB + detail unconditionally; dropping the subtext needs the detail term removed [reviewed: REVIEW-MC1]
 #mcdc:ignore:defensive SW-REQ-260922-Z48F: cursor_moves=T, disabled_rows_skipped=F => FALSE -- nextSelectable only returns rows rowSelectable answers true for; landing on a disabled row needs that check removed [reviewed: REVIEW-MC1]
 #mcdc:ignore:defensive SYS-REQ-260922-P708: action_executed_or_submenu_opened=F, selection_made=T => FALSE -- activateIndex dispatches every selectable row: menu/link drill in, apps launch, actions run; a selection with no dispatch needs all three branches removed [reviewed: REVIEW-MC1]
-#mcdc:ignore:defensive SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=F => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set, before any dispatch (Menu.qml:32); an abandoned prior caller needs that call removed. The resultProc busy-drop race that could lose the cancel write at runtime is outside this decision's structural model -- deferred claim CRS-0017/C01, re-validated by the Phase-2 live measurement [reviewed: REVIEW-26]
+#mcdc:ignore:defensive SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=F => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set, before any dispatch (Menu.qml:32); an abandoned prior caller needs that call removed. The resultProc busy-drop race that could lose the cancel write at runtime is outside this decision's structural model -- claim CRS-0017/C01, REFUTED by the Phase-2 live witness 2026-09-25 (0/20 same-turn drops, 20/20 real callers answered; dismissed) [reviewed: REVIEW-26]
 # mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
@@ -204,6 +206,7 @@ probe = anchor + """
         deleteConfirmOpen: root.deleteConfirmOpen,
         deleteTarget: root.deleteTarget,
         guardsPending: root.guardsPending, guardRunning: guardProc.running,
+        resultRunning: resultProc.running,
         whenResults: root.whenResults, disabledResults: root.disabledResults,
         visibleRowsHeight: root.visibleRowsHeight, panelHeight: panel.height,
         baseRowHeight: root.baseRowHeight, rowSpacing: root.rowSpacing,
@@ -213,6 +216,17 @@ probe = anchor + """
 
     function refresh(): string { return root.refresh() }
     function pokeGuards(): string { root.evaluateGuards(); return "ok" }
+    // TEST-ONLY race driver for CRS-0017/C01: calls the product's own summon
+    // entry (open, Menu.qml:21) and Escape entry (cancel, Menu.qml:896) back
+    // to back in ONE event-loop turn, so the cancel's finishRequest lands
+    // deterministically inside the guard's bash-exec window. Same product
+    // functions the IPC summon and the key handler call; only the inter-call
+    // delay is removed.
+    function summonCancelRace(payloadJson: string): string {
+      root.open(payloadJson)
+      root.cancel()
+      return "ok"
+    }
   }
 """
 open(path, "w").write(source.replace(anchor, probe))
@@ -613,5 +627,237 @@ $gb_visible || fail "the stand-aside evaluation runs after the killed batch exit
 # Verifies: SW-REQ-260922-4079
 # MCDC SW-REQ-260922-4079: batch_killed=T, last_complete_set_kept=T, pending_reeval_runs=T => TRUE
 pass "killed guard batch is discarded whole and the pending reevaluation runs (SW-REQ-260922-4079)"
+
+
+# =================== CRS-0017/C01: finishRequest busy-drop race
+# Deferred defect candidate CRS-0017/C01: finishRequest (Menu.qml:132-149)
+# assigns resultProc.command and sets resultProc.running=true with no busy
+# check, and a QML Process ignores a command change while running (the same
+# behavior the shipped tree documents for guardProc at Menu.qml:1067-1072).
+# Two finishRequest calls inside one bash-exec window would lose the second
+# answer: summon#2's guard (Menu.qml:32) fires finishRequest(null) for the
+# in-flight request, then a cancel of the new menu fires finishRequest(null)
+# for the new request before the first bash exits -> the second command
+# assignment is dropped -> caller#2's doneFile never appears -> the shipped
+# bin/omarchy-menu-select poll (bounded only by death) hangs forever, the
+# same hang class PR#9056 set out to fix.
+#
+# Two complementary live witnesses; the test PASSES under either verdict and
+# pins the property as a regression witness:
+#  A) mechanism, deterministic timing: a real shipped omarchy-menu-select
+#     caller arms request#1 through the real summon IPC path; the test-only
+#     probe then runs the product's own open() (summon entry: the guard fires
+#     finishRequest#1 and arms request#2) and cancel() (Escape entry:
+#     finishRequest#2) back to back in ONE event-loop turn, guaranteeing the
+#     second finishRequest lands inside the first bash's exec window. If
+#     Process really ignores the command change, done#2 is never written.
+#  B) the claim's literal end-to-end trigger: TWO real shipped callers, the
+#     second one's own summon trips the guard, and a wtype Escape is fired
+#     the instant the probe shows request#2 armed. A per-trial timeline
+#     (arm time, close time, resultRunning samples) classifies whether the
+#     cancel landed inside the claimed ~10-50ms window.
+#
+# Caller exit codes travel through rc files, not `wait`: bash intermittently
+# forgets reaped background jobs ("wait: pid N is not a child of this
+# shell"), which flaked trial accounting under $( ) command substitution.
+
+# Launch a real shipped omarchy-menu-select in the background; its exit code
+# lands in $2 when it terminates. Prints the wrapper pid.
+launch_caller() {
+  local out=$1 rcf=$2; shift 2
+  # The wrapper must not inherit the stdout of any $( ) capturing this
+  # function's echo: a held-open pipe makes the substitution block until the
+  # caller exits, deadlocking the trial against the answer it waits for.
+  { OMARCHY_PATH="$test_root" PATH="$test_root/bin:$PATH" \
+      "$test_root/bin/omarchy-menu-select" "$@" >"$out" 2>/dev/null
+    echo $? >"$rcf"
+  } >/dev/null 2>&1 &
+  echo $!
+}
+
+# Bounded wait on an rc file: prints the recorded exit code, or TIMEOUT
+# after $2 deciseconds (caller still running; kill via kill_caller).
+bound_wait_rcf() {
+  local rcf=$1 limit_ds=${2:-50} k
+  for (( k = 0; k < limit_ds; k++ )); do
+    [[ -e $rcf ]] && { cat "$rcf"; return 0; }
+    sleep 0.1
+  done
+  echo TIMEOUT
+}
+
+# Kill a hung caller wrapper and the omarchy-menu-select it supervises.
+kill_caller() {
+  local wp=$1 kids
+  kids=$(pgrep -P "$wp" 2>/dev/null || true)
+  kill $kids "$wp" 2>/dev/null || true
+  wait "$wp" 2>/dev/null || true
+}
+
+# --- witness A: deterministic same-turn open+cancel ------------------------
+a_trials=20 a_dropped=0 a_answered=0
+for (( i = 1; i <= a_trials; i++ )); do
+  out1="$TMPDIR/c01a-$i-out1"; rc1f="$TMPDIR/c01a-$i-rc1"
+  pid1=$(launch_caller "$out1" "$rc1f" "C01A pick" A1 A2)
+  wait_state "C01-A trial $i request#1 armed" \
+    '.requestActive == true and .rows[0].label == "A1"'
+
+  sel2="$TMPDIR/c01a-$i-sel2"; done2="$TMPDIR/c01a-$i-done2"
+  payload=$(jq -nc --arg sf "$sel2" --arg df "$done2" \
+    '{mode:"select",prompt:"C01A again",options:["B1"],selectionFile:$sf,doneFile:$df}')
+  [[ $(shell_ipc menu-debug summonCancelRace "$payload") == "ok" ]] \
+    || fail "C01-A trial $i summonCancelRace call"
+  wait_state "C01-A trial $i cancel closed the menu" \
+    '.opened == false and .requestActive == false' 30
+
+  # The guard must have answered the real first caller as cancelled.
+  rc1=$(bound_wait_rcf "$rc1f" 50)
+  if [[ $rc1 == "TIMEOUT" ]]; then
+    kill_caller "$pid1"
+    fail "C01-A trial $i: guard did not answer caller#1"
+  fi
+  [[ $rc1 == "1" ]] || fail "C01-A trial $i: caller#1 exit $rc1 (want 1 cancelled)"
+  [[ ! -s $out1 ]] || fail "C01-A trial $i: caller#1 printed a selection on cancel"
+
+  # done#2: if Process queues the second command it appears right after the
+  # first bash exits; a drop means it never appears at all.
+  for (( j = 0; j < 20; j++ )); do [[ -e $done2 ]] && break; sleep 0.1; done
+  if [[ -e $done2 ]]; then
+    (( a_answered++ )) || true
+  else
+    sleep 1  # outlive any queued-restart lag before declaring the drop
+    if [[ -e $done2 ]]; then
+      (( a_answered++ )) || true
+    else
+      [[ ! -e $sel2 ]] || fail "C01-A trial $i: drop wrote a selection without a done file"
+      (( a_dropped++ )) || true
+    fi
+  fi
+done
+
+# --- witness B: two real callers + wtype Escape race ------------------------
+b_trials=20 b_repro=0 b_answered=0 b_invalid=0 b_le50=0 b_inwin=0
+for (( i = 1; i <= b_trials; i++ )); do
+  out1="$TMPDIR/c01b-$i-out1"; rc1f="$TMPDIR/c01b-$i-rc1"
+  out2="$TMPDIR/c01b-$i-out2"; rc2f="$TMPDIR/c01b-$i-rc2"
+  pid1=$(launch_caller "$out1" "$rc1f" "C01B one" B1A B1B)
+  wait_state "C01-B trial $i request#1 armed" \
+    '.requestActive == true and .rows[0].label == "B1A"'
+
+  # Timeline sampler: timestamped probe states for the whole race.
+  tl="$TMPDIR/c01b-$i.timeline"; : >"$tl"
+  ( while :; do printf '%s ' "$(date +%s%3N)"; menu_state; printf '\n'; done >>"$tl" 2>/dev/null ) &
+  poller=$!
+
+  pid2=$(launch_caller "$out2" "$rc2f" "C01B two" B2A B2B)
+
+  # Fire Escape the instant the probe shows request#2 armed (the guard has
+  # already fired by then: open() answers the prior request before arming).
+  esc_sent=false
+  for (( j = 0; j < 400; j++ )); do
+    state=$(menu_state || true)
+    if [[ -n $state ]] && jq -e '.requestActive == true and .rows[0].label == "B2A"' <<<"$state" >/dev/null 2>&1; then
+      # short settle: bare wtype loses ~half its keys to sway seat
+      # re-negotiation on the freshly-mapped layer surface
+      wtype -s 30 -k Escape >/dev/null 2>&1 || true
+      esc_sent=true
+      break
+    fi
+    [[ -e $rc2f ]] && break
+  done
+  $esc_sent || { kill "$poller" 2>/dev/null; fail "C01-B trial $i: request#2 never armed"; }
+
+  # Confirm the cancel actually ran (Escape delivered, menu closed).
+  esc_processed=false
+  for (( j = 0; j < 60; j++ )); do
+    state=$(menu_state || true)
+    if [[ -n $state ]] && jq -e '.opened == false' <<<"$state" >/dev/null 2>&1; then
+      esc_processed=true
+      break
+    fi
+    sleep 0.05
+  done
+
+  rc1=$(bound_wait_rcf "$rc1f" 50)
+  if [[ $rc1 == "TIMEOUT" ]]; then
+    kill "$poller" 2>/dev/null || true
+    kill_caller "$pid1"; kill_caller "$pid2"
+    fail "C01-B trial $i: caller#1 not answered as cancelled"
+  fi
+  [[ $rc1 == "1" ]] || { kill "$poller" 2>/dev/null || true; fail "C01-B trial $i: caller#1 exit $rc1 (want 1 cancelled)"; }
+  [[ ! -s $out1 ]] || { kill "$poller" 2>/dev/null || true; fail "C01-B trial $i: caller#1 printed a selection on cancel"; }
+
+  rc2=$(bound_wait_rcf "$rc2f" 50)
+  kill "$poller" 2>/dev/null || true
+  wait "$poller" 2>/dev/null || true
+
+  # Classify the trial from the timeline + outcome.
+  read -r lag inwin <<<"$(python3 - "$tl" <<'PY'
+import json, sys
+arm = close = None
+inwin = False
+for line in open(sys.argv[1]):
+    parts = line.split(" ", 1)
+    if len(parts) != 2:
+        continue
+    try:
+        ts = int(parts[0]); st = json.loads(parts[1])
+    except Exception:
+        continue
+    rows = st.get("rows") or []
+    armed = st.get("requestActive") and rows and rows[0].get("label") == "B2A"
+    if arm is None and armed:
+        arm = ts
+    if arm is not None:
+        if st.get("resultRunning"):
+            inwin = True
+        if close is None and st.get("opened") is False:
+            close = ts
+if arm is None or close is None:
+    print("NA NA")
+else:
+    print(close - arm, 1 if inwin else 0)
+PY
+)"
+
+  if ! $esc_processed; then
+    # Key lost to seat re-negotiation: trial says nothing about the race.
+    (( b_invalid++ )) || true
+    key_burst Escape  # answer request#2 legitimately, well outside any window
+    rc2b=$(bound_wait_rcf "$rc2f" 50)
+    if [[ $rc2b == "TIMEOUT" ]]; then
+      kill_caller "$pid2"
+      fail "C01-B trial $i: cleanup cancel did not answer caller#2"
+    fi
+    continue
+  fi
+
+  [[ $lag != "NA" ]] && (( lag <= 50 )) && (( b_le50++ )) || true
+  [[ $inwin == "1" ]] && (( b_inwin++ )) || true
+
+  if [[ $rc2 == "TIMEOUT" ]]; then
+    # The cancel ran (menu closed) yet caller#2's done file never came: the
+    # second finishRequest was swallowed by the busy resultProc.
+    kill_caller "$pid2"
+    (( b_repro++ )) || true
+  else
+    [[ $rc2 == "1" ]] || fail "C01-B trial $i: caller#2 exit $rc2 (want 1 cancelled)"
+    [[ ! -s $out2 ]] || fail "C01-B trial $i: caller#2 printed a selection on cancel"
+    (( b_answered++ )) || true
+  fi
+
+  wait_state "C01-B trial $i clean state for next trial" \
+    '.opened == false and .requestActive == false' 30
+done
+
+if (( a_dropped > 0 || b_repro > 0 )); then
+  c01_verdict=REPRODUCED
+else
+  c01_verdict=REFUTED
+fi
+printf 'CRS-0017/C01 verdict=%s | A: %d/%d done-files dropped at same-turn timing (%d answered) | B: %d reproduced, %d answered, %d invalid of %d trials; %d escapes within 50ms of arm, %d trials with busy-window sample\n' \
+  "$c01_verdict" "$a_dropped" "$a_trials" "$a_answered" \
+  "$b_repro" "$b_answered" "$b_invalid" "$b_trials" "$b_le50" "$b_inwin" >&2
+pass "CRS-0017/C01 finishRequest busy-drop race witness: verdict=$c01_verdict (A dropped $a_dropped/$a_trials, B repro $b_repro answered $b_answered invalid $b_invalid)"
 
 pass "menu compositor interaction test complete"

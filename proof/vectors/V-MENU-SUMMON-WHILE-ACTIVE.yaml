@@ -1,6 +1,6 @@
 id: V-MENU-SUMMON-WHILE-ACTIVE
 title: 'Summon-while-request-active: repeated/hostile summon IPC interleaved with an in-flight dmenu request'
-description: 'Delta surface of PR#9056 (Menu.qml:32): hunt any interleaving that still abandons a polling caller or answers one request twice. Static hunt executed via claims sessions CRS-0017/0018 (4 dismissed, 1 deferred): surviving residual race is resultProc busy dropping a finishRequest answer mid-write (QML Process ignores command changes while running, Menu.qml:1067-1072) — needs live-harness PoC in Phase 2 (Linux) before KI-promotion or residual kill.'
+description: 'Delta surface of PR#9056 (Menu.qml:32): hunt any interleaving that still abandons a polling caller or answers one request twice. Static hunt executed via claims sessions CRS-0017/0018 (4 dismissed, 1 deferred). The surviving candidate race — resultProc busy dropping a finishRequest answer mid-write — was settled by the Phase-2 live-harness PoC (2026-09-25, headless sway + quickshell + wtype, test/shell.d/menu-compositor-test.sh CRS-0017/C01 section): 0/20 done-file drops at deterministic same-turn timing and 20/20 real omarchy-menu-select callers answered under the literal summon+Escape trigger, so the mechanism does not exist and CRS-0017/C01 is dismissed-refuted; no KI-promotion needed, residual kill stands with the exclusion lifted.'
 priority: P1
 status: partial
 axes:

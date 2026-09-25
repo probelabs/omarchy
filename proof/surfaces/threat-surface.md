@@ -52,10 +52,15 @@ The candidate vector for this surface is **V-MENU-SUMMON-WHILE-ACTIVE**
 (P1): repeated or hostile summon IPC interleaved with an in-flight
 request, hunting for any path that still abandons a caller or answers
 twice. The claims campaign (CRS-0017..0018) already hunted it statically;
-one residual race survived as a deferred claim — `resultProc` busy drops a
-`finishRequest` answer mid-write (QML `Process` ignores command changes
-while running, Menu.qml:1067-1072) — which needs a live-harness PoC in
-Phase 2 before it can be promoted (KI) or killed (residual).
+one candidate race survived static review as a deferred claim —
+`resultProc` busy drops a `finishRequest` answer mid-write (QML `Process`
+ignores command changes while running, Menu.qml:1067-1072). The Phase-2
+live-harness PoC (2026-09-25, headless sway + quickshell + wtype,
+test/shell.d/menu-compositor-test.sh CRS-0017/C01 section) refuted it:
+0/20 done-file drops at deterministic same-turn timing, 20/20 real
+callers answered under the literal summon+Escape trigger — CRS-0017/C01
+is dismissed and the residual kill (`L-MENU-001`) stands with the
+exclusion lifted.
 
 ### `menu-jsonc-config` (kind: parser) — pre-existing, recorded not re-hunted
 
