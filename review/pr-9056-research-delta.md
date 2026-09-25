@@ -60,3 +60,9 @@ Pre-existing baseline debt (documented, NOT fixed — out of delta scope):
 - code_predicates_modeled: 2 unmodeled predicate sites (Menu.qml charCodeAt, MenuModel.js isVisible).
 - Trace quirk: 4 derived implemented_by links to Menu.qml:requestDeleteSelected mis-attribute
   annotations (function-boundary detection); derived links cannot be removed via trace remove.
+- orphan_code_clean: 2 unmodeled upstream menu keybindings scripts
+  (bin/omarchy-menu-herdr-keybindings, bin/omarchy-menu-tmux-keybindings; post-quattro
+  upstream additions 03b825f5 / 3edf254a) surfaced when the box proof binary moved
+  gfbfdcd400 -> gec4c02971 (merged main detects subshell-style `name() ( ... )`
+  functions). No requirement coverage exists for either script; parked via lint.exclude
+  in proof.yaml pending the baseline-debt modeling track.

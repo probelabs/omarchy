@@ -163,6 +163,14 @@ project:
                     node --test test/node/menumodel-replay.test.mjs
     lint:
         exclude:
+            # Post-quattro upstream additions (herdr 03b825f5, tmux 3edf254a):
+            # unmodeled menu entry points with no requirement coverage. The
+            # subshell-style output_keybindings() ( ... ) functions were
+            # invisible to the pre-merge proof build (gfbfdcd400) and surfaced
+            # by merged main (gec4c02971) orphan_code_clean. Parked as
+            # pre-existing baseline debt -- see review/pr-9056-research-delta.md.
+            - bin/omarchy-menu-herdr-keybindings
+            - bin/omarchy-menu-tmux-keybindings
             - .git/**
             - vendor/**
             - third_party/**
