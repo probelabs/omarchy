@@ -493,6 +493,44 @@ key_burst Escape
 for _ in {1..50}; do [[ -e $done4 ]] && break; sleep 0.1; done
 [[ -e $done4 ]] || fail "escape answers the second request"
 
+# ---------- AC-002 acceptance: a re-summon cancels the real polling caller
+# STK-REQ-260922-XTNR AC-002, driven end to end: the caller is the shipped
+# omarchy-menu-select binary (its own mktemp selection/done files, its own
+# 50ms done-file poll), not a test-side stand-in. While its request is
+# active, a raw second summon arrives; the PR#9056 guard (Menu.qml:32) must
+# answer the caller as cancelled -- its poll terminates with no selection
+# and exit 1 -- before the new menu lists.
+caller_out="$TMPDIR/ac002-caller.out"
+OMARCHY_PATH="$test_root" PATH="$test_root/bin:$PATH" \
+  "$test_root/bin/omarchy-menu-select" "AC002 pick" Red Blue >"$caller_out" &
+caller_pid=$!
+wait_state "AC-002 caller request active" \
+  '.mode == "select" and .requestActive == true and (.rows | length == 2) and .rows[0].label == "Red"'
+payload=$(jq -nc --arg sf "$TMPDIR/ac002-sel2" --arg df "$TMPDIR/ac002-done2" \
+  '{mode:"select",prompt:"AC002 again",options:["Green"],selectionFile:$sf,doneFile:$df}')
+shell_ipc_quiet shell summon omarchy.menu "$payload" >/dev/null
+caller_rc=""
+for _ in {1..100}; do
+  if ! kill -0 "$caller_pid" 2>/dev/null; then
+    wait "$caller_pid" && caller_rc=0 || caller_rc=$?
+    break
+  fi
+  sleep 0.1
+done
+if [[ -z $caller_rc ]]; then
+  kill "$caller_pid" 2>/dev/null || true
+  fail "AC-002: prior caller still polling 10s after the re-summon"
+fi
+[[ $caller_rc -eq 1 ]] || fail "AC-002: cancelled caller exits 1 (got $caller_rc)"
+[[ ! -s $caller_out ]] || fail "AC-002: cancelled caller prints no selection"
+wait_state "AC-002 second menu listed after the cancel" \
+  '.mode == "select" and .rows[0].label == "Green"'
+# STK-REQ-260922-XTNR:AC-002:acceptance
+pass "re-summon while a select prompt awaits an answer cancels the real caller with exit 1 (STK-REQ-260922-XTNR AC-002)"
+key_burst Escape
+for _ in {1..50}; do [[ -e $TMPDIR/ac002-done2 ]] && break; sleep 0.1; done
+[[ -e $TMPDIR/ac002-done2 ]] || fail "escape answers the AC-002 second request"
+
 # ------------------------------------------------------------ fold: overflow
 reopen_menu '{"menu":"long"}' || fail_with_log "summon long menu"
 wait_state "40 rows listed" '.rows | length == 40'

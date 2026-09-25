@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T11:11:08Z"
+updated_at: "2026-09-25T11:48:54Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -18,6 +18,11 @@ steps:
         confirmed_at: "2026-09-25T08:46:42Z"
         confirmed_by: agent
         note: 'proof validate exits 0 (80 reqs, 4 variable files, 0 errors/warnings). Upgraded binary recognizes bash/qml MC/DC targets: code_mcdc_measure no longer reports ''unknown language bash'' — it fails only on expected environment gaps (/usr/bin/bash absent on macOS; .proof/mcdc/bash/latest.json not yet generated — Phase 2 measurement). No proof.yaml changes needed; check enablement unchanged; bash lock/menu targets remain enabled/disabled as pinned.'
+    coverage:
+        status: confirmed
+        confirmed_at: "2026-09-25T11:47:57Z"
+        confirmed_by: buger
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-25T10:51:34Z"
@@ -42,6 +47,11 @@ steps:
         confirmed_by: agent
         note: 'KI-MENU-SELECT-POLL-DEADLOCK: reproducer RUNS on macOS (homebrew timeout+bash present) - re-run 2026-09-25, still reproduces (peer-death poll deadlock; PR hunk mitigates only the abandoned-request trigger). proof evidence refresh re-stamped freshness hashes (content drift was pre-existing); known-issue check clean. KI record: appended mitigation note + added affected req SW-REQ-260925-XTGG; KI stays open (bounded-wait spec gap stands). hazard_review stamped on 6 delta-affected reqs (XTGG/Q6ZS/C8HX/3VTN/FGZQ/50RE): scenario/concurrent reviewed with mitigation rationale, property reviewed (atomicity applied where writes happen), domain+structural not_applicable with rationale. spec_lint_hazard_review_current back to baseline 75 advisory.'
         scope_key: menu
+    refresh-complete:
+        status: confirmed
+        confirmed_at: "2026-09-25T11:48:54Z"
+        confirmed_by: buger
+        note: 'Phase-2 (Linux) done at 0eb84406 on audit/pr-9056-refresh. Box proof binary rebuilt gfbfdcd400b15.dirty -> gec4c02971f71 (merged main ec4c02971). build_passes + tests_pass green (lock-shell, menu-shell incl. flock/lua/GNU-find gated tests, menu-node). MC/DC: 294 witness rows = quattro 290 + 4 new SW-REQ-260925-XTGG rows, 0 uncovered; XTGG rows 1/3/4 witnessed via menu-compositor-test.sh (re-run live on headless sway + quickshell + wtype: summon-while-active answers prior request cancelled, green), row 2 mcdc:ignore:defensive (REVIEW-26). Orphan gates clean: orphan_code_clean 224/224, orphan_tests_clean 35/35 after parking 2 unmodeled post-quattro upstream keybindings scripts (lint.exclude + baseline-debt record).'
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-25T08:51:32Z"

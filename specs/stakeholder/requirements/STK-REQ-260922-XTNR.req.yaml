@@ -37,7 +37,7 @@ acceptance_review:
     reviewed_at: "2026-09-25T09:30:00Z"
     reviewed_by: agent:kimi-upstream-refresh
     disposition: reviewed
-    notes: AC-001 (end-to-end menu open/search/activate) observable and non-slogan; witness deferred-tracked (dogfood-harness:no-quickshell). AC-002 added for PR#9056 abandoned-request behavior (summon answers in-flight prompt as cancelled); also witness-deferred to Phase 2 Linux harness (live Quickshell session required); spec-side coverage via SW-REQ-260925-XTGG. AC analysis complete.
+    notes: AC-001 (end-to-end menu open/search/activate) observable and non-slogan; witness deferred-tracked (dogfood-harness:no-quickshell). AC-002 added for PR#9056 abandoned-request behavior (summon answers in-flight prompt as cancelled); witnessed live in Phase 2 on the Linux box (headless sway + quickshell + wtype) -- test/shell.d/menu-compositor-test.sh drives the real omarchy-menu-select caller and a raw re-summon, observing cancelled done-file poll with exit 1 -- STK-REQ-260922-XTNR:AC-002:acceptance. AC-001 remains witness-deferred. AC analysis complete.
 stakeholder:
     persona: Omarchy user
     story: As an Omarchy user, I want every system action, setting, and application reachable through one menu whose rows reflect the machine's current state, so that I never hunt for a command or act on a stale, misleading row.
@@ -63,6 +63,3 @@ stakeholder:
           verification_method: test
           derived_reqs:
             - SYS-REQ-260922-X6Z5
-          witness_deferred:
-            reason: Witnessing summon-while-request-active end to end needs a live Quickshell session (real summon IPC plus a polling omarchy-menu-select caller); the macOS dogfood host has no quickshell runtime. The behavior is specified by SW-REQ-260925-XTGG and its MC/DC rows; measurement and the live witness run in Phase 2 on Linux. Deferred, not waived.
-            tracking: dogfood-harness:no-quickshell
