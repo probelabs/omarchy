@@ -72,3 +72,11 @@ lifecycle:
           to: review
           reason: ""
           changed_by: human:Leonid Bugaev
+defect_review:
+    reviewed_at: "2026-09-25T10:25:50Z"
+    session: CRS-0022
+    fingerprint_sha: sha256:786757e4858f5d1facbe88872752b448a8fd185840b7bdde9c27a6a72133e046
+    via: agent-review
+    counts:
+        emitted: 3
+        dismissed: 3

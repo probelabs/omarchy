@@ -51,14 +51,6 @@ hazard_review:
         - category: property
           disposition: reviewed
           rationale: 'Reviewed: no property-catalog class binds beyond the scenario coverage. The select/dispatch protocol is single-shot per request (no idempotency/monotonicity dimension); answer atomicity is owned by the finishRequest reqs (C8HX/FGZQ); the residual unbounded-wait hazard is tracked by KI-MENU-SELECT-POLL-DEADLOCK, not a property class.'
-defect_review:
-    reviewed_at: "2026-09-23T17:07:46Z"
-    session: CRS-0014
-    fingerprint_sha: sha256:022fb18e34eb7346e17af69d42e814b52878bad666405acc2a6f4f2e37ac44f2
-    via: agent-review
-    counts:
-        emitted: 3
-        verified: 1
 verification_state: failing
 lifecycle:
     change_history:
@@ -67,3 +59,11 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=1; known_issue:KI-MENU-SELECT-POLL-DEADLOCK=failing
           changed_by: agent:auto-derive
+defect_review:
+    reviewed_at: "2026-09-25T10:25:49Z"
+    session: CRS-0018
+    fingerprint_sha: sha256:57c8e8e194a7ffa92fe65ffbe5eaeac99bdab36fedc9423587c36f7d956e208e
+    via: agent-review
+    counts:
+        emitted: 5
+        dismissed: 5

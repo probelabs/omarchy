@@ -1,0 +1,21 @@
+id: CRS-0017
+spec_reqids:
+    - SW-REQ-260925-XTGG
+state: complete
+backend: grok
+model: Kimi (Moonshot AI) — exact model version not disclosed to the agent; reviewing as agent:kimi-upstream-refresh
+cells:
+    - req_id: SW-REQ-260925-XTGG
+      dir: .proof/defect-sessions/CRS-0017/cells/SW-REQ-260925-XTGG
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:1e713f2037212414062fcdc1f566ec2690e9fbf2131c62a3be148ff3ea05cfdf
+input_fingerprint:
+    spec_yaml_sha: sha256:3487ff616f75115c61136939a0b7b5d10a4f1a265a1a1e4ac1e2435f18ddf9c1
+    spec_projection: semantic-v1
+    code_fingerprints:
+        shell/plugins/menu/Menu.qml: sha256:0d7125eaccd1e4736fd5c82d95fcd1a5ed2e0dc4307789be3821230d1d1fb73b
+    claims_sha: sha256:329a594deea8488631e6554e78f9454e8bd71b55f83915be2c653ce3282e0001
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-25T09:41:58Z"
+updated_at: "2026-09-25T10:03:48Z"

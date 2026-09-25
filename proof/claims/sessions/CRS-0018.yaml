@@ -1,0 +1,21 @@
+id: CRS-0018
+spec_reqids:
+    - SW-REQ-260922-Q6ZS
+state: complete
+backend: grok
+model: Kimi (Moonshot AI) — exact model version not disclosed to the agent; reviewing as agent:kimi-upstream-refresh
+cells:
+    - req_id: SW-REQ-260922-Q6ZS
+      dir: .proof/defect-sessions/CRS-0018/cells/SW-REQ-260922-Q6ZS
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:6381c8ec348b986e74c442c2c1709e97c23488b25e684ab8b066279cf3e52ac1
+input_fingerprint:
+    spec_yaml_sha: sha256:8df396376cbafd433e607a43247ab90065c0d3d9999cdbbc9d8f2edfed9c00ea
+    spec_projection: semantic-v1
+    code_fingerprints:
+        bin/omarchy-menu-select: sha256:09780db2607970dfa8e9edce38a490b5468994f31e89156ba5f7460e033908b9
+    claims_sha: sha256:91313fbd20aeccb829f46bd6c3b6b2d52b2fccbc146e6e212db9e98e42da685b
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-25T10:12:00Z"
+updated_at: "2026-09-25T10:25:49Z"

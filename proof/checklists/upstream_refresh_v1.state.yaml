@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T09:26:28Z"
+updated_at: "2026-09-25T09:38:26Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -21,6 +21,12 @@ steps:
             exit_code: 0
             passed: true
             at: "2026-09-25T08:45:56Z"
+    hazard:
+        status: confirmed
+        confirmed_at: "2026-09-25T09:38:26Z"
+        confirmed_by: agent
+        note: 'KI-MENU-SELECT-POLL-DEADLOCK: reproducer RUNS on macOS (homebrew timeout+bash present) - re-run 2026-09-25, still reproduces (peer-death poll deadlock; PR hunk mitigates only the abandoned-request trigger). proof evidence refresh re-stamped freshness hashes (content drift was pre-existing); known-issue check clean. KI record: appended mitigation note + added affected req SW-REQ-260925-XTGG; KI stays open (bounded-wait spec gap stands). hazard_review stamped on 6 delta-affected reqs (XTGG/Q6ZS/C8HX/3VTN/FGZQ/50RE): scenario/concurrent reviewed with mitigation rationale, property reviewed (atomicity applied where writes happen), domain+structural not_applicable with rationale. spec_lint_hazard_review_current back to baseline 75 advisory.'
+        scope_key: menu
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-25T08:51:32Z"
