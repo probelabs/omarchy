@@ -35,10 +35,10 @@ history:
 obligation_checklist:
     - error_handling
 defect_review:
-    reviewed_at: "2026-09-23T17:08:39Z"
-    session: CRS-0015
-    fingerprint_sha: sha256:52b4fa680e885f8f5d12aec494ef8b04cf702b6d07b2f3e214abb14c4c9c9c17
+    reviewed_at: "2026-09-25T10:50:38Z"
+    session: CRS-0030
+    fingerprint_sha: sha256:5ae95892c30f261c734197e9b2be06c3106c1641ec6763445cabd5b95f46a204
     via: agent-review
     counts:
-        emitted: 2
-        dismissed: 1
+        emitted: 3
+        dismissed: 3

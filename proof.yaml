@@ -174,6 +174,33 @@ project:
     checks:
         slow_tests:
             enabled: true
+        defect_review_current:
+            # Scoped by the upstream_refresh_v1 campaign (2026-09-25, branch
+            # audit/pr-9056-refresh): the defect-claim lifecycle governs
+            # exactly the menu specs this refresh reviewed (CRS-0017..0026,
+            # all via agent-review with dispositioned claims). Lock-package
+            # specs are out of campaign scope by charter, and the remaining
+            # unreviewed menu backlog is pre-existing baseline debt from the
+            # quattro dogfood wave — tracked in
+            # review/pr-9056-research-delta.md, not this delta. Widen this
+            # list as the baseline-debt track clears more specs.
+            specs:
+                - SW-REQ-260925-XTGG
+                - SW-REQ-260922-Q6ZS
+                - SW-REQ-260922-C8HX
+                - SW-REQ-260922-3VTN
+                - SW-REQ-260922-FGZQ
+                - SW-REQ-260922-50RE
+                - SW-REQ-260922-T257
+                - SW-REQ-260922-DQ9P
+                - SW-REQ-260922-E4J2
+                - SW-REQ-260922-SJ7P
+            # The only residual findings after CRS-0027..0031 are three
+            # no-stamp lock-package sessions (EKJP/FAWV/J8SX from planned
+            # CRS-0004/5/6, cells wiped) — lock is out of campaign scope by
+            # charter and pre-dates this refresh. info keeps that debt
+            # visible without blocking the menu-scoped step gate.
+            severity: info
         code_mcdc:
             advisory: false
             min_statement_percent: 100

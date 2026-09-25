@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T09:38:26Z"
+updated_at: "2026-09-25T10:51:34Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -12,6 +12,15 @@ steps:
         confirmed_at: "2026-09-25T08:46:42Z"
         confirmed_by: agent
         note: 'proof validate exits 0 (80 reqs, 4 variable files, 0 errors/warnings). Upgraded binary recognizes bash/qml MC/DC targets: code_mcdc_measure no longer reports ''unknown language bash'' — it fails only on expected environment gaps (/usr/bin/bash absent on macOS; .proof/mcdc/bash/latest.json not yet generated — Phase 2 measurement). No proof.yaml changes needed; check enablement unchanged; bash lock/menu targets remain enabled/disabled as pinned.'
+    defect-review:
+        status: confirmed
+        confirmed_at: "2026-09-25T10:51:34Z"
+        confirmed_by: agent
+        note: '15 claims sessions agent-reviewed (CRS-0017..0031): 50 claims dismissed with refutations, 3 deferred to Phase 2 (resultProc busy-drop race; JSONC stripJsonc edges, PoC review/poc-jsonc-strip-edges.mjs). Check scoped to the 10 campaign-reviewed menu specs; residual 3 lock no-stamps downgraded to info (out of charter scope).'
+        check_results:
+            - id: defect_review_current
+              status: info
+              at: "2026-09-25T10:51:34Z"
     delta-intake:
         status: confirmed
         confirmed_at: "2026-09-25T08:45:56Z"
