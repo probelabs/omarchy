@@ -84,6 +84,18 @@ variables:
   type: bool
   direction: output
   description: A parse exception escapes to the caller.
+- name: comma_in_string
+  type: bool
+  direction: input
+  description: The comma sits inside a JSON string literal.
+- name: next_char_closes_json
+  type: bool
+  direction: input
+  description: The next non-whitespace character after the comma is } or ].
+- name: trailing_comma_dropped
+  type: bool
+  direction: output
+  description: The comma is dropped from the stripped JSON before parsing.
 - name: entry_shape_declared
   type: bool
   direction: input

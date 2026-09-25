@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when json_invalid the menu_model shall eventually satisfy empty_item_set & !parse_error_raised
-description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser.
+description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser. Trailing-comma stripping is string-aware — commas inside string literals are preserved verbatim, and only a comma outside any string whose next non-whitespace character is } or ] is dropped (trailing_comma_dropped = !comma_in_string && next_char_closes_json).
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js parseMenuJsonc lines 44-61; a crashing parser would take the whole menu down on a user edit.
+rationale: MenuModel.js parseMenuJsonc and stripJsonc; a crashing parser would take the whole menu down on a user edit, and the pre-fix string-blind comma regex silently corrupted labels containing comma+whitespace+} or ] (e.g. "x, ]y") while the parse still succeeded.
 tags: []
 variables: []
 traces:
