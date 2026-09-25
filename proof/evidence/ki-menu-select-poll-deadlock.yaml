@@ -5,12 +5,12 @@ results:
       command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-23T16:45:21Z"
+      executed_at: "2026-09-25T09:33:45Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-SELECT-POLL-DEADLOCK` from the KnownIssue''s reproducer command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - test/shell.d/menu-select-poll-deadlock-repro.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:c72cec428849e7a0becbe2f08fc38be2321443b63385a4a951b7c712296cfe1c
+        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:c6b3209d20ad4791ae9a347a2239138d5293649d093879199bb2c953323ebeba
         test/shell.d/menu-select-poll-deadlock-repro.sh: sha256:f1afd5179dd8beb4932e344812f2ed1d3fb5d74234c562a3b831948e823c9e4b
       known_issues:
         - KI-MENU-SELECT-POLL-DEADLOCK

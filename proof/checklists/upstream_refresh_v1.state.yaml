@@ -1,6 +1,12 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T09:22:31Z"
+updated_at: "2026-09-25T09:26:28Z"
 steps:
+    ac-sweep:
+        status: confirmed
+        confirmed_at: "2026-09-25T09:26:28Z"
+        confirmed_by: agent
+        note: 'STK-REQ-260922-XTNR: existing AC-001 covers the answer path partially but not abandoned-request resolution. Added AC-002 (summon while prompt in flight -> prior prompt cancelled, caller poll terminates empty/exit 1) with derived_reqs SYS-REQ-260922-X6Z5 and honest witness_deferred (tracking dogfood-harness:no-quickshell; live Quickshell session needed -> Phase 2 Linux). acceptance_review re-stamped reviewed with notes. AC lint checks (inverse_coverage, subset_of_satisfies, acceptance_review_current) all pass.'
+        scope_key: menu
     config-migrate:
         status: confirmed
         confirmed_at: "2026-09-25T08:46:42Z"

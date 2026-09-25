@@ -3,6 +3,7 @@ title: omarchy-menu-select hangs forever when the summoned menu dies before writ
 description: 'The done_file poll in bin/omarchy-menu-select (lines 93-95) is unbounded: `while [[ ! -e $done_file ]]; do sleep 0.05; done` carries no deadline, no peer-liveness probe, and no signal beyond the EXIT trap. If the menu process dies after the summon IPC succeeds (Quickshell crash, compositor restart), nothing ever writes the done file and the script loops forever, hanging every caller that invokes it synchronously. The protocol covers user cancel (the cancel path writes done_file) but not peer death. Reproduced live: with omarchy-shell stubbed to exit 0 and nothing writing the done file, the script was killed by an external 3s timeout (repro exits 1 = defect present). The spec gap rides with it: no requirement pins a bounded wait for the poll, so the defect had no contract to violate — the negative-state half of the dmenu protocol was never specified.'
 affected_requirements:
     - SW-REQ-260922-Q6ZS
+    - SW-REQ-260925-XTGG
 evidence_manifests:
     - test/shell.d/menu-select-poll-deadlock-repro.sh
     - proof/evidence/ki-menu-select-poll-deadlock.yaml
@@ -13,6 +14,8 @@ affected_api: bin/omarchy-menu-select (dmenu select protocol)
 reproducer_command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
 introduced_in: inception
 defect_class: latent
+notes:
+    - '2026-09-25 upstream refresh (branch audit/pr-9056-refresh, PR#9056 hunk baf7aaf0): the abandoned-request trigger is now MITIGATED - a new summon answers an in-flight request as cancelled (Menu.qml:32 finishRequest(null), spec SW-REQ-260925-XTGG), so a repeated summon can no longer strand a polling caller. The peer-death path (menu dies with no subsequent summon) is UNCHANGED and still reproduces: reproducer re-run on macOS 2026-09-25, exit fail / known_issue_reproduced, evidence re-stamped. KI stays open at severity medium; residual fix needs a bounded wait in bin/omarchy-menu-select (spec gap noted in the KI description still stands).'
 review_date: "2026-12-23"
 status: reviewed
 history:
@@ -39,4 +42,16 @@ history:
       by: agent:kimi-dogfood
       action: review
       detail: reviewer=agent:kimi-dogfood,new_review_date=2026-12-23
+    - at: "2026-09-25T09:29:46Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-09-25T09:33:18Z"
+      by: agent:kimi-upstream-refresh
+      action: edit
+      detail: append-note,add-requirement
+    - at: "2026-09-25T09:33:48Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
 source_claim: CRS-0014/C01
