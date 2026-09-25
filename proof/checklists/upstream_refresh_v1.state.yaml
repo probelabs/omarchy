@@ -1,11 +1,17 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T11:01:04Z"
+updated_at: "2026-09-25T11:11:08Z"
 steps:
     ac-sweep:
         status: confirmed
         confirmed_at: "2026-09-25T09:26:28Z"
         confirmed_by: agent
         note: 'STK-REQ-260922-XTNR: existing AC-001 covers the answer path partially but not abandoned-request resolution. Added AC-002 (summon while prompt in flight -> prior prompt cancelled, caller poll terminates empty/exit 1) with derived_reqs SYS-REQ-260922-X6Z5 and honest witness_deferred (tracking dogfood-harness:no-quickshell; live Quickshell session needed -> Phase 2 Linux). acceptance_review re-stamped reviewed with notes. AC lint checks (inverse_coverage, subset_of_satisfies, acceptance_review_current) all pass.'
+        scope_key: menu
+    annotations-heavy:
+        status: confirmed
+        confirmed_at: "2026-09-25T11:11:08Z"
+        confirmed_by: agent
+        note: 'MC/DC annotations for the new Menu.qml:32 decision (SW-REQ-260925-XTGG): rows 1/3/4 witnessed in menu-compositor-test.sh with a genuine summon-while-active scenario (raw re-summon answers the prior request done-file-only; probe extended test-side with requestActive/doneFile for the caller-level no-action proofs); violation row 2 dispositioned mcdc:ignore:defensive grounded in REVIEW-26 with the resultProc busy-drop caveat named (deferred CRS-0017/C01, re-validated by Phase-2 live measurement). proof mcdc show: all rows covered; annotation_validity passes.'
         scope_key: menu
     config-migrate:
         status: confirmed

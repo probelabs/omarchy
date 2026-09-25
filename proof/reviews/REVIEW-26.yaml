@@ -1,0 +1,12 @@
+id: REVIEW-26
+kind: spec_conformance
+reviewer: agent:kimi-upstream-refresh
+reviewed_at: "2026-09-25T11:25:00Z"
+subject: SW-REQ-260925-XTGG
+decision: approved
+comment: 'MC/DC row disposition for the PR#9056 cancel-prior decision (Menu.qml:32). Read open() (22-56) and finishRequest (131-149): when requestActive is set, open() calls finishRequest(null) unconditionally BEFORE dispatching to openDmenu/openRoute, so inside the QML decision model the violation row (menu_open_called=T, no_active_request=F, prior_request_cancelled=F) is structurally unreachable -- producing it needs the guard call removed. The one known way the cancel WRITE can still be lost is the resultProc busy-drop: QML Process ignores command changes while running (Menu.qml:1067-1072), so a finishRequest landing mid-write of a previous answer can be dropped. That is a runtime race below the decision''s structural model, not a code path that skips the guard; it is tracked as deferred claim CRS-0017/C01 with a Phase-2 live-harness PoC and re-validated by the Phase-2 MC/DC measurement, which will re-open this disposition if the row is ever observed. The other three rows are witnessed in test/shell.d/menu-compositor-test.sh (no-action rows carry caller-level probe assertions: requestActive/doneFile exposed by the injected read-only probe).'
+citations:
+    - shell/plugins/menu/Menu.qml:32
+    - shell/plugins/menu/Menu.qml:131
+    - shell/plugins/menu/Menu.qml:1067
+    - test/shell.d/menu-compositor-test.sh

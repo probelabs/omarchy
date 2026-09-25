@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-3JG5, SW-REQ-260922-4079, SW-REQ-260922-50RE, SW-REQ-260922-8CQ4, SW-REQ-260922-B757, SW-REQ-260922-DE93, SW-REQ-260922-NM45, SW-REQ-260922-Z48F, SYS-REQ-260922-P708
+# Verifies: SW-REQ-260922-3JG5, SW-REQ-260922-4079, SW-REQ-260922-50RE, SW-REQ-260922-8CQ4, SW-REQ-260922-B757, SW-REQ-260922-DE93, SW-REQ-260922-NM45, SW-REQ-260922-Z48F, SYS-REQ-260922-P708, SW-REQ-260925-XTGG
 #
 # Compositor-bound menu behavior, driven end-to-end against a live shell:
 # real IPC summons (omarchy-shell shell summon omarchy.menu ...) and real key
@@ -26,6 +26,7 @@ set -euo pipefail
 #mcdc:ignore:defensive SW-REQ-260922-NM45: dmenu_option_picked=T, glyph_stripped=T, subtext_returned=F => FALSE -- a subtext-bearing pick returns label + TAB + detail unconditionally; dropping the subtext needs the detail term removed [reviewed: REVIEW-MC1]
 #mcdc:ignore:defensive SW-REQ-260922-Z48F: cursor_moves=T, disabled_rows_skipped=F => FALSE -- nextSelectable only returns rows rowSelectable answers true for; landing on a disabled row needs that check removed [reviewed: REVIEW-MC1]
 #mcdc:ignore:defensive SYS-REQ-260922-P708: action_executed_or_submenu_opened=F, selection_made=T => FALSE -- activateIndex dispatches every selectable row: menu/link drill in, apps launch, actions run; a selection with no dispatch needs all three branches removed [reviewed: REVIEW-MC1]
+#mcdc:ignore:defensive SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=F => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set, before any dispatch (Menu.qml:32); an abandoned prior caller needs that call removed. The resultProc busy-drop race that could lose the cancel write at runtime is outside this decision's structural model -- deferred claim CRS-0017/C01, re-validated by the Phase-2 live measurement [reviewed: REVIEW-26]
 # mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
@@ -196,6 +197,7 @@ probe = anchor + """
       }
       return JSON.stringify({
         opened: root.opened, mode: root.mode, activeMenu: root.activeMenu,
+        requestActive: root.requestActive, doneFile: root.doneFile,
         navStack: root.navStack, filterText: root.filterText,
         selectedIndex: root.selectedIndex, cursorActive: root.cursorActive,
         rows: rows,
@@ -445,6 +447,51 @@ for _ in {1..50}; do [[ -e $done2 ]] && break; sleep 0.1; done
 # Verifies: SW-REQ-260922-NM45
 # MCDC SW-REQ-260922-NM45: dmenu_option_picked=F, glyph_stripped=F, subtext_returned=F => TRUE [no-action: Escape cancels with only the done file touched -- no selection is produced]
 pass "dmenu cancel produces no selection (SW-REQ-260922-NM45)"
+
+# ------------------- summon while a request is active answers it as cancelled
+# SW-REQ-260925-XTGG: the PR#9056 guard (Menu.qml:32) answers an in-flight
+# dmenu request as cancelled (done file only, no selection) when a new
+# summon arrives, so the prior caller is never abandoned.
+
+# No summon outstanding: no request exists that could be cancelled.
+sent_done="$TMPDIR/sent-done"
+shell_ipc_quiet shell hide omarchy.menu >/dev/null
+wait_state "menu closed, no request in flight" '.opened == false and .requestActive == false'
+sleep 0.3
+[[ ! -e $sent_done ]] || fail "no cancel write without a request"
+# Verifies: SW-REQ-260925-XTGG
+# MCDC SW-REQ-260925-XTGG: menu_open_called=F, no_active_request=F, prior_request_cancelled=F => TRUE [no-action: the probe shows requestActive=false with the menu closed -- there is no prior request to cancel and the sentinel done file never appears]
+pass "no prior request is cancelled when no summon is outstanding (SW-REQ-260925-XTGG)"
+
+# A clean summon with no active request fires no cancel.
+sel3="$TMPDIR/sel3"; done3="$TMPDIR/done3"
+payload=$(jq -nc --arg sf "$sel3" --arg df "$done3" \
+  '{mode:"select",prompt:"Pick",options:["Gamma","Delta"],selectionFile:$sf,doneFile:$df}')
+reopen_menu "$payload" || fail_with_log "summon clean dmenu select"
+wait_state "clean dmenu rows listed" '.mode == "select" and (.rows | length == 2) and .requestActive == true'
+[[ ! -e $done3 ]] || fail "clean summon touched its own done file before any answer"
+# Verifies: SW-REQ-260925-XTGG
+# MCDC SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=T, prior_request_cancelled=F => TRUE [no-action: the request was armed by this very summon (probe: requestActive=true) and its done file is untouched -- no prior request existed to cancel]
+
+# A second summon while the first request is still active answers the first
+# as cancelled: done file only, no selection. Raw summon with no hide --
+# hiding would answer the request through the lifecycle and disarm the guard.
+sel4="$TMPDIR/sel4"; done4="$TMPDIR/done4"
+payload=$(jq -nc --arg sf "$sel4" --arg df "$done4" \
+  '{mode:"select",prompt:"Pick again",options:["Epsilon","Zeta"],selectionFile:$sf,doneFile:$df}')
+shell_ipc_quiet shell summon omarchy.menu "$payload" >/dev/null
+wait_state "second dmenu listed while the first was active" '.mode == "select" and .rows[0].label == "Epsilon"'
+for _ in {1..50}; do [[ -e $done3 ]] && break; sleep 0.1; done
+[[ -e $done3 ]] || fail "the prior request's done file is touched by the cancel"
+[[ ! -e $sel3 ]] || fail "the prior request's cancel writes no selection"
+[[ ! -e $done4 ]] || fail "the new request is not pre-answered"
+# Verifies: SW-REQ-260925-XTGG
+# MCDC SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=T => TRUE
+pass "summon while a request is active answers the prior request as cancelled (SW-REQ-260925-XTGG)"
+
+key_burst Escape
+for _ in {1..50}; do [[ -e $done4 ]] && break; sleep 0.1; done
+[[ -e $done4 ]] || fail "escape answers the second request"
 
 # ------------------------------------------------------------ fold: overflow
 reopen_menu '{"menu":"long"}' || fail_with_log "summon long menu"
