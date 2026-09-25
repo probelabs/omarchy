@@ -95,6 +95,53 @@ assertEqual(menu.parseMenuJsonc('{\n// comment\n"items":').length, 0, 'menu pars
 // SW-REQ-260922-3T3F:boundary:nominal
 assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}').length, 0, 'menu parses empty input and an empty item set to zero entries')
 
+// String-aware trailing-comma stripping: a comma inside a string literal is
+// data, not JSONC syntax. The pre-fix string-blind regex ate `"x, ]y"` down
+// to `"x ]y"` and the parse still succeeded, so the corruption was invisible.
+// Decision under test: trailing_comma_dropped = !comma_in_string && next_char_closes_json
+// MCDC SW-REQ-260922-E4J2: comma_in_string=T, next_char_closes_json=T => FALSE
+// SW-REQ-260922-3T3F:boundary:negative
+assertEqual(
+  menu.parseMenuJsonc('{"b": {"label": "x, ]y"}}')[0].label,
+  'x, ]y',
+  'menu preserves a comma before a closing bracket inside a string literal'
+)
+// MCDC SW-REQ-260922-E4J2: comma_in_string=F, next_char_closes_json=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
+  1,
+  'menu still tolerates a real trailing comma before a closing brace'
+)
+assertDeepEqual(
+  menu.parseMenuJsonc('{"d": {"label": "z", "aliases": ["a", "b",]}}')[0].aliases,
+  ['a', 'b'],
+  'menu still tolerates a trailing comma before a closing bracket in an array'
+)
+// MCDC SW-REQ-260922-E4J2: comma_in_string=T, next_char_closes_json=T => FALSE
+assertEqual(
+  menu.parseMenuJsonc('{"e": {"label": "a\\", ]b"}}')[0].label,
+  'a", ]b',
+  'menu keeps a comma after an escaped quote inside a string literal'
+)
+// MCDC SW-REQ-260922-E4J2: comma_in_string=F, next_char_closes_json=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"i": {"label": "edge"}, }')[0].label,
+  'edge',
+  'menu strips a comma whose closing brace is the last character in the file'
+)
+// MCDC SW-REQ-260922-E4J2: comma_in_string=F, next_char_closes_json=F => FALSE
+assertEqual(
+  menu.parseMenuJsonc('{"m": {"label": "a"}, "n": {"label": "b"}}').length,
+  2,
+  'menu keeps a comma between entries'
+)
+// MCDC SW-REQ-260922-E4J2: comma_in_string=T, next_char_closes_json=F => FALSE
+assertEqual(
+  menu.parseMenuJsonc('{"o": {"label": "a, b"}}')[0].label,
+  'a, b',
+  'menu preserves a plain comma inside a string literal'
+)
+
 const user = [
   menu.normalizeItem('style.theme', { label: 'Theme picker', aliases: ['theme', 'colors'], action: 'custom-theme' }),
   menu.normalizeItem('tools', { label: 'Tools' })
