@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T09:10:25Z"
+updated_at: "2026-09-25T09:22:31Z"
 steps:
     config-migrate:
         status: confirmed
@@ -26,6 +26,18 @@ steps:
         confirmed_at: "2026-09-25T09:01:34Z"
         confirmed_by: agent
         note: 'Added SW-REQ-260925-XTGG (guarantee: when menu_open_called & !no_active_request -> prior_request_cancelled; parent SYS-REQ-260922-X6Z5, satisfies trace set; new output var prior_request_cancelled in menu.vars.yaml; 4-row MC/DC table compiles). Fixed Menu.qml rationale line citations shifted +8 by the delta in SW-REQ-260922-50RE/C8HX/3VTN/FGZQ (finishRequest 131-149, cancel 895-899, open 22-56, openExistingMenu/openDmenu 902-949). proof validate: 81/81 valid.'
+        scope_key: menu
+    spec-review-delta:
+        status: confirmed
+        confirmed_at: "2026-09-25T09:21:59Z"
+        confirmed_by: agent
+        note: 'Fixed all delta-related findings: changed_requirements_reviewed (7 drafts->review), spec_conformance_review_grounded (5; grounded ReviewRecords REVIEW-21..25 with citations+branch judgments), status_vs_review (7; in_review stamps per baseline precedent). Spec stage now 0 errors. Remaining 5 warnings are pre-existing baseline debt (gaps_clean, variable_orphans, interface_coverage, prose_ste100 on KI file, code_predicates_modeled) - documented in review/pr-9056-research-delta.md, not fixed per scope discipline.'
+        scope_key: menu
+    surface-matrix:
+        status: confirmed
+        confirmed_at: "2026-09-25T09:22:31Z"
+        confirmed_by: agent
+        note: 'Re-ran surfaces extract/matrix/check/gap-queue: 0 surfaces (no surfaces packages configured in proof.yaml; ledger empty by configuration). Delta adds NO new surface - the summon-cancels-prior-request path reuses the existing summon IPC entry (open(payloadJson)) and the existing doneFile/selectionFile filesystem protocol; no new IPC verb, file, or env input. surface_coverage OK, 0 GAP items. Nothing to close.'
         scope_key: menu
     traces-light:
         status: confirmed
