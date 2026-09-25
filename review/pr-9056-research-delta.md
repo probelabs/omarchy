@@ -40,3 +40,23 @@ cancelled before opening, so the poll always terminates.
 The poll is still unbounded for true peer death (Quickshell crash with no further
 summon). The delta mitigates the *abandoned-request* trigger only; the bounded-wait
 spec gap called out in KI-MENU-SELECT-POLL-DEADLOCK remains open.
+
+## spec-review-delta findings (step 6)
+Delta-related findings, all fixed:
+- changed_requirements_reviewed: 7 changed specs still draft (the 5 SW + 2 SYS this refresh
+  touched) -> promoted to review with grounded spec_conformance ReviewRecords REVIEW-21..25
+  (citation-backed, per-branch judgments) and verification.review in_review stamps matching
+  the baseline agent:kimi-dogfood precedent.
+- spec_lint_status_vs_review: 7 issues caused by the promotion -> fixed via review stamps.
+- spec_lint_spec_conformance_review_grounded: 5 issues (new at review status) -> fixed by
+  REVIEW-21..25.
+
+Pre-existing baseline debt (documented, NOT fixed — out of delta scope):
+- gaps_clean: 6 unconstrained output variables in specs/system/menu (dismissal_signalled,
+  rows_hidden_or_marked_per_results, lifecycle_answered, +3).
+- variable_orphans_clean: 12 declared-unused variables in specs/system/menu.
+- interface_coverage: lock and menu components have no INT interface specs.
+- spec_lint_prose_ste100: 11 prose issues, mostly proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml.
+- code_predicates_modeled: 2 unmodeled predicate sites (Menu.qml charCodeAt, MenuModel.js isVisible).
+- Trace quirk: 4 derived implemented_by links to Menu.qml:requestDeleteSelected mis-attribute
+  annotations (function-boundary detection); derived links cannot be removed via trace remove.

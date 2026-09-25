@@ -1,0 +1,12 @@
+id: REVIEW-25
+kind: spec_conformance
+reviewer: agent:kimi-upstream-refresh
+reviewed_at: "2026-09-25T09:16:05Z"
+subject: SW-REQ-260922-50RE
+decision: approved
+comment: 'Read open/close/refresh/ping (Menu.qml:22-56) and openExistingMenu/openDmenu (902-949). open() parses payload (malformed JSON falls back to {} via catch), then - post-PR#9056 - pre-answers any in-flight request (SW-REQ-260925-XTGG) before dispatching: mode select/input -> openDmenu, else openRoute; both set opened=true, so every menu_open_called yields lifecycle_answered. close() -> cancel(); refresh() reloads both JSONC files and returns ok; ping returns ok. The new guard preserves the dispatch contract (it adds an answer, never removes one). Formula models all four lifecycle verbs; no silent precondition found.'
+citations:
+    - shell/plugins/menu/Menu.qml:22
+    - shell/plugins/menu/Menu.qml:44
+    - shell/plugins/menu/Menu.qml:49
+    - shell/plugins/menu/Menu.qml:56

@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-25T09:01:34Z"
+updated_at: "2026-09-25T09:10:25Z"
 steps:
     config-migrate:
         status: confirmed
@@ -26,4 +26,10 @@ steps:
         confirmed_at: "2026-09-25T09:01:34Z"
         confirmed_by: agent
         note: 'Added SW-REQ-260925-XTGG (guarantee: when menu_open_called & !no_active_request -> prior_request_cancelled; parent SYS-REQ-260922-X6Z5, satisfies trace set; new output var prior_request_cancelled in menu.vars.yaml; 4-row MC/DC table compiles). Fixed Menu.qml rationale line citations shifted +8 by the delta in SW-REQ-260922-50RE/C8HX/3VTN/FGZQ (finishRequest 131-149, cancel 895-899, open 22-56, openExistingMenu/openDmenu 902-949). proof validate: 81/81 valid.'
+        scope_key: menu
+    traces-light:
+        status: confirmed
+        confirmed_at: "2026-09-25T09:10:25Z"
+        confirmed_by: agent
+        note: 'Added ''Implements: SW-REQ-260925-XTGG'' at Menu.qml:32 (autolink picked up implemented_by Menu.qml:open). Re-stamped with --citation evidence: SW-REQ-260925-XTGG, 50RE, C8HX, 3VTN, FGZQ + SYS parents X6Z5, J0AN (18 suspect links cleared, 191->173). Remaining 173 are pre-existing baseline debt on delta-untouched specs (incl. all lock links) - out of scope. Note: 4 derived implemented_by Menu.qml:requestDeleteSelected links mis-attribute annotations (function-boundary detection quirk; pre-existing; trace remove cannot delete derived links) - documented for spec-review.'
         scope_key: menu

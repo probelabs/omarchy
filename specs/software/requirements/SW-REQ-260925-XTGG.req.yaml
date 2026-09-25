@@ -1,6 +1,6 @@
 id: SW-REQ-260925-XTGG
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -35,12 +35,19 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
-        ai_generated: false
+        status: in_review
+        reviewer: agent:kimi-upstream-refresh
+        reviewed_at: "2026-09-25T09:20:00Z"
+        ai_generated: true
 history:
     created_by: human:Leonid Bugaev
     created_at: "2026-09-25T08:56:25Z"
-    last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-25T08:56:25Z"
+    last_modified_by: agent:kimi-upstream-refresh
+    last_modified_at: "2026-09-25T09:21:25Z"
+lifecycle:
+    change_history:
+        - date: "2026-09-25T09:13:14Z"
+          from: draft
+          to: review
+          reason: ""
+          changed_by: human:Leonid Bugaev

@@ -1,0 +1,10 @@
+id: REVIEW-21
+kind: spec_conformance
+reviewer: agent:kimi-upstream-refresh
+reviewed_at: "2026-09-25T09:15:39Z"
+subject: SW-REQ-260925-XTGG
+decision: approved
+comment: 'Read open() and finishRequest. The guard ''if (root.requestActive) root.finishRequest(null)'' (Menu.qml:32) is exactly the antecedent menu_open_called & !no_active_request: openDmenu sets requestActive=!!doneFile, so requestActive true implies a done file exists, matching no_active_request''s definition (no active request or no done file). finishRequest(null) takes the null branch (Menu.qml:143-147) writing only the done file, which is prior_request_cancelled; it runs before openDmenu/openExistingMenu can overwrite or clear the file paths, so the formula''s ''eventually satisfy'' is immediate and unconditional on this path. Branch coverage: guard-false path leaves state untouched (correct, no obligation). No silent preconditions found.'
+citations:
+    - shell/plugins/menu/Menu.qml:32
+    - shell/plugins/menu/Menu.qml:131
