@@ -1,0 +1,29 @@
+checklist: upstream_refresh_v1
+updated_at: "2026-09-25T09:01:34Z"
+steps:
+    config-migrate:
+        status: confirmed
+        confirmed_at: "2026-09-25T08:46:42Z"
+        confirmed_by: agent
+        note: 'proof validate exits 0 (80 reqs, 4 variable files, 0 errors/warnings). Upgraded binary recognizes bash/qml MC/DC targets: code_mcdc_measure no longer reports ''unknown language bash'' — it fails only on expected environment gaps (/usr/bin/bash absent on macOS; .proof/mcdc/bash/latest.json not yet generated — Phase 2 measurement). No proof.yaml changes needed; check enablement unchanged; bash lock/menu targets remain enabled/disabled as pinned.'
+    delta-intake:
+        status: confirmed
+        confirmed_at: "2026-09-25T08:45:56Z"
+        confirmed_by: agent
+        note: 'Base ce925cb1 (quattro, fully proof-instrumented baseline) -> head baf7aaf0 (review: apply PR #9056). Diff: shell/plugins/menu/Menu.qml +8/-0 (1 file). proof CLI 0.1.0-dev+g66be0edddc8c (probelabs/reqproof main @ 66be0eddd, adds bash+QML language support). No catalog pin in proof.yaml (no ''catalog'' key; builtin obligation catalog in use). Host: macOS (build/tests checks fail environmentally; Phase 2 runs them on Linux).'
+        verify_result:
+            exit_code: 0
+            passed: true
+            at: "2026-09-25T08:45:56Z"
+    research-delta:
+        status: confirmed
+        confirmed_at: "2026-09-25T08:51:32Z"
+        confirmed_by: agent
+        note: 'Studied Menu.qml open/finishRequest/openDmenu/openExistingMenu/cancel + bin/omarchy-menu-select + docs/menu.md. Findings in review/pr-9056-research-delta.md: requestActive lifecycle, finishRequest(null)=done-file-only cancelled answer, unbounded doneFile poll in omarchy-menu-select/input, pre-delta abandoned-request path into KI-MENU-SELECT-POLL-DEADLOCK; peer-death gap remains out of delta scope.'
+        scope_key: menu
+    skeleton-patch:
+        status: confirmed
+        confirmed_at: "2026-09-25T09:01:34Z"
+        confirmed_by: agent
+        note: 'Added SW-REQ-260925-XTGG (guarantee: when menu_open_called & !no_active_request -> prior_request_cancelled; parent SYS-REQ-260922-X6Z5, satisfies trace set; new output var prior_request_cancelled in menu.vars.yaml; 4-row MC/DC table compiles). Fixed Menu.qml rationale line citations shifted +8 by the delta in SW-REQ-260922-50RE/C8HX/3VTN/FGZQ (finishRequest 131-149, cancel 895-899, open 22-56, openExistingMenu/openDmenu 902-949). proof validate: 81/81 valid.'
+        scope_key: menu

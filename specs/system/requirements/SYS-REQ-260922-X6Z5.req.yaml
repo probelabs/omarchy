@@ -19,6 +19,18 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
+    reviewed_at: "2026-09-25T09:09:45.239718Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:9816822b11ba666e198807fc3791a9f47b5488d8c47a888b6ed464d55f8392df
+    review_history:
+        - reviewed_at: "2026-09-25T09:09:45.239718Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'PR#9056 refresh: new child SW-REQ-260925-XTGG satisfies this dmenu protocol req; protocol semantics unchanged'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

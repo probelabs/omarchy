@@ -19,6 +19,18 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
+    reviewed_at: "2026-09-25T09:09:12.887202Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:a8dd3f691022a20fce557a38620a2464f3fc5519db83382cb88735728c485be1
+    review_history:
+        - reviewed_at: "2026-09-25T09:09:12.887202Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'PR#9056 refresh: new requirement for summon answering in-flight request as cancelled; Implements annotation at Menu.qml:32'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:32
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
 verification:
     assurance_level: C
     formalization_status: valid

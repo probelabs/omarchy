@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
+    reviewed_at: "2026-09-25T09:09:12.256536Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
+    review_history:
+        - reviewed_at: "2026-09-25T09:09:12.256536Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'PR#9056 refresh: finishRequest guard unchanged; rationale citation re-pointed to lines 132-135'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:131
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

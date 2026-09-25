@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
+    reviewed_at: "2026-09-25T09:09:12.481066Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:e5cd1637075404ff13de781446af96ad3b83f7190faabcf8df6367a23954f089
+    review_history:
+        - reviewed_at: "2026-09-25T09:09:12.481066Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'PR#9056 refresh: selection write semantics unchanged; rationale citation re-pointed to lines 131-149'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:131
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

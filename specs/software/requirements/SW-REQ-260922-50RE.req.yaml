@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
+    reviewed_at: "2026-09-25T09:09:12.695185Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
+    review_history:
+        - reviewed_at: "2026-09-25T09:09:12.695185Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'PR#9056 refresh: open() gained summon-cancels-prior-request guard (see SW-REQ-260925-XTGG); lifecycle dispatch unchanged; rationale citations re-pointed'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - shell/plugins/menu/Menu.qml:927
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

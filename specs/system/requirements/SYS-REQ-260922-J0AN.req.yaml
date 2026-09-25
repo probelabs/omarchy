@@ -19,6 +19,18 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
+    reviewed_at: "2026-09-25T09:09:45.532834Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:ea8313eb678fa10a89f7dd461f19bfab30e8a46e698118a4313a33ef7774ff89
+    review_history:
+        - reviewed_at: "2026-09-25T09:09:45.532834Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'PR#9056 refresh: child 50RE rationale re-pointed for +8 shift; dispatch contract unchanged'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-dispatcher-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
