@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-X6Z5
 component: menu
-rationale: Menu.qml finishRequest lines 117-135.
+rationale: Menu.qml finishRequest lines 131-149 (selection branch 145-147).
 tags: []
 variables: []
 traces:

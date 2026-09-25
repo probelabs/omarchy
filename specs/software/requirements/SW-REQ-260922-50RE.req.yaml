@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-J0AN
 component: menu
-rationale: Menu.qml open/close/refresh/ping lines 21-44 and openExistingMenu/openDmenu lines 837-881; this is the plugin lifecycle the dispatcher IPC reaches.
+rationale: Menu.qml open/close/refresh/ping lines 22-56 and openExistingMenu/openDmenu lines 902-949; this is the plugin lifecycle the dispatcher IPC reaches.
 tags: []
 variables: []
 traces:
