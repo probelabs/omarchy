@@ -1,0 +1,22 @@
+id: L-MENU-001
+title: Concurrent-summon abandoned-caller angle residual after PR#9056 cancel-prior guard
+description: 'Theme residual delta for hazard classes concurrent+atomicity. Fix-sibling sweep 2026-09-25: the only isomorphic request/done-file site, shell/plugins/image-picker/ImagePicker.qml, ALREADY carries the same mitigation shape (openSelector finishes the prior doneFile before re-arming, :211; cancel()/closeSelector() finishDoneFile too) — no sibling fix needed. Reopen if the Phase-2 live harness reaches the resultProc busy-drop (promote to KI) or a new summon entry bypasses open().'
+status: provisional_kill
+severity: low
+kill_number: 0 abandoned-caller interleavings reachable in 50 attacked claims (48 dismissed with refutations, 2 declared exclusions); 15/15 fold-complete sessions
+kill_domain: 'Summon-while-request-active interleavings reaching Menu.qml open() (the single summon entry; openDmenu/openExistingMenu dispatch only after open() entry) on both dmenu backends (wayland 1072-1073, X11 1094-1095); caller side bin/omarchy-menu-select|input done-file poll. Excludes: (a) resultProc busy-drop race (deferred claim from a session not carried to baseline, Phase-2 live PoC), (b) compositor peer-death (KI-MENU-SELECT-POLL-DEADLOCK)'
+sample_table:
+    - pair: summon_during_active_select
+      notes: wayland
+    - pair: summon_during_active_select
+      notes: x11
+    - pair: summon_during_active_input
+      notes: wayland
+    - pair: cancel_then_resummon_same_donefile
+      notes: wayland
+    - pair: resummon_new_donefile
+      notes: x11
+kill_method: analytic (spec+code inspection) + defect-claims sessions CRS-0023..0036 (renumbered to landed sequence; earliest session not carried to baseline) + KI reproducer
+related_known_issues:
+    - KI-MENU-SELECT-POLL-DEADLOCK
+source_vector: V-MENU-SUMMON-WHILE-ACTIVE
