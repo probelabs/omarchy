@@ -22,6 +22,9 @@ traces:
 verification:
     assurance_level: C
     formalization_status: valid
+    not_modeled:
+        - predicate: guard >= 32
+          reason: "Recursion depth cap terminating the descendant-visibility walk on cyclic parent chains (MenuModel.js isVisible:297). Normalized menu trees are acyclic by construction (normalizeItem derives parents from dotted ids), so the cap never fires on modeled input and no FRETish variable carries it."
     review:
         status: in_review
         reviewer: agent:kimi-zero-warnings

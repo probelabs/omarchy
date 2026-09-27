@@ -22,6 +22,9 @@ traces:
 verification:
     assurance_level: C
     formalization_status: valid
+    not_modeled:
+        - predicate: event.text.charCodeAt(0) >= 32
+          reason: "Printable-character gate in the key catcher (Menu.qml:1225): control keys (<32, 127) skip the filterText append arm and fall through to their own key arms (cursor movement included). Row behavior is governed by filterText content, not by which key class produced it, so no FRETish variable models key-level input classification."
     review:
         status: pending
         reviewer: ""
