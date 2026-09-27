@@ -43,4 +43,37 @@ history:
       by: agent:kimi-dogfood
       action: review
       detail: reviewer=agent:kimi-dogfood,new_review_date=2026-12-23
+    - at: "2026-09-27T20:38:13Z"
+      by: agent:kimi-zero-warnings
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-09-27T20:38:46Z"
+      by: agent:kimi-zero-warnings
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: reproducer runs the real bin/omarchy-menu-select with only the omarchy-shell IPC binary stubbed on PATH (test/shell.d/menu-select-poll-deadlock-repro.sh).
+        quantitative_impact: hang measured against a 3s deadline; defect run killed by timeout (rc=124) => wait is unbounded, hanging every synchronous caller.
+        control_test: negative control in the same script - a healthy peer that writes done_file terminates promptly (rc=1 within deadline), proving the hang is the defect, not the protocol.
+        operational_path_verified: control + defect arms exercise the real operational path (summon IPC -> done_file poll) end to end.
+        current_deployment_relevance: bin/omarchy-menu-select lines 93-95 carry the unbounded poll on this branch today.
+        honest_severity: medium - availability impact on calling scripts; no data loss or privilege change claimed.
+        reproducible: deterministic; re-run 2026-09-27 via proof evidence refresh, observed known_issue_reproduced.
+        no_inflation: claims limited to the demonstrated hang; no escalation asserted.
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
+        reachability_verified: 'local-behavioral correctness defect: no ingress access-control or trust boundary to traverse; the poll runs inside the user''s own session script'
+        untrusted_attacker: 'local-behavioral reliability defect: the trigger is peer-process death (Quickshell crash/compositor restart), not an adversary; no actor model applies'
 source_claim: CRS-0014/C01
