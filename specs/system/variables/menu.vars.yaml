@@ -1,4 +1,7 @@
 component: menu
+independence:
+    declared: true
+    reason: "All 9 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 36 pairs share a consequent variable, matching the engine's connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible."
 variables:
     - name: menu_invoked
       type: bool

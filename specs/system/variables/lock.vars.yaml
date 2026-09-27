@@ -1,4 +1,7 @@
 component: lock
+independence:
+    declared: true
+    reason: "All formalized lock guarantees at both layers constrain pairwise-disjoint output variables (verified 2026-09-27: software 0/105 pairs, system 0/10 pairs share a consequent variable, matching the engine's connected-component pruning). This vars file is shared by both layers via symlink. Cross-requirement conflicts over outputs are structurally impossible."
 variables:
     - name: user_lock_requested
       type: bool
