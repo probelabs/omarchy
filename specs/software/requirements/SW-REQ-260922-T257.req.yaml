@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when verb_known the menu_dispatcher shall eventually satisfy ipc_call_executed
-description: toggle, summon, close, refresh, and ping each exec the matching omarchy-shell IPC call; toggle and summon pass the route as a JSON payload; help prints usage and exits 0.
+description: toggle, summon, close, refresh, and ping each exec the matching omarchy-shell IPC call. toggle and summon pass the route as a JSON payload. help prints usage and exits 0.
 formalization_strategy: fretish
 informal_verification:
     method: ""

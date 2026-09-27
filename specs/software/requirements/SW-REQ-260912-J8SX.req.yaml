@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when lock_requested & !password_pam_configured the lock_service shall always satisfy lock_denied_missing_pam
-description: When the lock IPC handler receives a lock request and /etc/pam.d/omarchy-lock-password is not configured, the lock service shall answer missing-pam and shall not engage the session lock.
+description: When the lock IPC handler receives a lock request and /etc/pam.d/omarchy-lock-password is missing, the lock service shall answer missing-pam. It shall not engage the session lock.
 formalization_strategy: fretish
 informal_verification:
     method: ""

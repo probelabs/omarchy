@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when resolved_kind_action the menu_router shall eventually satisfy action_runs_directly & menu_not_opened
-description: When a route resolves to an action item with a non-empty action (e.g. an alias for a leaf), the action runs directly and no menu opens.
+description: When a route resolves to an action item with a non-empty action, the action runs directly and no menu opens.
 formalization_strategy: fretish
 informal_verification:
     method: ""

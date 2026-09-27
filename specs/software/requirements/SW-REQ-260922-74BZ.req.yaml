@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when route_input & !exact_id_match & !alias_match the menu_router shall eventually satisfy route_is_literal_input
-description: A route matching no id and no alias resolves to the literal input, so a misspelling still attempts to open that id rather than being rewritten.
+description: A route matching no id and no alias resolves to the literal input. A misspelling still attempts to open that id without a rewrite.
 formalization_strategy: fretish
 informal_verification:
     method: ""

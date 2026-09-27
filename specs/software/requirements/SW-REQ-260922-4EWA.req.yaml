@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when same_named_plugins the plugin_picker shall eventually satisfy pick_resolves_by_id
-description: Every picker row carries the plugin id as tab subtext, so same-named plugins are told apart on screen and the pick resolves to the id, which the verb command receives.
+description: Every picker row carries the plugin id as tab subtext. This tells same-named plugins apart on screen. The pick resolves to the id, which the verb command receives.
 formalization_strategy: fretish
 informal_verification:
     method: ""

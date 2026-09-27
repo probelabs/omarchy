@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when json_invalid the menu_model shall eventually satisfy empty_item_set & !parse_error_raised
-description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser. Trailing-comma stripping is string-aware — commas inside string literals are preserved verbatim, and only a comma outside any string whose next non-whitespace character is } or ] is dropped (trailing_comma_dropped = !comma_in_string && next_char_closes_json).
+description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser. Trailing-comma stripping is string-aware. It preserves commas inside string literals verbatim. It drops only a comma outside any string whose next non-whitespace character is } or ] (trailing_comma_dropped = !comma_in_string && next_char_closes_json).
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js parseMenuJsonc and stripJsonc; a crashing parser would take the whole menu down on a user edit, and the pre-fix string-blind comma regex silently corrupted labels containing comma+whitespace+} or ] (e.g. "x, ]y") while the parse still succeeded.
+rationale: MenuModel.js parseMenuJsonc and stripJsonc. A crashing parser would take the whole menu down on a user edit. The pre-fix string-blind comma regex silently corrupted labels such as "x, ]y" while the parse still succeeded.
 tags: []
 variables: []
 traces:
@@ -59,7 +59,7 @@ hazard_review:
           applied:
             - malformed_input
             - error_handling
-          rationale: 'Delta-touched by the fix branch (description/rationale now name string-aware comma semantics). malformed_input: unparseable-after-strip input still routes to the unconditional catch returning [] (verified by direct execution 2026-09-27: unterminated string -> parse fail -> empty set, no exception escapes). error_handling: the failure mode is silent empty menu by design; the NEW malformed-input subclass this branch removes is the one where parse SUCCEEDED on corrupted text (comma-in-string), which no error path could ever catch - correctly handled by 66FW''s prevention, not by error handling here.'
+          rationale: 'Delta-touched by the fix branch: description and rationale now name string-aware comma semantics. malformed_input: unparseable-after-strip input still routes to the unconditional catch returning []. Verified by direct execution on 2026-09-27: unterminated string -> parse fail -> empty set, no exception escapes. error_handling: the failure mode is silent empty menu by design. 66FW''s prevention handles the subclass where parse SUCCEEDED on corrupted text, not error handling here.'
         - category: property
           disposition: reviewed
           applied:

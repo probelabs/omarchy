@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when password_text_overflows the lock_view shall always satisfy dots_scaled_within_field
-description: When the entered password text is wider than the password field, the lock view shall scale the password dots so the row stays inside the field. The lock view shall report the edited text to the service without an edit-feedback loop.
+description: When entered password text exceeds the field width, the lock view shall scale the password dots so the row stays inside the field. The lock view shall report the edited text to the service without an edit-feedback loop.
 formalization_strategy: fretish
 informal_verification:
     method: ""

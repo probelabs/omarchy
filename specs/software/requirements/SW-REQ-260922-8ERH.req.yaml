@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when share_clipboard the share_script shall eventually satisfy clipboard_saved_to_temp & send_detached
-description: Clipboard mode writes the clipboard to a temp .txt file (left for system cleanup so LocalSend can read it) and sends all files through systemd-run --user --quiet --collect localsend.
+description: Clipboard mode writes the clipboard to a temp .txt file and sends all files through systemd-run --user --quiet --collect localsend. System cleanup owns the temp file so LocalSend can read it.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -36,6 +36,6 @@ obligation_checklist:
     - error_handling
 obligation_suppressions:
     - id: error_handling
-      reason: 'bin/omarchy-menu-share deliberately captures the chooser exit status through command substitution (picked=$(omarchy-file-select ...) || status=$?) because the chooser status must survive to distinguish cancel (exit 0, silent) from chooser-failure (exit >1, critical notification + exit 1 per SW-REQ-260922-JREH). set -e/pipefail would abort the script on the very nonzero statuses this contract exists to inspect. Remaining pipeline steps (wl-paste, systemd-run) fail soft by design: a failed share leaves no partial state.'
+      reason: 'bin/omarchy-menu-share deliberately captures the chooser exit status through command substitution (picked=$(omarchy-file-select ...) || status=$?). The chooser status must survive to distinguish cancel (exit 0, silent) from chooser-failure (exit >1, critical notification + exit 1 per SW-REQ-260922-JREH). set -e/pipefail would abort the script on the very nonzero statuses this contract exists to inspect. Remaining pipeline steps (wl-paste, systemd-run) fail soft by design: a failed share leaves no partial state.'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"

@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when query_terms_given the menu_search shall eventually satisfy all_terms_matched & row_hidden_from_results
-description: A row matches only when every query term appears in its name text (label, leaf id, aliases) or as a whole word in its description; invisible and disabled rows never match.
+description: A row matches only when every query term appears in its name text (label, leaf id, aliases) or as a whole word in its description. Invisible and disabled rows never match.
 formalization_strategy: fretish
 informal_verification:
     method: ""

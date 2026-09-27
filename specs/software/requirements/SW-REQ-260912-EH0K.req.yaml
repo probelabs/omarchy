@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when lock_state_queried the session_locked shall always satisfy exit_zero_on_lock & exit_one_on_answerable_unlocked & exit_two_on_undetermined
-description: omarchy-hyprland-session-locked shall exit 0 when any monitor lists LOCK in solitaryBlockedBy, shall exit 1 when no monitor shows LOCK and at least one monitor is not blocked by WORKSPACE, and shall exit 2 when hyprctl fails or every monitor answer is undetermined.
+description: omarchy-hyprland-session-locked shall exit 0 when any monitor lists LOCK in solitaryBlockedBy. It shall exit 1 when no monitor shows LOCK and at least one monitor is not blocked by WORKSPACE. It shall exit 2 when hyprctl fails or every monitor answer comes back undetermined.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-FRG0
 component: lock
-rationale: Hyprland stops at the first solitary blocker on a monitor with no workspace yet, so a missing LOCK there means nothing was asked. Callers that branch only on success treat 2 as unlocked.
+rationale: Hyprland stops at the first solitary blocker on a monitor with no workspace yet, so a missing LOCK there means the probe never asked. Callers that branch only on success treat 2 as unlocked.
 tags: []
 variables: []
 traces:

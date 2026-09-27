@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when cursor_moves the menu_navigation shall eventually satisfy disabled_rows_skipped
-description: Cursor movement lands on the next selectable row in the direction of travel, wrapping at the list ends; disabled rows are stepped over.
+description: Cursor movement lands on the next selectable row in the direction of travel, wrapping at the list ends. Movement steps over disabled rows.
 formalization_strategy: fretish
 informal_verification:
     method: ""

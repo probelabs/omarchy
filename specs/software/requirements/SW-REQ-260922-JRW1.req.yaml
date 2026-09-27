@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when guard_results_applied the menu_view shall eventually satisfy rows_hidden_or_marked_per_results
-description: 'Applied guard results drive the view: a row hides when its when: is false, a static submenu or link hides when no descendant is visible, provider-backed menus stay visible, a checked:true or disabled:true row earns the check-mark label, and a disabled row dims and skips the cursor.'
+description: 'Applied guard results drive the view. A row hides when its when: is false. A static submenu or link hides when no descendant is visible, while provider-backed menus stay visible. A checked:true or disabled:true row earns the check-mark label. A disabled row dims and skips the cursor.'
 formalization_strategy: fretish
 informal_verification:
     method: ""

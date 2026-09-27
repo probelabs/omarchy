@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when stranded_lock_detected & password_pam_configured the lock_service shall eventually satisfy stranded_lock_recovered_once & recovery_logged
-description: When the stranded-lock probe exits 0, the shell lock service holds no lock of its own, and password PAM is configured, the lock service shall take the session lock once and shall log a lock-stranded recovery event.
+description: When the stranded-lock probe exits 0, the service holds no lock, and password PAM exists, the lock service shall take the session lock once. It shall log a lock-stranded recovery event.
 formalization_strategy: fretish
 informal_verification:
     method: ""

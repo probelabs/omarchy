@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when timezone_picked the timezone_script shall eventually satisfy timezone_set_and_refreshed
-description: A picked timezone is applied with sudo timedatectl set-timezone, the clock plugin is refreshed, and a confirmation notification names the new timezone.
+description: The script applies a picked timezone with sudo timedatectl set-timezone, refreshes the clock plugin, and sends a confirmation notification naming the new timezone.
 formalization_strategy: fretish
 informal_verification:
     method: ""

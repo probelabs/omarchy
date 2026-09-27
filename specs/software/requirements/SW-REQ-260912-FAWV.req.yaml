@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when suspend_imminent the sleep_lock shall always satisfy budget_bounded & budget_fallback_on_invalid
-description: omarchy-system-sleep-lock shall derive the wait budget from the logind InhibitDelayMaxUSec property, reserve one fifth of the window but at least 1000 ms for logind, fall back to 5000 ms when the property is unreadable, and cap the result at 12000 ms. When the caller passes an argument that is not a positive integer within the cap, the script shall ignore it and use the derived budget.
+description: omarchy-system-sleep-lock shall derive the wait budget from the logind InhibitDelayMaxUSec property. It shall reserve one fifth of the window but at least 1000 ms for logind. It shall fall back to 5000 ms when reading the property fails, and cap the result at 12000 ms. When the caller passes an argument that is not a positive integer within the cap, the script shall ignore it and use the derived budget.
 formalization_strategy: fretish
 informal_verification:
     method: ""

@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when lock_state_queried the lock_component shall always satisfy lock_state_reported & stranded_lock_recovered
-description: 'The system shall report the compositor session-lock state as an exit code: 0 when any monitor is blocked by LOCK, 1 when a monitor can answer and none shows LOCK, and 2 when the state cannot be determined. When the shell detects a stranded lock left by a dead client and password PAM is configured, the shell shall take the lock once and record the recovery in the journal.'
+description: 'The system shall report the compositor session-lock state as an exit code. Exit 0 means some monitor reports LOCK blocking it. Exit 1 means a monitor answered and none shows LOCK. Exit 2 means the probes cannot determine the state. When the shell detects a stranded lock left by a dead client and password PAM exists, the shell shall take the lock once. It shall record the recovery in the journal.'
 formalization_strategy: fretish
 informal_verification:
     method: ""

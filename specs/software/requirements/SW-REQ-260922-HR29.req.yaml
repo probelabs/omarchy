@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when paths_given the file_picker shall eventually satisfy listing_shape
-description: The listing matches the requested formats case-insensitively, prunes dotfiles and dot-directories, and sorts rows by modification time descending; a nonexistent path is rejected on stderr with exit 1.
+description: The listing matches the requested formats case-insensitively, prunes dotfiles and dot-directories, and sorts rows by modification time descending. The script rejects a nonexistent path on stderr with exit 1.
 formalization_strategy: fretish
 informal_verification:
     method: ""

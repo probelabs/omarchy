@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when rows_overflow the menu_layout shall eventually satisfy fold_signals_more
-description: 'When the rows do not fit, the list height ends mid-row: the clipped peek row tells the eye there is more below the fold, the height never lands exactly on a row boundary, and the card never exceeds 70 percent of panel height.'
+description: 'When the rows do not fit, the list height ends mid-row: the clipped peek row tells the eye there is more below the fold. The height never lands exactly on a row boundary, and the card never exceeds 70 percent of panel height.'
 formalization_strategy: fretish
 informal_verification:
     method: ""

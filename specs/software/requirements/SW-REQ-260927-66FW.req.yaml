@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: the menu_model shall always satisfy trailing_comma_dropped <=> (!comma_in_string & next_char_closes_json)
-description: When the JSONC stripper sees a comma, it drops the comma only when the comma is outside each string literal and the next non-whitespace character after the comma is a closing brace or bracket. A comma inside a string literal is data and stays unchanged.
+description: When the JSONC stripper sees a comma, it drops the comma only when the comma sits outside each string literal. The next non-whitespace character after the comma must be a closing brace or bracket. A comma inside a string literal is data and stays unchanged.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js stripJsonc uses a string-aware single-pass scanner; the pre-fix string-blind regex corrupted labels that contain comma+whitespace+} or ] (for example "x, ]y") while the parse still succeeded.
+rationale: MenuModel.js stripJsonc uses a string-aware single-pass scanner. The pre-fix string-blind regex corrupted labels such as "x, ]y" while the parse still succeeded.
 tags: []
 variables:
     - comma_in_string
@@ -46,7 +46,7 @@ verification:
         motivation:
             kind: defect
             ref: DEFECT-260927-CMMA
-            rationale: "This requirement closes the string-blind trailing-comma mutation class: it models the comma-drop decision (comma_in_string, next_char_closes_json) that let in-string commas be silently stripped while the parse still succeeded."
+            rationale: "This requirement closes the string-blind trailing-comma mutation class. It models the comma-drop decision (comma_in_string, next_char_closes_json). The old regex silently stripped in-string commas while the parse still succeeded."
 history:
     created_by: human:Leonid Bugaev
     created_at: "2026-09-27T15:24:42Z"
@@ -56,7 +56,7 @@ obligation_checklist:
     - malformed_input
 obligation_hazards:
     - class: malformed_input
-      worst_case: 'FMEA mode (a): a label like "x, ]y" is silently corrupted to "x ]y" while the parse still succeeds - the user sees a wrong row name. FMEA mode (b), the realistic payload: an action such as mv f{.bak,} or awk ''{print $1, }'' loses its in-string comma to the string-blind strip and the MUTATED command runs with the user''s full privileges when the row is activated - mv loses its brace expansion and targets a literal filename, awk silently changes output format feeding downstream pipelines. No error surfaces in either mode because JSON.parse accepts the stripped text; the corruption is invisible until the command misbehaves. Fixed on this branch by the string-aware scanner; the grading records the pre-fix worst case this requirement now forbids.'
+      worst_case: 'FMEA mode (a): the stripper silently corrupts a label like "x, ]y" to "x ]y" while the parse still succeeds - the user sees a wrong row name. FMEA mode (b), the realistic payload: an action such as mv f{.bak,} or awk ''{print $1, }'' loses its in-string comma to the string-blind strip. The MUTATED command then runs with the user''s full privileges on row activation. mv loses its brace expansion and targets a literal filename; awk silently changes output format for downstream pipelines. No error surfaces in either mode because JSON.parse accepts the stripped text; the corruption is invisible until the command misbehaves. Fixed on this branch by the string-aware scanner; the grading records the pre-fix worst case this requirement now forbids.'
       severity: medium
 hazard_review:
     reviewed_at: "2026-09-27T19:20:42Z"
@@ -69,18 +69,18 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'malformed_input: JSONC trailing commas are legal-but-non-JSON input the stripper must normalize WITHOUT touching string-literal bytes; both FMEA modes (label corruption; silently mutated user-privilege command, e.g. mv f{.bak,} / awk ''{print $1, }'') lived here pre-fix and are now forbidden by the equivalence formula + witnessed rows. boundary: comma at EOF with no closing byte is dropped (lenient row, witnessed). edge_case: escaped quote before comma+closer inside a string (''a", ]b'') witnessed verbatim.'
+          rationale: 'malformed_input: JSONC trailing commas are legal-but-non-JSON input the stripper must normalize WITHOUT touching string-literal bytes. Both FMEA modes (label corruption; silently mutated user-privilege command, e.g. mv f{.bak,} / awk ''{print $1, }'') lived here pre-fix. The equivalence formula and witnessed rows now forbid them. boundary: the stripper drops a comma at EOF with no closing byte (lenient row, witnessed). edge_case: escaped quote before comma+closer inside a string (''a", ]b'') witnessed verbatim.'
         - category: property
           disposition: reviewed
           applied:
             - determinism
-          rationale: The scanner is a single left-to-right pass with no environment, ordering, or timing inputs; identical bytes always strip identically (20k-case differential fuzz vs an independent reference scanner, 0 mismatches, 2026-09-27).
+          rationale: The scanner is a single left-to-right pass with no environment, ordering, or timing inputs. Identical bytes always strip identically. A 20k-case differential fuzz against an independent reference scanner found 0 mismatches (2026-09-27).
         - category: domain
           disposition: not_applicable
           rationale: No domain workload tags (HTTP/crypto/IPC frameworks); the component parses a local user-authored config file into a menu model.
         - category: structural
           disposition: not_applicable
-          rationale: Implementation is GC'd JavaScript (QML JS engine); no manual memory, pointer arithmetic, binary framing, or format strings - the structural catalog targets C-family hazards that cannot exist here.
+          rationale: Implementation is GC'd JavaScript (QML JS engine). No manual memory, pointer arithmetic, binary framing, or format strings exist here. The structural catalog targets C-family hazards that cannot exist here.
 lifecycle:
     change_history:
         - date: "2026-09-27T19:15:02Z"

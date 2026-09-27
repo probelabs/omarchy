@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when pkg_presence_asked the guard_pipeline shall eventually satisfy shadow_matches_pacman
-description: 'The prelude''s omarchy-pkg-present/missing shadows agree with pacman -Q everywhere: provides resolution, version constraints deferred to pacman, and the no-argument case (present true of nothing, missing not).'
+description: 'The prelude''s omarchy-pkg-present/missing shadows agree with pacman -Q everywhere. This covers provides resolution, version constraints deferred to pacman, and the no-argument case (present true of nothing, missing not).'
 formalization_strategy: fretish
 informal_verification:
     method: ""

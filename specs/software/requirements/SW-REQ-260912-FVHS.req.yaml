@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when update_run_requested & lock_unavailable the update_lock shall always satisfy run_refused_with_diagnostic
-description: omarchy-update-lock run shall open the update lock file on a dedicated file descriptor, shall print a diagnostic and exit 1 when flock cannot take the lock, and shall export the descriptor to the executed command.
+description: omarchy-update-lock run shall open the update lock file on a dedicated file descriptor. It shall print a diagnostic and exit 1 when flock cannot take the lock. It shall export the descriptor to the executed command.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-H8A5
 component: lock
-rationale: The executed update must hold the lock for its whole lifetime, so the descriptor is exported rather than released after acquisition.
+rationale: The executed update must hold the lock for its whole lifetime, so the script exports the descriptor rather than releasing it after acquisition.
 tags: []
 variables: []
 traces:

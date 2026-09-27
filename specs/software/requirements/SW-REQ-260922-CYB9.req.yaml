@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when route_input & !exact_id_match & alias_match the menu_router shall eventually satisfy route_is_alias_target
-description: Absent an exact id, a route equal to a declared alias (after lowercasing and underscore-to-dash normalization) resolves to the id of the item declaring the alias.
+description: Absent an exact id, a route equal to a declared alias resolves to the id of the item declaring the alias. Alias comparison lowercases and maps underscores to dashes.
 formalization_strategy: fretish
 informal_verification:
     method: ""

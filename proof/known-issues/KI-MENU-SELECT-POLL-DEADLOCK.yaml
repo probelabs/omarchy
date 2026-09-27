@@ -1,6 +1,6 @@
 id: KI-MENU-SELECT-POLL-DEADLOCK
 title: omarchy-menu-select hangs forever when the summoned menu dies before writing done_file
-description: 'The done_file poll in bin/omarchy-menu-select (lines 93-95) is unbounded: `while [[ ! -e $done_file ]]; do sleep 0.05; done` carries no deadline, no peer-liveness probe, and no signal beyond the EXIT trap. If the menu process dies after the summon IPC succeeds (Quickshell crash, compositor restart), nothing ever writes the done file and the script loops forever, hanging every caller that invokes it synchronously. The protocol covers user cancel (the cancel path writes done_file) but not peer death. Reproduced live: with omarchy-shell stubbed to exit 0 and nothing writing the done file, the script was killed by an external 3s timeout (repro exits 1 = defect present). The spec gap rides with it: no requirement pins a bounded wait for the poll, so the defect had no contract to violate — the negative-state half of the dmenu protocol was never specified.'
+description: 'The done_file poll in bin/omarchy-menu-select (lines 93-95) has no deadline and no peer-liveness probe. If the menu process dies after a successful summon IPC, nothing writes the done file. The script loops forever and hangs every synchronous caller. The protocol covers user cancel but not peer death. Reproduced live on 2026-09-23: an external 3s timeout killed the waiting script. No requirement pins a bounded wait, so the defect had no contract to violate.'
 affected_requirements:
     - SW-REQ-260922-Q6ZS
 evidence_manifests:
@@ -16,6 +16,10 @@ defect_class: latent
 review_date: "2026-12-23"
 status: reviewed
 history:
+    - at: "2026-09-27T20:05:00Z"
+      by: agent:kimi-zero-warnings
+      action: edit
+      detail: ste100-prose-rewrite (active voice, <=25-word sentences, <=6 sentences per field)
     - at: "2026-09-23T16:21:31Z"
       by: agent:kimi-dogfood
       action: created

@@ -5,14 +5,14 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: ""
-description: Users reach system actions, settings, and applications through the Omarchy menu; scripts pose picker and input prompts and read back the answer; menu rows reflect current system state (visibility guards, checkmarks, installed-dimmed rows) without stale or contradictory display.
+description: Users reach system actions, settings, and applications through the Omarchy menu. Scripts pose picker and input prompts and read back the answer. Menu rows reflect current system state without stale or contradictory display.
 formalization_strategy: informal
 informal_verification:
     method: ""
     evidence: ""
     verified: false
 component: menu
-rationale: 'The menu is the primary UX surface of omarchy and the #1 churn/bug hotspot (bin/omarchy-menu: 304 commits, 13 bug fixes, 3 cascade episodes); its rows make claims about system state that must not lie.'
+rationale: 'The menu is the primary UX surface of omarchy and its top churn/bug hotspot. bin/omarchy-menu history shows 304 commits, 13 bug fixes, and 3 cascade episodes. Its rows make claims about system state that must not lie.'
 tags: []
 variables: []
 traces: {}
@@ -41,10 +41,10 @@ obligation_checklist:
     - boundary
 stakeholder:
     persona: Omarchy user
-    story: As an Omarchy user, I want every system action, setting, and application reachable through one menu whose rows reflect the machine's current state, so that I never hunt for a command or act on a stale, misleading row.
+    story: As an Omarchy user, I want every system action, setting, and application reachable through one menu. Its rows must reflect the machine's current state. I never want to hunt for a command or act on a stale row.
     acceptance_criteria:
         - id: AC-001
-          text: Opening the menu (omarchy menu toggle) presents the menu UI, routes summon/close verbs to the correct plugin targets, and a pick in a script-driven select or input prompt returns the chosen answer to the calling script.
+          text: Opening the menu (omarchy menu toggle) presents the menu UI and routes summon/close verbs to the correct plugin targets. A pick in a script-driven select or input prompt returns the chosen answer to the calling script.
           verification_method: test
           derived_reqs:
             - SYS-REQ-260922-J0AN
@@ -60,7 +60,7 @@ stakeholder:
             reason: A true end-to-end acceptance run needs an integrated quickshell session (compositor-presented menu UI); the dogfood harness on macOS has no quickshell runtime, so only per-requirement verification exists (dispatcher IPC, dmenu protocol, and guard evaluation are covered by shell suites). Deferred, not waived.
             tracking: dogfood-harness:no-quickshell
         - id: AC-002
-          text: A menu entry whose label or action contains a comma adjacent to a closing brace or bracket (for example an awk '{print $1, }' or mv f{.bak,} command in a user extension) is displayed and executed verbatim, never silently mutated by JSONC trailing-comma stripping.
+          text: A menu entry whose label or action contains a comma before a closing brace or bracket keeps its text verbatim. The menu displays and executes it exactly as written. JSONC trailing-comma stripping must never mutate it silently.
           verification_method: test
           derived_reqs:
             - SYS-REQ-260922-PPDW

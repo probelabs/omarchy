@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when fingerprint_sensor_configured the lock_view shall always satisfy fingerprint_indicator_tracks_sensor
-description: When a fingerprint sensor is configured, the lock view shall show the fingerprint indicator next to the password field. When no sensor is configured, the lock view shall reserve no space for the indicator.
+description: When fingerprint authentication is available, the lock view shall show the fingerprint indicator next to the password field. When no fingerprint sensor is available, the lock view shall reserve no space for the indicator.
 formalization_strategy: fretish
 informal_verification:
     method: ""

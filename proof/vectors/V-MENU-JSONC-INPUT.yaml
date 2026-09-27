@@ -1,6 +1,6 @@
 id: V-MENU-JSONC-INPUT
 title: 'JSONC config input: comma-in-string payload silently mutates menu labels/actions (user-privilege command execution)'
-description: 'Hunt the JSONC-input angle: user/extension config carrying comma+closer inside strings reaching display or execution mutated. Executed statically 2026-09-27: pre-fix mutation reproduced (mv f{.bak,} / awk ''{print $1, }'' modes), fix verified by MC/DC witnesses + 20k differential fuzz; class closure recorded as DEFECT-260927-CMMA. Surviving pre-existing edges (inline comments, top-level arrays) are deferred claims with PoC review/poc-parse-edges.mjs.'
+description: 'Hunt the JSONC-input angle: user/extension config carrying comma+closer inside strings reaching display or execution mutated. Executed statically 2026-09-27: pre-fix mutation reproduced (mv f{.bak,} / awk ''{print $1, }'' modes). MC/DC witnesses plus a 20k differential fuzz verified the fix; class closure lives in DEFECT-260927-CMMA. Surviving pre-existing edges (inline comments, top-level arrays) remain deferred claims with PoC review/poc-parse-edges.mjs.'
 priority: P1
 status: closed-null
 related_obligation_classes:

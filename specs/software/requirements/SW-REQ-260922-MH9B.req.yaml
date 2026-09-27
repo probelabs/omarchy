@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when signature_mismatch the image_selector shall eventually satisfy rows_rebuilt_and_cached
-description: When the fast signature differs, rows are rebuilt from a full per-file scan and the rows cache plus signatures are rewritten.
+description: When the fast signature differs, the script rebuilds rows from a full per-file scan and rewrites the rows cache plus signatures.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -29,7 +29,7 @@ verification:
         ai_generated: true
 obligation_suppressions:
     - id: error_handling
-      reason: 'bin/omarchy-menu-images handles its failure points explicitly per call: flock and stat are guarded with || return (lines 166-167, 205) so a single unreadable image or a lost lock skips that item instead of aborting the batch. set -e/pipefail would invert the design: one corrupt image in a directory would kill the entire thumbnail rebuild (this req) instead of being skipped. Usage errors exit 1 explicitly (lines 27, 74, 352, 357).'
+      reason: 'bin/omarchy-menu-images handles its failure points explicitly per call. || return guards flock and stat (lines 166-167, 205): one unreadable image or a lost lock skips that item instead of aborting the batch. set -e/pipefail would invert the design: one corrupt image in a directory would kill the entire thumbnail rebuild (this req) instead of skipping it. Usage errors exit 1 explicitly (lines 27, 74, 352, 357).'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
 history:

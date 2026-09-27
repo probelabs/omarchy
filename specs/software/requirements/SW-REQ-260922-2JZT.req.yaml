@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when plain_substitution_form the guard_pipeline shall eventually satisfy only_plain_form_substituted
-description: Only the plain $(reader) form is rewritten to the captured slot; command -v reader, VAR=x reader, and every other form runs the real command.
+description: The rewrite touches only the plain $(reader) form, mapping it to the captured slot. command -v reader, VAR=x reader, and every other form runs the real command.
 formalization_strategy: fretish
 informal_verification:
     method: ""

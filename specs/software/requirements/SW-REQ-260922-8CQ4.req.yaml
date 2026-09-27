@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when delete_key_on_app the menu_actions shall eventually satisfy uninstall_confirmed_flow
-description: Delete with the cursor on an app row opens an uninstall confirmation naming the app; confirming removes the app through the shared app library and closes the menu; cancelling closes the dialog and returns focus without removing anything. Non-app rows ignore the key.
+description: Delete with the cursor on an app row opens an uninstall confirmation naming the app. Confirming removes the app through the shared app library and closes the menu. Cancelling closes the dialog and returns focus without removing anything. Non-app rows ignore the key.
 formalization_strategy: fretish
 informal_verification:
     method: ""

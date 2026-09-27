@@ -41,10 +41,10 @@ obligation_checklist:
     - boundary
 stakeholder:
     persona: Omarchy user
-    story: As an Omarchy user, I want the session to lock reliably on demand and before suspend, so that an unattended machine never exposes an unlocked session.
+    story: As an Omarchy user, I want the session to lock reliably on demand and before suspend. An unattended machine must never expose an unlocked session.
     acceptance_criteria:
         - id: AC-001
-          text: Locking the session (omarchy system lock or sleep path) results in a session the compositor reports as locked, or a visible failure.
+          text: Locking the session (omarchy system lock or sleep path) results in a compositor-reported locked session, or a visible failure.
           verification_method: test
           derived_reqs:
             - SYS-REQ-260912-T0XP

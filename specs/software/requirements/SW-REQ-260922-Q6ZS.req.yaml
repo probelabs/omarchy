@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when select_invoked the dmenu_protocol shall eventually satisfy payload_shape_correct
-description: The select payload carries mode=select, prompt, options, selectionFile, and doneFile, plus integer width/maxHeight only when given; options come from arguments or, with none and non-terminal stdin, from stdin lines.
+description: The select payload carries mode=select, prompt, options, selectionFile, and doneFile, plus integer width/maxHeight only when given. Options come from arguments or, with none and non-terminal stdin, from stdin lines.
 formalization_strategy: fretish
 informal_verification:
     method: ""

@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when route_input & exact_id_match the menu_router shall eventually satisfy route_is_exact_id
-description: An exact id match wins over every alias; app rows are never routable, so an installed app's keywords cannot shadow a menu route (htop ships Keywords=system).
+description: An exact id match wins over every alias. App rows are never routable, so an installed app's keywords cannot shadow a menu route (htop ships Keywords=system).
 formalization_strategy: fretish
 informal_verification:
     method: ""

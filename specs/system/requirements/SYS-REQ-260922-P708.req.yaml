@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when selection_made the menu_navigation shall eventually satisfy action_executed_or_submenu_opened
-description: Activating a row runs its action, follows its link, or drills into its submenu; the cursor never rests on a disabled row; back navigation retraces the drill path.
+description: Activating a row runs its action, follows its link, or drills into its submenu. The cursor never rests on a disabled row. Back navigation retraces the drill path.
 formalization_strategy: fretish
 informal_verification:
     method: ""

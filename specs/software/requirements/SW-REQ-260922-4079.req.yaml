@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when batch_killed the guard_pipeline shall eventually satisfy last_complete_set_kept & pending_reeval_runs
-description: A guard batch that exits nonzero or by signal is discarded whole (the last complete result set stays in effect), and an evaluation that stood aside runs once the process exits.
+description: The menu discards a guard batch that exits nonzero or by signal, keeping the last complete result set in effect. An evaluation that stood aside runs once the process exits.
 formalization_strategy: fretish
 informal_verification:
     method: ""

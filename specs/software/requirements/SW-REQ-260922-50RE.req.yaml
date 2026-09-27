@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when menu_open_called the menu_lifecycle shall eventually satisfy lifecycle_answered
-description: 'open(payload) dispatches on mode: select/input open the dmenu flow, anything else opens the resolved route; close() cancels; refresh() reloads both JSONC files and returns ok; ping() returns ok.'
+description: 'open(payload) dispatches on mode: select/input open the dmenu flow, anything else opens the resolved route. close() cancels. refresh() reloads both JSONC files and returns ok. ping() returns ok.'
 formalization_strategy: fretish
 informal_verification:
     method: ""

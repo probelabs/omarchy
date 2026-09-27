@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when budget_expired_without_secure the sleep_lock shall eventually satisfy unsecured_reported & exit_failure
-description: When the budget expires before the session reports secure, omarchy-system-sleep-lock shall print an unsecured-suspend diagnostic on stderr, shall send a critical notification, and shall exit 1. When the session reports secure within the budget, the script shall exit 0.
+description: When the budget expires before the session reports secure, omarchy-system-sleep-lock shall print an unsecured-suspend diagnostic on stderr. It shall then send a critical notification and exit 1. When the session reports secure within the budget, the script shall exit 0.
 formalization_strategy: fretish
 informal_verification:
     method: ""

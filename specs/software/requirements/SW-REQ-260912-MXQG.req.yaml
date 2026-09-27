@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when user_lock_requested & ttfx_running the system_lock shall eventually satisfy ttfx_signalled & ttfx_wait_bounded
-description: When the user locks the session and the ttfx screensaver is running, omarchy-system-lock shall send SIGTERM to ttfx and shall wait up to 1 s for ttfx to exit before the script finishes.
+description: When the user locks the session and the ttfx screensaver is running, omarchy-system-lock shall send SIGTERM to ttfx. The script shall wait up to 1 s for ttfx to exit before it finishes.
 formalization_strategy: fretish
 informal_verification:
     method: ""

@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when held_state_queried the update_lock shall always satisfy held_true_only_for_owning_fd
-description: omarchy-update-lock held shall exit 0 only when OMARCHY_UPDATE_LOCK_FD names an open descriptor that resolves to the update lock path and flock can take it on that descriptor.
+description: omarchy-update-lock held shall exit 0 only when OMARCHY_UPDATE_LOCK_FD names an open descriptor. That descriptor shall resolve to the update lock path, and flock shall take the lock on it.
 formalization_strategy: fretish
 informal_verification:
     method: ""

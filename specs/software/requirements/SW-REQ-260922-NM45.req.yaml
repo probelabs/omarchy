@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when dmenu_option_picked the dmenu_protocol shall eventually satisfy glyph_stripped & subtext_returned
-description: A dmenu option may lead with a glyph TAB and trail a subtext TAB; the glyph is shown but never returned, and a subtext-bearing pick returns 'label TAB subtext' as the stable key.
+description: A dmenu option may lead with a glyph TAB and trail a subtext TAB. The picker shows the glyph but never returns it. A subtext-bearing pick returns 'label TAB subtext' as the stable key.
 formalization_strategy: fretish
 informal_verification:
     method: ""

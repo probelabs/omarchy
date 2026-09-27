@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when all_rows_disabled the menu_navigation shall eventually satisfy no_cursor_parked
-description: When every row is disabled the menu shows no cursor at all rather than parking one on a row Enter cannot run; the cursor returns the moment a row becomes selectable.
+description: When no row is selectable, the menu shows no cursor at all rather than parking one on a row Enter cannot run. The cursor returns the moment a row becomes selectable.
 formalization_strategy: fretish
 informal_verification:
     method: ""

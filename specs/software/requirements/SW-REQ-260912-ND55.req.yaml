@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when idle_timeout_expired the lock_service shall always satisfy (blank_displays | password_auth_in_flight | timer_rearmed_after_suspend)
-description: While the session is locked and the idle blank timer expires, the lock service shall blank the displays only when no password authentication is in flight. The armed fingerprint PAM shall not hold the display lit. When wall-clock time shows the timer froze through a suspend, the service shall re-arm the timer instead of blanking.
+description: When the idle blank timer expires during a locked session, the lock service shall blank the displays only when no password authentication is in flight. The armed fingerprint PAM shall not hold the display lit. When wall-clock time shows the timer froze through a suspend, the service shall re-arm the timer instead of blanking.
 formalization_strategy: fretish
 informal_verification:
     method: ""
