@@ -1,0 +1,88 @@
+checklist: onboard_v1
+updated_at: "2026-09-27T21:43:22Z"
+steps:
+    init:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:42:13Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: proof.yaml present and active; project initialized by dogfood campaign (4 components, 82 reqs).
+        verify_result:
+            exit_code: 0
+            passed: true
+            at: "2026-09-27T21:42:13Z"
+        check_results:
+            - id: validate_passes
+              status: pass
+              at: "2026-09-27T21:42:13Z"
+            - id: role_prompt_hygiene
+              status: pass
+              at: "2026-09-27T21:42:13Z"
+    research:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:42:24Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Component structure modeled: 4 components (lock, menu x2 layers) + stakeholder map (STK-REQ-260912-XJ5D, STK-REQ-260922-XTNR) in specs/.'
+    skeleton:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:42:33Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Breadth skeleton landed: 2 STK + SYS + 60 SW + INT SYS-REQ-260927-WC89 (menu->lock interface), all layers populated.'
+        check_results:
+            - id: l0_stakeholder_complete
+              status: pass
+              at: "2026-09-27T21:42:33Z"
+            - id: l1_system_complete
+              status: pass
+              at: "2026-09-27T21:42:33Z"
+            - id: l2_software_complete
+              status: pass
+              at: "2026-09-27T21:42:33Z"
+            - id: levels_connected
+              status: pass
+              at: "2026-09-27T21:42:33Z"
+    spec-review-1:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:43:22Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Structure/ambiguity review: spec_lint green (STE100 rewrite commit 98ba4ded), review.status in_review on all 82 active reqs.'
+        check_results:
+            - id: spec_lint_decomposition_adds_refinement
+              status: pass
+              at: "2026-09-27T21:43:22Z"
+            - id: spec_lint_formalization_quality
+              status: pass
+              at: "2026-09-27T21:43:22Z"
+            - id: solver_modeling_opportunity
+              status: pass
+              at: "2026-09-27T21:43:22Z"
+            - id: under_modeled_requirements_clean
+              status: pass
+              at: "2026-09-27T21:43:22Z"
+    traces-light:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:43:07Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package menu: Implements/Verifies annotations live across its code and tests; trace matrix resolves; 0 suspect links after cited re-review 2026-09-27.'
+        scope_key: menu
+        check_results:
+            - id: annotation_validity
+              status: pass
+              at: "2026-09-27T21:43:07Z"
+            - id: orphan_code_clean
+              status: pass
+              at: "2026-09-27T21:43:07Z"
+    variables:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:43:22Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: Vars files per layer (lock split 2026-09-28, menu per-layer); 0 orphans, 0 unconstrained outputs; verify gaps PASS.
+        check_results:
+            - id: variable_orphans_clean
+              status: pass
+              at: "2026-09-27T21:43:22Z"
+            - id: variables_declared
+              status: pass
+              at: "2026-09-27T21:43:22Z"
+            - id: variable_drift
+              status: pass
+              at: "2026-09-27T21:43:22Z"

@@ -1,0 +1,9 @@
+id: REVIEW-55
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:51:27Z"
+subject: SW-REQ-260922-MP00
+decision: approved
+comment: Read omarchy-menu-select and omarchy-menu-input. Once the done file exists, the only read of the selection file is '[[ -s $selection_file ]] && cat' — a non-empty answer prints to stdout unconditionally. answer_file_written models the done-file gate; the empty case is 9ABD's condition. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-select:10

@@ -1,0 +1,9 @@
+id: REVIEW-42
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:49:33Z"
+subject: SW-REQ-260922-9ABD
+decision: approved
+comment: Read omarchy-menu-select and omarchy-menu-input. When the done file exists but the selection file is empty (a cancel), the script takes the unconditional exit-1 arm and prints nothing — the dmenu stub test at menu-dmenu-test.sh:91 observes status 1 with empty stdout. The empty_selection condition models the empty-selection-file test exactly. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-select:10

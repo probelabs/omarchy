@@ -1,0 +1,9 @@
+id: REVIEW-63
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:52:56Z"
+subject: SW-REQ-260922-SNZG
+decision: approved
+comment: 'Read omarchy-menu. The verb case falls through to an arm that prints ''omarchy-menu: unknown verb'' naming the verb to stderr and exits 2. verb_unknown models the case default; diagnostic_printed and exit_two are that arm''s two actions. Formula conforms to the code.'
+citations:
+    - bin/omarchy-menu:5

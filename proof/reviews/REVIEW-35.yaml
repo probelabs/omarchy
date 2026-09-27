@@ -1,0 +1,9 @@
+id: REVIEW-35
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:48:46Z"
+subject: SW-REQ-260922-43HQ
+decision: approved
+comment: Read omarchy-menu-images and menu-images-test.sh. The script computes a fast signature (directory path + mtime per image dir) and the reuse branch loads the cached rows file before any rebuild path when the signature matches; rows and signatures publish together under one lock. The dirs_unchanged condition models the signature-compare branch; no silent precondition. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-images:1

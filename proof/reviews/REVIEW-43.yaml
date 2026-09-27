@@ -1,0 +1,9 @@
+id: REVIEW-43
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:49:33Z"
+subject: SW-REQ-260922-9DMS
+decision: approved
+comment: Read omarchy-menu-keybindings. A code:N binding resolves its keysym from the compiled keymap via xkbcli, falling back to the built-in table when xkbcli cannot resolve; GRAVE displays as ~ (asserted in keybindings-menu-test.sh). The keycode_binding condition models the code:-form branch; the fallback is part of the resolution path, not a silent precondition. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-keybindings:3

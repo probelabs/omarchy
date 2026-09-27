@@ -1,0 +1,9 @@
+id: REVIEW-48
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:50:22Z"
+subject: SW-REQ-260922-E4J2
+decision: approved
+comment: 'Read stripJsonc (the function this branch fixed). Full-line // comments are stripped first, then trailing commas are removed string-aware: commas inside string literals copy verbatim (with backslash-escape handling) and a comma outside strings is dropped only when the next non-whitespace char is } or ]. The jsonc_has_comments_or_commas condition models both transforms; the string-awareness is the 66FW decision closing DEFECT-260927-CMMA. Formula conforms to the code.'
+citations:
+    - shell/plugins/menu/MenuModel.js:1

@@ -1,0 +1,9 @@
+id: REVIEW-60
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:52:56Z"
+subject: SW-REQ-260922-QMWP
+decision: approved
+comment: Read omarchy-menu-plugin. When the verb's filter yields no rows the script takes an unconditional notify 'No plugin to <verb>' plus exit 0 — it never opens an empty picker. nothing_actionable models the empty-rows test; notification_and_exit_zero is that exact arm. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-plugin:3

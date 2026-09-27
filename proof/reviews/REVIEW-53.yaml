@@ -1,0 +1,9 @@
+id: REVIEW-53
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:51:27Z"
+subject: SW-REQ-260922-KRBH
+decision: approved
+comment: Read omarchy-menu-plugin. The verb case maps enable to disabled plugins, disable to enabled canDisable ones, clone to first-party plugins with no installed clone pointing back, and remove to non-first-party plugins; rows come from select($filter) unconditionally. The picker_verb_given condition models the verb-case branch; verb_filter_applied is the per-verb jq filter. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-plugin:3

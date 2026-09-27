@@ -1,0 +1,9 @@
+id: REVIEW-52
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:50:22Z"
+subject: SW-REQ-260922-JREH
+decision: approved
+comment: 'Read omarchy-menu-share. The file-chooser result is handled by exit status: above 1 sends a critical ''Could not share'' notification and exits 1, while an empty pick exits 0 silently — the two arms match the chooser_failed condition and its complement exactly. Formula conforms to the code.'
+citations:
+    - bin/omarchy-menu-share:4

@@ -1,0 +1,9 @@
+id: REVIEW-51
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:50:22Z"
+subject: SW-REQ-260922-HR29
+decision: approved
+comment: Read omarchy-menu-file. The listing filters requested formats case-insensitively, prunes dotfiles and dot-directories, sorts by mtime descending, and a nonexistent path is rejected on stderr (usage guard for <3 args is separate). The paths_given condition models the listing entry point; the listing_shape response covers filter/prune/sort. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-file:4

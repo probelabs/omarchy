@@ -1,0 +1,9 @@
+id: REVIEW-64
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:52:57Z"
+subject: SW-REQ-260922-SWFT
+decision: approved
+comment: Read omarchy-menu-timezone. After a successful pick, sudo timedatectl set-timezone, the clock-plugin refresh, and the confirmation notification naming the new zone are unconditional sequence points under set -e. timezone_picked models the picker succeeding; timezone_set_and_refreshed is that sequence. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-timezone:2

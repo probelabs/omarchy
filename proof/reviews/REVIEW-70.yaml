@@ -1,0 +1,9 @@
+id: REVIEW-70
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:54:09Z"
+subject: SW-REQ-260922-Z48F
+decision: approved
+comment: Read rowSelectable/nextSelectable. Movement scans in the direction of travel, wrapping at list ends, and steps over rows whose disabled flag rowSelectable reports; -1 (all disabled) is 3JG5's condition. cursor_moves models the movement entry; disabled_rows_skipped is the scan-skips-disabled construction. Formula conforms to the code.
+citations:
+    - shell/plugins/menu/Menu.qml:557

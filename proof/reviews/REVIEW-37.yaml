@@ -1,0 +1,9 @@
+id: REVIEW-37
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:48:46Z"
+subject: SW-REQ-260922-4EWA
+decision: approved
+comment: Read omarchy-menu-plugin and menu-plugin-test.sh. Every picker row is built with the plugin id as tab-separated subtext so same-named plugins display distinctly, and the selection handler cuts field 2 (the id) unconditionally — the verb command receives the id, never the display name. The same_named_plugins condition models the ambiguous-label case the subtext design resolves. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-plugin:3

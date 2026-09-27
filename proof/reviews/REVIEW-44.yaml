@@ -1,0 +1,9 @@
+id: REVIEW-44
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:49:33Z"
+subject: SW-REQ-260922-B839
+decision: approved
+comment: Read omarchy-menu-select. Both empty-option paths — no argv options and an empty stdin mapfile — fall through to the same unconditional usage-to-stderr plus exit 1. The no_options_given condition models both feeds; no other branch writes the usage diagnostic. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-select:10

@@ -1,0 +1,9 @@
+id: REVIEW-38
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:48:46Z"
+subject: SW-REQ-260922-4VAV
+decision: approved
+comment: 'Read omarchy-menu-timezone: the picker call carries ''|| exit 1'' and the timedatectl set-timezone invocation sits after it, so a cancelled pick exits 1 before any set-timezone runs. The timezone_pick_cancelled condition models exactly that short-circuit branch; there is no other path to the set call. Formula conforms to the code.'
+citations:
+    - bin/omarchy-menu-timezone:2

@@ -1,0 +1,9 @@
+id: REVIEW-59
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:52:56Z"
+subject: SW-REQ-260922-Q6ZS
+decision: approved
+comment: Read omarchy-menu-select. The select payload is one deterministic perl encode carrying mode=select, prompt, options, selectionFile and doneFile, with integer width/maxHeight added only when given; options come from argv or, with none and stdin non-terminal, from the stdin mapfile. select_invoked models the summon; payload_shape_correct is the fixed encode. Note KI-MENU-SELECT-POLL-DEADLOCK tracks a known poll deadlock against this req, currently evidenced. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-select:10

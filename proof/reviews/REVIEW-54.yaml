@@ -1,0 +1,9 @@
+id: REVIEW-54
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:51:27Z"
+subject: SW-REQ-260922-MH9B
+decision: approved
+comment: 'Read omarchy-menu-images. A fast-signature mismatch falls unconditionally into the rebuild branch: full per-file scan, then rewrite of the rows cache plus signatures under the same lock that publishes them. signature_mismatch models the compare-fail arm (43HQ holds the match arm). Formula conforms to the code.'
+citations:
+    - bin/omarchy-menu-images:1

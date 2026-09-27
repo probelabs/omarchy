@@ -1,0 +1,9 @@
+id: REVIEW-65
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:52:57Z"
+subject: SW-REQ-260922-T257
+decision: approved
+comment: Read omarchy-menu and BarWidget.qml. toggle, summon, close, refresh and ping each exec the matching omarchy-shell IPC call; toggle and summon pass the route as a JSON payload; help prints usage and exits 0. verb_known models the named-verb case arms; ipc_call_executed is the exec. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu:5

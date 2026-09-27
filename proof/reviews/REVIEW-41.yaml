@@ -1,0 +1,9 @@
+id: REVIEW-41
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:49:33Z"
+subject: SW-REQ-260922-8ERH
+decision: approved
+comment: Read omarchy-menu-share. Clipboard mode writes the clipboard to a temp .txt (left for system cleanup so LocalSend can still read it) and every send goes through systemd-run --user --quiet --collect localsend, i.e. detached from the menu process. Both response conjuncts map to these two code paths; the usage guard on zero args is the only other branch and is out of scope of the condition. Formula conforms to the code.
+citations:
+    - bin/omarchy-menu-share:4

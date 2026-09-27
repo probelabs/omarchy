@@ -1,0 +1,9 @@
+id: REVIEW-30
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:45:34Z"
+subject: SW-REQ-260922-0W96
+decision: approved
+comment: 'Read the implementation and keybindings-menu-test.sh. The script keeps source-derived LUA_BIND_KEY_MAP/DISPATCHER/ARG maps so binds Hyprland reports as dispatcher __lua resolve to real keys and stay dispatchable; the only gating branch is the __lua dispatch-class lookup, which the FRETish condition lua_binds_present models. Silent precondition honored: binds whose dispatch class is unknown are NOT merged into a shared row (test at keybindings-menu-test.sh:218 proves they stay apart), matching the eventual dispatchability guarantee. Formula conforms to the code.'
+citations:
+    - bin/omarchy-menu-keybindings:3
