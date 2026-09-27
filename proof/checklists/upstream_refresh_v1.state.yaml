@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:12:10Z"
+updated_at: "2026-09-27T19:14:02Z"
 steps:
     config-migrate:
         status: confirmed
@@ -26,4 +26,10 @@ steps:
         confirmed_at: "2026-09-27T19:12:10Z"
         confirmed_by: agent
         note: 'Verified agent-25''s skeleton, no additions needed: SW-REQ-260927-66FW (guarantee, equivalence formula trailing_comma_dropped <=> (!comma_in_string & next_char_closes_json)) parents correctly under SYS-REQ-260922-PPDW (menu model merge); satisfies trace present. 3 decision variables declared in menu.vars.yaml with correct direction (comma_in_string/next_char_closes_json input, trailing_comma_dropped output). proof validate --variable-drift: 81/81 reqs, 4/4 var files clean. No STK/SYS/INT additions warranted: the fix restores intended parse semantics; stakeholder-visible behavior is unchanged-by-design (corruption was never intended). No retirements.'
+        scope_key: menu
+    traces-light:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:14:02Z"
+        confirmed_by: agent
+        note: 'GAP FOUND+FIXED: MenuModel.js Implements header named E4J2,3T3F but not SW-REQ-260927-66FW - stripJsonc is its implementation, so implemented_by was dangling. Added; trace show now resolves implemented_by -> MenuModel.js:stripJsonc. Trace review stamped with citations (MenuModel.js:1, PPDW spec, menu-test.sh). verified_by via menu-test.sh Verifies header (replay .mjs is not a trace target - node adapter only).'
         scope_key: menu
