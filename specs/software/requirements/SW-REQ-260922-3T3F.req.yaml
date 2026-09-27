@@ -1,6 +1,6 @@
 id: SW-REQ-260922-3T3F
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -37,15 +37,15 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:kimi-zero-warnings
+        reviewed_at: "2026-09-27T23:40:51Z"
         ai_generated: true
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:00Z"
-    last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-23T17:20:48Z"
+    last_modified_by: agent:kimi-zero-warnings
+    last_modified_at: "2026-09-27T23:40:51Z"
 obligation_checklist:
     - boundary
     - error_handling
@@ -77,4 +77,12 @@ defect_review:
     via: agent-review
     counts:
         emitted: 4
+        verified: 1
         dismissed: 2
+lifecycle:
+    change_history:
+        - date: "2026-09-27T23:37:33Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-toplevel-array-guard] [fix/jsonc-toplevel-array-guard] defect_review stamp gained verified:1 (CRS-0017/C03 array-root claim closed by SW-REQ-260928-BMFE); promote out of draft so the changed requirement clears changed_requirements_reviewed'
+          changed_by: agent:kimi-zero-warnings

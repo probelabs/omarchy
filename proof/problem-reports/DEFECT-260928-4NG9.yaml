@@ -1,0 +1,103 @@
+schema_version: 1
+id: DEFECT-260928-4NG9
+title: Top-level JSON array root in menu JSONC rendered phantom rows id 0,1,...
+introduced_in: inception
+source:
+    type: manual_review
+classification:
+    surface: config_behavior
+    severity: medium
+    defect_class: missing_validation
+    security_relevant: false
+description: >
+    MenuModel.js parseMenuJsonc guarded the parsed root with a typeof
+    check. But typeof [] is "object", so a JSON array root passed the
+    guard. The for..in loop then iterated array indices and emitted
+    phantom rows with numeric ids parented to root. A phantom row
+    carries the label and action out of its array element. Activating
+    it ran a command the user never placed in the menu with full user
+    privileges. JSON.parse accepted the input, so no error surfaced.
+root_cause:
+    missing_requirement: true
+    missing_test_partition: true
+    missing_mcdc_variable: true
+    notes: >
+        No requirement modeled the root-type decision. Its condition
+        (array_root_present) had no exercising test. The malformed-input
+        partition held scalars (null, 42, "str") but no array root.
+        3T3F could not catch this class because the array still parsed.
+        Reproduced on the pristine quattro baseline ce925cb1 with
+        review/upstream-repro-jsonc-toplevel-array.js (rc=1).
+impact_analysis:
+    affected_requirements:
+        - SW-REQ-260922-3T3F
+        - SW-REQ-260922-E4J2
+        - SYS-REQ-260922-PPDW
+    affected_interfaces: []
+    affected_code:
+        - shell/plugins/menu/MenuModel.js
+disposition:
+    status: covered_by_requirement
+    requirements:
+        - SW-REQ-260928-BMFE
+    rationale: >
+        SW-REQ-260928-BMFE models the decision as a guard over
+        array_root_present. All MC/DC rows carry witnesses in
+        test/shell.d/menu-test.sh, replayed 1/1 by
+        test/node/menumodel-replay.test.mjs on 2026-09-28 (RED before
+        the one-line Array.isArray guard, GREEN after). Differential
+        fuzz against the pristine quattro baseline is Phase 3 of this
+        campaign. Sibling sweep on 2026-09-28 found no isomorphic site:
+        parseMenuJsonc is the single JSONC root-type gate; Menu.qml
+        consumes only the normalized entry list.
+    evidence:
+        verified_by:
+            - test/shell.d/menu-test.sh
+            - test/node/menumodel-replay.test.mjs
+        requirement_mcdc_witnesses:
+            - requirement: SW-REQ-260928-BMFE
+              witness: "array_root_present=T, array_root_rejected=T => TRUE"
+        obligation_evidence:
+            - requirement: SW-REQ-260928-BMFE
+              obligation_class: malformed_input
+              evidence_type: negative
+        reviews:
+            - REVIEW-72
+    reviewer: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-27T23:35:00Z"
+hardening:
+    new_requirements:
+        - SW-REQ-260928-BMFE
+    strengthened_requirements:
+        - SW-REQ-260922-3T3F
+    added_obligations:
+        - requirement: SW-REQ-260928-BMFE
+          obligation_class: malformed_input
+    regression_tests:
+        # Bare paths: the resolver's symbol form targets Go `func TestX(`
+        # declarations; these suites are bash/node:test. The regression
+        # partition is the array-root assertion block in menu-test.sh
+        # (SW-REQ-260928-BMFE witness rows), replayed under node:test by
+        # menumodel-replay.test.mjs.
+        - test/shell.d/menu-test.sh
+        - test/node/menumodel-replay.test.mjs
+    mcdc_witnesses:
+        - requirement: SW-REQ-260928-BMFE
+          witness: "array_root_present=T, array_root_rejected=T => TRUE"
+    sibling_sweep:
+        scope:
+            - shell/plugins/menu/
+            - bin/
+        checked_at: "2026-09-28"
+        reviewer: agent:kimi-zero-warnings
+        result: "no isomorphic site: parseMenuJsonc is the only JSON.parse root-type gate in the menu plugin. The items-shape check already rejects arrays nested under \"items\" (MenuModel.js:84-86). That check is witnessed as the negative row of SW-REQ-260928-BMFE."
+        found: []
+affects:
+    - SW-REQ-260928-BMFE
+history:
+    - at: "2026-09-27T23:29:36Z"
+      by: agent:kimi-zero-warnings
+      action: created
+    - at: "2026-09-27T23:35:00Z"
+      by: agent:kimi-zero-warnings
+      action: "closed covered_by_requirement after hardening landed (BMFE + witnesses + obligation)"
