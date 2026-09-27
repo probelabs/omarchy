@@ -163,6 +163,13 @@ project:
                     node --test test/node/menumodel-replay.test.mjs
     lint:
         exclude:
+            # Post-quattro upstream additions (herdr 03b825f5, tmux 3edf254a):
+            # unmodeled menu entry points with no requirement coverage,
+            # surfaced by the merged-main orphan detector. Parked as
+            # pre-existing baseline debt, mirroring the parking on
+            # audit/pr-9056-refresh (0eb84406).
+            - bin/omarchy-menu-herdr-keybindings
+            - bin/omarchy-menu-tmux-keybindings
             - .git/**
             - vendor/**
             - third_party/**

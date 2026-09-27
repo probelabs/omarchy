@@ -1,0 +1,10 @@
+id: REVIEW-21
+kind: spec_conformance
+reviewer: human:unknown
+reviewed_at: "2026-09-27T16:09:09Z"
+subject: SW-REQ-260927-66FW
+decision: approved
+comment: 'Equivalence formula matches the stripJsonc scanner: a comma is dropped iff it sits outside every string literal and the next non-whitespace byte is a closing brace or bracket; string-literal commas are copied verbatim. The three predicate-violated rows are unreachable in a correct build: the scanner drops only before }/], always drops there when outside a string, and never drops inside a string.'
+citations:
+    - shell/plugins/menu/MenuModel.js:26@stripJsonc
+    - test/shell.d/menu-test.sh:98

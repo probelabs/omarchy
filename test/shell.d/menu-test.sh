@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP
+# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=T, parse_error_raised=F => FALSE -- a failed parse hits the catch that returns [] unconditionally; invalid input yielding items needs a broken catch [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=T => FALSE -- the same catch swallows the parse error by construction; a raised error needs the try/catch removed [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=F => FALSE -- normalizeItem derives parent from the id and kind from the declared shape unconditionally; skipping the inference needs those assignments removed [reviewed: REVIEW-M8]
@@ -99,14 +99,17 @@ assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}')
 // data, not JSONC syntax. The pre-fix string-blind regex ate `"x, ]y"` down
 // to `"x ]y"` and the parse still succeeded, so the corruption was invisible.
 // Decision under test: trailing_comma_dropped = !comma_in_string && next_char_closes_json
-// MCDC SW-REQ-260922-E4J2: comma_in_string=T, next_char_closes_json=T => FALSE
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=T => FALSE -- the scanner drops a comma only when the next non-whitespace byte is a closing brace or bracket; a drop before any other byte needs a broken string copy [reviewed: REVIEW-21]
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=F => FALSE -- a comma outside every string whose next non-whitespace byte closes JSON is always dropped, by the pre-fix regex and by the string-aware scanner alike; keeping it needs a broken build [reviewed: REVIEW-21]
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=T => FALSE -- the scanner copies string-literal bytes verbatim, so an in-string comma is never dropped; dropping one is the pre-fix defect this branch removes [reviewed: REVIEW-21]
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=F => TRUE
 // SW-REQ-260922-3T3F:boundary:negative
 assertEqual(
   menu.parseMenuJsonc('{"b": {"label": "x, ]y"}}')[0].label,
   'x, ]y',
   'menu preserves a comma before a closing bracket inside a string literal'
 )
-// MCDC SW-REQ-260922-E4J2: comma_in_string=F, next_char_closes_json=T => TRUE
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
 assertEqual(
   menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
   1,
@@ -117,25 +120,25 @@ assertDeepEqual(
   ['a', 'b'],
   'menu still tolerates a trailing comma before a closing bracket in an array'
 )
-// MCDC SW-REQ-260922-E4J2: comma_in_string=T, next_char_closes_json=T => FALSE
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=F => TRUE
 assertEqual(
   menu.parseMenuJsonc('{"e": {"label": "a\\", ]b"}}')[0].label,
   'a", ]b',
   'menu keeps a comma after an escaped quote inside a string literal'
 )
-// MCDC SW-REQ-260922-E4J2: comma_in_string=F, next_char_closes_json=T => TRUE
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
 assertEqual(
   menu.parseMenuJsonc('{"i": {"label": "edge"}, }')[0].label,
   'edge',
   'menu strips a comma whose closing brace is the last character in the file'
 )
-// MCDC SW-REQ-260922-E4J2: comma_in_string=F, next_char_closes_json=F => FALSE
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
 assertEqual(
   menu.parseMenuJsonc('{"m": {"label": "a"}, "n": {"label": "b"}}').length,
   2,
   'menu keeps a comma between entries'
 )
-// MCDC SW-REQ-260922-E4J2: comma_in_string=T, next_char_closes_json=F => FALSE
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
 assertEqual(
   menu.parseMenuJsonc('{"o": {"label": "a, b"}}')[0].label,
   'a, b',
