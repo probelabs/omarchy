@@ -1,0 +1,20 @@
+id: L-MENU-JSONC-001
+title: Post-fix JSONC grammar-edge residency under the string-aware scanner
+description: 'Theme residual delta for hazard classes malformed_input+boundary (66FW). Fix-sibling sweep 2026-09-27: Menu.qml delegates to MenuModel.stripJsonc (Menu.qml:240-241); no bin/ script parses menu JSONC; remaining .replace sites are slug normalizers - NO isomorphic site exists (attested in DEFECT-260927-CMMA sibling_sweep). Reopen if a third-party extension pipeline feeds machine-generated configs hitting the excluded edges.'
+status: provisional_kill
+severity: low
+kill_number: 0 semantic divergences in 20000 fuzz cases; 0 mutated strings in the adversarial payload set (mv/awk/label cases verified old-vs-new)
+kill_domain: 'Menu JSONC configs within the documented grammar: object root, full-line // comments, trailing commas outside string literals, escape sequences per JSON. Under this domain the 66FW equivalence (trailing_comma_dropped <=> !comma_in_string & next_char_closes_json) is proven. EXCLUSIONS (deferred claims, PoC review/poc-parse-edges.mjs): inline comment tails (CRS-0017/C01) and top-level arrays of objects (CRS-0019/C01) - both pre-existing on quattro, both outside the fix PR scope.'
+sample_table:
+    - pair: comma_in_string_before_closer
+      notes: preserved-verbatim-witnessed
+    - pair: trailing_comma_outside_string
+      notes: dropped-witnessed
+    - pair: escaped_quote_then_comma_closer
+      notes: preserved-witnessed
+    - pair: comment_plus_trailing_comma_metamorphic
+      notes: model-unchanged-fuzz
+    - pair: comma_at_eof
+      notes: dropped-unobservable-invalid-json-either-way
+kill_method: analytic + MC/DC witnesses (5/5 rows) + differential fuzz vs independent reference scanner
+source_vector: V-MENU-JSONC-INPUT

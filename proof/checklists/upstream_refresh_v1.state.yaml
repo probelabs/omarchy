@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:41:05Z"
+updated_at: "2026-09-27T19:42:37Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -60,6 +60,16 @@ steps:
         confirmed_by: agent
         note: 'Re-extracted surfaces for package menu: 0 surfaces (scope_partial=true), gap-queue empty, surfaces check OK. The JSONC config input is a parser surface, not a security surface in this ledger''s taxonomy (surfaces inventory security-relevant entry points; the menu package declares none). The parse-input threat angle is instead covered properly in the threat_surface_synthesis step (ladder + vector), not here. No new GAPs introduced by the delta; nothing to close.'
         scope_key: menu
+    threat_surface_synthesis:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:42:37Z"
+        confirmed_by: agent
+        note: 'Threat-surface delta synthesized for menu-jsonc-config (the delta surface): proof/surfaces/threat-surface.yaml schema v1 + narrative. L1 recover (crash oracles dead; the pre-fix danger was SILENT success on mutated text), L4 equivalence contract v1 defined before relational lanes armed, L7 metamorphic pair identified as load-bearing (failed pre-fix = DEFECT-260927-CMMA class, holds post-fix). JSONC-input vector V-MENU-JSONC-INPUT created (P1, researched): user config with comma-in-string payload -> command mutation angle, static hunt executed, exit with residual link lands in the residual step. Deferred edges (inline comments, top-level array phantoms) recorded on the L6 row with PoC. spec_lint_threat_surface_present + vector hygiene green. NOTE: .proof/threat_surface.json does not exist in this binary''s schema - used the lint-enforced yaml artifact.'
+        scope_key: menu
+        check_results:
+            - id: spec_lint_threat_surface_present
+              status: pass
+              at: "2026-09-27T19:42:37Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-27T19:14:02Z"
