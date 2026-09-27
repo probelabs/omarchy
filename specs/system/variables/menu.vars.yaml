@@ -1,7 +1,7 @@
 component: menu
 independence:
     declared: true
-    reason: "All 9 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 36 pairs share a consequent variable, matching the engine's connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible."
+    reason: "All 10 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 45 pairs share a consequent variable, matching the engine's connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible."
 variables:
     - name: menu_invoked
       type: bool
@@ -75,3 +75,11 @@ variables:
       type: bool
       direction: output
       description: The script performed its documented side effect or refusal.
+    - name: lock_row_activated
+      type: bool
+      direction: input
+      description: The user activated the menu's Lock row.
+    - name: system_lock_invoked
+      type: bool
+      direction: output
+      description: The menu invoked the lock component's omarchy-system-lock entry point.

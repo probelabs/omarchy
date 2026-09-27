@@ -24,21 +24,20 @@ verification:
         reviewer: agent:kimi-dogfood
         reviewed_at: "2026-09-12T23:50:00Z"
         ai_generated: true
-acceptance_review:
-    reviewed_at: "2026-09-23T17:09:27Z"
-    reviewed_by: "agent:kimi-dogfood"
-    disposition: reviewed
-    templates_applied: []
-    notes: "Single AC (compositor-reported lock state end-to-end) is observable and non-slogan; witnessing is deferred-tracked (dogfood-harness:no-compositor) pending an integrated Hyprland session. AC analysis complete."
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:42:00Z"
-    last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-23T17:08:39Z"
+    last_modified_by: agent:kimi-zero-warnings
+    last_modified_at: "2026-09-27T21:00:53Z"
 obligation_checklist:
     - nominal
     - error_handling
     - boundary
+acceptance_review:
+    reviewed_at: "2026-09-23T17:09:27Z"
+    reviewed_by: agent:kimi-dogfood
+    disposition: reviewed
+    notes: Single AC (compositor-reported lock state end-to-end) is observable and non-slogan; witnessing is deferred-tracked (dogfood-harness:no-compositor) pending an integrated Hyprland session. AC analysis complete.
 stakeholder:
     persona: Omarchy user
     story: As an Omarchy user, I want the session to lock reliably on demand and before suspend. An unattended machine must never expose an unlocked session.
@@ -52,6 +51,7 @@ stakeholder:
             - SYS-REQ-260912-FRG0
             - SYS-REQ-260912-JW2J
             - SYS-REQ-260912-H8A5
+            - SYS-REQ-260927-WC89
           witness_deferred:
             reason: A true end-to-end acceptance run needs an integrated Hyprland session (compositor-reported lock state); the dogfood harness on macOS has no compositor, so only per-requirement verification exists. Deferred, not waived.
             tracking: dogfood-harness:no-compositor

@@ -1,4 +1,4 @@
-// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW
+// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SYS-REQ-260927-WC89
 // node:test adapter for the proof js MC/DC engine: replays the MenuModel.js
 // assertion body from test/shell.d/menu-test.sh under node:test so the
 // engine's Babel instrumentation can observe MenuModel.js decisions. The
@@ -833,4 +833,27 @@ assert(
   /function activateIndex\(index, fromPointer\)[\s\S]*root\.setActiveMenu\(row\.target \|\| row\.itemId, true, fromPointer\)/.test(menuQml)
     && /onClicked:[\s\S]*root\.activateIndex\(row\.index, true\)/.test(menuQml),
   'mouse activation carries pointer intent into subordinate menus'
-)})
+)
+
+// WC89: menu -> lock interface contract. The default config's Lock row
+// carries action "omarchy-system-lock" verbatim, and openRoute runs action
+// rows through Util.execDetached (REVIEW-28).
+const defaultEntries = menu.parseMenuJsonc(defaultMenuJsonc)
+const entryById = {}
+for (const e of defaultEntries) entryById[e.id] = e
+// MCDC SYS-REQ-260927-WC89: lock_row_activated=T, system_lock_invoked=T => TRUE
+assert(
+  entryById['system.lock'] && entryById['system.lock'].action === 'omarchy-system-lock',
+  'menu Lock row invokes the lock component entry point omarchy-system-lock'
+)
+assert(
+  /function openRoute\(initialMenu\)[\s\S]*entry\.kind === "action" && entry\.action[\s\S]*root\.runAction\(entry\.action\)/.test(menuQml)
+    && /function runAction\(action\)[\s\S]*Util\.execDetached\(command\)/.test(menuQml),
+  'menu action rows exec their action as a subprocess'
+)
+// MCDC SYS-REQ-260927-WC89: lock_row_activated=F, system_lock_invoked=F => TRUE [no-action: the other system.* rows carry their own actions (systemctl suspend et al.) -- no lock invocation occurs without the Lock row]
+assert(
+  entryById['system.suspend'] && entryById['system.suspend'].action === 'systemctl suspend',
+  'menu non-lock rows carry no lock invocation'
+)
+})

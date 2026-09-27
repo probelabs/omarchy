@@ -1,0 +1,48 @@
+id: SYS-REQ-260927-WC89
+version: 1
+status: review
+priority: shall
+category: interface
+req_type: guarantee
+fretish: when lock_row_activated the menu shall eventually satisfy system_lock_invoked
+description: The menu Lock row invokes the lock component's CLI entry point omarchy-system-lock with no arguments. The callee engages the session lock and exits 0. This is the only menu-to-lock interaction; lock never calls menu.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+component: menu
+rationale: The default menu config carries a Lock row whose action is omarchy-system-lock (default/omarchy/omarchy-menu.jsonc:38). This row is the single menu-to-lock call path; the lock component never invokes menu.
+tags: []
+variables: []
+traces:
+    satisfies:
+        - STK-REQ-260912-XJ5D
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:kimi-zero-warnings
+        reviewed_at: "2026-09-27T21:05:00Z"
+        ai_generated: true
+history:
+    created_by: agent:kimi-zero-warnings
+    created_at: "2026-09-27T20:58:23Z"
+    last_modified_by: agent:kimi-zero-warnings
+    last_modified_at: "2026-09-27T21:01:10Z"
+interface:
+    caller: menu
+    callee: lock
+    type: subprocess
+    signature: omarchy-system-lock() -> exit 0
+    protocol: "CLI exec with no arguments and no stdin; no stdout contract (output discarded)"
+    assumptions: "Caller provides no arguments; PATH resolves omarchy-system-lock; a Hyprland session with omarchy-shell IPC answers the lock verb."
+    guarantees: "Callee engages the session lock via omarchy-shell lock lock, resets keyboard layout, locks 1password when running, stops the ttfx screensaver, and exits 0."
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:01:10Z"
+          from: draft
+          to: review
+          reason: '[zero-warnings-campaign] interface contract verified against code: default/omarchy/omarchy-menu.jsonc:38 Lock row action is omarchy-system-lock; bin/omarchy-system-lock takes no args and exits 0 (engages lock via omarchy-shell lock lock)'
+          changed_by: agent:kimi-zero-warnings

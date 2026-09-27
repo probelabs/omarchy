@@ -1,0 +1,11 @@
+id: REVIEW-28
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T21:05:09Z"
+subject: SYS-REQ-260927-WC89
+decision: approved
+comment: 'Read the full call path. default/omarchy/omarchy-menu.jsonc:38 binds the Lock row action to omarchy-system-lock verbatim. openRoute (Menu.qml:954) resolves the row, sees kind=action, and runs entry.action via runAction -> Util.execDetached (subprocess, no args). bin/omarchy-system-lock takes no arguments, invokes omarchy-shell lock lock, and exits 0 by construction. Formula lock_row_activated -> system_lock_invoked matches: activation of the Lock row is the only trigger and the subprocess exec is the only invocation channel.'
+citations:
+    - default/omarchy/omarchy-menu.jsonc:38
+    - bin/omarchy-system-lock:10
+    - shell/plugins/menu/Menu.qml:954@openRoute

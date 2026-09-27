@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW
+# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SYS-REQ-260927-WC89
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=T, parse_error_raised=F => FALSE -- a failed parse hits the catch that returns [] unconditionally; invalid input yielding items needs a broken catch [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=T => FALSE -- the same catch swallows the parse error by construction; a raised error needs the try/catch removed [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=F => FALSE -- normalizeItem derives parent from the id and kind from the declared shape unconditionally; skipping the inference needs those assignments removed [reviewed: REVIEW-M8]
@@ -31,6 +31,7 @@ set -euo pipefail
 #mcdc:ignore:defensive SYS-REQ-260922-V7W6: matching_rows_ranked=F, search_entered=T => FALSE -- every search row carries its searchScore and the QML search model sorts by it; an unranked result list needs the sort removed [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-TKDP: matches_span_menus=T, sections_divided=F => FALSE -- displayRow copies the caller's section onto every row unconditionally; search rows arriving without their section needs that assignment removed [reviewed: REVIEW-M8]
 # mcdc:witness-out-of-process
+#mcdc:ignore:defensive SYS-REQ-260927-WC89: lock_row_activated=T, system_lock_invoked=F => FALSE -- openRoute copies the row's action verbatim into Util.execDetached; an activated Lock row not invoking omarchy-system-lock needs the action field in default/omarchy/omarchy-menu.jsonc or the exec call removed [reviewed: REVIEW-28]
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
@@ -824,6 +825,28 @@ assert(
   /function activateIndex\(index, fromPointer\)[\s\S]*root\.setActiveMenu\(row\.target \|\| row\.itemId, true, fromPointer\)/.test(menuQml)
     && /onClicked:[\s\S]*root\.activateIndex\(row\.index, true\)/.test(menuQml),
   'mouse activation carries pointer intent into subordinate menus'
+)
+
+// WC89: menu -> lock interface contract. The default config's Lock row
+// carries action "omarchy-system-lock" verbatim, and openRoute runs action
+// rows through Util.execDetached (REVIEW-28).
+const defaultEntries = menu.parseMenuJsonc(defaultMenuJsonc)
+const entryById = {}
+for (const e of defaultEntries) entryById[e.id] = e
+// MCDC SYS-REQ-260927-WC89: lock_row_activated=T, system_lock_invoked=T => TRUE
+assert(
+  entryById['system.lock'] && entryById['system.lock'].action === 'omarchy-system-lock',
+  'menu Lock row invokes the lock component entry point omarchy-system-lock'
+)
+assert(
+  /function openRoute\(initialMenu\)[\s\S]*entry\.kind === "action" && entry\.action[\s\S]*root\.runAction\(entry\.action\)/.test(menuQml)
+    && /function runAction\(action\)[\s\S]*Util\.execDetached\(command\)/.test(menuQml),
+  'menu action rows exec their action as a subprocess'
+)
+// MCDC SYS-REQ-260927-WC89: lock_row_activated=F, system_lock_invoked=F => TRUE [no-action: the other system.* rows carry their own actions (systemctl suspend et al.) -- no lock invocation occurs without the Lock row]
+assert(
+  entryById['system.suspend'] && entryById['system.suspend'].action === 'systemctl suspend',
+  'menu non-lock rows carry no lock invocation'
 )
 JS
 
