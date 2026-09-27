@@ -269,6 +269,8 @@ wait_state "comma label row presented" '[.rows[] | select(.itemId == "cma")] | l
 label=$(jq -r '[.rows[] | select(.itemId == "cma")][0].label' <<<"$LAST_STATE")
 [[ $label == "Commas, Included" ]] || fail "label with a comma renders verbatim" "got: $label"
 
+key_burst Down
+wait_state "cursor moved to the comma row" '.selectedIndex == 1'
 key_burst Return
 wait_state "comma submenu opened" '.activeMenu == "cma"'
 leaf_label=$(jq -r '[.rows[] | select(.itemId == "cma.run")][0].label' <<<"$(menu_state)")
