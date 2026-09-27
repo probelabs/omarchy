@@ -1,6 +1,72 @@
 checklist: onboard_v1
-updated_at: "2026-09-27T22:07:50Z"
+updated_at: "2026-09-27T23:06:03Z"
 steps:
+    ac-sweep:
+        status: confirmed
+        confirmed_at: "2026-09-27T22:57:20Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package lock: AC sweep complete. Lock acceptance suite attempted on the box GUI session 2026-09-28 and is genuinely infeasible headless: omarchy-shell binary absent (omarchy-system-lock fails command-not-found), hyprctl monitors unavailable, compositor never reports locked. STK-REQ-260912-XJ5D AC-001 deferral retained with upgraded box-measured rationale (Hyprland aquamarine headless drmFD=-1 no-allocator, no seat for DRM, nested dmabuf no main device) -- the single tracked debt of this campaign. All other lock ACs witnessed.'
+        scope_key: lock
+        check_results:
+            - id: acceptance_criteria_witnessed
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+            - id: acceptance_witness_quality
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+    annotations-heavy:
+        status: confirmed
+        confirmed_at: "2026-09-27T22:58:29Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package lock: MC/DC and obligation evidence annotations complete. Lock scripts (bin/omarchy-*lock*) carry Implements annotations bound to the P708 obligation set; code-level MC/DC measured for the lock package in the bash engine within the 80-req / 298-row green campaign; obligation witnesses grounded (obligation_witness_grounded pass).'
+        scope_key: lock
+        check_results:
+            - id: annotation_validity
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+            - id: obligation_witness_grounded
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+    coverage:
+        status: confirmed
+        confirmed_at: "2026-09-27T23:01:52Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package lock: coverage measured and logged within the same green code-level MC/DC campaign (bash engine covers bin/omarchy-*lock*); P708 boundary obligations witnessed; lock acceptance deferral (XJ5D AC-001) is a witness-scope debt, not a coverage hole -- all measured lock requirements carry covered witness rows.'
+        verify_result:
+            exit_code: 0
+            passed: true
+            at: "2026-09-27T23:01:53Z"
+            output: |
+                Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
+
+
+                Requirements: 82 total
+
+                  ━━━ IMPLEMENTATION ━━━
+                    ✓ orphan_code_clean              224/224 code functions traced  (0ms)
+                    ✓ orphan_tests_clean             44 test functions scanned, 0 orphans  (0ms)
+
+                  Errors: 0  Warnings: 0
+
+                Help: proof help audit
+                  Cache: 2 hits / 0 fresh (computed in 878ms)
+        scope_key: lock
+        check_results:
+            - id: code_mcdc_measure
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+    debt-standing:
+        status: confirmed
+        confirmed_at: "2026-09-27T23:02:46Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Debt hygiene final: exactly one standing debt -- STK-REQ-260912-XJ5D AC-001 lock-screen acceptance deferral with box-measured infeasibility rationale (headless aquamarine no-allocator, no seat, nested dmabuf) and a concrete unblock condition. All other deferrals (XTNR AC-001/AC-002 witnesses, P708 obligations) closed by the box acceptance runs. Documented budget dispositions in proof.yaml (proof_complexity_clean, under_modeled_requirements) carry per-finding rationale. Checklist complete; project handed to continuous pipeline posture.'
+        check_results:
+            - id: known_issues_reviewed
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+            - id: waivers_reviewed
+              status: pass
+              at: "2026-09-27T23:05:58Z"
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-27T21:57:07Z"
@@ -9,7 +75,29 @@ steps:
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
+    hazard:
+        status: confirmed
+        confirmed_at: "2026-09-27T22:57:42Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package lock: hazard review complete. Lock hazard classes covered by the lock defect-claim sessions CRS-0004/0005/0006 and the P708 obligation set (wrap-around, all-disabled no-cursor) whose boundary behavior was re-verified green in the box acceptance run 2026-09-28. Lock screen bypass/fail-closed posture unchanged by this campaign; no code delta in bin/omarchy-*lock* beyond spec-level deferral rationale updates.'
+        scope_key: lock
+        check_results:
+            - id: spec_lint_hazard_consequence
+              status: info
+              at: "2026-09-27T23:05:58Z"
+    history-mine:
+        status: confirmed
+        confirmed_at: "2026-09-27T23:02:16Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'History mined: the campaign commits (jsonc trailing-comma fix, menu/lock acceptance calibration, deferral removals, XTNR promotion, under_modeled disposition) were reviewed for DEFECT/CHG signals; the parse-edge defect class is already captured as CRS-deferred baseline debt with PoC (review/poc-parse-edges.mjs) and the defect-claim lifecycle stamps; no new obligation class emerged from recent history.'
+        check_results:
+            - id: problem_reports_reviewed
+              status: pass
+              at: "2026-09-27T23:05:58Z"
+            - id: change_evidence_complete
+              status: pass
+              at: "2026-09-27T23:05:58Z"
     init:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:13Z"
@@ -31,6 +119,16 @@ steps:
         confirmed_at: "2026-09-27T21:42:24Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Component structure modeled: 4 components (lock, menu x2 layers) + stakeholder map (STK-REQ-260912-XJ5D, STK-REQ-260922-XTNR) in specs/.'
+    residual:
+        status: confirmed
+        confirmed_at: "2026-09-27T22:58:16Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package lock: residual inventories dispositioned. The single standing residual is the XJ5D AC-001 lock-screen acceptance deferral, upgraded 2026-09-28 with box-measured infeasibility evidence (aquamarine headless drmFD=-1 no-allocator CRIT, no logind seat for DRM, nested wayland dmabuf without main device); tracked as deliberate debt with a concrete unblock condition (seat/session-capable host).'
+        scope_key: lock
+        check_results:
+            - id: residual_kill_hygiene
+              status: pass
+              at: "2026-09-27T23:05:58Z"
     skeleton:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:33Z"
@@ -51,22 +149,22 @@ steps:
               at: "2026-09-27T21:42:33Z"
     spec-review-1:
         status: confirmed
-        confirmed_at: "2026-09-27T21:43:22Z"
+        confirmed_at: "2026-09-27T22:57:03Z"
         confirmed_by: agent:kimi-zero-warnings
-        note: 'Structure/ambiguity review: spec_lint green (STE100 rewrite commit 98ba4ded), review.status in_review on all 82 active reqs.'
+        note: 'Structure and ambiguity pass complete: proof validate 82/82 requirements valid (0 errors); full-audit spec lint suite green (identifier/structure/FRETish checks); ambiguity and conformance debt worked through the 42 grounded spec_conformance reviews REVIEW-30..71 recorded under spec-review-2; remaining heuristic findings dispositioned 2026-09-28 (under_modeled budget disposition in proof.yaml).'
         check_results:
             - id: spec_lint_decomposition_adds_refinement
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: spec_lint_formalization_quality
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: solver_modeling_opportunity
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: under_modeled_requirements_clean
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
     spec-review-2:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:37Z"
@@ -75,16 +173,26 @@ steps:
         check_results:
             - id: spec_lint_spec_conformance_review_grounded
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: software_formalization_complete
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
     surface-matrix:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:48Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Package menu: surfaces inventoried in proof/surfaces/threat-surface.yaml; menu-jsonc-config surface dispositioned reviewed (commit 88a1322f) with residual links.'
         scope_key: menu
+    threat_surface_synthesis:
+        status: confirmed
+        confirmed_at: "2026-09-27T22:58:02Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package lock: threat surface synthesized -- lock vectors (session-lock bypass, compositor lock reporting, P708 navigation boundaries) carried in the lock spec obligation sets and validated through the box GUI acceptance attempts 2026-09-28; the one untestable surface (real session lock on headless box) is recorded as the XJ5D AC-001 deferral with measured backend-failure rationale.'
+        scope_key: lock
+        check_results:
+            - id: spec_lint_threat_surface_present
+              status: pass
+              at: "2026-09-27T23:05:58Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:07Z"
@@ -94,10 +202,10 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: orphan_code_clean
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
     variables:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:22Z"
@@ -106,10 +214,10 @@ steps:
         check_results:
             - id: variable_orphans_clean
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: variables_declared
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
             - id: variable_drift
               status: pass
-              at: "2026-09-27T22:07:49Z"
+              at: "2026-09-27T23:05:58Z"
