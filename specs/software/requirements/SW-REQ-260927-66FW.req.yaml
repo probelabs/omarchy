@@ -88,3 +88,11 @@ lifecycle:
           to: review
           reason: '[fix/jsonc-trailing-comma-in-strings] fix branch review: formula verified against scanner by REVIEW-21 + independent fuzz (20k cases, 0 mismatch) this campaign'
           changed_by: agent:kimi-fix-jsonc-refresh
+defect_review:
+    reviewed_at: "2026-09-27T19:39:58Z"
+    session: CRS-0017
+    fingerprint_sha: sha256:cbebc37d9574a7284db976630d1d24a84f197af58f67f4cd00cc7e326c8a590a
+    via: agent-review
+    counts:
+        emitted: 4
+        dismissed: 2

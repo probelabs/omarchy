@@ -70,3 +70,11 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: GC'd JavaScript; no C-family structural hazard surface.
+defect_review:
+    reviewed_at: "2026-09-27T19:39:58Z"
+    session: CRS-0019
+    fingerprint_sha: sha256:28f10f1f8752d325249eb074737cda33523e3ea9fd8419d557c5109584153aec
+    via: agent-review
+    counts:
+        emitted: 4
+        dismissed: 2

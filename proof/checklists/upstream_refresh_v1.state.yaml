@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:18:07Z"
+updated_at: "2026-09-27T19:27:50Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -21,6 +21,12 @@ steps:
             exit_code: 0
             passed: true
             at: "2026-09-27T19:08:12Z"
+    hazard:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:27:50Z"
+        confirmed_by: agent
+        note: 'FMEA for 66FW covers BOTH failure modes: (a) label corruption x, ]y -> x ]y; (b) realistic payloads mv f{.bak,} -> mv f{.bak} (brace expansion destroyed) and awk ''{print $1, }'' -> awk ''{print $1 }'' - silently mutated command running with user privileges, parse succeeding so nothing surfaces; graded malformed_input/medium with worst-case prose (reproduced old-vs-new 2026-09-27; NOTE: brief''s ''REVIEW-21 line 60-61'' reference does not resolve - REVIEW-21.yaml is an 11-line record - grounded instead in parser semantics + reproduction). hazard_review stamped: scenario reviewed (malformed_input/boundary/edge_case), property reviewed (determinism, 20k fuzz), domain+structural not_applicable with rationales, on 66FW AND delta-touched 3T3F. DEFECT-260927-CMMA problem report filed and closed covered_by_requirement with full hardening block + sibling-sweep attestation (Menu.qml delegates to MenuModel; no isomorphic site). All hazard/problem-report/change-record checks green.'
+        scope_key: menu
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-27T19:11:50Z"

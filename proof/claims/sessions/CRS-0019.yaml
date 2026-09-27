@@ -1,0 +1,22 @@
+id: CRS-0019
+spec_reqids:
+    - SW-REQ-260922-3T3F
+state: complete
+backend: grok
+model: Kimi (Moonshot AI) — agent:kimi-fix-jsonc-refresh
+cells:
+    - req_id: SW-REQ-260922-3T3F
+      dir: .proof/defect-sessions/CRS-0019/cells/SW-REQ-260922-3T3F
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:6c85ee8c33af401ec3f330587d7b7637099ad6fc7eceef57f2147d3aed4cac76
+input_fingerprint:
+    spec_yaml_sha: sha256:a807cad5929f268aa3d6cd5eeb20c5269052419eeb6e04ac24bc0984ab74db91
+    spec_projection: semantic-v1
+    code_fingerprints:
+        shell/plugins/menu/Menu.qml: sha256:7451c0933a4502292aae3294c22a26b81659155a87745e684c1b50c6712cca28
+        shell/plugins/menu/MenuModel.js: sha256:b4c960890feb21a12fa10300ef750c41c4b57161b4ddd16ce05a5eea7fc99723
+    claims_sha: sha256:b5699a2864be4ba4993378135321cc2a864bea2591d8bf962a7416fb5d91106a
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-27T19:28:54Z"
+updated_at: "2026-09-27T19:39:31Z"
