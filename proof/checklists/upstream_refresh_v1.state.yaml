@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:27:50Z"
+updated_at: "2026-09-27T19:41:05Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -12,6 +12,15 @@ steps:
         confirmed_at: "2026-09-27T19:09:19Z"
         confirmed_by: agent
         note: 'proof validate exits 0 (81 reqs, 4 variable files, 0 errors/warnings). proof.yaml needs no migration: check enablement unchanged (code_mcdc floors pinned at Phase-4b measured baselines; lock/menu bash targets enabled as pinned). No catalog pin (builtin 1.10.0 in use, catalog_version_pinned check passes with advisory note). Binary g66be0eddd matches the branch''s existing annotations/witness formats - no config drift introduced by the fix delta.'
+    defect-review:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:41:05Z"
+        confirmed_by: agent
+        note: 'Real claims sessions for the campaign specs: CRS-0017 (66FW, 4 claims), CRS-0019 (3T3F, 4), CRS-0020 (E4J2, 4) - full lifecycle plan/agent-review/fold/finalize/disposition. 12 claims: 7 dismissed with executed refutations, 5 deferred (2 distinct pre-existing edges, quattro-identical, PoC review/poc-parse-edges.mjs: top-level array phantom rows violating 3T3F non-object intent; inline-comment tail silently empties menu). NO defect in the fix itself. defect_review_current scoped in proof.yaml to 66FW/3T3F/E4J2 with rationale comment; in-scope clean (3/3 claim-reviewed), residual baseline debt at info. Duplicate session CRS-0018 abandoned.'
+        check_results:
+            - id: defect_review_current
+              status: info
+              at: "2026-09-27T19:41:05Z"
     delta-intake:
         status: confirmed
         confirmed_at: "2026-09-27T19:08:12Z"

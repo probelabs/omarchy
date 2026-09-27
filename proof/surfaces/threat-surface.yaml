@@ -1,0 +1,62 @@
+schema_version: 1
+campaign: upstream_refresh_v1 (fix/jsonc-trailing-comma-in-strings)
+delta: ce925cb1..1832b66a   # own fix: string-aware stripJsonc, package menu
+synthesized_by: agent:kimi-fix-jsonc-refresh
+synthesized_at: "2026-09-27"
+narrative: proof/surfaces/threat-surface.md
+# NOTE for integrators: this proof version (0.1.0-dev+g66be0eddd) persists the
+# threat-surface map at proof/surfaces/threat-surface.yaml (schema_version 1);
+# there is NO .proof/threat_surface.json schema in this binary. The JSONC-input
+# vector requested by the campaign brief lives below and in proof/vectors/.
+
+surfaces:
+
+  - id: menu-jsonc-config
+    kind: parser
+    summary: >
+      User-authored JSONC menu definitions (~/.config/omarchy/extensions/
+      omarchy-menu.jsonc + shipped default) parsed by MenuModel.stripJsonc +
+      parseMenuJsonc into the menu model. THE delta surface: pre-fix, the
+      string-blind trailing-comma regex silently mutated commas inside string
+      literals while JSON.parse still succeeded - including inside action:
+      command strings that omarchy-menu later executes with the user's full
+      privileges (mv f{.bak,} -> mv f{.bak}; awk '{print $1, }' ->
+      awk '{print $1 }'). Post-fix the stripper is a string-aware scanner
+      speced by SW-REQ-260927-66FW.
+    entrypoints:
+      - shell/plugins/menu/MenuModel.js (stripJsonc, parseMenuJsonc)
+      - shell/plugins/menu/Menu.qml (FileView onLoaded delegates)
+    error_posture: recover        # L1 — parse failure yields empty menu via 3T3F catch, never a crash
+    boundaries: [strip, parse, model]   # L2 — one-way; model never re-serialized
+    invariants:                   # L3
+      - "string-literal bytes survive stripping verbatim (66FW equivalence: trailing_comma_dropped <=> !comma_in_string & next_char_closes_json)"
+      - "invalid input degrades to an empty or skipped item set with no escaping exception (3T3F)"
+    equivalence_contract:         # L4 — hard gate, defined before any relational oracle
+      version: 1
+      comparison_surface: "parsed menu model (ordered item list with label/action/aliases fields) for a fixed config byte stream"
+      sanctioned_normalizations:
+        - "insignificant whitespace and line formatting"
+        - "object key ordering"
+        - "full-line comments and trailing commas outside strings (JSONC syntax, not data)"
+    oracle_families_armed:
+      - valid-subset-survives / invalid-superset-degrades (L6) — menu-test.sh string-aware block + node replay
+      - metamorphic pairs (L7) — adding/removing full-line comments and legal trailing commas must not change the model
+      - differential fuzz vs independent reference scanner (L5/L7) — 20k cases, 0 mismatches, 2026-09-27
+    oracle_families_blocked:
+      - crash oracles — DEAD on a recovery-posture surface (L1)
+      - live differential vs a second production parser — none exists (verified: no bin/ script parses the menu JSONC)
+    candidate_vectors:
+      - V-MENU-JSONC-INPUT
+    ladder:
+      - {q: L1,  tag: universal, answer: "recover: any parse failure -> empty menu (3T3F catch); crash oracles dead by posture. The dangerous pre-fix mode was NOT a crash but silent success on mutated text - now forbidden by 66FW"}
+      - {q: L2,  tag: universal, answer: "strip -> parse -> model, one-way; no re-serialization cycle, so fixpoint/idempotence families do not arm"}
+      - {q: L3,  tag: universal, answer: "conservation: string-literal bytes are data and survive verbatim; invalid input never produces phantom success... with one surviving pre-existing exception (top-level array of objects, deferred claim CRS-0019/C01)"}
+      - {q: L4,  tag: universal, answer: "equivalence_contract v1 above; armed before the metamorphic/differential lanes ran"}
+      - {q: L5,  tag: domain_parameterized, answer: "no second production implementation (verified bin/ tree); an INDEPENDENT reference scanner was written for the campaign's 20k-case differential fuzz instead"}
+      - {q: L6,  tag: domain_parameterized, answer: "grammar: JSONC = JSON + full-line comments + trailing commas. Known degradation edges: inline comments (unstripped -> empty menu, deferred CRS-0017/C01) and top-level arrays (phantom rows, deferred CRS-0019/C01) - both pre-existing, PoC review/poc-parse-edges.mjs"}
+      - {q: L7,  tag: domain_parameterized, answer: "metamorphic: comment/trailing-comma insertion outside strings preserves the model - post-fix this pair holds; pre-fix it FAILED for comma+closer inside strings (the DEFECT-260927-CMMA class)"}
+      - {q: L8,  tag: na, na_reason: "parser is stateless per load; FileView reload re-runs the pure function; no object lifecycle"}
+      - {q: L9,  tag: universal, answer: "governance: fixed class closed via DEFECT-260927-CMMA (covered_by_requirement + hardening); surviving edges tracked as deferred claims with PoCs; intake gate is the claims lifecycle"}
+      - {q: L10, tag: na, na_reason: "parsing is locale/tz/fs independent (pure byte scan + JSON.parse)"}
+      - {q: L11, tag: domain_parameterized, answer: "resource bounds: configs are small operator-authored files; scanner is O(n) single pass; no depth recursion; no limits enforced or needed at this scale"}
+      - {q: L12, tag: domain_parameterized, answer: "the rendered menu rows are user-visible and spec-regulated through the model requirements; pixel rendering is out of scope (no rendering oracle in the harness)"}
