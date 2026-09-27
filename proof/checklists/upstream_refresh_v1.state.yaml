@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:09:19Z"
+updated_at: "2026-09-27T19:12:10Z"
 steps:
     config-migrate:
         status: confirmed
@@ -15,3 +15,15 @@ steps:
             exit_code: 0
             passed: true
             at: "2026-09-27T19:08:12Z"
+    research-delta:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:11:50Z"
+        confirmed_by: agent
+        note: 'Studied MenuModel.js stripJsonc scanner (1-35) + parseMenuJsonc + variables + both test suites. Independent verification: node replay 1/1 pass; old-vs-new shows pre-fix SILENT command mutation (mv f{.bak,} -> mv f{.bak}; awk ''{print $1, }'' -> awk ''{print $1 }'') with parse still succeeding - failure mode (b) confirmed real pre-fix and closed post-fix; 20k differential fuzz vs independent reference scanner: 0 mismatches. Findings in review/fix-jsonc-comma-research-delta.md. Residual pre-existing edge: inline comments still unstripped (3T3F covers with empty-set). No defect in the fix found.'
+        scope_key: menu
+    skeleton-patch:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:12:10Z"
+        confirmed_by: agent
+        note: 'Verified agent-25''s skeleton, no additions needed: SW-REQ-260927-66FW (guarantee, equivalence formula trailing_comma_dropped <=> (!comma_in_string & next_char_closes_json)) parents correctly under SYS-REQ-260922-PPDW (menu model merge); satisfies trace present. 3 decision variables declared in menu.vars.yaml with correct direction (comma_in_string/next_char_closes_json input, trailing_comma_dropped output). proof validate --variable-drift: 81/81 reqs, 4/4 var files clean. No STK/SYS/INT additions warranted: the fix restores intended parse semantics; stakeholder-visible behavior is unchanged-by-design (corruption was never intended). No retirements.'
+        scope_key: menu

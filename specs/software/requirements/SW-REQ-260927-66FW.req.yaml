@@ -22,6 +22,19 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-09-27T19:14:02.630895Z"
+    reviewed_by: agent:kimi-fix-jsonc-refresh
+    reviewed_fingerprint: sha256:edb05429dd6a72cf07d60ea9501c81d0844b42616e2d2c5dcccbf43f12962ad5
+    review_history:
+        - reviewed_at: "2026-09-27T19:14:02.630895Z"
+          reviewed_by: agent:kimi-fix-jsonc-refresh
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:1
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh
 verification:
     assurance_level: C
     formalization_status: valid

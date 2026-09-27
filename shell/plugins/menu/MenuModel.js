@@ -1,4 +1,4 @@
-// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
+// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260927-66FW
 function stripJsonc(raw) {
   var noComments = String(raw || "")
     .replace(/^\s*\/\/[^\n]*(\n|$)/gm, "")
