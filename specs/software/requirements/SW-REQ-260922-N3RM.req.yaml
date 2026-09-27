@@ -20,6 +20,20 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
+    reviewed_at: "2026-09-27T21:21:24.159161Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
+    review_history:
+        - reviewed_at: "2026-09-27T21:21:24.159161Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

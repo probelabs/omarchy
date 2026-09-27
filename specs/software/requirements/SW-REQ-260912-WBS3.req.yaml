@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-09-27T21:18:01.391863Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:10ef9988f240b45bd910270e9230a798bb0d2d142144566df155ec4b5da284fc
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:01.391863Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:37
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-password-overflow-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

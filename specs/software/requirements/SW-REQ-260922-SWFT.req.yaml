@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
+    reviewed_at: "2026-09-27T21:18:36.631139Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:c9ddbcbd2076f322382d35e1472f4b13dcc3c6e4f113a1c146a3fb9bf8e7227c
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:36.631139Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-timezone:7
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-timezone-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

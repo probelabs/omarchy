@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
+    reviewed_at: "2026-09-27T21:18:08.198035Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:f8c7007ed0cadf8073d2d92ad02b419c0071977c8d56731a3766f70a122f5415
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:08.198035Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-images:6
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-images-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

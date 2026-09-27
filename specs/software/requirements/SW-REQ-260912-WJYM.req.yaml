@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
+    reviewed_at: "2026-09-27T21:18:02.269427Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:a1e2adef8ba0d8e38e0bef9e877664d69d4efe26d1e64d5eb6de56be02c4b08e
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:02.269427Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:106
+            - shell/plugins/lock/Service.qml:93
+            - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
+            - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

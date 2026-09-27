@@ -18,6 +18,18 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
+    reviewed_at: "2026-09-27T21:21:32.96388Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
+    review_history:
+        - reviewed_at: "2026-09-27T21:21:32.96388Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

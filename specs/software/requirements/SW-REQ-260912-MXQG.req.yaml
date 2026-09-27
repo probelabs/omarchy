@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-09-27T21:17:58.798079Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:3558f943eda013a9fcc5f9851131e7c00f449a7d0242a0554481e3b8c17a71f0
+    review_history:
+        - reviewed_at: "2026-09-27T21:17:58.798079Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:26
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

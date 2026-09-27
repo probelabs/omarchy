@@ -19,6 +19,27 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
+    reviewed_at: "2026-09-27T21:18:11.443413Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:11.443413Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - shell/plugins/menu/Menu.qml:35
+            - shell/plugins/menu/Menu.qml:40
+            - shell/plugins/menu/Menu.qml:47
+            - shell/plugins/menu/Menu.qml:87
+            - shell/plugins/menu/Menu.qml:893
+            - shell/plugins/menu/Menu.qml:918
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:304
+            - test/shell.d/menu-compositor-test.sh:313
+            - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

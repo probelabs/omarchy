@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-09-27T21:21:18.612719Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:cce8af4897e3cc83790af34c836aa263cede8e10c78ec45686d6592f58267ea5
+    review_history:
+        - reviewed_at: "2026-09-27T21:21:18.612719Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:96
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

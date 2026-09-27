@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
+    reviewed_at: "2026-09-27T21:17:52.858344Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:318fada1f049836480b5144a32c53ffdbf09aec075d56e9b586eb807fafdaae2
+    review_history:
+        - reviewed_at: "2026-09-27T21:17:52.858344Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-hyprland-session-locked:6
+            - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
+            - test/shell.d/hyprland-session-locked-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

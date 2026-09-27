@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
+    reviewed_at: "2026-09-27T21:21:26.881945Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
+    review_history:
+        - reviewed_at: "2026-09-27T21:21:26.881945Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:487
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

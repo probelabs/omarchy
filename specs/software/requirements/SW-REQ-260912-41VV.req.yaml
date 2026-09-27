@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-09-27T21:17:51.992931Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:e9d839982162cdec70f292772e05ddc37d4e59e76c32fef7b7fade3f5b0caa1d
+    review_history:
+        - reviewed_at: "2026-09-27T21:17:51.992931Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:33
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-fingerprint-indicator-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

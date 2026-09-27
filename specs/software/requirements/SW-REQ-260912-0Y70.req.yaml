@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-H8A5
+    reviewed_at: "2026-09-27T21:13:13.386949Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:aadb46a7fe3f63ab9cf8f5327ba27d3c70da35a6fa8fd3b4ebe51cfb3279feea
+    review_history:
+        - reviewed_at: "2026-09-27T21:13:13.386949Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-update-lock:14
+            - specs/system/requirements/SYS-REQ-260912-H8A5.req.yaml
+            - test/shell.d/update-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

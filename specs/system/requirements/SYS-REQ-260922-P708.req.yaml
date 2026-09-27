@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
+    reviewed_at: "2026-09-27T21:18:50.861314Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:50.861314Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-compositor-test.sh:333
+            - test/shell.d/menu-compositor-test.sh:347
+            - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

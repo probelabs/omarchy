@@ -19,6 +19,21 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
+    reviewed_at: "2026-09-27T21:18:43.222964Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:09b910367c950a5d23bb4b015ae116f9d9ca20931b96302f52194bdc3b41cc38
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:43.222964Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-hyprland-session-locked:6
+            - shell/plugins/lock/Service.qml:8
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/hyprland-session-locked-test.sh:7
+            - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

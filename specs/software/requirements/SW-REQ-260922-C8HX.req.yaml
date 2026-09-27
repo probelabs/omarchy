@@ -19,6 +19,21 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
+    reviewed_at: "2026-09-27T21:18:18.82126Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:18.82126Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:869
+            - shell/plugins/menu/Menu.qml:886
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

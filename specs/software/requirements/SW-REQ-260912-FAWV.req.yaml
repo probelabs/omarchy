@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-HC86
+    reviewed_at: "2026-09-27T21:17:54.532648Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:860e715d71359c2c1ebb2c9cb29d4e8ee568a696fbae802ddbd12ab2171063e1
+    review_history:
+        - reviewed_at: "2026-09-27T21:17:54.532648Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-sleep-lock:23
+            - bin/omarchy-system-sleep-lock:43
+            - specs/system/requirements/SYS-REQ-260912-HC86.req.yaml
+            - test/shell.d/sleep-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

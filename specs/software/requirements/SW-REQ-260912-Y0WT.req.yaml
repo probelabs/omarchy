@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-JW2J
+    reviewed_at: "2026-09-27T21:18:03.113469Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:626257907f61eef6debbb2193954f8875b477538a740f81dfd79a1dc939d3b83
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:03.113469Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-apply-lock:46
+            - specs/system/requirements/SYS-REQ-260912-JW2J.req.yaml
+            - test/shell.d/apply-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

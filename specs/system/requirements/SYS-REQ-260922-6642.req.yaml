@@ -19,6 +19,18 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
+    reviewed_at: "2026-09-27T21:18:49.199937Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:0c25abb06bad1efc26494f1cc1ccd90263b23bfeb55077dc68881419350b5904
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:49.199937Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-share-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

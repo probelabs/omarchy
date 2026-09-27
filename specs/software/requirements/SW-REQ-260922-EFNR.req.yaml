@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
+    reviewed_at: "2026-09-27T21:21:22.284137Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
+    review_history:
+        - reviewed_at: "2026-09-27T21:21:22.284137Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:349
+            - shell/plugins/menu/MenuModel.js:172
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

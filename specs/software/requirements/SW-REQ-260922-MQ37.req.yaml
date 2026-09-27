@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
+    reviewed_at: "2026-09-27T21:18:29.346182Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:fc8d35f87287613f6ae2ec347e485c2a39bd2b6a171e936a3582d0644564093f
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:29.346182Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:511
+            - shell/plugins/menu/MenuModel.js:521
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

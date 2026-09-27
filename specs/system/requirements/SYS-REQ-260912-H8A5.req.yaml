@@ -19,6 +19,19 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
+    reviewed_at: "2026-09-27T21:18:44.133631Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:acd935d6dea370e06390155ac69a86620f1de267ec7f68e7b69c5c79309a48f7
+    review_history:
+        - reviewed_at: "2026-09-27T21:18:44.133631Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-update-lock:7
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/update-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-09-27T21:17:57.948378Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:b8a4369841cdad3aea39dc8dca4da0b43beb8c41a757fc4067ebbfc732f193d4
+    review_history:
+        - reviewed_at: "2026-09-27T21:17:57.948378Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:141
+            - shell/plugins/lock/Service.qml:593
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-missing-pam-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
