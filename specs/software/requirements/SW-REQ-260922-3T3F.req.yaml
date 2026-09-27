@@ -19,6 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-09-27T19:27:25.571806Z"
+    reviewed_by: agent:kimi-fix-jsonc-refresh
+    reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
+    review_history:
+        - reviewed_at: "2026-09-27T19:27:25.571806Z"
+          reviewed_by: agent:kimi-fix-jsonc-refresh
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml
+            - shell/plugins/menu/MenuModel.js:1
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh
 verification:
     assurance_level: C
     formalization_status: valid
@@ -35,3 +49,24 @@ history:
 obligation_checklist:
     - boundary
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-27T19:20:59Z"
+    reviewed_by: agent:kimi-fix-jsonc-refresh
+    reviewed_against_catalog_version: 1.10.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - error_handling
+          rationale: 'Delta-touched by the fix branch (description/rationale now name string-aware comma semantics). malformed_input: unparseable-after-strip input still routes to the unconditional catch returning [] (verified by direct execution 2026-09-27: unterminated string -> parse fail -> empty set, no exception escapes). error_handling: the failure mode is silent empty menu by design; the NEW malformed-input subclass this branch removes is the one where parse SUCCEEDED on corrupted text (comma-in-string), which no error path could ever catch - correctly handled by 66FW''s prevention, not by error handling here.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags; local config parser.
+        - category: structural
+          disposition: not_applicable
+          rationale: GC'd JavaScript; no C-family structural hazard surface.

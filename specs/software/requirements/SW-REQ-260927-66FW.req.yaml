@@ -43,11 +43,44 @@ verification:
         reviewer: agent:kimi-fix-jsonc-refresh
         reviewed_at: "2026-09-27T19:16:00Z"
         ai_generated: true
+        motivation:
+            kind: defect
+            ref: DEFECT-260927-CMMA
+            rationale: "This requirement closes the string-blind trailing-comma mutation class: it models the comma-drop decision (comma_in_string, next_char_closes_json) that let in-string commas be silently stripped while the parse still succeeded."
 history:
     created_by: human:Leonid Bugaev
     created_at: "2026-09-27T15:24:42Z"
     last_modified_by: agent:kimi-fix-jsonc-refresh
-    last_modified_at: "2026-09-27T19:15:02Z"
+    last_modified_at: "2026-09-27T19:20:42Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'FMEA mode (a): a label like "x, ]y" is silently corrupted to "x ]y" while the parse still succeeds - the user sees a wrong row name. FMEA mode (b), the realistic payload: an action such as mv f{.bak,} or awk ''{print $1, }'' loses its in-string comma to the string-blind strip and the MUTATED command runs with the user''s full privileges when the row is activated - mv loses its brace expansion and targets a literal filename, awk silently changes output format feeding downstream pipelines. No error surfaces in either mode because JSON.parse accepts the stripped text; the corruption is invisible until the command misbehaves. Fixed on this branch by the string-aware scanner; the grading records the pre-fix worst case this requirement now forbids.'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-09-27T19:20:42Z"
+    reviewed_by: agent:kimi-fix-jsonc-refresh
+    reviewed_against_catalog_version: 1.10.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+          rationale: 'malformed_input: JSONC trailing commas are legal-but-non-JSON input the stripper must normalize WITHOUT touching string-literal bytes; both FMEA modes (label corruption; silently mutated user-privilege command, e.g. mv f{.bak,} / awk ''{print $1, }'') lived here pre-fix and are now forbidden by the equivalence formula + witnessed rows. boundary: comma at EOF with no closing byte is dropped (lenient row, witnessed). edge_case: escaped quote before comma+closer inside a string (''a", ]b'') witnessed verbatim.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: The scanner is a single left-to-right pass with no environment, ordering, or timing inputs; identical bytes always strip identically (20k-case differential fuzz vs an independent reference scanner, 0 mismatches, 2026-09-27).
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags (HTTP/crypto/IPC frameworks); the component parses a local user-authored config file into a menu model.
+        - category: structural
+          disposition: not_applicable
+          rationale: Implementation is GC'd JavaScript (QML JS engine); no manual memory, pointer arithmetic, binary framing, or format strings - the structural catalog targets C-family hazards that cannot exist here.
 lifecycle:
     change_history:
         - date: "2026-09-27T19:15:02Z"

@@ -1,6 +1,12 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:16:57Z"
+updated_at: "2026-09-27T19:18:07Z"
 steps:
+    ac-sweep:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:18:07Z"
+        confirmed_by: agent
+        note: 'No STK specs changed by the delta; reviewed XTNR ACs against the fix''s stakeholder-observable effect. Added AC-002: labels/actions with comma+closing-brace payloads (awk ''{print $1, }'', mv f{.bak,}) must survive verbatim. Parse-level witnessed (menu-test.sh block, node replay 1/1, 20k fuzz); UI-level witness_deferred dogfood-harness:no-quickshell matching AC-001 convention. acceptance_criteria_witnessed / ac_subset / ac_inverse lints pass.'
+        scope_key: menu
     config-migrate:
         status: confirmed
         confirmed_at: "2026-09-27T19:09:19Z"
