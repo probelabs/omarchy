@@ -1,0 +1,11 @@
+id: REVIEW-24
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T20:46:30Z"
+subject: SW-REQ-260922-50RE
+decision: approved
+comment: Read open/close/refresh/ping at Menu.qml:21-44. open parses payloadJson with try/catch (bad JSON silently degrades to empty object - a precondition the code honors and the formula abstracts over), dispatches select/input to openDmenu and everything else to openRoute; close cancels; refresh reloads both JSONC files and returns ok; ping returns ok. Every lifecycle verb produces an answer, matching menu_open_called -> lifecycle_answered.
+citations:
+    - shell/plugins/menu/Menu.qml:22@open
+    - shell/plugins/menu/Menu.qml:34@close
+    - shell/plugins/menu/Menu.qml:38@refresh
