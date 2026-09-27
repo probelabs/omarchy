@@ -1,8 +1,17 @@
 checklist: onboard_v1
-updated_at: "2026-09-27T21:43:22Z"
+updated_at: "2026-09-27T21:57:07Z"
 steps:
-    init:
+    defect-review:
         status: confirmed
+        confirmed_at: "2026-09-27T21:57:07Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Defect-claim sessions complete: CRS-0004..0020 (incl. CRS-0017/0019/0020 for the jsonc delta); 7 claims dismissed with refutations, 5 deferred as baseline debt with PoC (review/poc-parse-edges.mjs); defect_review_current scoped+green.'
+        check_results:
+            - id: defect_review_current
+              status: info
+              at: "2026-09-27T21:57:07Z"
+    init:
+        status: not_applicable
         confirmed_at: "2026-09-27T21:42:13Z"
         confirmed_by: agent:kimi-zero-warnings
         note: proof.yaml present and active; project initialized by dogfood campaign (4 components, 82 reqs).
@@ -18,12 +27,12 @@ steps:
               status: pass
               at: "2026-09-27T21:42:13Z"
     research:
-        status: confirmed
+        status: not_applicable
         confirmed_at: "2026-09-27T21:42:24Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Component structure modeled: 4 components (lock, menu x2 layers) + stakeholder map (STK-REQ-260912-XJ5D, STK-REQ-260922-XTNR) in specs/.'
     skeleton:
-        status: confirmed
+        status: not_applicable
         confirmed_at: "2026-09-27T21:42:33Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Breadth skeleton landed: 2 STK + SYS + 60 SW + INT SYS-REQ-260927-WC89 (menu->lock interface), all layers populated.'
@@ -48,16 +57,34 @@ steps:
         check_results:
             - id: spec_lint_decomposition_adds_refinement
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
             - id: spec_lint_formalization_quality
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
             - id: solver_modeling_opportunity
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
             - id: under_modeled_requirements_clean
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
+    spec-review-2:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:56:37Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Deep pass complete: 42 grounded spec_conformance reviews (REVIEW-30..71) recorded 2026-09-28 after reading per-req code bundles; spec_lint_spec_conformance_review_grounded green.'
+        check_results:
+            - id: spec_lint_spec_conformance_review_grounded
+              status: pass
+              at: "2026-09-27T21:56:37Z"
+            - id: software_formalization_complete
+              status: pass
+              at: "2026-09-27T21:56:37Z"
+    surface-matrix:
+        status: confirmed
+        confirmed_at: "2026-09-27T21:56:48Z"
+        confirmed_by: agent:kimi-zero-warnings
+        note: 'Package menu: surfaces inventoried in proof/surfaces/threat-surface.yaml; menu-jsonc-config surface dispositioned reviewed (commit 88a1322f) with residual links.'
+        scope_key: menu
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:07Z"
@@ -67,10 +94,10 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-27T21:43:07Z"
+              at: "2026-09-27T21:55:44Z"
             - id: orphan_code_clean
               status: pass
-              at: "2026-09-27T21:43:07Z"
+              at: "2026-09-27T21:55:44Z"
     variables:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:22Z"
@@ -79,10 +106,10 @@ steps:
         check_results:
             - id: variable_orphans_clean
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
             - id: variables_declared
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
             - id: variable_drift
               status: pass
-              at: "2026-09-27T21:43:22Z"
+              at: "2026-09-27T21:55:44Z"
