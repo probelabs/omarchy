@@ -1,6 +1,6 @@
 id: SW-REQ-260922-8CQ4
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -30,5 +30,12 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T15:09:55Z"
-    last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-22T15:09:57Z"
+    last_modified_by: agent:kimi-zero-warnings
+    last_modified_at: "2026-09-27T20:41:27Z"
+lifecycle:
+    change_history:
+        - date: "2026-09-27T20:41:27Z"
+          from: draft
+          to: review
+          reason: '[zero-warnings-campaign] genuine re-review 2026-09-27: FRETish verified against implementation (JRW1 isVisible/isDisabled/labelFor MenuModel.js:284+, 50RE open/close/refresh/ping Menu.qml:21-44, C8HX finishRequest Menu.qml:122, B757 foldedListHeight/availableRowsHeight Menu.qml:164-216, 8CQ4 requestDeleteSelected/cancelDelete/confirmDelete Menu.qml:841-875); all MC/DC witness rows already covered by shell suites; activates the 9 declared variables these reqs own'
+          changed_by: agent:kimi-zero-warnings

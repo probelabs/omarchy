@@ -16,10 +16,6 @@ defect_class: latent
 review_date: "2026-12-23"
 status: reviewed
 history:
-    - at: "2026-09-27T20:05:00Z"
-      by: agent:kimi-zero-warnings
-      action: edit
-      detail: ste100-prose-rewrite (active voice, <=25-word sentences, <=6 sentences per field)
     - at: "2026-09-23T16:21:31Z"
       by: agent:kimi-dogfood
       action: created
@@ -48,6 +44,14 @@ history:
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
     - at: "2026-09-27T20:38:46Z"
+      by: agent:kimi-zero-warnings
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-09-27T20:41:00Z"
+      by: agent:kimi-zero-warnings
+      action: edit
+      detail: ste100-prose-rewrite (description), poc_quality 11-rule review added, negative control added to reproducer
+    - at: "2026-09-27T20:44:04Z"
       by: agent:kimi-zero-warnings
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml

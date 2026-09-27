@@ -64,14 +64,6 @@ variables:
       type: bool
       direction: output
       description: The picked value was delivered to the calling script.
-    - name: prompt_dismissed
-      type: bool
-      direction: input
-      description: The user cancelled the prompt without picking.
-    - name: dismissal_signalled
-      type: bool
-      direction: output
-      description: The caller observes the cancellation (no selection).
     - name: action_script_invoked
       type: bool
       direction: input
@@ -80,35 +72,3 @@ variables:
       type: bool
       direction: output
       description: The script performed its documented side effect or refusal.
-    - name: guard_results_applied
-      type: bool
-      direction: input
-      description: The batched guard results (when/checked/disabled per id) landed in the view state.
-    - name: rows_hidden_or_marked_per_results
-      type: bool
-      direction: output
-      description: Rows hide on when:false, static submenus with no visible descendant hide, provider menus stay, checked/disabled rows earn the check mark, disabled rows dim.
-    - name: menu_open_called
-      type: bool
-      direction: input
-      description: The host called open(payloadJson) after summon.
-    - name: lifecycle_answered
-      type: bool
-      direction: output
-      description: Payload mode dispatched (select/input/route), close cancels, refresh reloads both JSONC sources and answers ok, ping answers ok.
-    - name: rows_overflow
-      type: bool
-      direction: input
-      description: The row list is taller than the height available to it.
-    - name: fold_signals_more
-      type: bool
-      direction: output
-      description: The list height ends mid-row with a peek of the next row, capped at 70 percent of panel height, never exactly on a row boundary.
-    - name: delete_key_on_app
-      type: bool
-      direction: input
-      description: The user pressed Delete with the cursor on an app row.
-    - name: uninstall_confirmed_flow
-      type: bool
-      direction: output
-      description: A confirmation dialog opens; confirm removes the app through the app library, cancel restores focus without removing.
