@@ -119,10 +119,17 @@ assertEqual(
   'menu preserves a comma before a closing bracket inside a string literal'
 )
 // MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
+// SW-REQ-260927-66FW:malformed_input:nominal
 assertEqual(
   menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
   1,
   'menu still tolerates a real trailing comma before a closing brace'
+)
+// SW-REQ-260927-66FW:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"a": undefined, }').length,
+  0,
+  'menu rejects a malformed value even when a strippable trailing comma is present'
 )
 assertDeepEqual(
   menu.parseMenuJsonc('{"d": {"label": "z", "aliases": ["a", "b",]}}')[0].aliases,
