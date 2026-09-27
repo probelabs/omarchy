@@ -13,6 +13,20 @@ surfaces:
 
   - id: menu-jsonc-config
     kind: parser
+    disposition:
+      status: reviewed
+      ref: DEFECT-260927-CMMA
+      reason: >
+        Fully worked in the upstream_refresh_v1 campaign (2026-09-27): L1-L12
+        ladder answered above; the delta mutation class is closed by
+        SW-REQ-260927-66FW (5/5 MC/DC rows witnessed in menu-test.sh + node
+        replay) plus a 20k-case differential fuzz with zero mismatches.
+        Class closure recorded as DEFECT-260927-CMMA (covered_by_requirement);
+        vector V-MENU-JSONC-INPUT exited closed-null; surviving grammar edges
+        (inline comments, top-level arrays) parked as residual
+        L-MENU-JSONC-001 with PoC review/poc-parse-edges.mjs.
+      reviewed_by: agent:kimi-zero-warnings
+      reviewed_at: "2026-09-27T21:00:00Z"
     summary: >
       User-authored JSONC menu definitions (~/.config/omarchy/extensions/
       omarchy-menu.jsonc + shipped default) parsed by MenuModel.stripJsonc +
