@@ -1,0 +1,17 @@
+checklist: upstream_refresh_v1
+updated_at: "2026-09-27T19:09:19Z"
+steps:
+    config-migrate:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:09:19Z"
+        confirmed_by: agent
+        note: 'proof validate exits 0 (81 reqs, 4 variable files, 0 errors/warnings). proof.yaml needs no migration: check enablement unchanged (code_mcdc floors pinned at Phase-4b measured baselines; lock/menu bash targets enabled as pinned). No catalog pin (builtin 1.10.0 in use, catalog_version_pinned check passes with advisory note). Binary g66be0eddd matches the branch''s existing annotations/witness formats - no config drift introduced by the fix delta.'
+    delta-intake:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:08:12Z"
+        confirmed_by: agent
+        note: 'Base ce925cb1 (quattro, proof-instrumented) -> head 1832b66a (fix/jsonc-trailing-comma-in-strings). Delta is OUR fix, 4 commits: a277f1c4 witness tests, 0d93b9e7 string-aware stripJsonc scanner, 2329125a SW-REQ-260927-66FW + 3 decision variables, 1832b66a MC/DC row settle + REVIEW-21 + 3T3F description/rationale. Diff: 8 files +199/-7 (MenuModel.js +33, 66FW spec +37, 3T3F spec, menu.vars.yaml +12, REVIEW-21, menu-test.sh +52, menumodel-replay.test.mjs +51). proof CLI 0.1.0-dev+g66be0edddc8c (NOTE: user brief said gec4c0297 - actual binary reports g66be0eddd). No catalog pin (builtin 1.10.0). Host macOS: build_passes/tests_pass/code_mcdc_measure fail environmentally (/usr/bin/bash, .proof/mcdc/bash/latest.json absent); box phase re-measures. Branch is directly on quattro - no pr-9056-refresh campaign docs carried over, contrary to brief.'
+        verify_result:
+            exit_code: 0
+            passed: true
+            at: "2026-09-27T19:08:12Z"
