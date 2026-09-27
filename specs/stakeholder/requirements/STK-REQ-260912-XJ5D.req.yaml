@@ -53,7 +53,7 @@ stakeholder:
             - SYS-REQ-260912-H8A5
             - SYS-REQ-260927-WC89
           witness_deferred:
-            reason: A true end-to-end acceptance run needs an integrated Hyprland session (compositor-reported lock state); the dogfood harness on macOS has no compositor, so only per-requirement verification exists. Deferred, not waived.
+            reason: "A true end-to-end acceptance run needs an integrated Hyprland session (compositor-reported lock state via hyprctl solitaryBlockedBy). Measured infeasible on the proof box (headless VM, no seat, no sudo) on 2026-09-28 — Hyprland 0.56.2 + aquamarine 0.15.1 headless backend always reports drmFD=-1 so no GBM allocator exists and CBackend::create throws; the DRM backend needs a libseat seat (no seatd; the ssh logind session has no seat); a nested wayland backend under headless sway starts on gles2 but the dmabuf feedback carries no main device, so the allocator still fails. Only per-requirement verification exists. Deferred, not waived."
             tracking: dogfood-harness:no-compositor
 lifecycle:
     change_history:

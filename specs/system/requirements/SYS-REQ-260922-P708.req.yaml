@@ -48,11 +48,6 @@ history:
     last_modified_at: "2026-09-27T21:25:46Z"
 obligation_checklist:
     - boundary
-obligation_deferrals:
-    - obligation_class: boundary
-      reason: Nav-boundary evidence needs the Quickshell runtime (compositor-hosted); the Z48F/3JG5 carriers sit in the compositor residual and cannot be exercised on this harness host
-      tracking: dogfood-harness:no-quickshell
-      owner: agent:kimi-dogfood
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
