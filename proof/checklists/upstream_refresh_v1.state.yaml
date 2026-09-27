@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:14:02Z"
+updated_at: "2026-09-27T19:16:57Z"
 steps:
     config-migrate:
         status: confirmed
@@ -26,6 +26,18 @@ steps:
         confirmed_at: "2026-09-27T19:12:10Z"
         confirmed_by: agent
         note: 'Verified agent-25''s skeleton, no additions needed: SW-REQ-260927-66FW (guarantee, equivalence formula trailing_comma_dropped <=> (!comma_in_string & next_char_closes_json)) parents correctly under SYS-REQ-260922-PPDW (menu model merge); satisfies trace present. 3 decision variables declared in menu.vars.yaml with correct direction (comma_in_string/next_char_closes_json input, trailing_comma_dropped output). proof validate --variable-drift: 81/81 reqs, 4/4 var files clean. No STK/SYS/INT additions warranted: the fix restores intended parse semantics; stakeholder-visible behavior is unchanged-by-design (corruption was never intended). No retirements.'
+        scope_key: menu
+    spec-review-delta:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:16:32Z"
+        confirmed_by: agent
+        note: '66FW promoted draft->review (lifecycle change_history stamped, verification.review in_review by agent:kimi-fix-jsonc-refresh). REVIEW-21 (agent-25) verified sound: formula matches scanner semantics, 3 defensive row dispositions correct. REVIEW-22 added grounding 3T3F''s description/rationale delta edit (parseMenuJsonc citation fixed to post-delta line 72). 3T3F/E4J2 stay draft per quattro baseline convention (all menu SW specs draft there); changed_requirements_reviewed passes. Suspect links: 191 pre-existing baseline (whole-repo drift), none introduced by this delta.'
+        scope_key: menu
+    surface-matrix:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:16:57Z"
+        confirmed_by: agent
+        note: 'Re-extracted surfaces for package menu: 0 surfaces (scope_partial=true), gap-queue empty, surfaces check OK. The JSONC config input is a parser surface, not a security surface in this ledger''s taxonomy (surfaces inventory security-relevant entry points; the menu package declares none). The parse-input threat angle is instead covered properly in the threat_surface_synthesis step (ladder + vector), not here. No new GAPs introduced by the delta; nothing to close.'
         scope_key: menu
     traces-light:
         status: confirmed

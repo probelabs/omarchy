@@ -59,3 +59,11 @@ stakeholder:
           witness_deferred:
             reason: A true end-to-end acceptance run needs an integrated quickshell session (compositor-presented menu UI); the dogfood harness on macOS has no quickshell runtime, so only per-requirement verification exists (dispatcher IPC, dmenu protocol, and guard evaluation are covered by shell suites). Deferred, not waived.
             tracking: dogfood-harness:no-quickshell
+        - id: AC-002
+          text: A menu entry whose label or action contains a comma adjacent to a closing brace or bracket (for example an awk '{print $1, }' or mv f{.bak,} command in a user extension) is displayed and executed verbatim, never silently mutated by JSONC trailing-comma stripping.
+          verification_method: test
+          derived_reqs:
+            - SYS-REQ-260922-PPDW
+          witness_deferred:
+            reason: Parse-level verbatim preservation is witnessed now (test/shell.d/menu-test.sh string-aware comma block, replayed by test/node/menumodel-replay.test.mjs, 1/1 pass on 2026-09-27 plus a 20k-case differential fuzz); rendering/executing the preserved string in the compositor-presented menu UI needs the integrated quickshell session the macOS harness lacks. Deferred, not waived.
+            tracking: dogfood-harness:no-quickshell
