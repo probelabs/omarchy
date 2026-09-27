@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T19:47:57Z"
+updated_at: "2026-09-27T20:01:19Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -18,6 +18,12 @@ steps:
         confirmed_at: "2026-09-27T19:09:19Z"
         confirmed_by: agent
         note: 'proof validate exits 0 (81 reqs, 4 variable files, 0 errors/warnings). proof.yaml needs no migration: check enablement unchanged (code_mcdc floors pinned at Phase-4b measured baselines; lock/menu bash targets enabled as pinned). No catalog pin (builtin 1.10.0 in use, catalog_version_pinned check passes with advisory note). Binary g66be0eddd matches the branch''s existing annotations/witness formats - no config drift introduced by the fix delta.'
+    coverage:
+        status: confirmed
+        confirmed_at: "2026-09-27T19:57:25Z"
+        confirmed_by: buger
+        note: 'Box phase (Linux, proof 0.1.0-dev+g66be0edddc8c): build_passes green (/usr/bin/bash present), tests_pass green 117.7s (lock-shell x3, menu-node, menu-shell harnesses), code_mcdc_measure green (bash+js; .proof/mcdc/js+bs latest.json fresh). mcdc_coverage: 79 reqs, 295 witness rows (290 quattro baseline + 5 new SW-REQ-260927-66FW), 0 uncovered, 0 stale; 66FW rows 1/4 witnessed live by menu-test.sh, rows 2/3/5 defensive-ignored via REVIEW-21. The 3 macOS-environmental errors from the local run (build_passes /usr/bin/bash, tests_pass, code_mcdc_measure) are all green on Linux.'
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-27T19:41:05Z"
@@ -42,6 +48,11 @@ steps:
         confirmed_by: agent
         note: 'FMEA for 66FW covers BOTH failure modes: (a) label corruption x, ]y -> x ]y; (b) realistic payloads mv f{.bak,} -> mv f{.bak} (brace expansion destroyed) and awk ''{print $1, }'' -> awk ''{print $1 }'' - silently mutated command running with user privileges, parse succeeding so nothing surfaces; graded malformed_input/medium with worst-case prose (reproduced old-vs-new 2026-09-27; NOTE: brief''s ''REVIEW-21 line 60-61'' reference does not resolve - REVIEW-21.yaml is an 11-line record - grounded instead in parser semantics + reproduction). hazard_review stamped: scenario reviewed (malformed_input/boundary/edge_case), property reviewed (determinism, 20k fuzz), domain+structural not_applicable with rationales, on 66FW AND delta-touched 3T3F. DEFECT-260927-CMMA problem report filed and closed covered_by_requirement with full hardening block + sibling-sweep attestation (Menu.qml delegates to MenuModel; no isomorphic site). All hazard/problem-report/change-record checks green.'
         scope_key: menu
+    refresh-complete:
+        status: confirmed
+        confirmed_at: "2026-09-27T20:01:19Z"
+        confirmed_by: buger
+        note: 'Campaign complete on the Linux proof box. Full proof audit (213 checks, 143s): 0 errors, 17 warnings — all pre-existing baseline debt categories (deferred ACs/obligation deferrals tracked as dogfood-harness debt, suspect links, consistency pairs, KI freshness, onboard_v1 not applicable to this campaign, etc.); none in the fix delta scope. Campaign-scope checks all green: build_passes, tests_pass (both harnesses), code_mcdc_measure, mcdc_coverage 295/295 (0 uncovered, 0 stale, 66FW included), defect_review_current, orphan_code_clean 224/224, orphan_tests_clean 35/35, annotation_validity. The 3 macOS-environmental errors from the local run are green on Linux.'
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-27T19:11:50Z"
