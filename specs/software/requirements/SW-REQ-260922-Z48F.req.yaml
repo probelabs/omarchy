@@ -14,6 +14,8 @@ informal_verification:
 parent: SYS-REQ-260922-P708
 component: menu
 rationale: Menu.qml nextSelectable lines 530-542 and select lines 706-717.
+obligation_checklist:
+    - boundary
 tags: []
 variables: []
 traces:
