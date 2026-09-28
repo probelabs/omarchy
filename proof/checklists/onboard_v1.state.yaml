@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-28T11:05:32Z"
+updated_at: "2026-09-28T13:18:57Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -167,16 +167,16 @@ steps:
               at: "2026-09-28T11:05:29Z"
     spec-review-2:
         status: confirmed
-        confirmed_at: "2026-09-28T10:16:38Z"
-        confirmed_by: agent:kimi-upstream-watch
-        note: 'Re-confirmed after upstream sync 324f0ba5 invalidated it. Deep spec pass for the delta: new SW-REQ-260928-8VJQ authored with graph-aware review (REVorded REVIEW-74 spec_conformance, approved); trace reviews re-recorded for drifted lock citations (J8SX 141->155/593->659, ND55 485->549); REVIEW-2/REVIEW-3 citation pointers updated to the new annotation lines. Full spec-stage suite green: 174 checks PASS, 0 FAIL, ste100/trace-review-evidence/conformance-grounded/obligation-coverage all clean; proof validate 85/85 reqs + 4/4 var files, 0 errors 0 warnings; trace suspect: 0.'
+        confirmed_at: "2026-09-28T13:18:57Z"
+        confirmed_by: agent
+        note: 'Re-confirmed after upstream de63134b merge (228a9073). Deep-pass state: proof validate 85 reqs / 4 var files 0/0; trace suspect 0; delta-affected 0W96 got spec_conformance REVIEW-75 (approved; citations re-grounded to annotated files per lint), hazard_review added, CRS-0022 claims session 4/4 dismissed with executed refutations; 9DMS unaffected (region precedes insertion). Graph clean (autolink rebuilt).'
         check_results:
             - id: spec_lint_spec_conformance_review_grounded
               status: pass
-              at: "2026-09-28T11:05:29Z"
+              at: "2026-09-28T13:18:57Z"
             - id: software_formalization_complete
               status: pass
-              at: "2026-09-28T11:05:29Z"
+              at: "2026-09-28T13:18:57Z"
     surface-matrix:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:48Z"
