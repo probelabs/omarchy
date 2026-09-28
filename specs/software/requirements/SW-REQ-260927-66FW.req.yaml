@@ -95,5 +95,5 @@ defect_review:
     via: agent-review
     counts:
         emitted: 4
-        verified: 1
+        verified: 2
         dismissed: 2

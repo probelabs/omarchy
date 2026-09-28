@@ -1,4 +1,4 @@
-// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SYS-REQ-260927-WC89
+// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1, SYS-REQ-260927-WC89
 // node:test adapter for the proof js MC/DC engine: replays the MenuModel.js
 // assertion body from test/shell.d/menu-test.sh under node:test so the
 // engine's Babel instrumentation can observe MenuModel.js decisions. The
@@ -186,6 +186,43 @@ assertEqual(
   menu.parseMenuJsonc('{"items": [{"label":"x"}]}').length,
   0,
   'menu rejects an array nested under the items key the same way'
+)
+
+// Inline comment tails: a // opener outside a string literal starts a comment
+// that runs to the end of the line, wherever the opener sits on the line. The
+// pre-fix line-anchored regex only stripped whole-line comments, so an inline
+// tail survived stripping and JSON.parse rejected the whole file -- the menu
+// went empty. Decision under test: comment_tail_dropped = !comment_in_string
+// MCDC SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=T => TRUE
+// SW-REQ-260928-C8W1:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
+  1,
+  'menu strips an inline comment tail instead of dropping the whole file'
+)
+// MCDC SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{ // opening note\n"a": {"label": "A"},\n} // closing note\n// final line').length,
+  1,
+  'menu strips full-line and inline comments in the same pass'
+)
+// MCDC SW-REQ-260928-C8W1: comment_in_string=T, comment_tail_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"s": {"label": "A // B"}}')[0].label,
+  'A // B',
+  'menu preserves comment slashes inside a string literal'
+)
+// SW-REQ-260928-C8W1:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}} // }, "x": {"label": "X"}').length,
+  1,
+  'menu ignores JSON syntax carried inside a comment tail'
+)
+//mcdc:ignore:defensive SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=F => FALSE -- no comment opener in the input, so there is no tail to drop; the equivalence only has content when an opener exists [reviewed: REVIEW-73]
+assertEqual(
+  menu.parseMenuJsonc('{"n": {"label": "plain"}}').length,
+  1,
+  'menu parses a comment-free object unchanged'
 )
 
 const user = [

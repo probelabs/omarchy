@@ -31,7 +31,7 @@ steps:
         status: confirmed
         confirmed_at: "2026-09-28T00:26:57Z"
         confirmed_by: agent:kimi-zero-warnings
-        note: 'Package menu: coverage measured and logged on box for the array-guard delta: tests_pass 120s green, code_mcdc_measure bash+js, mcdc_coverage 81 requirements / 301 witness rows / 0 uncovered (BMFE adds 3 witnessed rows for the array-root guard: F,T reject / T,F pass-through / F,F negative). Witness evidence persisted under .proof/mcdc.'
+        note: 'Package menu: coverage measured and logged on box for both fix deltas: array-guard run (tests_pass 120s green, code_mcdc_measure bash+js, mcdc_coverage 81 requirements / 301 witness rows / 0 uncovered; BMFE adds 3 witnessed rows) and inline-comment run (33459744: 81 reqs / 301 witness rows / 0 uncovered; C8W1 rows witnessed). Witness evidence persisted under .proof/mcdc. Consolidated-tree re-verification is queued for box (agent-23).'
         verify_result:
             exit_code: 0
             passed: true
