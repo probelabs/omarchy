@@ -13,6 +13,16 @@ refresh:
         (upstream's stripJsonc untouched; our scanner still ahead). New entries
         below cover the absorbed summonAction fast path (c231097d) and the lock
         video-poster pipeline (ab18321b/387fcf59).
+    - at: "2026-09-28"
+      by: agent:kimi-upstream-watch
+      delta: 324f0ba5..de63134b (watched; 21 commits, merge 228a9073)
+      added_surfaces: [menu-keybindings-dispatch]
+      note: >
+        Second same-day refresh. The delta extends the keybindings menu's
+        dispatcher-resolution chain (o.bind_commands lookup for Lua function
+        binds, f8146395) - a distinct menu data path not covered by the three
+        existing surfaces, now modeled below. menu-jsonc-config and
+        menu-action-dispatch postures unchanged; lock surface untouched.
 narrative: proof/surfaces/threat-surface.md
 # NOTE for integrators: this proof version (0.1.0-dev+g66be0eddd) persists the
 # threat-surface map at proof/surfaces/threat-surface.yaml (schema_version 1);
@@ -198,3 +208,66 @@ surfaces:
       - {q: L10, tag: na, na_reason: "stat signature is locale-independent"}
       - {q: L11, tag: domain_parameterized, answer: "flock -w 10 and timeout -k 1 5 bound the subprocess; cache self-prunes to the current key"}
       - {q: L12, tag: na, na_reason: "pixel output out of harness scope"}
+
+  - id: menu-keybindings-dispatch
+    kind: command-dispatch
+    added: "2026-09-28 (upstream-sync de63134b, agent:kimi-upstream-watch)"
+    disposition:
+      status: reviewed
+      ref: CRS-0022
+      reason: >
+        Worked 2026-09-28 in this refresh: the bind_commands branch resolves
+        Lua function binds (Hyprland reports them only as __lua) to the
+        command helpers.lua registered for them. Claims session CRS-0022
+        emitted 4 attack claims against the extension; all 4 dismissed, three
+        by EXECUTION against the real merged sandbox chunk under luajit
+        (registered bind resolves to exec omarchy-launch-terminal; old-vs-new
+        differential shows exactly one row changed; nil dispatcher falls
+        through without error), one by inspection (cache-key v14 bump makes
+        pre-delta caches key-unreachable). No vector warranted: the Lua
+        config is already fully trusted user code executing inside Hyprland,
+        so the path crosses no trust boundary.
+      reviewed_by: agent:kimi-upstream-watch
+      reviewed_at: "2026-09-28T12:30:00Z"
+    summary: >
+      The keybindings menu re-executes the user's Lua config in a sandbox
+      (stubbed hl, real helpers.lua) to render rows as
+      modmask/description/key/kind/arg records; picking a row runs kind/arg.
+      The delta adds a third resolution branch: function dispatchers
+      registered in o.bind_commands (function-identity keys) resolve to
+      kind=exec with the mapped command. Danger class is MIS-DISPATCH: a
+      bind running a command other than the one its closure would run.
+    entrypoints:
+      - bin/omarchy-menu-keybindings (sandboxed hl.bind, lines 201-224)
+      - default/hypr/helpers.lua (o.launch_terminal, o.bind_commands registration)
+    error_posture: recover        # unresolved dispatchers render with empty kind/arg (no exec), as pre-delta
+    boundaries: [resolve, cache, dispatch]  # one-way; records cache re-keyed by content + version
+    invariants:
+      - "bind_commands is keyed by function identity: two binds can never collide on the same key, so cross-bind command confusion is structurally impossible"
+      - "the new branch fires only for dispatchers that previously fell through with empty kind (order after the table and string branches)"
+      - "records caches are version-keyed (v14): pre-delta cache files are unreachable post-upgrade"
+    equivalence_contract:
+      version: 1
+      comparison_surface: "records row (kind, arg) emitted for a fixed bind triple (keys, dispatcher, description)"
+      sanctioned_normalizations:
+        - "registered function binds that previously rendered kind='' now render kind=exec with the registered command (the intended fix)"
+    oracle_families_armed:
+      - differential execution (L5) — pre-delta sandbox (3-line deletion, diff-verified) vs merged sandbox over a 5-case corpus: exactly one row changed
+      - edge battery (L6) — registered function / unregistered function / string / command_from table / nil dispatcher, all executed under luajit
+      - negative control (L6) — nil-key read on o.bind_commands returns nil, sandbox rc=0 empty stderr
+    oracle_families_blocked:
+      - live compositor differential — Hyprland's own __lua reporting needs a running session (dogfood-harness debt, same class as menu-action-dispatch process oracles)
+    candidate_vectors: []
+    ladder:
+      - {q: L1, tag: universal, answer: "recover: unresolved dispatchers render with empty kind/arg; activation of such a row execs nothing (pre-existing posture, unchanged)"}
+      - {q: L2, tag: universal, answer: "resolve -> cache -> dispatch, one-way; no feedback into the Lua config"}
+      - {q: L3, tag: universal, answer: "conservation: non-function dispatchers are byte-identical old-vs-new (differential witness); the branch adds, never rewrites"}
+      - {q: L4, tag: universal, answer: "equivalence_contract v1 above, defined before the battery ran"}
+      - {q: L5, tag: domain_parameterized, answer: "old-vs-new differential over the real sandbox chunk: exactly the registered-function row changed"}
+      - {q: L6, tag: domain_parameterized, answer: "5-case executed battery incl. nil and unregistered-function edges; upstream's own terminal-bind test adds a sixth, box-run this campaign"}
+      - {q: L7, tag: na, na_reason: "map lookup by identity key; no input perturbation flips the result other than registration presence"}
+      - {q: L8, tag: universal, answer: "records cache is content+version keyed; config edits change the key and force re-resolution"}
+      - {q: L9, tag: universal, answer: "governance: claims lifecycle CRS-0022 (4/4 dismissed, three executed refutations); intake gate stands"}
+      - {q: L10, tag: na, na_reason: "string keys and function identity; locale/tz/fs independent"}
+      - {q: L11, tag: domain_parameterized, answer: "one extra map read per bind; config-sized input, no resource surface"}
+      - {q: L12, tag: domain_parameterized, answer: "dispatch outcome is menu-visible (row command runs or not); rendering fidelity out of scope"}

@@ -1,0 +1,12 @@
+id: REVIEW-75
+kind: spec_conformance
+reviewer: agent:kimi-upstream-watch
+reviewed_at: "2026-09-28T11:49:47Z"
+subject: SW-REQ-260922-0W96
+decision: approved
+comment: 'Spec conformance after upstream de63134b merge (f8146395). The bind_commands dispatch branch (merged bin/omarchy-menu-keybindings:213-215) is the mechanism now making Lua function binds dispatchable as exec rows; helpers.lua:163-179 registers the mapping at bind-creation time. Verified: (1) FRETish unchanged - when lua_binds_present the menu eventually satisfies lua_binds_dispatchable; the delta moves the code CLOSER to the guarantee (pre-delta function binds fell through with empty kind). (2) Variables lua_binds_present/lua_binds_dispatchable still map to the same observable behavior; truth-table rows remain witnessed by existing keybindings-menu-test.sh MCDC lines, plus upstream''s new terminal-bind test exercises the T,T scenario end-to-end through the new branch. (3) STE100 prose intact; rationale reference to LUA_BIND_*_MAP population remains accurate - bind_commands is a second population path for the same contract, noted in traces re-review. Approved.'
+citations:
+    - bin/omarchy-menu-keybindings:8
+    - bin/omarchy-menu-keybindings:213
+    - default/hypr/helpers.lua:163
+    - test/shell.d/keybindings-menu-test.sh:223

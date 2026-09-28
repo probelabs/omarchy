@@ -242,11 +242,17 @@ project:
             # 2026-09-28 (upstream-sync 324f0ba5, agent
             # kimi-upstream-watch): + SW-REQ-260928-8VJQ, the guarantee
             # authored for the absorbed summonAction fast path.
+            # 2026-09-28 (upstream-sync de63134b, agent
+            # kimi-upstream-watch): + SW-REQ-260922-0W96, whose dispatch
+            # mechanism the delta extended (bind_commands); claims
+            # session CRS-0022, 4/4 dismissed with executed refutations
+            # (luajit differential harness, real sandbox + helpers.lua).
             specs:
                 - SW-REQ-260927-66FW
                 - SW-REQ-260922-3T3F
                 - SW-REQ-260922-E4J2
                 - SW-REQ-260928-8VJQ
+                - SW-REQ-260922-0W96
             severity: info
         code_mcdc:
             advisory: false

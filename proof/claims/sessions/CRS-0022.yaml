@@ -1,0 +1,20 @@
+id: CRS-0022
+spec_reqids:
+    - SW-REQ-260922-0W96
+state: complete
+backend: grok
+cells:
+    - req_id: SW-REQ-260922-0W96
+      dir: .proof/defect-sessions/CRS-0022/cells/SW-REQ-260922-0W96
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:2e6e45501cf257c57ffdf5195e2c76fbd694bffe30015fba7122a42877a95db2
+input_fingerprint:
+    spec_yaml_sha: sha256:3d865f315623a5231cf3c13e861c56a5d0dd7683450f1c635ee6db0e49b97f13
+    spec_projection: semantic-v1
+    code_fingerprints:
+        bin/omarchy-menu-keybindings: sha256:8b73c979d8d0eae86fd7f6814d3e66513272d60cb9c92f58984035ca17a7519e
+    claims_sha: sha256:5892b43b75782b8786591fa636cf61ede5322323ee9ea97613c852692f08606c
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-28T12:15:54Z"
+updated_at: "2026-09-28T12:18:44Z"

@@ -1,6 +1,6 @@
 schema_version: 1
 branch: fix-jsonc-trailing-comma-in-strings
-generated_at: "2026-09-28T10:13:22Z"
+generated_at: "2026-09-28T11:51:35Z"
 reviews:
     - requirement: SW-REQ-260912-41VV
       artifact: shell/plugins/lock/LockView.qml
@@ -52,6 +52,16 @@ reviews:
       approval_fingerprint: sha256:7c90efba92df2187ee71bd763c22a8415739d41cfd109bc3cba86e5072d585ea
       artifact_fingerprint: sha256:706ddf7b8600102fe2c099990b5c920d323f8d11ea7d69b6c341772547b97ca4
       reviewed_at: "2026-09-28T10:13:22Z"
+    - requirement: SW-REQ-260922-0W96
+      artifact: bin/omarchy-menu-keybindings
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'upstream de63134b (f8146395): bind_commands dispatch branch + cache key v14; in-surface change absorbed by merge 228a9073; spec impact reviewed in REVIEW-75 (0W96 strengthened, no spec edit needed); trace reviews re-recorded'
+      base: HEAD~1
+      requirement_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
+      approval_fingerprint: sha256:57f392b15a9ab7409d5afeff271e056f6db61ad4d6820bdde4afa5ca0d6bfa43
+      artifact_fingerprint: sha256:8b73c979d8d0eae86fd7f6814d3e66513272d60cb9c92f58984035ca17a7519e
+      reviewed_at: "2026-09-28T11:51:35Z"
     - requirement: SW-REQ-260922-2JZT
       artifact: shell/plugins/menu/MenuModel.js
       decision: no-authored-change
@@ -182,6 +192,16 @@ reviews:
       approval_fingerprint: sha256:3e2dd931a01dfbad6dec41878ec7b2fc704223409bd52517037bf8bc62d64bdb
       artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
       reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-9DMS
+      artifact: bin/omarchy-menu-keybindings
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'upstream de63134b (f8146395): bind_commands dispatch branch + cache key v14; in-surface change absorbed by merge 228a9073; spec impact reviewed in REVIEW-75 (0W96 strengthened, no spec edit needed); trace reviews re-recorded'
+      base: HEAD~1
+      requirement_fingerprint: sha256:aaaf72702684be4ed9cb8a538179332ac08e7ea998e0cfdf2da7d48dfe49979f
+      approval_fingerprint: sha256:4f62105f78a535ae4cb61e789f3736d9fad41c574a731d933a0ed7bcd40a1d4d
+      artifact_fingerprint: sha256:8b73c979d8d0eae86fd7f6814d3e66513272d60cb9c92f58984035ca17a7519e
+      reviewed_at: "2026-09-28T11:51:35Z"
     - requirement: SW-REQ-260922-B757
       artifact: shell/plugins/menu/Menu.qml
       decision: no-authored-change

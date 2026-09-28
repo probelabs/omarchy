@@ -19,14 +19,23 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-27T21:18:03.953793Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-28T11:42:26.094596Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
     review_history:
         - reviewed_at: "2026-09-27T21:18:03.953793Z"
           reviewed_by: agent:kimi-zero-warnings
           method: inspection
           rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
+        - reviewed_at: "2026-09-28T11:42:26.094596Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 'post-de63134b merge re-record: Implements header unmoved (line 8); bind_commands dispatch branch (merged lines 213-215) extends lua-bind dispatchability under 0W96 - mechanism change, guarantee unchanged and better satisfied; upstream terminal-bind test witnesses T,T row; parent SYS-REQ-260922-6642 lifecycle-active'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-keybindings:8
@@ -50,6 +59,29 @@ obligation_suppressions:
       reason: 'bin/omarchy-menu-keybindings is a read-only display-formatting script: it runs hyprctl/xkbcli/awk pipelines whose worst-case failure is an empty or partial keybinding list presented in the menu. It mutates no state. set -e/pipefail would turn a transient tooling failure (missing xkbcli off Hyprland) into a hard abort of a menu the user invoked for something else. Recorded as an intentional degradation-not-corruption contract; no per-call guards exist upstream, which this suppression documents rather than excuses.'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
+hazard_review:
+    reviewed_at: "2026-09-28T11:45:00Z"
+    reviewed_by: agent:kimi-upstream-watch
+    reviewed_against_catalog_version: 1.10.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+          rationale: >-
+            malformed_input (post-de63134b): dispatcher values that are nil, unmarked tables, or unregistered functions fall through the resolution chain with kind="" exactly as pre-delta - the new elseif only fires when o.bind_commands holds an entry for the exact dispatcher key. boundary: a registered function bind resolves to its single mapped command; Lua table keys are function-identity unique, so cross-bind command confusion is structurally impossible. Stale-cache boundary closed by the v13->v14 key bump (verified in keybindings_cache_key).
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'The bind_commands lookup is a pure map read keyed by function identity: same config run yields the same records. helpers.lua registers the mapping at bind-creation time, before the sandbox prints rows, so ordering is fixed.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'No new trust boundary: the Lua config already executes with full user privileges inside Hyprland; the keybindings script only re-reads it to render the menu, and the menu ran the resulting rows with user privileges before this delta. bind_commands values are written only by o.launch_terminal (fixed string omarchy-launch-terminal); a user-written mapping is config behavior, not an attack surface.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'Bash + GC''d Lua; table.concat over strings only. Lua nil-key read returns nil (no error), keeping the fall-through safe; no manual memory, pointers, or format strings.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:06Z"
@@ -57,3 +89,10 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-28T12:24:02Z"
+    session: CRS-0022
+    fingerprint_sha: sha256:2833b52b9d7cdc5016f0d953528b747f43ba10bb96e7460b7f0b908880663e28
+    via: agent-review
+    counts:
+        emitted: 4
