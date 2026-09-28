@@ -1,0 +1,89 @@
+id: SW-REQ-260928-BMFE
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when array_root_present the menu_model shall always satisfy array_root_rejected
+description: A top-level JSON array is not an object map of menu entries. The parser returns an empty item set for it, as it does for every other non-object root. No phantom rows with numeric ids appear.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-PPDW
+component: menu
+rationale: MenuModel.js parseMenuJsonc guards typeof parsed !== object, but typeof [] passes. The for..in loop then iterates array indices and emits phantom rows id 0,1,... parented to root (PoC review/upstream-repro-jsonc-toplevel-array.js, deferred claim CRS-0019/C01 = CRS-0017/C03).
+tags: []
+variables:
+    - array_root_present
+    - array_root_rejected
+traces:
+    satisfies:
+        - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-09-27T23:32:07.303648Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:de0d01a59f68c77d9c6dfa460da6f400714e0a86ccc71f0335e3f8e73ee1c966
+    review_history:
+        - reviewed_at: "2026-09-27T23:32:07.303648Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:71
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml:1
+            - test/shell.d/menu-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:kimi-zero-warnings
+        reviewed_at: "2026-09-27T23:32:39Z"
+        ai_generated: true
+        motivation:
+            kind: defect
+            ref: DEFECT-260928-4NG9
+            rationale: "This requirement closes the array-root phantom-row class. It models the root-type decision (array_root_present -> array_root_rejected). The old guard rejected scalars and null but let a JSON array root through, so for..in iterated indices and rendered phantom rows id 0,1,... while JSON.parse still succeeded."
+history:
+    created_by: agent:kimi-zero-warnings
+    created_at: "2026-09-27T23:20:27Z"
+    last_modified_by: agent:kimi-zero-warnings
+    last_modified_at: "2026-09-27T23:32:39Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'FMEA mode (a): a menu file whose root is a JSON array parses cleanly. for..in then walks the array indices and renders phantom rows id "0","1",... parented to root. Rows the config never defined appear in the menu. FMEA mode (b), the realistic payload: a phantom row carries a label and an action out of the array element. Activating it runs a command the user never placed in the menu, with the user''s full privileges. No error surfaces in either mode because JSON.parse accepts the array. The corruption is visible only as extra rows. Fixed on this branch by extending the root-type guard with Array.isArray. The grading records the pre-fix worst case this requirement now forbids.'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-09-27T23:29:03Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_against_catalog_version: 1.10.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+          rationale: 'malformed_input: a top-level JSON array is legal JSON but not a menu entry map; the parser must reject it like every scalar root instead of iterating indices. Both FMEA modes (phantom rows id 0,1,...; an unintended user-privilege action on a phantom row) lived here pre-fix and the guarded rows now forbid them. boundary: empty array [] and empty object {} both yield zero rows (witnessed). edge_case: an array nested under "items" is rejected by the same pre-existing items-shape check, witnessed as a negative row.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: The guard is a pure type check on the parsed root with no environment, ordering, or timing inputs. Identical bytes always yield the same item set. Differential fuzz of the fix branch against the pre-fix quattro baseline is scheduled for Phase 3 of this campaign.
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags (HTTP/crypto/IPC frameworks); the component parses a local user-authored config file into a menu model.
+        - category: structural
+          disposition: not_applicable
+          rationale: Implementation is GC'd JavaScript (QML JS engine). No manual memory, pointer arithmetic, binary framing, or format strings exist here. The structural catalog targets C-family hazards that cannot exist here.
+lifecycle:
+    change_history:
+        - date: "2026-09-27T23:32:33Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-toplevel-array-guard] fix branch review: guard verified against parseMenuJsonc by REVIEW-72; RED->GREEN witnessed in both harnesses this campaign'
+          changed_by: agent:kimi-zero-warnings

@@ -1,7 +1,4 @@
 component: menu
-independence:
-    declared: true
-    reason: "All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine's connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict."
 variables:
     - name: verb_known
       type: bool
@@ -447,3 +444,14 @@ variables:
       type: bool
       direction: output
       description: A confirmation dialog opens; confirm removes the app through the app library, cancel restores focus without removing.
+    - name: array_root_present
+      type: bool
+      direction: input
+      description: The parsed JSONC root is a JSON array rather than an object map.
+    - name: array_root_rejected
+      type: bool
+      direction: output
+      description: The parser returned an empty item set for a top-level array root.
+independence:
+    declared: true
+    reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'

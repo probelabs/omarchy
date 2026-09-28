@@ -1,0 +1,10 @@
+id: REVIEW-72
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T23:30:51Z"
+subject: SW-REQ-260928-BMFE
+decision: approved
+comment: 'FRETish guard (array_root_present -> array_root_rejected) matches the code: parseMenuJsonc now returns [] when Array.isArray(parsed), alongside the pre-existing scalar/null rejection, so an array root yields an empty item set before for..in can iterate indices. Witness rows in both harnesses cover T,T (array root -> 0 rows), F,F (object root -> rows kept), and the negative nested-array case under items. RED observed pre-fix (phantom rows id 0,1; expected 0 actual 2 in both harnesses), GREEN after the one-line guard.'
+citations:
+    - shell/plugins/menu/MenuModel.js:85@parseMenuJsonc
+    - test/shell.d/menu-test.sh:163

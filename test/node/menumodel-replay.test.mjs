@@ -1,4 +1,4 @@
-// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SYS-REQ-260927-WC89
+// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SYS-REQ-260927-WC89
 // node:test adapter for the proof js MC/DC engine: replays the MenuModel.js
 // assertion body from test/shell.d/menu-test.sh under node:test so the
 // engine's Babel instrumentation can observe MenuModel.js decisions. The
@@ -159,6 +159,33 @@ assertEqual(
   menu.parseMenuJsonc('{"o": {"label": "a, b"}}')[0].label,
   'a, b',
   'menu preserves a plain comma inside a string literal'
+)
+
+// Top-level array rejection: a JSON array root is not an object map of menu
+// entries. The pre-fix guard (typeof [] === "object") let array indices
+// through as phantom row ids "0", "1", ... parented to root. Scalars, null,
+// and empty input already yield zero rows; an array root joins them.
+// Decision under test: array_root_rejected = array_root_present
+//mcdc:ignore:defensive SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=F => FALSE -- the guard returns an empty set for any Array root unconditionally; an array yielding rows needs the Array.isArray check removed [reviewed: REVIEW-72]
+//mcdc:ignore:defensive SW-REQ-260928-BMFE: array_root_present=F, array_root_rejected=T => FALSE -- the rejection arm runs only inside the Array branch; an object root taking it needs a broken condition [reviewed: REVIEW-72]
+// MCDC SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=T => TRUE
+// SW-REQ-260928-BMFE:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('[{"label":"should-not-appear"},{"label":"ghost-2"}]').length,
+  0,
+  'menu rejects a top-level array of objects instead of rendering phantom rows'
+)
+// MCDC SW-REQ-260928-BMFE: array_root_present=F, array_root_rejected=F => TRUE [no-action: an object root parses to its entries -- the array rejection path is not taken]
+assertEqual(
+  menu.parseMenuJsonc('{"obj": {"label":"kept"}}').length,
+  1,
+  'menu still parses an object root to its entries'
+)
+// SW-REQ-260928-BMFE:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"items": [{"label":"x"}]}').length,
+  0,
+  'menu rejects an array nested under the items key the same way'
 )
 
 const user = [

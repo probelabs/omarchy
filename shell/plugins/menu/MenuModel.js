@@ -68,7 +68,7 @@ function normalizeItem(id, raw) {
   }
 }
 
-// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
+// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260928-BMFE
 function parseMenuJsonc(raw) {
   var stripped = stripJsonc(raw)
   if (!stripped.trim()) return []
@@ -79,7 +79,10 @@ function parseMenuJsonc(raw) {
   } catch (e) {
     return []
   }
-  if (typeof parsed !== "object" || parsed === null) return []
+  // A JSON array root is not a menu entry map either. Treat it like the
+  // scalars above and return no rows; walking it with for..in would render
+  // phantom rows keyed "0", "1", ... off the array indices.
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return []
 
   var source = (parsed.items && typeof parsed.items === "object" && !Array.isArray(parsed.items))
     ? parsed.items
