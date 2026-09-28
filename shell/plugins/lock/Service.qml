@@ -649,7 +649,10 @@ Item {
     checkStrandedLock()
   }
 
+  // The id documents this object's identity for the lock IPC surface
+  // (qml.missing_id_on_logic_object); it is referenced by audits, not by code.
   ShellIpc {
+    id: lockIpc
     target: "lock"
 
     function lock(): string {

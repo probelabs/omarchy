@@ -3,6 +3,16 @@ campaign: upstream_refresh_v1 (fix/jsonc-trailing-comma-in-strings)
 delta: ce925cb1..1832b66a   # own fix: string-aware stripJsonc, package menu
 synthesized_by: agent:kimi-fix-jsonc-refresh
 synthesized_at: "2026-09-27"
+refresh:
+    - at: "2026-09-28"
+      by: agent:kimi-upstream-watch
+      delta: 3faafba2..324f0ba5 (watched; sync absorbed 235 commits from 31bd80da)
+      added_surfaces: [menu-action-dispatch, lock-wallpaper-poster]
+      note: >
+        Upstream sync refresh. menu-jsonc-config surface unchanged in posture
+        (upstream's stripJsonc untouched; our scanner still ahead). New entries
+        below cover the absorbed summonAction fast path (c231097d) and the lock
+        video-poster pipeline (ab18321b/387fcf59).
 narrative: proof/surfaces/threat-surface.md
 # NOTE for integrators: this proof version (0.1.0-dev+g66be0eddd) persists the
 # threat-surface map at proof/surfaces/threat-surface.yaml (schema_version 1);
@@ -74,3 +84,117 @@ surfaces:
       - {q: L10, tag: na, na_reason: "parsing is locale/tz/fs independent (pure byte scan + JSON.parse)"}
       - {q: L11, tag: domain_parameterized, answer: "resource bounds: configs are small operator-authored files; scanner is O(n) single pass; no depth recursion; no limits enforced or needed at this scale"}
       - {q: L12, tag: domain_parameterized, answer: "the rendered menu rows are user-visible and spec-regulated through the model requirements; pixel rendering is out of scope (no rendering oracle in the harness)"}
+
+  - id: menu-action-dispatch
+    kind: command-dispatch
+    added: "2026-09-28 (upstream-sync 324f0ba5, agent:kimi-upstream-watch)"
+    disposition:
+      status: reviewed
+      ref: CRS-0021
+      reason: >
+        Worked 2026-09-28 in this refresh: the in-process summon fast path
+        (MenuModel.summonAction + Menu.qml runAction) is governed by new
+        SW-REQ-260928-8VJQ with an exact bash-equivalence clause. Claims
+        session CRS-0021 emitted 4 attack claims against the equivalence;
+        all 4 dismissed with executed refutations (empty-payload upgrade
+        unreachable+benign, refusal path shared-code, charset exclusion
+        safe-direction, trailing-whitespace fallback executed). Vector
+        V-MENU-SUMMON-DISPATCH exited closed-null.
+      reviewed_by: agent:kimi-upstream-watch
+      reviewed_at: "2026-09-28T08:20:00Z"
+    summary: >
+      Menu rows carry action: command strings that run with the user's full
+      privileges on activation. The absorbed upstream change adds an
+      in-process fast path: actions exactly matching 'omarchy-shell shell
+      summon <id> ['<payload>']' bypass bash and call shell.summon directly.
+      The danger class is MIS-DISPATCH: an action taking the fast path whose
+      bash interpretation would differ (payload mutation, argument split,
+      metacharacter reinterpretation).
+    entrypoints:
+      - shell/plugins/menu/MenuModel.js (summonAction, line 554)
+      - shell/plugins/menu/Menu.qml (runAction fast path, line 146)
+    error_posture: recover        # refusal (falsy summon) falls through to the unchanged bash path
+    boundaries: [match, dispatch]  # one-way decision; no re-dispatch cycle
+    invariants:
+      - "fast path fires only on the strict summon grammar; everything else keeps the pre-existing bash path verbatim (8VJQ)"
+      - "in-process argv equals bash argv for every matched string, including the '{}' payload default (bin/omarchy-shell:51)"
+    equivalence_contract:
+      version: 1
+      comparison_surface: "argv delivered to shell.summon (plugin id + payload string) for a fixed action byte string"
+      sanctioned_normalizations:
+        - "absent payload defaults to '{}' on both paths"
+    oracle_families_armed:
+      - edge battery (L6) — 10/10 grammar cases + trailing-whitespace and empty-quotes probes, 2026-09-28
+      - shared-handler convergence (L5) — bash/socket path terminates in the same shell.summon (shell.qml:1840)
+      - shape assertion (L7 metamorphic anchor) — menu-test.sh regex pins runAction's fast-path/fall-through structure
+    oracle_families_blocked:
+      - live process differential — the two paths differ BY DESIGN in spawn mechanics; equivalence is defined on delivered argv, not on process trees
+    candidate_vectors:
+      - V-MENU-SUMMON-DISPATCH
+    ladder:
+      - {q: L1, tag: universal, answer: "recover: falsy summon falls through to execDetached; no crash path added"}
+      - {q: L2, tag: universal, answer: "match -> dispatch, one-way; no feedback into the model"}
+      - {q: L3, tag: universal, answer: "conservation: non-matching actions are byte-preserved into the bash path; the fast path never rewrites the action string"}
+      - {q: L4, tag: universal, answer: "equivalence_contract v1 above, defined before the battery ran"}
+      - {q: L5, tag: domain_parameterized, answer: "convergence oracle: both paths end in shell.summon, so post-entry behavior is shared code (shell.qml:1840 -> 1143)"}
+      - {q: L6, tag: domain_parameterized, answer: "grammar battery: compound commands, substitutions, unbalanced quotes, empty/trailing-space payloads, foreign verbs - 10/10 + 2 probes take the expected path"}
+      - {q: L7, tag: domain_parameterized, answer: "metamorphic: adding characters outside the grammar flips dispatch to bash and nowhere else"}
+      - {q: L8, tag: na, na_reason: "dispatch decision is stateless per activation"}
+      - {q: L9, tag: universal, answer: "governance: claims lifecycle CRS-0021 (4/4 dismissed with executed refutations); intake gate stands"}
+      - {q: L10, tag: na, na_reason: "regex over a byte string; locale/tz/fs independent"}
+      - {q: L11, tag: domain_parameterized, answer: "O(n) regex on short action strings; no resource surface"}
+      - {q: L12, tag: domain_parameterized, answer: "dispatch outcome is plugin-visible (panel summoned or not); rendering out of scope"}
+
+  - id: lock-wallpaper-poster
+    kind: subprocess-pipeline
+    added: "2026-09-28 (upstream-sync 324f0ba5, agent:kimi-upstream-watch)"
+    disposition:
+      status: reviewed
+      reason: >
+        Reviewed statically 2026-09-28: poster.sh runs ffmpegthumbnailer on the
+        configured wallpaper under an flock with a 10s timeout and -k 1 5s
+        exec timeout, writes to a temp file and mv -f atomically, prunes only
+        other keys' posters, and every failure exit propagates to
+        videoPosterPath='' (graceful still-image fallback in Service.qml).
+        Input is the operator's own wallpaper path; no new privilege boundary
+        crossed (same user, same file the lock already decodes). No claims
+        session warranted: not a spec'd component change, covered here at
+        surface level.
+      reviewed_by: agent:kimi-upstream-watch
+      reviewed_at: "2026-09-28T08:20:00Z"
+    summary: >
+      Lock screen video wallpapers now get a thumbnail poster via a new
+      bash pipeline (poster.sh: stat signature -> sha256 cache key ->
+      flock-serialized ffmpegthumbnailer -> atomic mv -> prune stale keys).
+      Failure modes (missing ffmpegthumbnailer, timeout, un-readable source)
+      all exit non-zero and degrade to the still-image lock.
+    entrypoints:
+      - shell/plugins/lock/poster.sh
+      - shell/plugins/lock/Service.qml (posterProc, refreshPoster)
+    error_posture: recover
+    boundaries: [extract, cache, display]
+    invariants:
+      - "poster cache writes are atomic (temp + mv -f) and serialized (flock -w 10)"
+      - "any pipeline failure yields videoPosterPath='' and the lock still draws its still background"
+    equivalence_contract:
+      version: 1
+      comparison_surface: "poster file path emitted for a fixed (source path, size, mtime, ctime) signature"
+      sanctioned_normalizations: ["cache location", "jpeg quality of the thumbnail"]
+    oracle_families_armed:
+      - failure-injection review (L6) — missing tool/timeout/empty output all traced to the graceful fallback
+    oracle_families_blocked:
+      - rendering oracles — no rendering oracle in this harness (documented dogfood debt)
+    candidate_vectors: []
+    ladder:
+      - {q: L1, tag: universal, answer: "recover: non-zero exit -> empty poster -> still-image lock"}
+      - {q: L2, tag: universal, answer: "extract -> cache -> display, one-way"}
+      - {q: L3, tag: universal, answer: "cache key is content-addressed (path+size+mtime+ctime); a changed file gets a new key, never a stale poster"}
+      - {q: L4, tag: universal, answer: "equivalence_contract v1 above"}
+      - {q: L5, tag: na, na_reason: "single implementation; ffmpegthumbnailer is the system tool"}
+      - {q: L6, tag: domain_parameterized, answer: "failure injection reviewed statically; runtime exercise needs the graphical lock, deferred as dogfood-harness debt"}
+      - {q: L7, tag: na, na_reason: "no metamorphic pair identified for a thumbnail cache"}
+      - {q: L8, tag: universal, answer: "lifecycle: refreshPoster re-runs when the source path changed under the process (sourcePath !== backgroundPath re-queue)"}
+      - {q: L9, tag: universal, answer: "governance: surface-level review this refresh; runtime oracles remain dogfood-harness debt"}
+      - {q: L10, tag: na, na_reason: "stat signature is locale-independent"}
+      - {q: L11, tag: domain_parameterized, answer: "flock -w 10 and timeout -k 1 5 bound the subprocess; cache self-prunes to the current key"}
+      - {q: L12, tag: na, na_reason: "pixel output out of harness scope"}

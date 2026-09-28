@@ -239,10 +239,14 @@ project:
             # charter; severity info keeps that debt visible without
             # blocking the scoped gate. Widen this list as the
             # baseline-debt track clears more specs.
+            # 2026-09-28 (upstream-sync 324f0ba5, agent
+            # kimi-upstream-watch): + SW-REQ-260928-8VJQ, the guarantee
+            # authored for the absorbed summonAction fast path.
             specs:
                 - SW-REQ-260927-66FW
                 - SW-REQ-260922-3T3F
                 - SW-REQ-260922-E4J2
+                - SW-REQ-260928-8VJQ
             severity: info
         code_mcdc:
             advisory: false

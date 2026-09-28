@@ -460,6 +460,14 @@ variables:
       type: bool
       direction: output
       description: The bytes from the comment opener to the end of the line are dropped
+    - name: action_is_bare_summon
+      type: bool
+      direction: input
+      description: The action string matches the bare-summon grammar 'omarchy-shell shell summon <id> ['<payload>']' (id [A-Za-z0-9._-]+, payload single-quoted, no embedded quote).
+    - name: in_process_summon_equivalent
+      type: bool
+      direction: output
+      description: The action runs in-process via shell.summon(id, payload) with bash-equivalent argv semantics (payload defaults to '{}' exactly as bin/omarchy-shell line 51 does for the 3-arg form); non-matching actions keep the unchanged execDetached bash path.
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'

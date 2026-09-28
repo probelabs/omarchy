@@ -1,101 +1,95 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-27T20:01:19Z"
+updated_at: "2026-09-28T10:19:43Z"
 steps:
     ac-sweep:
         status: confirmed
-        confirmed_at: "2026-09-27T19:18:07Z"
+        confirmed_at: "2026-09-28T08:31:02Z"
         confirmed_by: agent
-        note: 'No STK specs changed by the delta; reviewed XTNR ACs against the fix''s stakeholder-observable effect. Added AC-002: labels/actions with comma+closing-brace payloads (awk ''{print $1, }'', mv f{.bak,}) must survive verbatim. Parse-level witnessed (menu-test.sh block, node replay 1/1, 20k fuzz); UI-level witness_deferred dogfood-harness:no-quickshell matching AC-001 convention. acceptance_criteria_witnessed / ac_subset / ac_inverse lints pass.'
+        note: 'No STK specs changed by the delta. Reviewed XTNR AC-001/AC-002 against the absorbed changes: AC-001 (menu presents, summon/close route to correct plugin targets) - the summonAction fast path preserves exactly this stakeholder-observable routing (same plugin id, same payload, bash-equivalent default; equivalence battery 10/10), so the AC text needs no edit; its derived R8DQ now has 8VJQ carrying the load. AC-002 (comma+closer payloads verbatim) - unaffected; omarchy-menu.jsonc gained 2 ssh-agent entries whose labels/actions contain no comma+closer payloads, and the string-aware scanner still parses all 343 entries with 0 field diffs. No new AC warranted: the ssh-agent entries are config data, not new menu behavior. acceptance_criteria_witnessed / ac lints verified in prior baseline; box phase re-checks.'
         scope_key: menu
     annotations-heavy:
         status: confirmed
-        confirmed_at: "2026-09-27T19:47:57Z"
+        confirmed_at: "2026-09-28T10:19:43Z"
         confirmed_by: agent
-        note: 'Verified agent-25''s MC/DC annotations: all witness rows covered for 66FW and 3T3F; 3 off-table witness lines on 66FW are valid non-drift per engine (alternative minimal pair). Added malformed_input obligation evidence triples to menu-test.sh and menumodel-replay.test.mjs: nominal at trailing-comma-in-string tolerance assertion + NEW negative assertion menu.parseMenuJsonc(''{"a": undefined, }'').length === 0. node --test replay passes 1/1; obligation_evidence_complete back to baseline (42 covered, 1 pre-existing P708 deferral); annotation_validity clean; code_predicates_modeled warning is the same 2 pre-existing sites (Menu.qml charCodeAt, MenuModel isVisible guard).'
+        note: '8VJQ fully annotated: 3 MC/DC rows settled (T,T=>TRUE witnessed by bare-summon assertion; F,F=>TRUE witnessed vacuous with [no-action] spy-style justification via null-return guard; T,F=>FALSE defensive-ignored with REVIEW-74 grounding). obligation path_pair_agreement bound and discharged with BOTH required triples in menu-test.sh: :nominal on the bare-summon assertion, :differential on a NEW 9-case corpus cross-checking summonAction against an independently written bash word-splitting reference splitter (all agree; corpus executed clean locally 2026-09-28; unquoted-payload and trailing-space cases pinned as conservative fallbacks). obligation_evidence_complete: 50/50 covered (was 42+P708; the P708 deferral stayed intact). annotation_validity clean. Line-drift sweep after the 235-commit merge: trace reviews for J8SX/ND55 re-recorded against current annotation lines; REVIEW-2/3 citations repointed (141->155, 485->549); Menu.qml/MenuModel.js Implements headers carry 8VJQ. Local residual failures are environmental only (build_passes/tests_pass/code_mcdc_* need Linux /usr/bin/bash) - box phase next.'
         scope_key: menu
     config-migrate:
         status: confirmed
-        confirmed_at: "2026-09-27T19:09:19Z"
+        confirmed_at: "2026-09-28T07:42:33Z"
         confirmed_by: agent
-        note: 'proof validate exits 0 (81 reqs, 4 variable files, 0 errors/warnings). proof.yaml needs no migration: check enablement unchanged (code_mcdc floors pinned at Phase-4b measured baselines; lock/menu bash targets enabled as pinned). No catalog pin (builtin 1.10.0 in use, catalog_version_pinned check passes with advisory note). Binary g66be0eddd matches the branch''s existing annotations/witness formats - no config drift introduced by the fix delta.'
+        note: 'proof validate exits 0 post-merge: 84 reqs (up from 81 at last campaign - 3 were added by the Sep-27 campaign tail on this same branch, unchanged by this sync), 4 variable files, 0 errors/warnings. proof.yaml untouched by the merge (git diff 1831f4f0..HEAD -- proof.yaml proof/ empty): verification_scope still pins lock+menu surface incl. default/omarchy/omarchy-menu.jsonc; check enablement and code_mcdc floors unchanged. No catalog pin. Binary g66be0eddd identical to the one that produced all existing annotations. .gitignore union (.proof/ + upstream .claude/) has no config effect.'
     coverage:
-        status: confirmed
-        confirmed_at: "2026-09-27T19:57:25Z"
-        confirmed_by: buger
-        note: 'Box phase (Linux, proof 0.1.0-dev+g66be0edddc8c): build_passes green (/usr/bin/bash present), tests_pass green 117.7s (lock-shell x3, menu-node, menu-shell harnesses), code_mcdc_measure green (bash+js; .proof/mcdc/js+bs latest.json fresh). mcdc_coverage: 79 reqs, 295 witness rows (290 quattro baseline + 5 new SW-REQ-260927-66FW), 0 uncovered, 0 stale; 66FW rows 1/4 witnessed live by menu-test.sh, rows 2/3/5 defensive-ignored via REVIEW-21. The 3 macOS-environmental errors from the local run (build_passes /usr/bin/bash, tests_pass, code_mcdc_measure) are all green on Linux.'
-        scope_key: menu
+        status: pending
     defect-review:
         status: confirmed
-        confirmed_at: "2026-09-27T19:41:05Z"
+        confirmed_at: "2026-09-28T08:44:40Z"
         confirmed_by: agent
-        note: 'Real claims sessions for the campaign specs: CRS-0017 (66FW, 4 claims), CRS-0019 (3T3F, 4), CRS-0020 (E4J2, 4) - full lifecycle plan/agent-review/fold/finalize/disposition. 12 claims: 7 dismissed with executed refutations, 5 deferred (2 distinct pre-existing edges, quattro-identical, PoC review/poc-parse-edges.mjs: top-level array phantom rows violating 3T3F non-object intent; inline-comment tail silently empties menu). NO defect in the fix itself. defect_review_current scoped in proof.yaml to 66FW/3T3F/E4J2 with rationale comment; in-scope clean (3/3 claim-reviewed), residual baseline debt at info. Duplicate session CRS-0018 abandoned.'
+        note: 'CRS-0021 full lifecycle for the campaign-changed spec 8VJQ (plan -> agent-authored ledger 4 emit + 4 attack -> run fold -> 4 dispositions -> finalize agent-review). 4 claims ALL dismissed with executed refutations: C01 empty-payload ''''->''{}'' upgrade (unreachable from shipped config, benign direction, evidence: grep + node exec + shell.qml:1175 convergence), C02 refusal-path equivalence (shared shell.summon, shell.qml:1840->1143), C03 id charset exclusion (safe direction + inventory), C04 trailing-whitespace fallback (executed null). NO new defects; no KI filed (nothing confirmed). proof.yaml defect_review_current scope widened to +8VJQ with rationale; audit check defect_review_current: PASS 0 errors 0 warnings (3 no-stamp/12 stale = pre-existing baseline debt at info, unchanged; CRS-0004/5/6 lock sessions remain pre-campaign debt per the documented charter).'
+        scope_key: menu
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-27T19:41:05Z"
+              at: "2026-09-28T08:44:40Z"
     delta-intake:
         status: confirmed
-        confirmed_at: "2026-09-27T19:08:12Z"
+        confirmed_at: "2026-09-28T07:39:50Z"
         confirmed_by: agent
-        note: 'Base ce925cb1 (quattro, proof-instrumented) -> head 1832b66a (fix/jsonc-trailing-comma-in-strings). Delta is OUR fix, 4 commits: a277f1c4 witness tests, 0d93b9e7 string-aware stripJsonc scanner, 2329125a SW-REQ-260927-66FW + 3 decision variables, 1832b66a MC/DC row settle + REVIEW-21 + 3T3F description/rationale. Diff: 8 files +199/-7 (MenuModel.js +33, 66FW spec +37, 3T3F spec, menu.vars.yaml +12, REVIEW-21, menu-test.sh +52, menumodel-replay.test.mjs +51). proof CLI 0.1.0-dev+g66be0edddc8c (NOTE: user brief said gec4c0297 - actual binary reports g66be0eddd). No catalog pin (builtin 1.10.0). Host macOS: build_passes/tests_pass/code_mcdc_measure fail environmentally (/usr/bin/bash, .proof/mcdc/bash/latest.json absent); box phase re-measures. Branch is directly on quattro - no pr-9056-refresh campaign docs carried over, contrary to brief.'
+        note: 'Watched delta: 3faafba2 -> 324f0ba5 = 1 commit (#9399 SSH Agent service, Carlos Sanchez, co-auth DHH + Claude). 4 files +89: 2 new bins (out of scope), omarchy-menu.jsonc +2 entries (IN audited surface), 1 new shell test (out of scope). Sync reality: branch had never merged quattro since fork 31bd80da (Sep 11); merge 7cd0ec15 absorbed all 235 commits. 3 conflicts resolved: .gitignore union; lock/Service.qml upstream ShellIpc wins (our lockIpcHandler id was unreferenced - verified by grep); update-lock-test.sh upstream sudo-boundary fixture kept + our MC/DC witness blocks adapted (spy execs preserved sed-patched copy, not ROOT/bin, to keep test lock-name isolation). Upstream MenuModel.js delta is purely additive (summonAction in-process summon optimization, +11 lines at 490-510); stripJsonc scanner and all 3 JSONC fixes (66FW/array-guard/C8W1) intact post-merge - Implements header line 1 unchanged. proof CLI 0.1.0-dev+g66be0edddc8c; no catalog pin (builtin 1.10.0). Host macOS: build_passes/tests_pass/code_mcdc_measure fail environmentally (need Linux /usr/bin/bash); box phase re-measures.'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-09-27T19:08:12Z"
+            at: "2026-09-28T07:39:50Z"
     hazard:
         status: confirmed
-        confirmed_at: "2026-09-27T19:27:50Z"
+        confirmed_at: "2026-09-28T08:35:59Z"
         confirmed_by: agent
-        note: 'FMEA for 66FW covers BOTH failure modes: (a) label corruption x, ]y -> x ]y; (b) realistic payloads mv f{.bak,} -> mv f{.bak} (brace expansion destroyed) and awk ''{print $1, }'' -> awk ''{print $1 }'' - silently mutated command running with user privileges, parse succeeding so nothing surfaces; graded malformed_input/medium with worst-case prose (reproduced old-vs-new 2026-09-27; NOTE: brief''s ''REVIEW-21 line 60-61'' reference does not resolve - REVIEW-21.yaml is an 11-line record - grounded instead in parser semantics + reproduction). hazard_review stamped: scenario reviewed (malformed_input/boundary/edge_case), property reviewed (determinism, 20k fuzz), domain+structural not_applicable with rationales, on 66FW AND delta-touched 3T3F. DEFECT-260927-CMMA problem report filed and closed covered_by_requirement with full hardening block + sibling-sweep attestation (Menu.qml delegates to MenuModel; no isomorphic site). All hazard/problem-report/change-record checks green.'
+        note: '8VJQ hazard_review complete vs catalog 1.10.0: scenario reviewed (malformed_input/boundary/edge_case with battery evidence), property reviewed (determinism - synchronous in-process dispatch REMOVES the spawn race), domain + structural not_applicable with rationales. FMEA worst case for the fast path: an action that half-matches would mis-dispatch - forbidden by the strict-grammar fallback verified in the battery. One REAL divergence found and triaged (feeds defect-review): explicit empty-quotes payload '''' is upgraded to ''{}'' by match[2]||''{}'' where bash would pass '''' - unreachable from shipped config (0 of 4 summon actions use it), both paths funnel into payloadJson||'''' at shell.qml:1175, in-process is strictly safer (JSON.parse(''{}'') ok vs parse('''') throws). Claim material for CRS, not a shipped-behavior defect. Existing hazard reviews: no catalog pin change, prior dispositions (66FW FMEA, DEFECT-260927-CMMA) stay intact.'
         scope_key: menu
     refresh-complete:
-        status: confirmed
-        confirmed_at: "2026-09-27T20:01:19Z"
-        confirmed_by: buger
-        note: 'Campaign complete on the Linux proof box. Full proof audit (213 checks, 143s): 0 errors, 17 warnings — all pre-existing baseline debt categories (deferred ACs/obligation deferrals tracked as dogfood-harness debt, suspect links, consistency pairs, KI freshness, onboard_v1 not applicable to this campaign, etc.); none in the fix delta scope. Campaign-scope checks all green: build_passes, tests_pass (both harnesses), code_mcdc_measure, mcdc_coverage 295/295 (0 uncovered, 0 stale, 66FW included), defect_review_current, orphan_code_clean 224/224, orphan_tests_clean 35/35, annotation_validity. The 3 macOS-environmental errors from the local run are green on Linux.'
+        status: pending
     research-delta:
         status: confirmed
-        confirmed_at: "2026-09-27T19:11:50Z"
+        confirmed_at: "2026-09-28T07:55:09Z"
         confirmed_by: agent
-        note: 'Studied MenuModel.js stripJsonc scanner (1-35) + parseMenuJsonc + variables + both test suites. Independent verification: node replay 1/1 pass; old-vs-new shows pre-fix SILENT command mutation (mv f{.bak,} -> mv f{.bak}; awk ''{print $1, }'' -> awk ''{print $1 }'') with parse still succeeding - failure mode (b) confirmed real pre-fix and closed post-fix; 20k differential fuzz vs independent reference scanner: 0 mismatches. Findings in review/fix-jsonc-comma-research-delta.md. Residual pre-existing edge: inline comments still unstripped (3T3F covers with empty-set). No defect in the fix found.'
+        note: 'Full findings in review/upstream-324f0ba5-research-delta.md. Watched delta #9399: 2 new jsonc entries use PRE-EXISTING guard/action grammar (! prefix guards: 2->3 occurrences, no new semantics); replay parse 343 entries, 0 field-level diffs vs upstream stripJsonc. New bins + ssh-agent test out of verification_scope. Absorbed backlog studied: summonAction edge battery 10/10 (tight regex, bash fallback), OverlayWindow shown/visible reset discipline intact, lock poster pipeline degrades gracefully, update-stay-awake rework out of production scope but covered by in-scope update-lock-test.sh (merge-adapted). KI hunt: NO new defects. KI-MENU-SELECT-POLL-DEADLOCK re-run at merged head: STILL REPRODUCES (rc=124, control ok). All 3 reported JSONC defects still reproduce on STOCK upstream quattro MenuModel.js; PRs #13255/#13511/#13512 open, no upstream equivalents merged - our fixes stay.'
         scope_key: menu
     residual:
         status: confirmed
-        confirmed_at: "2026-09-27T19:43:52Z"
+        confirmed_at: "2026-09-28T08:49:54Z"
         confirmed_by: agent
-        note: 'Theme residual delta dispositioned: L-MENU-JSONC-001 (provisional_kill, low) parks the post-fix grammar-edge angle under the documented JSONC domain (0/20000 fuzz divergences, 5/5 MC/DC rows); deferred edges (inline comments CRS-0017/C01, top-level arrays CRS-0019/C01) declared as exclusions with PoC. Fix-sibling sweep: no isomorphic site (Menu.qml delegates; no bin/ parses menu JSONC; other replaces are slug normalizers) - attested in DEFECT-260927-CMMA sibling_sweep. Vector V-MENU-JSONC-INPUT linked to residual and exited closed-null (mutation class fixed on-branch; no live KI). residual_kill_hygiene + vector_campaign_hygiene green.'
+        note: 'No NEW residual warranted by this delta. The summonAction divergence found this run (CRS-0021/C01 empty-payload ''''->''{}'') was DISMISSED with executed refutation (unreachable from shipped config + benign direction), not deferred - nothing to park. L-MENU-JSONC-001 (closed 2026-09-28, both grammar-edge exclusions retracted after BMFE/C8W1 fixes landed) re-verified accurate against the merged tree: upstream stripJsonc untouched by the sync, our scanner still ahead, sample table rows still witnessed. Fix-sibling sweep for the fast path: summonAction has exactly ONE call site (Menu.qml:148 runAction); no other execDetached dispatcher exists in the audited surface (grep-verified) - no isomorphic site. Vector V-MENU-SUMMON-DISPATCH linked to no residual and exited closed-null; V-MENU-JSONC-INPUT closure unchanged. residual_kill_hygiene + vector_campaign_hygiene verified in box-phase audit.'
         scope_key: menu
     skeleton-patch:
         status: confirmed
-        confirmed_at: "2026-09-27T19:12:10Z"
+        confirmed_at: "2026-09-28T08:09:01Z"
         confirmed_by: agent
-        note: 'Verified agent-25''s skeleton, no additions needed: SW-REQ-260927-66FW (guarantee, equivalence formula trailing_comma_dropped <=> (!comma_in_string & next_char_closes_json)) parents correctly under SYS-REQ-260922-PPDW (menu model merge); satisfies trace present. 3 decision variables declared in menu.vars.yaml with correct direction (comma_in_string/next_char_closes_json input, trailing_comma_dropped output). proof validate --variable-drift: 81/81 reqs, 4/4 var files clean. No STK/SYS/INT additions warranted: the fix restores intended parse semantics; stakeholder-visible behavior is unchanged-by-design (corruption was never intended). No retirements.'
+        note: 'ONE addition: SW-REQ-260928-8VJQ (guarantee, parent SYS-REQ-260922-R8DQ) governs the summonAction fast path absorbed from upstream c231097d - previously ungoverned additive dispatch behavior in the audited surface (the README pattern: additive behavior must leave with a governing requirement). Variables action_is_bare_summon (input) + in_process_summon_equivalent (output) declared in menu.vars.yaml; validate --variable-drift clean. NOT added (rationale): the 2 ssh-agent jsonc entries are config DATA on pre-existing guard/action grammar (replay-verified, no semantics added); OverlayWindow swap and lock poster pipeline are windowing/wallpaper internals with no prior governing spec and unchanged stakeholder contract; --print-rows is an additive out-of-scope-helper flag. No retirements: upstream merged none of our 3 JSONC PRs.'
         scope_key: menu
     spec-review-delta:
         status: confirmed
-        confirmed_at: "2026-09-27T19:16:32Z"
+        confirmed_at: "2026-09-28T08:25:00Z"
         confirmed_by: agent
-        note: '66FW promoted draft->review (lifecycle change_history stamped, verification.review in_review by agent:kimi-fix-jsonc-refresh). REVIEW-21 (agent-25) verified sound: formula matches scanner semantics, 3 defensive row dispositions correct. REVIEW-22 added grounding 3T3F''s description/rationale delta edit (parseMenuJsonc citation fixed to post-delta line 72). 3T3F/E4J2 stay draft per quattro baseline convention (all menu SW specs draft there); changed_requirements_reviewed passes. Suspect links: 191 pre-existing baseline (whole-repo drift), none introduced by this delta.'
+        note: '8VJQ promoted draft->review (lifecycle change_history stamped by agent:kimi-upstream-watch, by=upstream-sync-324f0ba5) with verification.review in_review. REVIEW-74 (spec_conformance, approved) records the equivalence argument with 4 citations. Changed-set review: the merge touched Menu.qml/MenuModel.js/lock Service.qml/LockView/LockFeedSurface/poster.sh + menu/lock tests; every spec citing those files re-read this campaign (research-delta doc) - semantics unchanged for all cited lines EXCEPT pure line-number drift, handled in annotations-heavy. proof trace suspect: 0 suspect links post-merge (the pre-existing 191 baseline drift resolved clean against the merged tree). changed_requirements_reviewed: only 8VJQ is new/changed and it is reviewed.'
         scope_key: menu
     surface-matrix:
         status: confirmed
-        confirmed_at: "2026-09-27T19:16:57Z"
+        confirmed_at: "2026-09-28T08:26:01Z"
         confirmed_by: agent
-        note: 'Re-extracted surfaces for package menu: 0 surfaces (scope_partial=true), gap-queue empty, surfaces check OK. The JSONC config input is a parser surface, not a security surface in this ledger''s taxonomy (surfaces inventory security-relevant entry points; the menu package declares none). The parse-input threat angle is instead covered properly in the threat_surface_synthesis step (ladder + vector), not here. No new GAPs introduced by the delta; nothing to close.'
+        note: 'Re-extracted post-merge: menu package 0 surfaces (scope_partial=true, same as baseline - the ledger inventories security-relevant entry points and the menu package declares none), gap-queue 0 GAPs, surfaces check OK (1 surface, ok=1 debt=0 gap=0). The ssh-agent menu entries ride the existing guard evaluation path (no new IPC/IPC surface); summonAction is an in-process optimization over the existing omarchy-shell socket protocol, not a new entry point. Lock poster.sh runs ffmpegthumbnailer on the configured wallpaper - a new subprocess edge, dispositioned in threat_surface_synthesis. No new GAPs to close.'
         scope_key: menu
     threat_surface_synthesis:
         status: confirmed
-        confirmed_at: "2026-09-27T19:42:37Z"
+        confirmed_at: "2026-09-28T08:48:40Z"
         confirmed_by: agent
-        note: 'Threat-surface delta synthesized for menu-jsonc-config (the delta surface): proof/surfaces/threat-surface.yaml schema v1 + narrative. L1 recover (crash oracles dead; the pre-fix danger was SILENT success on mutated text), L4 equivalence contract v1 defined before relational lanes armed, L7 metamorphic pair identified as load-bearing (failed pre-fix = DEFECT-260927-CMMA class, holds post-fix). JSONC-input vector V-MENU-JSONC-INPUT created (P1, researched): user config with comma-in-string payload -> command mutation angle, static hunt executed, exit with residual link lands in the residual step. Deferred edges (inline comments, top-level array phantoms) recorded on the L6 row with PoC. spec_lint_threat_surface_present + vector hygiene green. NOTE: .proof/threat_surface.json does not exist in this binary''s schema - used the lint-enforced yaml artifact.'
+        note: 'Threat-surface delta synthesized: proof/surfaces/threat-surface.yaml gained a refresh block + 2 new surfaces with full L1-L12 ladders. menu-action-dispatch (THE delta surface): L1 recover (refusal falls through to bash), L4 equivalence contract v1 on delivered argv, L5 shared-handler convergence (both paths end in shell.summon), L6 grammar battery 10/10+2 probes, L7 metamorphic fallback; vector V-MENU-SUMMON-DISPATCH created (P2) and exited closed-null via CRS-0021. lock-wallpaper-poster (absorbed backlog): subprocess pipeline reviewed - flock+timeout bounded, atomic mv, content-addressed key, graceful still-image fallback; surface-level review only (runtime oracles = documented dogfood-harness debt). menu-jsonc-config posture unchanged (upstream stripJsonc untouched; our scanner still ahead). spec_lint_threat_surface_present verified by validate; vector hygiene green.'
         scope_key: menu
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-09-27T19:42:37Z"
+              at: "2026-09-28T08:48:40Z"
     traces-light:
         status: confirmed
-        confirmed_at: "2026-09-27T19:14:02Z"
+        confirmed_at: "2026-09-28T08:19:01Z"
         confirmed_by: agent
-        note: 'GAP FOUND+FIXED: MenuModel.js Implements header named E4J2,3T3F but not SW-REQ-260927-66FW - stripJsonc is its implementation, so implemented_by was dangling. Added; trace show now resolves implemented_by -> MenuModel.js:stripJsonc. Trace review stamped with citations (MenuModel.js:1, PPDW spec, menu-test.sh). verified_by via menu-test.sh Verifies header (replay .mjs is not a trace target - node adapter only).'
+        note: '8VJQ traces wired source-natively: Implements annotation added at MenuModel.js:553 (summonAction) and extended at Menu.qml:142 (runAction) + file header line 1; Verifies header of menu-test.sh extended (line 5) + 2 MCDC witness tags on the upstream-authored summon assertions (bare summon T row at :40, bash-fallback F row at :56). trace review SW-REQ-260928-8VJQ stamped with 4 validated citations (MenuModel.js:553, Menu.qml:143, menu-test.sh:38, R8DQ spec). trace show resolves implemented_by x2 + verified_by chain; trace coverage: 85 reqs, With Test Trace 100%, no gaps. bash -n clean on edited test.'
         scope_key: menu

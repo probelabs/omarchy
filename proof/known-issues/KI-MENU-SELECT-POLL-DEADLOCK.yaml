@@ -55,6 +55,10 @@ history:
       by: agent:kimi-zero-warnings
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-09-28T10:26:19Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

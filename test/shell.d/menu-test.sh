@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1, SYS-REQ-260927-WC89
+# Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1, SYS-REQ-260927-WC89
+#mcdc:ignore:defensive SW-REQ-260928-8VJQ: action_is_bare_summon=T, in_process_summon_equivalent=F => FALSE -- a matched bare summon whose delivered argv diverges from bash is exactly the defect the requirement forbids; summonAction is a pure regex + passthrough, so producing it needs a broken regex or a mutated payload copy [reviewed: REVIEW-74]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=T, parse_error_raised=F => FALSE -- a failed parse hits the catch that returns [] unconditionally; invalid input yielding items needs a broken catch [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=T => FALSE -- the same catch swallows the parse error by construction; a raised error needs the try/catch removed [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=F => FALSE -- normalizeItem derives parent from the id and kind from the declared shape unconditionally; skipping the inference needs those assignments removed [reviewed: REVIEW-M8]
@@ -41,6 +42,8 @@ const menu = requireFromRoot('shell/plugins/menu/MenuModel.js')
 const menuQml = fs.readFileSync(path.join(root, 'shell/plugins/menu/Menu.qml'), 'utf8')
 const defaultMenuJsonc = fs.readFileSync(path.join(root, 'default/omarchy/omarchy-menu.jsonc'), 'utf8')
 
+// MCDC SW-REQ-260928-8VJQ: action_is_bare_summon=T, in_process_summon_equivalent=T => TRUE
+// SW-REQ-260928-8VJQ:path_pair_agreement:nominal
 assertDeepEqual(
   menu.summonAction("omarchy-shell shell summon omarchy.speedtest"),
   { id: 'omarchy.speedtest', payload: '{}' },
@@ -53,11 +56,56 @@ assertDeepEqual(
 )
 assertEqual(menu.summonAction("omarchy-shell shell summon omarchy.speedtest && echo done"), null, 'menu leaves compound summon commands to bash')
 assertEqual(menu.summonAction(`omarchy-shell shell summon omarchy.x "$(id)"`), null, 'menu leaves shell-expanded payloads to bash')
+// MCDC SW-REQ-260928-8VJQ: action_is_bare_summon=F, in_process_summon_equivalent=F => TRUE [no-action: summonAction returns null for these actions (asserted above), and runAction's fast-path guard `if (summon && ...)` requires a non-null match - a null return structurally proves zero in-process summons]
 assertEqual(menu.summonAction("omarchy-theme-set nord"), null, 'menu leaves ordinary actions to bash')
 assert(
   /var summon = MenuModel\.summonAction\(command\)\s*if \(summon && root\.shell && root\.shell\.summon\(summon\.id, summon\.payload\)\) return\s*Util\.execDetached\(command\)/.test(menuQml),
   'menu falls back to bash when an in-process summon is refused'
 )
+
+// Differential witness: an independent reference splitter reproducing bash
+// word-splitting (whitespace-separated words, single-quote grouping with
+// quote removal) derives the summon argv for each corpus action; wherever the
+// fast path fires, its result must equal the bash reference exactly.
+// SW-REQ-260928-8VJQ:path_pair_agreement:differential
+function bashReferenceSummon(action) {
+  const words = []
+  let cur = '', inQ = false, started = false
+  for (const ch of action) {
+    if (inQ) { if (ch === "'") { inQ = false } else { cur += ch } }
+    else if (ch === "'") { inQ = true; started = true }
+    else if (/\s/.test(ch)) { if (started) { words.push(cur); cur = ''; started = false } }
+    else { cur += ch; started = true }
+  }
+  if (inQ) return 'bash-rejects'
+  if (started) words.push(cur)
+  if (words.length < 4 || words.length > 5) return null
+  if (words[0] !== 'omarchy-shell' || words[1] !== 'shell' || words[2] !== 'summon') return null
+  if (!/^[A-Za-z0-9._-]+$/.test(words[3])) return null
+  return { id: words[3], payload: words.length === 5 ? words[4] : '{}' }
+}
+const summonCorpus = [
+  "omarchy-shell shell summon omarchy.speedtest",
+  `omarchy-shell shell summon omarchy.image-picker '{"source":"themes"}'`,
+  `omarchy-shell shell summon foo '{"k":"a b"}'`,
+  'omarchy-shell shell summon foo; id',
+  'omarchy-shell shell summon',
+  'omarchy-shell shell toggle omarchy.osd',
+  'omarchy-theme-set nord',
+  `omarchy-shell shell summon foo '{"x":1}' extra`,
+]
+for (const action of summonCorpus) {
+  const want = bashReferenceSummon(action)
+  if (want === 'bash-rejects') continue
+  assertDeepEqual(menu.summonAction(action), want, `summon fast path agrees with bash reference on: ${action}`)
+}
+// Documented conservative fallbacks (claims CRS-0021/C04, C01): trailing
+// whitespace fails the strict grammar and stays on the bash path, which
+// word-splits it correctly; an explicit empty-quotes payload is upgraded to
+// '{}' in-process (unreachable from shipped config, benign direction).
+assertEqual(menu.summonAction('omarchy-shell shell summon foo '), null, 'trailing-whitespace summon stays on the bash path')
+assertEqual(menu.summonAction('omarchy-shell shell summon foo bar'), null, 'unquoted payload stays on the bash path (grammar requires single quotes)')
+assertDeepEqual(menu.summonAction(`omarchy-shell shell summon foo ''`), { id: 'foo', payload: '{}' }, 'empty-quotes payload upgrades to the default object')
 
 const parsed = menu.parseMenuJsonc(`
 {

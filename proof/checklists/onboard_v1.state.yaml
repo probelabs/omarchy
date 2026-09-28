@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-28T00:29:39Z"
+updated_at: "2026-09-28T10:29:09Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -10,10 +10,10 @@ steps:
         check_results:
             - id: acceptance_criteria_witnessed
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: acceptance_witness_quality
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     annotations-heavy:
         status: confirmed
         confirmed_at: "2026-09-27T22:58:29Z"
@@ -23,38 +23,12 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: obligation_witness_grounded
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     coverage:
-        status: confirmed
-        confirmed_at: "2026-09-28T00:26:57Z"
-        confirmed_by: agent:kimi-zero-warnings
-        note: 'Package menu: coverage measured and logged on box for both fix deltas: array-guard run (tests_pass 120s green, code_mcdc_measure bash+js, mcdc_coverage 81 requirements / 301 witness rows / 0 uncovered; BMFE adds 3 witnessed rows) and inline-comment run (33459744: 81 reqs / 301 witness rows / 0 uncovered; C8W1 rows witnessed). Witness evidence persisted under .proof/mcdc. Consolidated-tree re-verification is queued for box (agent-23).'
-        verify_result:
-            exit_code: 0
-            passed: true
-            at: "2026-09-28T00:26:58Z"
-            output: |
-                Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
-
-
-                Requirements: 83 total
-
-                  ━━━ IMPLEMENTATION ━━━
-                    ✓ orphan_code_clean              224/224 code functions traced  (0ms)
-                    ✓ orphan_tests_clean             44 test functions scanned, 0 orphans  (0ms)
-
-                  Errors: 0  Warnings: 0
-
-                Help: proof help audit
-                  Cache: 2 hits / 0 fresh (computed in 796ms)
-        scope_key: menu
-        check_results:
-            - id: code_mcdc_measure
-              status: pass
-              at: "2026-09-28T00:29:33Z"
+        status: pending
     debt-standing:
         status: confirmed
         confirmed_at: "2026-09-27T23:02:46Z"
@@ -63,10 +37,10 @@ steps:
         check_results:
             - id: known_issues_reviewed
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: waivers_reviewed
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-27T21:57:07Z"
@@ -75,7 +49,7 @@ steps:
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     hazard:
         status: confirmed
         confirmed_at: "2026-09-27T22:57:42Z"
@@ -85,7 +59,7 @@ steps:
         check_results:
             - id: spec_lint_hazard_consequence
               status: info
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     history-mine:
         status: confirmed
         confirmed_at: "2026-09-28T00:27:14Z"
@@ -94,10 +68,10 @@ steps:
         check_results:
             - id: problem_reports_reviewed
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: change_evidence_complete
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     init:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:13Z"
@@ -128,7 +102,7 @@ steps:
         check_results:
             - id: residual_kill_hygiene
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     skeleton:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:33Z"
@@ -155,28 +129,28 @@ steps:
         check_results:
             - id: spec_lint_decomposition_adds_refinement
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: spec_lint_formalization_quality
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: solver_modeling_opportunity
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: under_modeled_requirements_clean
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     spec-review-2:
         status: confirmed
-        confirmed_at: "2026-09-27T23:46:02Z"
-        confirmed_by: agent
-        note: 'Deep pass re-confirmed for the BUG-A delta: new SW-REQ-260928-BMFE grounded by REVIEW-72 (spec_conformance, annotated-file citations); REVIEW-22 citation repaired (file:line, annotated files only); 3T3F promoted draft->review with review fields set; full-audit spec lint suite green except the zero remaining ste100 findings (verified 2026-09-28).'
+        confirmed_at: "2026-09-28T10:16:38Z"
+        confirmed_by: agent:kimi-upstream-watch
+        note: 'Re-confirmed after upstream sync 324f0ba5 invalidated it. Deep spec pass for the delta: new SW-REQ-260928-8VJQ authored with graph-aware review (REVorded REVIEW-74 spec_conformance, approved); trace reviews re-recorded for drifted lock citations (J8SX 141->155/593->659, ND55 485->549); REVIEW-2/REVIEW-3 citation pointers updated to the new annotation lines. Full spec-stage suite green: 174 checks PASS, 0 FAIL, ste100/trace-review-evidence/conformance-grounded/obligation-coverage all clean; proof validate 85/85 reqs + 4/4 var files, 0 errors 0 warnings; trace suspect: 0.'
         check_results:
             - id: spec_lint_spec_conformance_review_grounded
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: software_formalization_complete
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     surface-matrix:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:48Z"
@@ -192,7 +166,7 @@ steps:
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:07Z"
@@ -202,10 +176,10 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: orphan_code_clean
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
     variables:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:22Z"
@@ -214,10 +188,10 @@ steps:
         check_results:
             - id: variable_orphans_clean
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: variables_declared
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"
             - id: variable_drift
               status: pass
-              at: "2026-09-28T00:29:33Z"
+              at: "2026-09-28T10:29:06Z"

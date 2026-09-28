@@ -1,4 +1,4 @@
-// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260927-66FW, SW-REQ-260928-C8W1
+// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260927-66FW, SW-REQ-260928-C8W1, SW-REQ-260928-8VJQ
 function stripJsonc(raw) {
   // Comments and trailing commas are stripped string-aware in a single pass:
   // string contents are copied verbatim, and outside any string
@@ -547,6 +547,7 @@ function guardScript(items) {
 // run in-process, skipping the bash and qs ipc spawns. Anything more than the
 // bare call, such as a second command or a shell-expanded payload, is left to
 // bash.
+// Implements: SW-REQ-260928-8VJQ
 function summonAction(action) {
   var match = /^omarchy-shell shell summon ([A-Za-z0-9._-]+)(?: '([^']*)')?$/.exec(String(action || ""))
   if (!match) return null

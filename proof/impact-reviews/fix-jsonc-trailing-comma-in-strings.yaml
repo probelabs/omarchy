@@ -1,0 +1,544 @@
+schema_version: 1
+branch: fix-jsonc-trailing-comma-in-strings
+generated_at: "2026-09-28T10:13:22Z"
+reviews:
+    - requirement: SW-REQ-260912-41VV
+      artifact: shell/plugins/lock/LockView.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: LockView gains videoPosterPath pass-through + wallpaper pre-decode wiring (ab18321b/387fcf59). Lock view contract (background render, password field, fingerprint indicator) unchanged; linked reqs 41VV/WBS3/T0XP intents intact. Verified against diff.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:e9d839982162cdec70f292772e05ddc37d4e59e76c32fef7b7fade3f5b0caa1d
+      approval_fingerprint: sha256:b486a331044ec6abe0eb8c42bba20f28d7c73d065254095d72ecd1e789e99f9d
+      artifact_fingerprint: sha256:b1664ce0c2309c99dbca5b2ce60abc389048341767788b107adbca14fa34defe
+      reviewed_at: "2026-09-28T08:59:11Z"
+    - requirement: SW-REQ-260912-J8SX
+      artifact: shell/plugins/lock/Service.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Follow-up after restoring the ShellIpc object id (id: lockIpc, qml.missing_id_on_logic_object signal closure): the id is audit-documentation only, referenced by no code path; all lock IPC verb semantics unchanged. Supersedes the earlier sync impact review for this file.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:b8a4369841cdad3aea39dc8dca4da0b43beb8c41a757fc4067ebbfc732f193d4
+      approval_fingerprint: sha256:77e046373463f840b5e69ea22702a61e1adf9b60be2c2b359f3fd45510f9d39c
+      artifact_fingerprint: sha256:706ddf7b8600102fe2c099990b5c920d323f8d11ea7d69b6c341772547b97ca4
+      reviewed_at: "2026-09-28T10:13:22Z"
+    - requirement: SW-REQ-260912-ND55
+      artifact: shell/plugins/lock/Service.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Follow-up after restoring the ShellIpc object id (id: lockIpc, qml.missing_id_on_logic_object signal closure): the id is audit-documentation only, referenced by no code path; all lock IPC verb semantics unchanged. Supersedes the earlier sync impact review for this file.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:acfb8573e2a8aed78be868c02bdd4cd45d17441df3b6c22c283615ab65053bda
+      approval_fingerprint: sha256:59b24f8084cb311077b828e00e1ada01300921f712e069ca96449ea5fbfc204a
+      artifact_fingerprint: sha256:706ddf7b8600102fe2c099990b5c920d323f8d11ea7d69b6c341772547b97ca4
+      reviewed_at: "2026-09-28T10:13:22Z"
+    - requirement: SW-REQ-260912-WBS3
+      artifact: shell/plugins/lock/LockView.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: LockView gains videoPosterPath pass-through + wallpaper pre-decode wiring (ab18321b/387fcf59). Lock view contract (background render, password field, fingerprint indicator) unchanged; linked reqs 41VV/WBS3/T0XP intents intact. Verified against diff.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:10ef9988f240b45bd910270e9230a798bb0d2d142144566df155ec4b5da284fc
+      approval_fingerprint: sha256:34b1e621c6ed341a5dbb8f952e980370fb9bad7b3e8a53e2b31d4191907cffc1
+      artifact_fingerprint: sha256:b1664ce0c2309c99dbca5b2ce60abc389048341767788b107adbca14fa34defe
+      reviewed_at: "2026-09-28T08:59:11Z"
+    - requirement: SW-REQ-260912-WJYM
+      artifact: shell/plugins/lock/Service.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Follow-up after restoring the ShellIpc object id (id: lockIpc, qml.missing_id_on_logic_object signal closure): the id is audit-documentation only, referenced by no code path; all lock IPC verb semantics unchanged. Supersedes the earlier sync impact review for this file.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:a1e2adef8ba0d8e38e0bef9e877664d69d4efe26d1e64d5eb6de56be02c4b08e
+      approval_fingerprint: sha256:7c90efba92df2187ee71bd763c22a8415739d41cfd109bc3cba86e5072d585ea
+      artifact_fingerprint: sha256:706ddf7b8600102fe2c099990b5c920d323f8d11ea7d69b6c341772547b97ca4
+      reviewed_at: "2026-09-28T10:13:22Z"
+    - requirement: SW-REQ-260922-2JZT
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:a6db6c93dd4de43b8844bc0838374f66b8fea8928b43fdecebcbcc1b2b017a8f
+      approval_fingerprint: sha256:ae5b99a45b041079e44026c0f167f2abc537ecac9bfbcab268504c68c9e68588
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-3JG5
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:5062bd7cb7c5163fe264e63ebb7db55d538c8264a921a82cec7e0860047d5b3c
+      approval_fingerprint: sha256:a64d00588dc23d9679fa990f358cb8a49a95d41dda5aede788bc2f9e34171dd2
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-3T3F
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
+      approval_fingerprint: sha256:449d874c8b35b8798869e5062a69fc0385ebaf6cf8bfe1e9e233e0aac95a8d7c
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-3T3F
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
+      approval_fingerprint: sha256:449d874c8b35b8798869e5062a69fc0385ebaf6cf8bfe1e9e233e0aac95a8d7c
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-3VTN
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
+      approval_fingerprint: sha256:fc9f427183e267623063be699b027eca6e2dee81ae330099b1b8318cc6db0401
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-4079
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:4814738158a95da982e78ab3f4d297048bb9913f4c966238f96477828341c213
+      approval_fingerprint: sha256:8d2c60a33a0b947458d733ce0fa039a926f3ecc06c2c2f89c4115bf100a6ef70
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-43HQ
+      artifact: bin/omarchy-menu-images
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: additive --print-rows flag (early-exit printf of cached rows, 24f12431). No existing flag semantics changed; linked requirements'' intents (image selector menu behavior) untouched. Verified against diff 31bd80da..324f0ba5.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:f8c7007ed0cadf8073d2d92ad02b419c0071977c8d56731a3766f70a122f5415
+      approval_fingerprint: sha256:ecf985ec5e42702980c1c838d0b680c4b4854c3f1f0b272f71b9b3e15c7a5389
+      artifact_fingerprint: sha256:e45667c1538bf206580c36b4efc2474a1ccdfea99cf5c0321a9d413dccfbb763
+      reviewed_at: "2026-09-28T08:59:10Z"
+    - requirement: SW-REQ-260922-46HY
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
+      approval_fingerprint: sha256:30354bb5228e1fc2c33da8c8c2a1826938baae63bc6e5635b86fb18c6772d3bb
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-46HY
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
+      approval_fingerprint: sha256:30354bb5228e1fc2c33da8c8c2a1826938baae63bc6e5635b86fb18c6772d3bb
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-50RE
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
+      approval_fingerprint: sha256:9b3760ea0f61daf59f617ee723d431118f12c185fd771ff8540cf02bcd1b8e66
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-74BZ
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:3951141167e965f81efdf4d8c2b94ccc40cd74ef7cbc22fa66a6fce7603ecf1a
+      approval_fingerprint: sha256:ea9ad04afd978a07a754bbf19b7fb87cf841f15cc132dd20dd6a8ecb5cb2d76f
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-7NPE
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:cce8af4897e3cc83790af34c836aa263cede8e10c78ec45686d6592f58267ea5
+      approval_fingerprint: sha256:082b448ad7a4046496b3e74f414df77dd141093bb92078b0acd9eb20bd5f0bc3
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-8CQ4
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
+      approval_fingerprint: sha256:3e2dd931a01dfbad6dec41878ec7b2fc704223409bd52517037bf8bc62d64bdb
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-B757
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:fc27f2279de1e5cd4ee33a70334305734f2c20198f543b39a6f9ffc758a8390f
+      approval_fingerprint: sha256:50f169864c91d287eaf51e42601e9aae60dfee03e1c826d6e27d4269a1602975
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-C8HX
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
+      approval_fingerprint: sha256:d84def3b630a968d071a6c2f42ef564899732ad066843aba9df90befd84881a4
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-CYB9
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:716560d628a0fb55aff91766c51e37799e934dbad95a1ffc54746081694551c3
+      approval_fingerprint: sha256:8547a67d3a40c5b622accc384e16fe6a6feb07765ba9bcfb3e2b1c84ae7095d3
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-DE93
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
+      approval_fingerprint: sha256:e9eaac850eaf43e3a74208f52f0f1c2b300f3dda5da745e3fc8856bf7896daf3
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-DQ9P
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
+      approval_fingerprint: sha256:2f4e13ad4f650d0ce783c0b3d4da9e9911253a4222493711f29bed0ca18e711b
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-DQ9P
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
+      approval_fingerprint: sha256:2f4e13ad4f650d0ce783c0b3d4da9e9911253a4222493711f29bed0ca18e711b
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-E4J2
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:420fd55c985b9e93456f8ce0c8d32c97623ec554d8bb3f717b03e5debca81336
+      approval_fingerprint: sha256:6b87ba555d80d594bfe964de732110f5491cbfca8bfee215a064b1c6d62b11e7
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-E4J2
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:420fd55c985b9e93456f8ce0c8d32c97623ec554d8bb3f717b03e5debca81336
+      approval_fingerprint: sha256:6b87ba555d80d594bfe964de732110f5491cbfca8bfee215a064b1c6d62b11e7
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-EFNR
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
+      approval_fingerprint: sha256:824ba1412eb162599e5923ad4d9bc347659eeae2adb08ddc8811d3d84226d939
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-EFNR
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
+      approval_fingerprint: sha256:824ba1412eb162599e5923ad4d9bc347659eeae2adb08ddc8811d3d84226d939
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-FGZQ
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:e5cd1637075404ff13de781446af96ad3b83f7190faabcf8df6367a23954f089
+      approval_fingerprint: sha256:3d598919051655d1af6dd29a24911f16e4026c556336b49ce1ab25f99d86d531
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-JRW1
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
+      approval_fingerprint: sha256:25a9e5224412c76b575c18a68acf695b0f21c8a94996ca2ad4a19546b3f9d51c
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-JRW1
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
+      approval_fingerprint: sha256:25a9e5224412c76b575c18a68acf695b0f21c8a94996ca2ad4a19546b3f9d51c
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-MH9B
+      artifact: bin/omarchy-menu-images
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: additive --print-rows flag (early-exit printf of cached rows, 24f12431). No existing flag semantics changed; linked requirements'' intents (image selector menu behavior) untouched. Verified against diff 31bd80da..324f0ba5.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:29500a90b89216a2ebcae8a7915c7791832018d295459e7d33bccb41621aa10b
+      approval_fingerprint: sha256:de9f820f24b098880ad263fa4714debc2ca8cc9f2fd84d0978879fbec0a96e82
+      artifact_fingerprint: sha256:e45667c1538bf206580c36b4efc2474a1ccdfea99cf5c0321a9d413dccfbb763
+      reviewed_at: "2026-09-28T08:59:10Z"
+    - requirement: SW-REQ-260922-MQ37
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:fc8d35f87287613f6ae2ec347e485c2a39bd2b6a171e936a3582d0644564093f
+      approval_fingerprint: sha256:13533c22735a0533061de61124c086e70ef5ff65808593db190805fc9f6f58af
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-N3RM
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
+      approval_fingerprint: sha256:47790aadc5deaf57587853d09a64a3f8316107610721f8c85623eabf26dfbff3
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-NM45
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
+      approval_fingerprint: sha256:c059ef3c650c5846fbabe90231e81760da0c3af1a43a60d00839208fc8ac8411
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-PRNV
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:fd3ccfe18360a85fad15b5d31824f3f7172da756ccc92a03c2b8c7d1b68de06b
+      approval_fingerprint: sha256:949d5fe5a0f96fdd1e1ff5498dbd8d2f146a7a3c685b71f74a466d3ec9fa55f2
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-RGCV
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:89f2661dc04a40a14754bd8a7674693e5330c85726a50ee4927277d6b2c218fa
+      approval_fingerprint: sha256:0647f0752cfe158fd653c3f2fc602f46493d224f11308848721adc17164860e7
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-SJ7P
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
+      approval_fingerprint: sha256:093166fd39f195709168ce547082bcfc92fa8126bd5f2977281ca5342f163b8a
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-SJ7P
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
+      approval_fingerprint: sha256:093166fd39f195709168ce547082bcfc92fa8126bd5f2977281ca5342f163b8a
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-TKDP
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
+      approval_fingerprint: sha256:9f425ec8db098964ff0541c91b43117e3ec70ee24b3a65b0edfadf426fbf5186
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-W17G
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:b91978261365965ea5975ff28c9d069b1c5ef1fe4db20e794b9a371e0bc51a96
+      approval_fingerprint: sha256:b7cacba9cf6a0a226155c3d8e0934db92b110621382b327c4ce4fdcf35247a7b
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-XW52
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:7dd1a4b8502776dfec2ad63fa9f83394117091a6e8ca8314af5cea25d1f92225
+      approval_fingerprint: sha256:d675698726d9fe0f55efab686620863c3e53f5ed4a9f3888d9b1cbbc0932f0ea
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-Y58B
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:ba0def97671b0819fd2c0220ae42864be60807c1de55ebfe4a1b1213973ad1da
+      approval_fingerprint: sha256:582c973d903d5d323567153bd0c435a93c55f11dbad5ec087ef53af2ac7bfd07
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260922-Z48F
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
+      approval_fingerprint: sha256:9d40a025a18084200d9eaef984ea54f0bfaee5fec654040096a7e9d8687e4b6a
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-Z680
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
+      approval_fingerprint: sha256:407cc4fd79a5e1e03f4120300be138e19e32c14a5660f7da2e0588d37bef2a39
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260922-Z680
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
+      approval_fingerprint: sha256:407cc4fd79a5e1e03f4120300be138e19e32c14a5660f7da2e0588d37bef2a39
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260927-66FW
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:edb05429dd6a72cf07d60ea9501c81d0844b42616e2d2c5dcccbf43f12962ad5
+      approval_fingerprint: sha256:ceeec459e8203275a67474c36f4b584dc53850f125e71a9527e7b577cea9f764
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260928-8VJQ
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: two behavioral deltas - (1) summonAction fast path in runAction, now governed by NEW requirement SW-REQ-260928-8VJQ authored this campaign (traces + witnesses wired); (2) PanelWindow->OverlayWindow swap (48de7823) with shown/visible state-reset discipline preserved. All 23 linked requirements'' intents unchanged; annotations refreshed where line numbers drifted.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
+      approval_fingerprint: sha256:2678669d36e654e7208578b4591d3a8a8fd73fd40e7b079988d8836092d2b3ed
+      artifact_fingerprint: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+      reviewed_at: "2026-09-28T08:59:49Z"
+    - requirement: SW-REQ-260928-8VJQ
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: purely additive summonAction export (+11 lines); stripJsonc/parseMenuJsonc untouched by upstream (our 3 JSONC fixes verified intact post-merge). The addition is owned by NEW requirement SW-REQ-260928-8VJQ authored this campaign.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
+      approval_fingerprint: sha256:2678669d36e654e7208578b4591d3a8a8fd73fd40e7b079988d8836092d2b3ed
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T08:59:50Z"
+    - requirement: SW-REQ-260928-BMFE
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:de0d01a59f68c77d9c6dfa460da6f400714e0a86ccc71f0335e3f8e73ee1c966
+      approval_fingerprint: sha256:1c91ee3a25271d50d98f5e385fb78d10504c2dd7c541919ebee74f4e3ed25699
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SW-REQ-260928-C8W1
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'End-of-sync sweep over all 20 linked owners: the upstream delta to this file is ONLY the additive summonAction export (diff 31bd80da..324f0ba5 = +11 lines at 493-510, owned by new SW-REQ-260928-8VJQ); our string-aware scanner, array guard, and inline-comment fixes verified byte-intact post-merge (Implements header + scanner body reviewed; replay parse of shipped config 343 entries 0 field diffs). Every other linked owner''s intent unchanged; witnesses re-run on the box phase.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:0c34f90de08562484d5c9874022b82d1f39c638e0821be235060518a2921f24e
+      approval_fingerprint: sha256:5382071cbdb672291d7903e28886c6dc167002da55a9b0c81c4e441ff50f22bc
+      artifact_fingerprint: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+      reviewed_at: "2026-09-28T09:00:51Z"
+    - requirement: SYS-REQ-260912-FRG0
+      artifact: shell/plugins/lock/Service.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Follow-up after restoring the ShellIpc object id (id: lockIpc, qml.missing_id_on_logic_object signal closure): the id is audit-documentation only, referenced by no code path; all lock IPC verb semantics unchanged. Supersedes the earlier sync impact review for this file.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:09b910367c950a5d23bb4b015ae116f9d9ca20931b96302f52194bdc3b41cc38
+      approval_fingerprint: sha256:03a8b1dd02eabcda8b44c9e87d5bddcd29367c10f34bd04d6869dac0732fb7aa
+      artifact_fingerprint: sha256:706ddf7b8600102fe2c099990b5c920d323f8d11ea7d69b6c341772547b97ca4
+      reviewed_at: "2026-09-28T10:13:22Z"
+    - requirement: SYS-REQ-260912-T0XP
+      artifact: shell/plugins/lock/LockView.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Upstream sync 324f0ba5: LockView gains videoPosterPath pass-through + wallpaper pre-decode wiring (ab18321b/387fcf59). Lock view contract (background render, password field, fingerprint indicator) unchanged; linked reqs 41VV/WBS3/T0XP intents intact. Verified against diff.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:3f77f2a80c0200f078baeed027d27f972b19dedd247714a44695c2aee3c41740
+      approval_fingerprint: sha256:16a22e438f5bac69f833accbbe616d0ba53c22103fcadba5aa4aeb457d854126
+      artifact_fingerprint: sha256:b1664ce0c2309c99dbca5b2ce60abc389048341767788b107adbca14fa34defe
+      reviewed_at: "2026-09-28T08:59:11Z"
+    - requirement: SYS-REQ-260912-T0XP
+      artifact: shell/plugins/lock/Service.qml
+      decision: no-authored-change
+      reviewer: agent:kimi-upstream-watch
+      reason: 'Follow-up after restoring the ShellIpc object id (id: lockIpc, qml.missing_id_on_logic_object signal closure): the id is audit-documentation only, referenced by no code path; all lock IPC verb semantics unchanged. Supersedes the earlier sync impact review for this file.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:3f77f2a80c0200f078baeed027d27f972b19dedd247714a44695c2aee3c41740
+      approval_fingerprint: sha256:16a22e438f5bac69f833accbbe616d0ba53c22103fcadba5aa4aeb457d854126
+      artifact_fingerprint: sha256:706ddf7b8600102fe2c099990b5c920d323f8d11ea7d69b6c341772547b97ca4
+      reviewed_at: "2026-09-28T10:13:22Z"

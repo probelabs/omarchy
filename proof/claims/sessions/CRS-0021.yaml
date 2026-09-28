@@ -1,0 +1,21 @@
+id: CRS-0021
+spec_reqids:
+    - SW-REQ-260928-8VJQ
+state: complete
+backend: grok
+cells:
+    - req_id: SW-REQ-260928-8VJQ
+      dir: .proof/defect-sessions/CRS-0021/cells/SW-REQ-260928-8VJQ
+      status: complete
+      artifact_hashes:
+        ledger.jsonl: sha256:54f558318a36c95ac852f715346da298e17c2b61daf983488a3e1bae2bcf71ca
+input_fingerprint:
+    spec_yaml_sha: sha256:b90a99e3bb45b4a2ed660040681ed7c5cd0041801ed3edf710e63e4f18aed4d0
+    spec_projection: semantic-v1
+    code_fingerprints:
+        shell/plugins/menu/Menu.qml: sha256:519a3c6fb6d67491bddaabb6eb7ef7a8d3c0e6e744deeff7dca4d3bee622b50c
+        shell/plugins/menu/MenuModel.js: sha256:a8459c7d65b432c2287290ca74b03ea4631059ab984becf90d29abc9004c2e62
+    claims_sha: sha256:374e8d2a8b6d1a459db4bd921f93179b4f1413d853b3d2a3998a9fb9db930ea3
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+created_at: "2026-09-28T08:39:24Z"
+updated_at: "2026-09-28T08:41:36Z"

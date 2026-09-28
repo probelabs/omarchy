@@ -140,7 +140,7 @@ Item {
     resultProc.running = true
   }
 
-  // Implements: SW-REQ-260922-N3RM
+  // Implements: SW-REQ-260922-N3RM, SW-REQ-260928-8VJQ
   function runAction(action) {
     var command = String(action || "")
     if (!command) return

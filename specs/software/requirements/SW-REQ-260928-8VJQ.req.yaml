@@ -1,0 +1,99 @@
+id: SW-REQ-260928-8VJQ
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when action_is_bare_summon the menu_model shall eventually satisfy in_process_summon_equivalent
+description: >-
+  A menu action may exactly match the bare-summon grammar: omarchy-shell shell
+  summon <id>, plus an optional single-quoted payload. The payload carries no
+  embedded quote and the id draws from [A-Za-z0-9._-]+. Such an action executes
+  in-process via shell.summon(id, payload) instead of spawning bash. An absent
+  payload defaults to an empty object literal, matching the bin/omarchy-shell
+  argv default exactly. Any action outside that grammar falls back to the
+  unchanged execDetached bash path. The fast path must preserve semantics: same
+  plugin id, same payload bytes, same default.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-R8DQ
+component: menu
+rationale: 'Upstream c231097d (#13435) added MenuModel.summonAction and the execAction fast path. bin/omarchy-shell:51 defaults a missing payload to ''{}'', exactly like match[2] || ''{}''. The regex grammar is a strict subset of bash word-splitting here: the id charset excludes metacharacters, and the payload admits no embedded quote. A 10/10 edge battery on 2026-09-28 confirmed the equivalence. Exotic inputs fall back to bash.'
+tags: []
+variables:
+    - action_is_bare_summon
+    - in_process_summon_equivalent
+traces:
+    satisfies:
+        - SYS-REQ-260922-R8DQ
+    reviewed_at: "2026-09-28T08:17:00.10011Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
+    review_history:
+        - reviewed_at: "2026-09-28T08:17:00.10011Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: implemented_by resolves to MenuModel.summonAction (local Implements annotation at 553) + Menu.qml runAction (header names 8VJQ at 142); verified_by resolves to menu-test.sh node block (header line 5 names 8VJQ; upstream summon assertions carry the new MCDC witness tags); satisfies R8DQ is lifecycle-active
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/MenuModel.js:553
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-test.sh:38
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:kimi-upstream-watch
+        reviewed_at: "2026-09-28T08:10:00Z"
+        ai_generated: true
+history:
+    created_by: human:Leonid Bugaev
+    created_at: "2026-09-28T08:03:15Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-28T09:16:45Z"
+obligation_checklist:
+    - path_pair_agreement
+hazard_review:
+    reviewed_at: "2026-09-28T08:31:31Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+          rationale: >-
+            malformed_input: an action string that half-matches the summon grammar (trailing junk, unbalanced quote, shell substitution) must NOT take the fast path - verified by battery cases 5-10 all returning null (bash fallback). boundary: payload absent vs empty-string - absent defaults to '{}' matching omarchy-shell:51; an explicit empty-quotes payload matches with the empty string upgraded to '{}' (match[2] falsy), a byte divergence triaged unreachable+benign in CRS-0021/C01. edge_case: payload containing double quotes/spaces inside single quotes passes through with bytes identical to bash word-splitting (battery case 4).
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'summonAction is a pure regex match over the action string: same input always takes the same path (10/10 battery + replay determinism). The in-process call is synchronous on the UI thread where the bash path was async-detached; ordering of the summon relative to menu close is now deterministic (summon completes before execAction returns), which removes rather than adds a race.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'No domain workload tags. The fast path crosses no new trust boundary: the action string was already user-config data executed with user privileges; in-process dispatch reaches the same shell.summon IPC handler the bash path reaches over the socket (shell.qml:1840).'
+        - category: structural
+          disposition: not_applicable
+          rationale: GC'd JavaScript (QML JS engine); no manual memory, pointers, binary framing, or format strings.
+defect_review:
+    reviewed_at: "2026-09-28T08:43:35Z"
+    session: CRS-0021
+    fingerprint_sha: sha256:66205ecfd9c77a641786da76028ff8a243747a2811b242534ef2f90476d3b2b5
+    via: agent-review
+    counts:
+        emitted: 4
+        dismissed: 4
+lifecycle:
+    change_history:
+        - date: "2026-09-28T08:20:36Z"
+          from: draft
+          to: review
+          reason: '[upstream-sync-324f0ba5] [upstream-324f0ba5 refresh] new guarantee for the summonAction fast path absorbed from c231097d; equivalence to bash path verified by construction (omarchy-shell:51 ''{}'' default) and 10/10 edge battery; witnesses in menu-test.sh node block'
+          changed_by: agent:kimi-upstream-watch

@@ -1,0 +1,19 @@
+id: V-MENU-SUMMON-DISPATCH
+title: 'Menu action dispatch: in-process summon fast path mis-dispatches an action whose bash interpretation differs'
+description: 'Hunt the dispatch-equivalence angle opened by upstream c231097d. The risk: a menu action takes the summonAction fast path while bash would deliver different argv to shell.summon. Executed 2026-09-28 with a 10/10 edge battery plus trailing-whitespace and empty-quotes probes. One byte-level divergence surfaced: the fast path upgrades an explicit empty-quotes payload to ''{}''. CRS-0021/C01 triaged that divergence unreachable and benign: no shipped config uses it, and both paths converge on the shell.qml payloadJson fallback. The strict-grammar fallback held for compound commands, substitutions, unbalanced quotes, and foreign verbs.'
+priority: P2
+status: closed-null
+related_obligation_classes:
+    - malformed_input
+    - boundary
+    - edge_case
+stacks:
+    - qml
+related_residuals: []
+notes_path: proof/surfaces/threat-surface.md
+close_note: Angle hunted in the 2026-09-28 upstream-sync refresh (claims CRS-0021, 4/4 dismissed with executed refutations). The fast path is governed by SW-REQ-260928-8VJQ with witnessed MC/DC rows in menu-test.sh. No live defect; the single divergence found is unreachable from shipped configuration and benign in direction, so no KI is warranted.
+campaign_log:
+    - at: "2026-09-28T08:20:00Z"
+      status: closed-null
+      note: Hunted during upstream_refresh_v1 for delta 3faafba2..324f0ba5. Battery + claims session clean; no KI.
+      actor: agent

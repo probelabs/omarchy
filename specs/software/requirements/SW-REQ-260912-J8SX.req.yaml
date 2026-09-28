@@ -19,8 +19,8 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-27T21:17:57.948378Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-28T09:08:13.615459Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:b8a4369841cdad3aea39dc8dca4da0b43beb8c41a757fc4067ebbfc732f193d4
     review_history:
         - reviewed_at: "2026-09-27T21:17:57.948378Z"
@@ -31,6 +31,16 @@ traces:
           citations:
             - shell/plugins/lock/Service.qml:141
             - shell/plugins/lock/Service.qml:593
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-missing-pam-test.sh:7
+        - reviewed_at: "2026-09-28T09:08:13.615459Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 're-recorded after upstream sync 324f0ba5 line drift: J8SX Implements moved 141->155 (beginLock guard) and 593->659 (ShellIpc lock verb); both still name J8SX and lock/beginLock semantics unchanged in merged file; verified_by header at lock-missing-pam-test.sh:7 intact; parent T0XP lifecycle-active'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:155
+            - shell/plugins/lock/Service.qml:659
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-missing-pam-test.sh:7
 verification:
