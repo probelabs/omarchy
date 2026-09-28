@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-28T10:19:43Z"
+updated_at: "2026-09-28T11:05:59Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -19,7 +19,11 @@ steps:
         confirmed_by: agent
         note: 'proof validate exits 0 post-merge: 84 reqs (up from 81 at last campaign - 3 were added by the Sep-27 campaign tail on this same branch, unchanged by this sync), 4 variable files, 0 errors/warnings. proof.yaml untouched by the merge (git diff 1831f4f0..HEAD -- proof.yaml proof/ empty): verification_scope still pins lock+menu surface incl. default/omarchy/omarchy-menu.jsonc; check enablement and code_mcdc floors unchanged. No catalog pin. Binary g66be0eddd identical to the one that produced all existing annotations. .gitignore union (.proof/ + upstream .claude/) has no config effect.'
     coverage:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T11:01:05Z"
+        confirmed_by: buger
+        note: 'Box re-measurement at 1e0cf1f0 (post upstream/quattro 324f0ba5 sync): full proof audit --no-cache on Linux proof box. mcdc_coverage: 83 requirements, 307 witness rows total, 0 uncovered (was 295 pre-refresh; +12 from SW-REQ-260928-8VJQ and absorbed upstream delta). code_mcdc_coverage green: aggregate decisions 41.2%, conditions 47.3%, 29 incomplete functions, 10 ignored decisions - thresholds met. Suite executed with /usr/bin/bash + probe-code 0.6.0 on PATH: menu-test.sh (incl. 8VJQ differential corpus) and merged update-lock-test.sh (sudo-boundary fixture + re-anchored spy) both pass. Regression found and fixed this run: in-JS bare-id annotations re-partition heredoc MC/DC crediting blocks - 8VJQ witness block moved to heredoc tail (1e0cf1f0), restoring 19 menu requirements.'
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-28T08:44:40Z"
@@ -46,7 +50,10 @@ steps:
         note: '8VJQ hazard_review complete vs catalog 1.10.0: scenario reviewed (malformed_input/boundary/edge_case with battery evidence), property reviewed (determinism - synchronous in-process dispatch REMOVES the spawn race), domain + structural not_applicable with rationales. FMEA worst case for the fast path: an action that half-matches would mis-dispatch - forbidden by the strict-grammar fallback verified in the battery. One REAL divergence found and triaged (feeds defect-review): explicit empty-quotes payload '''' is upgraded to ''{}'' by match[2]||''{}'' where bash would pass '''' - unreachable from shipped config (0 of 4 summon actions use it), both paths funnel into payloadJson||'''' at shell.qml:1175, in-process is strictly safer (JSON.parse(''{}'') ok vs parse('''') throws). Claim material for CRS, not a shipped-behavior defect. Existing hazard reviews: no catalog pin change, prior dispositions (66FW FMEA, DEFECT-260927-CMMA) stay intact.'
         scope_key: menu
     refresh-complete:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T11:05:59Z"
+        confirmed_by: buger
+        note: 'Upstream refresh campaign COMPLETE for delta 3faafba2..324f0ba5 (235 commits absorbed by merge 7cd0ec15; audited surface touched via shell/plugins/menu). All 15 steps confirmed. Final full proof audit --no-cache on Linux box at 1e0cf1f0: 0 errors / 0 warnings. MC/DC: 307 witness rows, 0 uncovered; code-level decisions 41.2% / conditions 47.3% within thresholds. KI sweep: KI-MENU-SELECT-POLL-DEADLOCK re-executed at merged head - still present, evidence re-stamped; no new confirmed defects (CRS-0021 C01 empty-payload divergence dismissed unreachable+benign). Upstream PRs #13255/#13511/#13512 and issues #13250/#13492/#13493 all still open; all 3 JSONC defects still reproduce on stock upstream. Pre-existing dispositions intact (P708 deferral, CRS-0004/5/6 baseline debt, XJ5D AC-001 acceptance deferral).'
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-28T07:55:09Z"

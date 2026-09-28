@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-28T10:29:09Z"
+updated_at: "2026-09-28T11:05:32Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -10,10 +10,10 @@ steps:
         check_results:
             - id: acceptance_criteria_witnessed
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: acceptance_witness_quality
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     annotations-heavy:
         status: confirmed
         confirmed_at: "2026-09-27T22:58:29Z"
@@ -23,12 +23,38 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: obligation_witness_grounded
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     coverage:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T11:03:05Z"
+        confirmed_by: buger
+        note: 'Lock package coverage re-measured on the Linux proof box at 1e0cf1f0: full bash MC/DC suite (apply-lock, system-lock, sleep-lock, hyprland-session-locked, lock-blank-fingerprint, lock-fingerprint-indicator, lock-password-overflow, lock-stranded-recovery, lock-missing-pam, update-lock incl. merged sudo-boundary fixture) executed green with /usr/bin/bash + flock + /proc; mcdc_coverage 0 uncovered of 307 project rows. Evidence: proof audit --no-cache 2026-09-28 on 100.110.166.101.'
+        verify_result:
+            exit_code: 0
+            passed: true
+            at: "2026-09-28T11:03:05Z"
+            output: |
+                Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
+
+
+                Requirements: 85 total
+
+                  ━━━ IMPLEMENTATION ━━━
+                    ✓ orphan_code_clean              227/227 code functions traced  (0ms)
+                    ✓ orphan_tests_clean             45 test functions scanned, 0 orphans  (0ms)
+
+                  Errors: 0  Warnings: 0
+
+                Help: proof help audit
+                  Cache: 2 hits / 0 fresh (computed in 456ms)
+        scope_key: lock
+        check_results:
+            - id: code_mcdc_measure
+              status: pass
+              at: "2026-09-28T11:05:29Z"
     debt-standing:
         status: confirmed
         confirmed_at: "2026-09-27T23:02:46Z"
@@ -37,10 +63,10 @@ steps:
         check_results:
             - id: known_issues_reviewed
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: waivers_reviewed
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-27T21:57:07Z"
@@ -49,7 +75,7 @@ steps:
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     hazard:
         status: confirmed
         confirmed_at: "2026-09-27T22:57:42Z"
@@ -59,7 +85,7 @@ steps:
         check_results:
             - id: spec_lint_hazard_consequence
               status: info
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     history-mine:
         status: confirmed
         confirmed_at: "2026-09-28T00:27:14Z"
@@ -68,10 +94,10 @@ steps:
         check_results:
             - id: problem_reports_reviewed
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: change_evidence_complete
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     init:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:13Z"
@@ -102,7 +128,7 @@ steps:
         check_results:
             - id: residual_kill_hygiene
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     skeleton:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:33Z"
@@ -129,16 +155,16 @@ steps:
         check_results:
             - id: spec_lint_decomposition_adds_refinement
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: spec_lint_formalization_quality
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: solver_modeling_opportunity
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: under_modeled_requirements_clean
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     spec-review-2:
         status: confirmed
         confirmed_at: "2026-09-28T10:16:38Z"
@@ -147,10 +173,10 @@ steps:
         check_results:
             - id: spec_lint_spec_conformance_review_grounded
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: software_formalization_complete
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     surface-matrix:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:48Z"
@@ -166,7 +192,7 @@ steps:
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:07Z"
@@ -176,10 +202,10 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: orphan_code_clean
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
     variables:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:22Z"
@@ -188,10 +214,10 @@ steps:
         check_results:
             - id: variable_orphans_clean
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: variables_declared
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
             - id: variable_drift
               status: pass
-              at: "2026-09-28T10:29:06Z"
+              at: "2026-09-28T11:05:29Z"
