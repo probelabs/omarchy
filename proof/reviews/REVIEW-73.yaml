@@ -1,0 +1,10 @@
+id: REVIEW-73
+kind: spec_conformance
+reviewer: agent:kimi-zero-warnings
+reviewed_at: "2026-09-27T23:57:22Z"
+subject: SW-REQ-260928-C8W1
+decision: approved
+comment: 'FRETish equivalence (comment_tail_dropped <=> !comment_in_string) matches the code: stripJsonc''s single pass drops bytes from a // opener to end-of-line only when outside a string literal (MenuModel.js:27-28), and copies string contents verbatim. Witness rows cover F->T twice (inline tail at EOF without newline; full-line plus inline comments in one pass), T->F (label "A // B" preserved verbatim), a negative (JSON syntax inside a comment tail ignored), and a no-action row (comment-free input unchanged). RED observed pre-fix (inline tail emptied the menu: expected 1 actual 0 in both harnesses), GREEN after folding comment stripping into the scanner.'
+citations:
+    - shell/plugins/menu/MenuModel.js:27@stripJsonc
+    - test/shell.d/menu-test.sh:161

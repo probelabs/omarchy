@@ -1,0 +1,194 @@
+schema_version: 1
+branch: fix-jsonc-inline-comment-tail
+generated_at: "2026-09-28T00:04:51Z"
+reviews:
+    - requirement: SW-REQ-260922-2JZT
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:a6db6c93dd4de43b8844bc0838374f66b8fea8928b43fdecebcbcc1b2b017a8f
+      approval_fingerprint: sha256:ae5b99a45b041079e44026c0f167f2abc537ecac9bfbcab268504c68c9e68588
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-3T3F
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'MenuModel.js delta reviewed: comment stripping folded into the string-aware scanner is the bug fix tracked by DEFECT-260928-7AX9 and modeled by new SW-REQ-260928-C8W1; 3T3F/E4J2/66FW intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
+      approval_fingerprint: sha256:449d874c8b35b8798869e5062a69fc0385ebaf6cf8bfe1e9e233e0aac95a8d7c
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:01:38Z"
+    - requirement: SW-REQ-260922-46HY
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
+      approval_fingerprint: sha256:30354bb5228e1fc2c33da8c8c2a1826938baae63bc6e5635b86fb18c6772d3bb
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-74BZ
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:3951141167e965f81efdf4d8c2b94ccc40cd74ef7cbc22fa66a6fce7603ecf1a
+      approval_fingerprint: sha256:ea9ad04afd978a07a754bbf19b7fb87cf841f15cc132dd20dd6a8ecb5cb2d76f
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-7NPE
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:cce8af4897e3cc83790af34c836aa263cede8e10c78ec45686d6592f58267ea5
+      approval_fingerprint: sha256:082b448ad7a4046496b3e74f414df77dd141093bb92078b0acd9eb20bd5f0bc3
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-CYB9
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:716560d628a0fb55aff91766c51e37799e934dbad95a1ffc54746081694551c3
+      approval_fingerprint: sha256:8547a67d3a40c5b622accc384e16fe6a6feb07765ba9bcfb3e2b1c84ae7095d3
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-DQ9P
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
+      approval_fingerprint: sha256:2f4e13ad4f650d0ce783c0b3d4da9e9911253a4222493711f29bed0ca18e711b
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-E4J2
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'MenuModel.js delta reviewed: comment stripping folded into the string-aware scanner is the bug fix tracked by DEFECT-260928-7AX9 and modeled by new SW-REQ-260928-C8W1; 3T3F/E4J2/66FW intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:420fd55c985b9e93456f8ce0c8d32c97623ec554d8bb3f717b03e5debca81336
+      approval_fingerprint: sha256:6b87ba555d80d594bfe964de732110f5491cbfca8bfee215a064b1c6d62b11e7
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:01:38Z"
+    - requirement: SW-REQ-260922-EFNR
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
+      approval_fingerprint: sha256:824ba1412eb162599e5923ad4d9bc347659eeae2adb08ddc8811d3d84226d939
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-JRW1
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
+      approval_fingerprint: sha256:25a9e5224412c76b575c18a68acf695b0f21c8a94996ca2ad4a19546b3f9d51c
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-MQ37
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:fc8d35f87287613f6ae2ec347e485c2a39bd2b6a171e936a3582d0644564093f
+      approval_fingerprint: sha256:13533c22735a0533061de61124c086e70ef5ff65808593db190805fc9f6f58af
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-PRNV
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:fd3ccfe18360a85fad15b5d31824f3f7172da756ccc92a03c2b8c7d1b68de06b
+      approval_fingerprint: sha256:949d5fe5a0f96fdd1e1ff5498dbd8d2f146a7a3c685b71f74a466d3ec9fa55f2
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-RGCV
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:89f2661dc04a40a14754bd8a7674693e5330c85726a50ee4927277d6b2c218fa
+      approval_fingerprint: sha256:0647f0752cfe158fd653c3f2fc602f46493d224f11308848721adc17164860e7
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-SJ7P
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
+      approval_fingerprint: sha256:093166fd39f195709168ce547082bcfc92fa8126bd5f2977281ca5342f163b8a
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-W17G
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:b91978261365965ea5975ff28c9d069b1c5ef1fe4db20e794b9a371e0bc51a96
+      approval_fingerprint: sha256:b7cacba9cf6a0a226155c3d8e0934db92b110621382b327c4ce4fdcf35247a7b
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-Y58B
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:ba0def97671b0819fd2c0220ae42864be60807c1de55ebfe4a1b1213973ad1da
+      approval_fingerprint: sha256:582c973d903d5d323567153bd0c435a93c55f11dbad5ec087ef53af2ac7bfd07
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260922-Z680
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'End-of-branch sweep: reviewed the stripJsonc scanner fold-in against every linked owner; behavioral delta is owned by new SW-REQ-260928-C8W1 and DEFECT-260928-7AX9, all other owners'' intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
+      approval_fingerprint: sha256:407cc4fd79a5e1e03f4120300be138e19e32c14a5660f7da2e0588d37bef2a39
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:04:51Z"
+    - requirement: SW-REQ-260927-66FW
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'MenuModel.js delta reviewed: comment stripping folded into the string-aware scanner is the bug fix tracked by DEFECT-260928-7AX9 and modeled by new SW-REQ-260928-C8W1; 3T3F/E4J2/66FW intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:edb05429dd6a72cf07d60ea9501c81d0844b42616e2d2c5dcccbf43f12962ad5
+      approval_fingerprint: sha256:ceeec459e8203275a67474c36f4b584dc53850f125e71a9527e7b577cea9f764
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:01:38Z"
+    - requirement: SW-REQ-260928-C8W1
+      artifact: shell/plugins/menu/MenuModel.js
+      decision: no-authored-change
+      reviewer: unknown
+      reason: 'MenuModel.js delta reviewed: comment stripping folded into the string-aware scanner is the bug fix tracked by DEFECT-260928-7AX9 and modeled by new SW-REQ-260928-C8W1; 3T3F/E4J2/66FW intents unchanged and their witnesses still pass in both harnesses'
+      base: HEAD~1
+      requirement_fingerprint: sha256:0c34f90de08562484d5c9874022b82d1f39c638e0821be235060518a2921f24e
+      approval_fingerprint: sha256:06a9c09160fdc72df8fa480bc37880898c7fe3b4ff38cccb86207ccef6738ee4
+      artifact_fingerprint: sha256:0f91885274a25071f274fc664b5ebfe150e833cee56ea15e6726910946c73534
+      reviewed_at: "2026-09-28T00:01:38Z"

@@ -1,0 +1,89 @@
+id: SW-REQ-260928-C8W1
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: the menu_model shall always satisfy comment_tail_dropped <=> !comment_in_string
+description: When the JSONC stripper sees a comment opener, it drops the comment only when the opener sits outside each string literal. The comment runs to the end of the line. An opener inside a string literal is data and stays unchanged.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-PPDW
+component: menu
+rationale: MenuModel.js stripJsonc stripped only line-anchored comments. An inline comment tail survived stripping, JSON.parse rejected the whole file, and the menu went empty. PoC review/upstream-repro-jsonc-inline-comment.js. Deferred claim CRS-0017/C01 = CRS-0019/C02 = CRS-0020/C01.
+tags: []
+variables:
+    - comment_in_string
+    - comment_tail_dropped
+traces:
+    satisfies:
+        - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-09-27T23:58:50.63446Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_fingerprint: sha256:0c34f90de08562484d5c9874022b82d1f39c638e0821be235060518a2921f24e
+    review_history:
+        - reviewed_at: "2026-09-27T23:58:50.63446Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:1
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml:1
+            - test/shell.d/menu-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:kimi-zero-warnings
+        reviewed_at: "2026-09-27T23:58:50Z"
+        ai_generated: true
+        motivation:
+            kind: defect
+            ref: DEFECT-260928-7AX9
+            rationale: "This requirement closes the inline-comment-tail class. It models the comment-strip decision (comment_in_string -> comment_tail_dropped). The old line-anchored regex left inline tails in the text, so JSON.parse rejected the whole file and the menu went empty."
+history:
+    created_by: agent:kimi-zero-warnings
+    created_at: "2026-09-27T23:52:32Z"
+    last_modified_by: agent:kimi-zero-warnings
+    last_modified_at: "2026-09-28T00:04:50Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'FMEA mode (a): an inline comment tail survives stripping and JSON.parse rejects the whole menu file. Every menu row vanishes; the user loses the entire menu until the file is fixed. FMEA mode (b): a full-line comment containing a quote opens a fake string in a naive scanner. Then real content would be eaten as comment. The string-aware scanner on this branch forbids both modes. The grading records the pre-fix worst case this requirement now forbids.'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-09-27T23:56:34Z"
+    reviewed_by: agent:kimi-zero-warnings
+    reviewed_against_catalog_version: 1.10.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+          rationale: 'malformed_input: an inline comment tail is legal JSONC the stripper must remove WITHOUT touching string-literal bytes; pre-fix it survived and JSON.parse rejected the whole file (empty menu). boundary: a comment opener at EOF with no newline drops to EOF (witnessed); an empty comment // does the same. edge_case: // inside a string literal ("A // B") is data and stays verbatim (witnessed); JSON syntax inside a comment tail is ignored (witnessed negative).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: The scanner is a single left-to-right pass with no environment, ordering, or timing inputs. Identical bytes always strip identically. Differential fuzz against the pre-fix baseline is Phase 3 of this campaign.
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags (HTTP/crypto/IPC frameworks); the component parses a local user-authored config file into a menu model.
+        - category: structural
+          disposition: not_applicable
+          rationale: Implementation is GC'd JavaScript (QML JS engine). No manual memory, pointer arithmetic, binary framing, or format strings exist here. The structural catalog targets C-family hazards that cannot exist here.
+lifecycle:
+    change_history:
+        - date: "2026-09-27T23:58:50Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-inline-comment-tail] fix branch review: equivalence verified against stripJsonc by REVIEW-73; RED->GREEN witnessed in both harnesses this campaign'
+          changed_by: agent:kimi-zero-warnings
