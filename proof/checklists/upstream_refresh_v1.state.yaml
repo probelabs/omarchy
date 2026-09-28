@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-28T14:53:35Z"
+updated_at: "2026-09-28T15:02:01Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -19,7 +19,11 @@ steps:
         confirmed_by: agent
         note: 'No config migration needed: the delta''s only in-scope file (default/omarchy/omarchy-menu.jsonc) is already pinned individually in verification_scope (production include). New upstream files (bin/omarchy-toggle-animations, bin/omarchy-cmd-browser-handoff, toggles/no-animations.lua, browser-handoff/launch-browser tests) all fall outside the lock+menu dogfood universe per the completeness disposition. proof.yaml byte-identical across the merge (git diff empty); check enablement, code_mcdc floors, surface packages unchanged.'
     coverage:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T15:01:01Z"
+        confirmed_by: buger
+        note: 'Box re-measurement at 968148ae (post upstream/quattro b18ab495 sync): full proof audit --no-cache on Linux proof box with probe-code 0.6.0. mcdc_coverage: 83 requirements, 307 witness rows, 0 uncovered. code_mcdc_coverage: aggregate decisions 41.2% / conditions 47.3%, thresholds met. tests_pass: full suite green incl. keybindings (real lua) and the merged update-lock fixture; no new in-scope test logic this delta - the parse verification of the new menu row executed on mac (344 rows). build_passes green.'
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-28T14:41:25Z"
@@ -46,7 +50,10 @@ steps:
         note: 'Catalog unchanged (1.10.0, no pin) - no hazard_review went stale. Existing reviews re-checked against the delta: 8VJQ''s summon-grammar FMEA unaffected (the new action omarchy-toggle-animations does not match the summon grammar - verified by reading; summon inventory re-counted at 4, unchanged); 0W96''s bind_commands review unaffected (keybindings path untouched). New candidates assessed: the added menu row introduces NO new decision point - it is config data parsed by the witnessed scanner and dispatched by the witnessed exec path; its FMEA worst case (toggle script fails) is identical in class to every other action row and bounded by the documented error_handling posture. No new hazard_review blocks warranted.'
         scope_key: menu
     refresh-complete:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T15:02:01Z"
+        confirmed_by: buger
+        note: 'Upstream refresh campaign COMPLETE for delta de63134b..b18ab495 (2 commits, DHH: #13550 no-animations mode + #13530 browser handoff; merge 7771c14e). Audited surface touched via default/omarchy/omarchy-menu.jsonc only (+1 row trigger.toggle.animations). All 15 steps confirmed. Final full proof audit --no-cache on Linux box at 968148ae: 0 errors / 0 warnings. MC/DC: 307 witness rows, 0 uncovered; code-level 41.2% decisions / 47.3% conditions in thresholds. KI sweep: KI-MENU-SELECT-POLL-DEADLOCK re-executed at merged head - still present, evidence re-stamped 2026-09-28T14:14:16Z; no new confirmed defects (4 suspicions dismissed, parse replay executed). PRs #13255/#13511/#13512 + issues #13250/#13492/#13493 all still open. Pre-existing dispositions intact (P708, CRS-0004/5/6 at info, XJ5D AC-001).'
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-28T14:19:35Z"
