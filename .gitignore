@@ -1,7 +1,8 @@
-
 # Python bytecode (orchestrator)
 __pycache__/
 *.pyc
 
 # ReqProof local-only state (versionable .proof/ audit objects stay tracked).
 .proof/
+
+.claude/
