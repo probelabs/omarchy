@@ -23,6 +23,16 @@ refresh:
         binds, f8146395) - a distinct menu data path not covered by the three
         existing surfaces, now modeled below. menu-jsonc-config and
         menu-action-dispatch postures unchanged; lock surface untouched.
+    - at: "2026-09-28"
+      by: agent:kimi-upstream-watch
+      delta: de63134b..b18ab495 (watched; 2 commits, merge 7771c14e)
+      added_surfaces: []
+      note: >
+        Third same-day refresh. In-surface contact is one omarchy-menu.jsonc
+        data row (trigger.toggle.animations, plain exec action) - parse path
+        already modeled by menu-jsonc-config, dispatch path by
+        menu-action-dispatch (summon grammar cannot match it). No new surface,
+        vector, or posture change; all four existing surfaces re-verified.
 narrative: proof/surfaces/threat-surface.md
 # NOTE for integrators: this proof version (0.1.0-dev+g66be0eddd) persists the
 # threat-surface map at proof/surfaces/threat-surface.yaml (schema_version 1);

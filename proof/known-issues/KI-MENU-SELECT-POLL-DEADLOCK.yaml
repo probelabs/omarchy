@@ -63,6 +63,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-09-28T14:14:18Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

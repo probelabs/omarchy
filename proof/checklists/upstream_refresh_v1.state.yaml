@@ -1,102 +1,95 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-28T13:29:54Z"
+updated_at: "2026-09-28T14:53:35Z"
 steps:
     ac-sweep:
         status: confirmed
-        confirmed_at: "2026-09-28T12:00:59Z"
+        confirmed_at: "2026-09-28T14:37:12Z"
         confirmed_by: agent
-        note: 'No new/changed STKs in this delta (skeleton-patch: none added). Changed SW reqs under review (0W96, 9DMS) carry no acceptance_criteria blocks - nothing to sweep. proof validate: 85 requirements valid, 4 variable files valid, 0 errors/0 warnings at merge 228a9073. Upstream''s new keybindings test is behavioral evidence under the existing 0W96 Verifies header; it asserts the T,T dispatch scenario (SUPER+RETURN lua bind -> exec omarchy-launch-terminal row), reinforcing the existing witness set.'
+        note: 'No new/changed STKs (skeleton-patch: none). No requirement''s acceptance blocks affected - the delta adds no spec changes. proof validate at merge 7771c14e: 85 requirements valid, 4 variable files valid, 0 errors/0 warnings. The executed parse verification (344 rows, new entry normalized) stands as the behavioral witness for the data-row addition under the existing test suite.'
         scope_key: menu
     annotations-heavy:
         status: confirmed
-        confirmed_at: "2026-09-28T12:52:34Z"
+        confirmed_at: "2026-09-28T14:53:35Z"
         confirmed_by: agent
-        note: 'Moved-package annotations verified post-merge: SW-REQ-260922-0W96 and 9DMS all MC/DC witness rows covered (proof mcdc show, existing keybindings-menu-test.sh witness lines remain accurate - the lua_bind fixtures exercise the source-cache enrichment path the delta preserves). Implements header at bin/omarchy-menu-keybindings:8 unmoved; the new bind_commands branch executes under it (per-file pattern preserved; trace re-review records the branch at merged lines 213-215). annotation_validity clean; suspect_clean 0 links; obligation_evidence_complete 50/50 covered. New upstream terminal-bind test needs no annotation edit - it lands under the file-level Verifies header. Local residual failures remain environmental only (lock bash suite needs Linux /usr/bin/bash) - box phase next.'
+        note: 'No annotation-bearing code moved this delta (only omarchy-menu.jsonc data). Verified green post-merge: annotation_validity clean, suspect_clean 0 links, obligation_evidence_complete 50/50 covered. menu-test.sh suite green locally (JS/node portions incl. the 8VJQ differential corpus at the heredoc tail). The new menu row needs no annotation - it is witnessed by the existing parse+dispatch tests. Remaining local failures are environmental only (lock bash suite needs Linux /usr/bin/bash, lua for keybindings) - box phase next.'
         scope_key: menu
     config-migrate:
         status: confirmed
-        confirmed_at: "2026-09-28T11:33:49Z"
+        confirmed_at: "2026-09-28T14:08:53Z"
         confirmed_by: agent
-        note: 'No config migration needed: delta adds zero new in-scope files. bin/omarchy-menu-keybindings pre-existed and is matched by bin/omarchy-menu* glob; keybindings-menu-test.sh is explicitly listed. All new test files (default-browser-lookup, terminal-cwd, yt6801-driver, security-fingerprint-remove, remove-security-sshd-firewall) are out of verification_scope. proof.yaml byte-identical across the merge (git diff empty); check enablement, code_mcdc floors, surfaces packages unchanged.'
+        note: 'No config migration needed: the delta''s only in-scope file (default/omarchy/omarchy-menu.jsonc) is already pinned individually in verification_scope (production include). New upstream files (bin/omarchy-toggle-animations, bin/omarchy-cmd-browser-handoff, toggles/no-animations.lua, browser-handoff/launch-browser tests) all fall outside the lock+menu dogfood universe per the completeness disposition. proof.yaml byte-identical across the merge (git diff empty); check enablement, code_mcdc floors, surface packages unchanged.'
     coverage:
-        status: confirmed
-        confirmed_at: "2026-09-28T13:27:26Z"
-        confirmed_by: buger
-        note: 'Box re-measurement at d4897b5b (post upstream/quattro de63134b sync): full proof audit --no-cache on Linux proof box with probe-code 0.6.0. mcdc_coverage: 83 requirements, 307 witness rows, 0 uncovered. code_mcdc_coverage: aggregate decisions 41.2% / conditions 47.3%, 29 incomplete functions, 10 ignored decisions - thresholds met. tests_pass green: full suite incl. keybindings-menu-test.sh under real /usr/bin/lua - upstream''s new terminal-bind test (bind_commands path) passes end-to-end; update-lock/menu suites unchanged green. build_passes green (bash -n all lock+menu bins, node --check MenuModel.js). Local mac-only findings (lua absence skip) confirmed environmental.'
-        scope_key: menu
+        status: pending
     defect-review:
         status: confirmed
-        confirmed_at: "2026-09-28T12:28:21Z"
+        confirmed_at: "2026-09-28T14:41:25Z"
         confirmed_by: agent
-        note: 'CRS-0022 claims session for SW-REQ-260922-0W96 (the delta-touched spec): 4 claims emitted, 4/4 DISMISSED with executed refutations - C01 registered function bind resolves (real merged sandbox chunk lines 87-243 + real helpers.lua under luajit, fixture HOME: row ''Terminal exec omarchy-launch-terminal''); C02 zero collateral drift (differential old-vs-new sandbox, diff = exactly the Terminal row); C03 nil-dispatcher safe (executed rc=0, nil-key read returns nil); C04 stale-cache impossible (v13->v14 bump is first hashed line). Ledger .proof/defect-sessions/CRS-0022, folded, finalized --via agent-review; defect_review stamp on 0W96 (emitted 4/dismissed 4); proof.yaml defect_review_current scope widened +0W96; gate green (0 errors/0 warnings, pre-existing baseline debt stays at severity info). No claim was upstream-worthy - nothing for the KI ledger.'
+        note: 'No claims session warranted this delta: no spec''s implementation changed - the only in-scope change is one config data row. The KI hunt''s 4 suspicions were dismissed at research level with evidence (row mis-parse: EXECUTED refutation via node replay to 344 rows; fast-path grammar mismatch: code reading against the 8VJQ regex; summon inventory drift: executed re-count = 4 unchanged; toggle inversion: documented intent, out of scope). defect_review_current gate re-verified green post-merge (severity info posture for pre-existing baseline debt unchanged; scoped specs 66FW/3T3F/E4J2/8VJQ/0W96 stamps untouched by a data-only delta).'
         scope_key: menu
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-28T12:28:21Z"
+              at: "2026-09-28T14:41:25Z"
     delta-intake:
         status: confirmed
-        confirmed_at: "2026-09-28T11:33:31Z"
+        confirmed_at: "2026-09-28T14:04:29Z"
         confirmed_by: agent
-        note: 'Delta 324f0ba5..de63134b (21 commits, DHH/Erik Melton/Afonso Oliveira; 27 files +1152/-25): 11 bin (launchers, omarchy-menu-keybindings [IN SCOPE], theme-set+hunk, security-removal), 8 test/shell.d (incl. keybindings-menu-test.sh [IN SCOPE]), 2 shell/plugins/notifications, test/cli, migrations/1788279117, install/hardware YT6801, default/hypr Lua. Merged as 228a9073, zero conflicts (both in-scope files auto-merged: upstream bind_commands lookup + v14 cache key in, our Verifies/MCDC annotations intact). proof 0.1.0-dev+g66be0edddc8c, builtin catalog 1.10.0, no pin, unchanged by delta. State-file baseline 324f0ba5 matches merge parent.'
+        note: 'Delta de63134b..b18ab495 (2 commits, both DHH): #13550 no-animations mode (45 files: shell/Ui/* + panels animation gating, bin/omarchy-toggle-animations, default/hypr/toggles/no-animations.lua, vm-no-animations.sh installer) + #13530 browser handoff (5 files: bin/omarchy-cmd-browser-handoff, launch-browser, launch-webapp, 2 tests). IN-SCOPE contact: exactly one file - default/omarchy/omarchy-menu.jsonc (+1 row: trigger.toggle.animations -> omarchy-toggle-animations, plain exec action). No shell/plugins/menu/** or lock files touched. Merged as 7771c14e, zero conflicts. proof 0.1.0-dev+g66be0edddc8c, builtin catalog 1.10.0, no pin, unchanged. State-file baseline de63134b matches merge parent. Post-merge parse verified: our string-aware scanner reads the merged menu.jsonc to 344 rows with the new entry normalized correctly; menu-test.sh green locally.'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-09-28T11:33:31Z"
+            at: "2026-09-28T14:04:29Z"
     hazard:
         status: confirmed
-        confirmed_at: "2026-09-28T12:03:21Z"
+        confirmed_at: "2026-09-28T14:39:22Z"
         confirmed_by: agent
-        note: 'Hazard review vs catalog 1.10.0 (unchanged, no pin). NEW: hazard_review added to SW-REQ-260922-0W96 for the bind_commands dispatch path - scenario (malformed_input/boundary: unregistered dispatchers fall through with empty kind as pre-delta; function-identity keys make cross-bind confusion structurally impossible; v14 cache bump verified), property (determinism: pure map read, registration precedes row print), domain + structural not_applicable with rationales (config already fully trusted; GC''d Lua, nil-key read safe). FMEA worst case: a function bind resolving to a wrong command requires bind_commands corruption, writable only by o.launch_terminal with a fixed string. 9DMS: delta does not touch its region - no new candidates. No pre-existing hazard_review went stale (catalog identical).'
+        note: 'Catalog unchanged (1.10.0, no pin) - no hazard_review went stale. Existing reviews re-checked against the delta: 8VJQ''s summon-grammar FMEA unaffected (the new action omarchy-toggle-animations does not match the summon grammar - verified by reading; summon inventory re-counted at 4, unchanged); 0W96''s bind_commands review unaffected (keybindings path untouched). New candidates assessed: the added menu row introduces NO new decision point - it is config data parsed by the witnessed scanner and dispatched by the witnessed exec path; its FMEA worst case (toggle script fails) is identical in class to every other action row and bounded by the documented error_handling posture. No new hazard_review blocks warranted.'
         scope_key: menu
     refresh-complete:
-        status: confirmed
-        confirmed_at: "2026-09-28T13:29:54Z"
-        confirmed_by: buger
-        note: 'Upstream refresh campaign COMPLETE for delta 324f0ba5..de63134b (21 commits; merge 228a9073; audited surface touched via bin/omarchy-menu-keybindings + keybindings-menu-test.sh from #13521). All 15 steps confirmed. Final full proof audit --no-cache on Linux box at d4897b5b: 0 errors / 0 warnings. MC/DC: 307 witness rows, 0 uncovered; code-level decisions 41.2% / conditions 47.3% within thresholds. KI sweep: KI-MENU-SELECT-POLL-DEADLOCK re-executed at merged head - still present (file untouched by delta), evidence re-stamped; no new confirmed defects (CRS-0022: 4/4 dismissed, 3 by executed luajit differential harness on the real sandbox chunk). Upstream PRs #13255/#13511/#13512 + issues #13250/#13492/#13493 all still open. Pre-existing dispositions intact (P708 deferral, CRS-0004/5/6 baseline debt at info, XJ5D AC-001 acceptance). Watch-state update to de63134b follows on the mac side.'
+        status: pending
     research-delta:
         status: confirmed
-        confirmed_at: "2026-09-28T11:38:51Z"
+        confirmed_at: "2026-09-28T14:19:35Z"
         confirmed_by: agent
-        note: 'Research doc: review/upstream-de63134b-research-delta.md. In-surface change (f8146395): bin/omarchy-menu-keybindings dispatch chain gains o.bind_commands lookup for Lua function binds (kind=exec) + cache key v13->v14; strengthens SW-REQ-260922-0W96 satisfaction (function binds previously rendered with empty kind - now dispatchable); 9DMS untouched (cited region precedes insertion). KI hunt: 4 suspicions dismissed with evidence (unregistered-function fall-through pre-existing; cache invalidated by v14 bump; sandbox o-scope exercised by upstream''s new test; bind_commands value typing config-error only). Out-of-surface scan: fingerprint/sshd removal, YT6801, notification collapse, launchers, theme-set-hunk - no menu/lock invariant invalidated. KI-MENU-SELECT-POLL-DEADLOCK re-executed at 228a9073: still present, evidence re-stamped 2026-09-28T11:37:21Z. PRs #13255/#13511/#13512 + issues #13250/#13492/#13493 all OPEN (gh-verified).'
+        note: 'Research doc: review/upstream-b18ab495-research-delta.md. In-surface contact is exactly one menu.jsonc row (trigger.toggle.animations -> omarchy-toggle-animations, plain exec). Executed parse verification: merged file -> 344 rows via our string-aware scanner, entry normalized correctly; menu-test.sh green. Summon inventory re-counted: 4, unchanged (CRS-0021/C03 stays accurate). KI hunt: 4 suspicions dismissed (row mis-parse - executed refutation; fast-path grammar mismatch - reading; summon inventory drift - re-count; toggle on/off inversion - intentional, documented, out of scope). No menu/lock invariant invalidated by #13550''s animation gating (menu+lock plugins not among gated files) or #13530''s launcher handoff. KI-MENU-SELECT-POLL-DEADLOCK re-executed at 7771c14e: still present, evidence re-stamped 2026-09-28T14:14:16Z.'
         scope_key: menu
     residual:
         status: confirmed
-        confirmed_at: "2026-09-28T12:46:33Z"
+        confirmed_at: "2026-09-28T14:49:20Z"
         confirmed_by: agent
-        note: 'No NEW residual warranted: CRS-0022 dismissed all 4 claims with executed refutations - nothing deferred, nothing to park. Fix-sibling sweep EXECUTED: enumerated every dispatcher-producing helper in default/hypr/helpers.lua (launch/launch_webapp/launch_webapp_sole/launch_sole return strings; shell_dispatcher returns string or hl.dsp.global table; bind_toggle/exec_on_start are non-bind or string paths) - o.launch_terminal is the ONLY function-returning bind helper, so bind_commands covers 100% of shipped function binds; no isomorphic unregistered site exists. Convention gap noted for the research record: any FUTURE function-returning helper must self-register in bind_commands or it renders undispatchable. L-MENU-JSONC-001 closure re-verified accurate: the delta does not touch MenuModel.js/stripJsonc at all. Vector hygiene unchanged (no new vector this delta).'
+        note: 'No NEW residual: the delta is a data row; nothing investigated was deferred - all 4 suspicions were DISMISSED with evidence (parse replay executed, grammar reading, inventory re-count, documented intent), not parked. Fix-sibling sweep: the trigger.toggle.* rows are homogeneous (all plain exec actions); the new row matches the established shape exactly - no isomorphic variant needing the same treatment. L-MENU-JSONC-001 closure re-verified accurate (scanner untouched; the new row parses correctly through it - executed). Vector campaign unchanged (no new vector). residual_kill_hygiene + vector_campaign_hygiene green in box-phase audit.'
         scope_key: menu
     skeleton-patch:
         status: confirmed
-        confirmed_at: "2026-09-28T11:40:02Z"
+        confirmed_at: "2026-09-28T14:22:30Z"
         confirmed_by: agent
-        note: 'No skeleton adds/retires. The in-surface delta is a mechanism extension UNDER existing SW-REQ-260922-0W96 (lua binds dispatchable): upstream''s bind_commands lookup strengthens an already-specified guarantee - the spec''s FRETish, variables (lua_binds_present/lua_binds_dispatchable), and truth table are unchanged and now better satisfied. Upstream''s new behavioral test lands under the existing keybindings-menu-test.sh Verifies header (0W96/9DMS). Out-of-surface features (notification collapse, mimeapps browser lookup, fingerprint/sshd removal, YT6801 driver swap) are outside the lock+menu dogfood universe per proof.yaml completeness disposition - intentionally not skeletoned.'
+        note: 'No skeleton adds/retires. The in-surface delta is a single data row in omarchy-menu.jsonc, fully governed by existing specs: parse+normalize by SW-REQ-260922-3T3F/E4J2/46HY (verified executed: 344 rows), dispatch by N3RM/WC89/8VJQ lineage (plain exec action -> bash path). The animations toggle feature itself lives outside the lock+menu dogfood universe (UI gating + hyprland toggle); the menu''s obligation ends at correctly parsing and dispatching the row, both already specified. Out-of-surface additions (omarchy-toggle-animations, browser handoff, vm-no-animations) intentionally not skeletoned per the completeness disposition.'
         scope_key: menu
     spec-review-delta:
         status: confirmed
-        confirmed_at: "2026-09-28T11:52:43Z"
+        confirmed_at: "2026-09-28T14:32:24Z"
         confirmed_by: agent
-        note: 'Changed-requirement review complete. SW-REQ-260922-0W96: spec_conformance REVIEW-75 approved - bind_commands branch (bin:213-215) + helpers.lua registration reviewed, FRETish/variables/truth-table unchanged and better satisfied, no spec edit required. SW-REQ-260922-9DMS: not delta-affected (parse_keycodes region byte-identical); trace re-review recorded instead. Impact reviews: bin/omarchy-menu-keybindings recorded (authored_delta_expected); keybindings-menu-test.sh already up-to-date. No suspect requirements in surface (trace suspect: 0).'
+        note: 'No spec files changed and no annotated code changed this delta - the only in-scope change is data (one menu.jsonc row). Changed/suspect review: SYS-REQ-260927-WC89''s interface citation (menu.jsonc:38 Lock row) verified byte-identical in the merged file (insertion at :101); SW-REQ-260922-3T3F/E4J2/46HY parse pipeline re-witnessed by execution (344 rows, correct normalization of the new entry); 8VJQ unaffected (new action is not a summon). Impact review recorded for default/omarchy/omarchy-menu.jsonc. No new spec_conformance review warranted - no requirement''s text, variables, or truth table is touched by a data-row addition.'
         scope_key: menu
     surface-matrix:
         status: confirmed
-        confirmed_at: "2026-09-28T11:59:31Z"
+        confirmed_at: "2026-09-28T14:34:44Z"
         confirmed_by: agent
-        note: 'Surface re-extraction done against the merged tree. Existing surfaces (menu-jsonc-config, menu-action-dispatch, lock-wallpaper-poster) re-checked: none structurally altered by this delta. ONE GAP identified: the keybindings dispatch path (hyprctl binds + sandboxed Lua re-execution -> LUA_BIND_*_MAP/bind_commands -> records cache -> menu activation) is a distinct menu data path not modeled by any existing surface; the delta extends its dispatcher-resolution chain. Trust analysis: no NEW boundary crossed (the Lua config is already fully trusted user code executing inside Hyprland; the sandbox only re-reads it), and bind_commands keys are function-identity unique (cross-bind command confusion impossible). GAP forwarded to threat_surface_synthesis for a menu-keybindings-dispatch entry.'
+        note: 'Surface re-extraction against merged tree: zero new GAPs. The delta''s only in-scope change is a data row inside omarchy-menu.jsonc, already modeled by surface menu-jsonc-config (parser posture: our string-aware scanner ahead of upstream, unchanged). The row''s action dispatches via the bash path modeled by menu-action-dispatch (the summon fast path cannot match it - verified by grammar reading). No new entrypoint, boundary, or trust change: the toggle script runs with user privileges like every other action row. Existing surfaces (menu-jsonc-config, menu-action-dispatch, menu-keybindings-dispatch, lock-wallpaper-poster) re-verified unchanged in posture.'
         scope_key: menu
     threat_surface_synthesis:
         status: confirmed
-        confirmed_at: "2026-09-28T12:37:47Z"
+        confirmed_at: "2026-09-28T14:47:33Z"
         confirmed_by: agent
-        note: 'Threat-surface delta synthesized: refresh block for 324f0ba5..de63134b + new surface menu-keybindings-dispatch with full L1-L12 ladder. Disposition reviewed (ref CRS-0022): mis-dispatch class bounded by function-identity keys (collision impossible), branch order (only previously-empty-kind dispatchers), and v14 cache re-keying. Oracle families armed: old-vs-new differential (exactly one row changed), 5-case executed luajit battery, nil-key negative control. No vector: the Lua config is already fully trusted user code - no boundary crossed. Existing surfaces re-verified unchanged in posture. proof validate: 85 reqs / 4 var files clean.'
+        note: 'No new surfaces this delta (surface-matrix: 0 GAPs). Refresh block added to proof/surfaces/threat-surface.yaml documenting the de63134b..b18ab495 review: the data-row addition rides the already-modeled menu-jsonc-config (parse) and menu-action-dispatch (bash exec) surfaces; all 4 existing surfaces re-verified unchanged in posture. spec_lint_threat_surface_present verified via validate (85 reqs clean).'
         scope_key: menu
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-09-28T12:37:47Z"
+              at: "2026-09-28T14:47:33Z"
     traces-light:
         status: confirmed
-        confirmed_at: "2026-09-28T11:42:56Z"
+        confirmed_at: "2026-09-28T14:30:15Z"
         confirmed_by: agent
-        note: 'proof trace suspect: 0 suspect links post-merge; autolink rebuilt. Trace reviews re-recorded for both keybindings specs with citation validation: SW-REQ-260922-0W96 (Implements header :8 unmoved; bind_commands branch at merged lines 213-215 noted as mechanism extension; parent SYS-REQ-260922-6642 active; test header intact) and SW-REQ-260922-9DMS (parse_keycodes region precedes insertion, byte-identical). No new Implements/Documents links needed - the delta''s in-surface code executes under the existing 0W96 header annotation.'
+        note: 'proof trace suspect: 0 links post-merge. The delta''s only in-scope file (omarchy-menu.jsonc) is cited by line in exactly two places - SYS-REQ-260927-WC89 rationale and REVIEW-28, both pointing at :38 (the Lock row). Verified in the merged file: line 38 still carries system.lock -> omarchy-system-lock verbatim; the new trigger.toggle.animations row landed at line 101, below every cited line. No Implements/Documents re-linking needed; no annotation-bearing file changed.'
         scope_key: menu
