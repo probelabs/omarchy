@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-28T12:52:34Z"
+updated_at: "2026-09-28T13:29:54Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -19,7 +19,11 @@ steps:
         confirmed_by: agent
         note: 'No config migration needed: delta adds zero new in-scope files. bin/omarchy-menu-keybindings pre-existed and is matched by bin/omarchy-menu* glob; keybindings-menu-test.sh is explicitly listed. All new test files (default-browser-lookup, terminal-cwd, yt6801-driver, security-fingerprint-remove, remove-security-sshd-firewall) are out of verification_scope. proof.yaml byte-identical across the merge (git diff empty); check enablement, code_mcdc floors, surfaces packages unchanged.'
     coverage:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T13:27:26Z"
+        confirmed_by: buger
+        note: 'Box re-measurement at d4897b5b (post upstream/quattro de63134b sync): full proof audit --no-cache on Linux proof box with probe-code 0.6.0. mcdc_coverage: 83 requirements, 307 witness rows, 0 uncovered. code_mcdc_coverage: aggregate decisions 41.2% / conditions 47.3%, 29 incomplete functions, 10 ignored decisions - thresholds met. tests_pass green: full suite incl. keybindings-menu-test.sh under real /usr/bin/lua - upstream''s new terminal-bind test (bind_commands path) passes end-to-end; update-lock/menu suites unchanged green. build_passes green (bash -n all lock+menu bins, node --check MenuModel.js). Local mac-only findings (lua absence skip) confirmed environmental.'
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-28T12:28:21Z"
@@ -46,7 +50,10 @@ steps:
         note: 'Hazard review vs catalog 1.10.0 (unchanged, no pin). NEW: hazard_review added to SW-REQ-260922-0W96 for the bind_commands dispatch path - scenario (malformed_input/boundary: unregistered dispatchers fall through with empty kind as pre-delta; function-identity keys make cross-bind confusion structurally impossible; v14 cache bump verified), property (determinism: pure map read, registration precedes row print), domain + structural not_applicable with rationales (config already fully trusted; GC''d Lua, nil-key read safe). FMEA worst case: a function bind resolving to a wrong command requires bind_commands corruption, writable only by o.launch_terminal with a fixed string. 9DMS: delta does not touch its region - no new candidates. No pre-existing hazard_review went stale (catalog identical).'
         scope_key: menu
     refresh-complete:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-28T13:29:54Z"
+        confirmed_by: buger
+        note: 'Upstream refresh campaign COMPLETE for delta 324f0ba5..de63134b (21 commits; merge 228a9073; audited surface touched via bin/omarchy-menu-keybindings + keybindings-menu-test.sh from #13521). All 15 steps confirmed. Final full proof audit --no-cache on Linux box at d4897b5b: 0 errors / 0 warnings. MC/DC: 307 witness rows, 0 uncovered; code-level decisions 41.2% / conditions 47.3% within thresholds. KI sweep: KI-MENU-SELECT-POLL-DEADLOCK re-executed at merged head - still present (file untouched by delta), evidence re-stamped; no new confirmed defects (CRS-0022: 4/4 dismissed, 3 by executed luajit differential harness on the real sandbox chunk). Upstream PRs #13255/#13511/#13512 + issues #13250/#13492/#13493 all still open. Pre-existing dispositions intact (P708 deferral, CRS-0004/5/6 baseline debt at info, XJ5D AC-001 acceptance). Watch-state update to de63134b follows on the mac side.'
     research-delta:
         status: confirmed
         confirmed_at: "2026-09-28T11:38:51Z"
