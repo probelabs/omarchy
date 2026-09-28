@@ -232,8 +232,9 @@ Item {
   }
 
   // ------------------------------------------------------------------
-  // JSONC → normalized item array. Mirrors the bash bin's jq pipeline so
-  // the on-disk authoring format stays untouched.
+  // JSONC → normalized item array. All parsing lives in MenuModel.js;
+  // these wrappers only delegate, so the on-disk authoring format stays
+  // untouched. No bin/ script parses menu JSONC.
   // ------------------------------------------------------------------
 
   // Implements: SW-REQ-260922-E4J2
