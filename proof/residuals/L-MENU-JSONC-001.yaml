@@ -1,10 +1,10 @@
 id: L-MENU-JSONC-001
 title: Post-fix JSONC grammar-edge residency under the string-aware scanner
-description: 'Theme residual delta for hazard classes malformed_input+boundary (66FW). Fix-sibling sweep 2026-09-27: Menu.qml delegates to MenuModel.stripJsonc (Menu.qml:240-241); no bin/ script parses menu JSONC; remaining .replace sites are slug normalizers - NO isomorphic site exists (attested in DEFECT-260927-CMMA sibling_sweep). Reopen if a third-party extension pipeline feeds machine-generated configs hitting the excluded edges.'
-status: provisional_kill
+description: 'Theme residual delta for hazard classes malformed_input+boundary (66FW), closed 2026-09-28 after both deferred grammar edges were fixed and landed on fix/jsonc-trailing-comma-in-strings. Fix-sibling sweep 2026-09-27: Menu.qml delegates to MenuModel.stripJsonc; no bin/ script parses menu JSONC; remaining .replace sites are slug normalizers - NO isomorphic site exists (attested in DEFECT-260927-CMMA sibling_sweep). Reopen only if a NEW grammar edge class surfaces (e.g. block comments, BOMs, or a third-party extension pipeline feeding machine-generated configs outside the documented grammar).'
+status: closed
 severity: low
-kill_number: 0 semantic divergences in 20000 fuzz cases; 0 mutated strings in the adversarial payload set (mv/awk/label cases verified old-vs-new)
-kill_domain: 'Menu JSONC configs within the documented grammar: object root, full-line and inline // comments, trailing commas outside string literals, escape sequences per JSON. Under this domain the 66FW equivalence (trailing_comma_dropped <=> !comma_in_string & next_char_closes_json) is proven. RETRACTED 2026-09-28: the top-level-array exclusion (CRS-0019/C01) is closed on fix/jsonc-toplevel-array-guard by SW-REQ-260928-BMFE (guard + MC/DC witnesses, DEFECT-260928-4NG9 covered_by_requirement); array roots now join the scalar club and return an empty item set. RETRACTED 2026-09-28: the inline-comment-tail exclusion (CRS-0017/C01 = CRS-0019/C02 = CRS-0020/C01) is closed on fix/jsonc-inline-comment-tail by SW-REQ-260928-C8W1 (scanner fold-in + MC/DC witnesses, DEFECT-260928-7AX9 covered_by_requirement); comment tails now strip to end-of-line wherever the opener sits outside a string. No exclusions remain.'
+kill_number: 0 semantic divergences on clean inputs in 20000 fuzz cases (consolidated tip vs pristine quattro ce925cb1, seeded xorshift, review/fuzz-diff.js); 0 mutated strings in the adversarial payload set (mv/awk/label cases verified old-vs-new); bug-class inputs diverge only in the fixed direction (array root -> empty set; inline comment tail -> rows preserved)
+kill_domain: 'Menu JSONC configs within the documented grammar: object root, full-line and inline // comments, trailing commas outside string literals, escape sequences per JSON. Under this domain the 66FW equivalence (trailing_comma_dropped <=> !comma_in_string & next_char_closes_json) is proven. RETRACTED 2026-09-28: the top-level-array exclusion (CRS-0019/C01) is fixed by SW-REQ-260928-BMFE (guard + MC/DC witnesses, DEFECT-260928-4NG9 covered_by_requirement), landed via merge 851c990e (PR #4); array roots now join the scalar club and return an empty item set. RETRACTED 2026-09-28: the inline-comment-tail exclusion (CRS-0017/C01 = CRS-0019/C02 = CRS-0020/C01) is fixed by SW-REQ-260928-C8W1 (scanner fold-in + MC/DC witnesses, DEFECT-260928-7AX9 covered_by_requirement), landed via merge 5f9f43a6 (PR #5); comment tails now strip to end-of-line wherever the opener sits outside a string. No exclusions remain.'
 sample_table:
     - pair: comma_in_string_before_closer
       notes: preserved-verbatim-witnessed
@@ -16,5 +16,11 @@ sample_table:
       notes: model-unchanged-fuzz
     - pair: comma_at_eof
       notes: dropped-unobservable-invalid-json-either-way
-kill_method: analytic + MC/DC witnesses (5/5 rows) + differential fuzz vs independent reference scanner
+    - pair: top_level_array_root
+      notes: empty-item-set-witnessed-SW-REQ-260928-BMFE
+    - pair: inline_comment_tail_after_content
+      notes: stripped-rows-preserved-witnessed-SW-REQ-260928-C8W1
+    - pair: comment_slashes_inside_string
+      notes: preserved-verbatim-witnessed
+kill_method: analytic + MC/DC witnesses (66FW 5/5 rows; BMFE and C8W1 rows all witnessed in both harnesses) + differential fuzz vs pristine quattro baseline
 source_vector: V-MENU-JSONC-INPUT
