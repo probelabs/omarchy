@@ -164,6 +164,10 @@ project:
                 language: js
                 command: >-
                     node --test test/node/menumodel-replay.test.mjs
+            lock-qml:
+                language: qml
+                command: >-
+                    bash test/qml/lock/run.sh
     lint:
         exclude:
             # Post-quattro upstream additions (herdr 03b825f5, tmux 3edf254a):
@@ -313,15 +317,33 @@ project:
                   test_command: lock-shell
                   min_decision_percent: 100
                   min_condition_percent: 100
-                # Disabled: no QML test runner exists on this platform
-                # (qmltestrunner/qml/qml6 all absent) and the project ships no
-                # tst_*.qml harness. The analyzer inventory run (80 decisions
-                # across 2 files in shell/plugins/lock) is recorded in the
-                # dogfood report; re-enable when a QML test harness exists.
-                - id: lock-qml
-                  enabled: false
+                # Enabled: test/qml/lock is a purpose-built harness that
+                # drives LockView.qml + Service.qml under a private headless
+                # sway (PanelWindow/WlrLayershell/WlSessionLock need a live
+                # compositor), a private /etc/pam.d mount namespace for the
+                # PAM branches, and PATH stubs for the process-driven branches.
+                # The engine rewrites the plugin sources and harvests
+                # __REQPROOF_MCDC__ markers from the harness stdout. Structural
+                # residue (ext-session-lock secure/held coupling, quickshell
+                # 0.3.1 signal quirks, spawn-resolution and stall limits) is
+                # dispositioned via //mcdc:ignore in the two plugin files.
+                # One target per file: the audit target-evidence association
+                # exact-matches the target scope against the measured suite
+                # packages, and the QML engine emits file-level packages.
+                - id: lock-qml-view
+                  enabled: true
                   language: qml
-                  scope: shell/plugins/lock
+                  scope: shell/plugins/lock/LockView.qml
+                  test_command: lock-qml
+                  min_decision_percent: 100
+                  min_condition_percent: 100
+                - id: lock-qml-service
+                  enabled: true
+                  language: qml
+                  scope: shell/plugins/lock/Service.qml
+                  test_command: lock-qml
+                  min_decision_percent: 100
+                  min_condition_percent: 100
                 # --- MENU system targets (menu dogfood Phase 4b) ---
                 # Thresholds are measured baselines, not aspirations: they pin
                 # the live MC/DC level the Phase 4 harness actually reaches so

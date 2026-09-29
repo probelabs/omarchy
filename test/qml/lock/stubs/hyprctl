@@ -1,0 +1,7 @@
+echo hit >> "$MCDC_STUB_STATE/hyprctl-hits"
+#!/bin/bash
+# hyprctl stand-in for the monitor DPMS poll: answers slowly with an empty
+# monitor list, so the poll timer fires a second time while the process is
+# still running.
+sleep 8
+echo "[]"

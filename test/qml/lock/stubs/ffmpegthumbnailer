@@ -1,0 +1,18 @@
+#!/bin/bash
+# ffmpegthumbnailer stand-in for poster.sh: succeeds unless the harness has
+# dropped a poster-fail flag, which makes the run exit nonzero.
+echo hit >> "$MCDC_STUB_STATE/poster-hits"
+out=""
+while (( $# > 0 )); do
+  if [[ $1 == "-o" && -n ${2:-} ]]; then
+    out=$2
+  fi
+  shift
+done
+if [[ -f $MCDC_STUB_STATE/poster-fail ]]; then
+  exit 1
+fi
+if [[ -f $MCDC_STUB_STATE/poster-slow ]]; then
+  sleep 0.6
+fi
+printf poster > "$out"

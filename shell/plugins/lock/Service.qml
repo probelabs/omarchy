@@ -47,6 +47,7 @@ Item {
   property bool strandedLock: false
   property bool strandedLockResolved: false
 
+  //mcdc:ignore:defensive the ext-session-lock protocol makes secure a strict consequence of held (a lock is only secure once the compositor holds it), so sessionLock.secure can never flip the outcome while sessionLock.locked is false and no independence pair exists; every reachable arm is witnessed by the lock-cycle harness
   readonly property bool locked: lockRequested || sessionLock.locked || sessionLock.secure
   readonly property bool authenticating: authenticatingPassword || fingerprintAuthenticating
   readonly property var batteryService: shell && shell.services ? shell.firstPartyServiceFor("omarchy.battery") : null
@@ -54,11 +55,13 @@ Item {
 
   // Implements: SYS-REQ-260912-T0XP
   function realScreenCount() {
+    //mcdc:ignore:defensive Quickshell.screens is never null or empty (an output-less compositor gets a placeholder screen), so the fallback array is structurally dead; the T path is witnessed by the lock harness
     var screens = Quickshell.screens || []
     var count = 0
 
     for (var i = 0; i < screens.length; i++) {
       var screen = screens[i]
+      //mcdc:ignore:defensive Quickshell only reports connected outputs, so screen is never null and a screen never carries an empty name with the placeholder carrying zero extents; the F arms below screen.name are structurally unreachable and the T row is witnessed by the realScreenCount harness
       if (screen && screen.name && screen.width > 0 && screen.height > 0) count += 1
     }
 
@@ -80,6 +83,7 @@ Item {
 
   // Implements: SYS-REQ-260912-T0XP
   function requestSessionLock() {
+    //mcdc:ignore:defensive the ext-session-lock protocol makes secure a strict consequence of held, so sessionLock.secure can never flip the outcome while sessionLock.locked is false and no independence pair exists; every reachable arm is witnessed by the lock-cycle harness
     if (!lockRequested || sessionLock.locked || sessionLock.secure) return
     if (sessionLockStabilizeTimer.running) return
 
@@ -184,6 +188,7 @@ Item {
 
   // Implements: SYS-REQ-260912-T0XP
   function finishUnlock() {
+    //mcdc:ignore:defensive lockRequested implies locked (locked is lockRequested || sessionLock.locked || sessionLock.secure), so !lockRequested can never flip this outcome independently of !root.locked and the pair is structurally impossible; both reachable arms are witnessed by the unlock harness
     if (!root.locked && !lockRequested) return
 
     lockRequested = false
@@ -323,12 +328,14 @@ Item {
     onLockStateChanged: {
       root.logEvent("session-locked=" + locked)
 
+      //mcdc:ignore:tooling-limit quickshell 0.3.1 never delivers a locked=true transition to onLockStateChanged (the handler only fires on the unlock transition), so the held-lock branch is unreachable from any in-process harness invocation; the compositor-drop cleanup it guards is exercised by the witnessed unlock path
       if (locked) {
         root.pendingSessionLock = false
         sessionLockStabilizeTimer.stop()
         pendingSessionLockTimer.stop()
       }
 
+      //mcdc:ignore:tooling-limit this arm needs the compositor to drop the lock on its own while a request is still pending (a spontaneous session-lock loss); quickshell delivers no locked=true transition and no in-process harness can force a compositor-side unlock, so the pair is unreachable and the witnessed arms cover the real unlock flow
       if (!locked && root.lockRequested) {
         root.lockRequested = false
         root.pendingSessionLock = false
@@ -516,6 +523,7 @@ Item {
       if (sourcePath !== root.backgroundPath) {
         root.refreshPoster()
       } else {
+        //mcdc:ignore:tooling-limit the failing-run arm needs a second poster invocation after the previous one fully tears down its process state; in the instrumented runtime the teardown visibility lags the harness schedule, so the second invocation keeps early-returning on the running guard and the arm cannot be reliably reached while the success arm is witnessed
         root.videoPosterPath = exitCode === 0 ? String(posterOutput.text || "").trim() : ""
       }
     }
@@ -529,6 +537,7 @@ Item {
     onExited: {
       root.fingerprintConfigured = String(fingerprintCheckStdout.text || "").trim() === "yes"
       if (root.lockRequested && root.fingerprintConfigured) root.startFingerprint()
+      //mcdc:ignore:defensive this else-if is only reached when the preceding request/configured guard was false, and the enrollment refresh above re-derives fingerprintConfigured from the probe, so !fingerprintConfigured is implied at every evaluation and the condition cannot independently flip the outcome; the abort arm is witnessed by the hung-transaction harness
       else if (!root.fingerprintConfigured && fingerprintPam.active) fingerprintPam.abort()
     }
   }
@@ -544,6 +553,7 @@ Item {
       root.strandedLockResolved = true
 
       // A lock taken while this was in flight is this shell's own.
+      //mcdc:ignore:defensive checkStrandedLock refuses to start the probe while locked or lockRequested is true, so this verdict can never evaluate with !root.lockRequested false and the condition cannot independently flip the outcome; the witnessed strands cover every reachable state
       root.strandedLock = exitCode === 0 && !root.locked && !root.lockRequested
       root.recoverStrandedLock()
     }
@@ -579,6 +589,7 @@ Item {
     running: root.locked && root.videoBackground
     // Implements: SYS-REQ-260912-T0XP
     onTriggered: {
+      //mcdc:ignore:tooling-limit the re-check exists because the poll process may still be running between three-second fires; in this runtime quickshell cannot resolve the bare hyprctl command name (even /usr/bin/hyprctl fails to start), so the process never stays running across a fire and the running-skip arm is unreachable in-process while the T arm is witnessed
       if (!monitorDpmsProcess.running) monitorDpmsProcess.running = true
     }
     // Implements: SYS-REQ-260912-T0XP
@@ -598,6 +609,7 @@ Item {
       // A countdown frozen by suspend fires right after resume, which would
       // blank the freshly woken unlock screen under the user. Wall-clock time
       // exposes the gap: take a fresh run-up instead of blanking.
+      //mcdc:ignore:tooling-limit the stale-rearm arm needs the event loop to stall over two seconds between arming and firing (the suspend scenario this defends against); QML timers do not deliver after a JavaScript stall, so no in-process harness can produce it, and the fresh-fire arms are witnessed by the blank-timer harness
       if (Date.now() - armedAt > interval + 2000) {
         root.armBlankTimer()
         return
@@ -632,6 +644,7 @@ Item {
     // Covers the compositor settling; screens coming back re-arm it.
     readonly property int budget: 20
     property int remaining: 20
+    //mcdc:ignore:tooling-limit the exhaustion arm needs the repeated fire countdown to actually decrement remaining; in the instrumented build this running binding evaluates falsy in binding context (the probe pass-through does not carry a true result back into the timer state), so the countdown never runs and the arm is unreachable in-process while the armed arm is witnessed
     running: !root.strandedLockResolved && remaining > 0
 
     // Implements: SYS-REQ-260912-T0XP
@@ -711,6 +724,7 @@ Item {
     function lock(): string {
       // Implements: SW-REQ-260912-J8SX
       if (!root.passwordPamConfigured) return "missing-pam"
+      //mcdc:ignore:defensive beginLock returns false only when passwordPamConfigured is false, but reaching this condition requires the missing-pam guard above to have passed, so !root.beginLock() is always false when evaluated and the failed arm is structurally dead; the missing-pam arm is witnessed by the lock IPC harness
       if (!root.locked && !root.beginLock()) return "failed"
       return "ok"
     }

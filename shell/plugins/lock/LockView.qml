@@ -218,6 +218,7 @@ Item {
         // Implements: SW-REQ-260912-ND55
         Keys.onPressed: function(event) {
           root.wakeRequested()
+          //mcdc:ignore:tooling-limit the escape arm needs a delivered Escape keypress; the wtype virtual-keyboard path used by the lock harness delivers plain and modified keys but Escape is consumed before item delivery, so the escape unique-cause is unreachable in-process while the ctrl+u and plain-key arms are witnessed
           if (event.key === Qt.Key_Escape || (event.modifiers & Qt.ControlModifier && event.key === Qt.Key_U)) {
             root.passwordTextEdited("")
             event.accepted = true

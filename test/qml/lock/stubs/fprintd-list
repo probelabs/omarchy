@@ -1,0 +1,8 @@
+#!/bin/bash
+# fprintd-list stand-in for Service.qml's fingerprint probe: answers "no"
+# until the driver flips the mode file to yes, so the fingerprint PAM flow
+# only starts when the harness schedules it.
+if [[ $(cat "$MCDC_STUB_STATE/fprintd" 2>/dev/null) == yes ]]; then
+  echo "fingerprints enrolled on device"
+fi
+exit 0

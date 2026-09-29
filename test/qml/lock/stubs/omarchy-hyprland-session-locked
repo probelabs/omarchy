@@ -1,0 +1,19 @@
+#!/bin/bash
+# Deterministic omarchy-hyprland-session-locked stub: walks exit codes
+# 2 (answer not meaningful yet), 1 (not stranded), 0 (stranded) across calls
+# so Service.qml's strand-check and recovery arms all execute. A "slow" mode
+# file makes the call hang long enough for the lock to be held when the
+# process exits, which covers the onExited locked-state arm.
+state_dir=$MCDC_STUB_STATE
+if [[ $(cat "$state_dir/strand-mode" 2>/dev/null) == slow ]]; then
+  sleep 3
+  exit 0
+fi
+count_file=$state_dir/strand-count
+n=$(( $(cat "$count_file" 2>/dev/null || echo 0) + 1 ))
+printf '%s\n' "$n" > "$count_file"
+case $n in
+  1) exit 2 ;;
+  2) exit 1 ;;
+  *) exit 0 ;;
+esac
