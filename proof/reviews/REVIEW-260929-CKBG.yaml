@@ -1,0 +1,10 @@
+id: REVIEW-260929-CKBG
+kind: spec_conformance
+reviewer: human:Leonid Bugaev
+reviewed_at: "2026-09-29T14:07:38Z"
+subject: SW-REQ-260929-DXFJ
+decision: approved
+comment: Read panel.freezeCardTop and onShownChanged. setFilter and setActiveMenu call freezeCardTop while the card is shown, pinning cardTop to the centered top and maxRowsHeight to the current rows height; onShownChanged resets both to -1 when the surface unmaps on close. menu_interacted models the first interaction, card_top_frozen the pinned pair cleared by close. Formula conforms to the code.
+citations:
+    - shell/plugins/menu/Menu.qml:1161@freezeCardTop
+    - shell/plugins/menu/Menu.qml:1169

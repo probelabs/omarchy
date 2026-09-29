@@ -1,11 +1,11 @@
 id: SW-REQ-260929-B8N9
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
 fretish: when item_requested the menu_model shall eventually satisfy item_by_id_resolved
-description: 'The merged item tree is addressable by id: an id present in the tree yields its item, and any other id yields null, so menu state falls back to the root menu instead of a dangling entry.'
+description: 'The merged item tree is addressable by id. An id present in the tree yields its item, and any other id yields null. Menu state then falls back to the root menu instead of a dangling entry.'
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -19,16 +19,31 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-09-29T14:26:57.150110286Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:0faebab064ec5dad24c320b57dcfc96c16ca0857948daaa09a46ed81d3778693
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
 verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: human:Leonid Bugaev
+        reviewed_at: "2026-09-29T14:34:39Z"
         ai_generated: false
 history:
     created_by: human:Leonid Bugaev
     created_at: "2026-09-29T13:51:21Z"
     last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-29T13:51:21Z"
+    last_modified_at: "2026-09-29T14:07:42Z"
+lifecycle:
+    change_history:
+        - date: "2026-09-29T14:07:42Z"
+          from: draft
+          to: review
+          reason: ""
+          changed_by: human:Leonid Bugaev

@@ -468,6 +468,30 @@ variables:
       type: bool
       direction: output
       description: The action runs in-process via shell.summon(id, payload) with bash-equivalent argv semantics (payload defaults to '{}' exactly as bin/omarchy-shell line 51 does for the 3-arg form); non-matching actions keep the unchanged execDetached bash path.
+    - name: item_requested
+      type: bool
+      direction: input
+      description: A caller asks the item model for an item by id (guard evaluation, navigation fallback, or route/state lookup).
+    - name: item_by_id_resolved
+      type: bool
+      direction: output
+      description: The by-id accessor answers with the id item when present and null otherwise; the answer is never a dangling entry.
+    - name: menu_interacted
+      type: bool
+      direction: input
+      description: 'The user interacts with the open menu: the first filter keystroke or a submenu move.'
+    - name: card_top_frozen
+      type: bool
+      direction: output
+      description: The card top edge and max rows height hold at their interaction-time values; closing the menu clears the freeze.
+    - name: pointer_moves_over_rows
+      type: bool
+      direction: input
+      description: The pointer genuinely moves past the PointerMoveGate threshold over the row list.
+    - name: gated_row_selection
+      type: bool
+      direction: output
+      description: 'Pointer-driven selection ends in the gate-honored outcome: it lands on the hovered row only when the gate moved and the row is selectable, otherwise selection holds.'
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'
