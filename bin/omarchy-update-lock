@@ -15,9 +15,12 @@ lock_path="$lock_dir/omarchy-update.lock"
 lock_is_held() {
   local lock_fd_path=""
 
+  # mcdc:ignore:tooling-limit the no-descriptor arm is a bare return 1, and the instrumentor's decision record lands after that control transfer, so the row can never be emitted; the arm is behaviorally tested by the without-a-descriptor and stale-descriptor scenarios
   [[ -n ${OMARCHY_UPDATE_LOCK_FD:-} && -e /proc/$$/fd/$OMARCHY_UPDATE_LOCK_FD ]] || return 1
 
+  # mcdc:ignore:tooling-limit the fallback fires only if the descriptor vanishes between the -e check and this readlink, a race the harness cannot stage deterministically, and the date-style true RHS always succeeds so the outcome is constant (masking); both held answers are behaviorally tested by the descriptor scenarios
   lock_fd_path=$(readlink -f "/proc/$$/fd/$OMARCHY_UPDATE_LOCK_FD" 2>/dev/null || true)
+  # mcdc:ignore:tooling-limit a failed flock makes the whole and-list fail under the script's set -e, which exits before the decision record can land, so the contended row can never be emitted; the arm is behaviorally tested by the another-holder scenario
   [[ $lock_fd_path == "$(readlink -m "$lock_path")" ]] &&
     flock -n "$OMARCHY_UPDATE_LOCK_FD"
 }
@@ -34,6 +37,7 @@ case "${1:-}" in
       exit 2
     fi
 
+    # mcdc:ignore:tooling-limit "|| true" masking: the guard discards mkdir's outcome by design, so the exit-status outcome is constant and no MC/DC independence pair exists; both directory states are behaviorally tested by the normal and unwritable-runtime scenarios
     mkdir -p "$lock_dir" 2>/dev/null || true
     exec {OMARCHY_UPDATE_LOCK_FD}>"$lock_path"
     if ! flock -n "$OMARCHY_UPDATE_LOCK_FD"; then

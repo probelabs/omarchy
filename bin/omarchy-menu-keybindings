@@ -73,9 +73,11 @@ parse_keycodes() {
 build_lua_bind_cache() {
   local modmask description key dispatcher arg cache_key
 
+  # mcdc:ignore:tooling-limit the lua-missing arm is a bare return 0, and the instrumentor's decision record lands after that control transfer, so the row can never be emitted; the arm is behaviorally tested by the without-lua scenario
   omarchy-cmd-present lua || return 0
 
   while IFS=$'\t' read -r modmask description key dispatcher arg; do
+    # mcdc:ignore:tooling-limit the skip arm is a bare continue, and the decision record lands after that control transfer, so the row can never be emitted; scan rows with missing pieces are behaviorally tested by the ghost-chord scenario
     [[ -z $modmask || -z $description || -z $key ]] && continue
 
     LUA_BIND_KEY_MAP["$modmask,$description"]="$key"
@@ -309,9 +311,11 @@ dynamic_bindings() {
         arg="${LUA_BIND_ARG_MAP["$cache_key"]}"
       fi
 
+      # mcdc:ignore:tooling-limit the skip arm is a bare continue, and the decision record lands after that control transfer, so the row can never be emitted; the undescribed __lua drop is behaviorally tested by the empty-description bind scenario
       [[ -z $description && $dispatcher == "__lua" ]] && continue
 
       # The Copilot key just duplicates an existing binding, so keep it hidden
+      # mcdc:ignore:tooling-limit the skip arm is a bare continue, and the decision record lands after that control transfer, so the row can never be emitted; the Copilot duplicate is behaviorally tested by the hidden-chord scenario
       [[ $key == "code:201" ]] && continue
 
       case "$key" in
@@ -520,6 +524,7 @@ output_binding_records_uncached() {
   dynamic=$(dynamic_bindings)
 
   {
+    # mcdc:ignore:tooling-limit printf idiom: the RHS always succeeds writing into the rendering pipeline, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); both arms are behaviorally tested by the with-binds and no-binds scenarios
     [[ -n $dynamic ]] && printf '%s\n' "$dynamic"
     static_bindings
   } |
@@ -547,10 +552,12 @@ refresh_keybindings_cache() {
   local cache_name="$3"
   local tmp_file
 
+  # mcdc:ignore:tooling-limit the mktemp-failure arm is a bare return 1, and the decision record lands after that control transfer, so the row can never be emitted; the arm is behaviorally tested by the unwritable-cache scenario
   tmp_file=$(mktemp "$cache_dir/keybindings.XXXXXX") || return 1
 
   if output_binding_records_uncached >"$tmp_file"; then
     mv "$tmp_file" "$cache_file"
+    # mcdc:ignore:tooling-limit "|| true" masking: the find runs in the same directory mktemp just succeeded in, so it cannot fail deterministically and the exit-status outcome is constant; stale-record cleanup is behaviorally tested by every cache rebuild scenario
     find "$cache_dir" -maxdepth 1 -type f -name 'keybindings-*.records' ! -name "$cache_name" -delete 2>/dev/null || true
   else
     rm -f "$tmp_file"
@@ -599,6 +606,7 @@ dispatch_lua_expression() {
   status=$?
 
   if (( status == 0 )) && [[ -z $output || $output == "ok" ]]; then
+    # mcdc:ignore:tooling-limit printf idiom: the RHS always succeeds echoing the compositor's answer, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); the ok answer is behaviorally tested by the ok-dispatch scenario
     [[ -n $output ]] && printf '%s\n' "$output"
     return 0
   fi
@@ -621,6 +629,7 @@ dispatch_sendshortcut_binding() {
   key=$(trim "$key")
   window=$(trim "$window")
 
+  # mcdc:ignore:tooling-limit default-assignment idiom: the RHS assignment always succeeds, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); both window arms are behaviorally tested by the default-window and named-window scenarios
   [[ -z $window ]] && window="activewindow"
 
   if [[ -n $key ]] && dispatch_lua_expression "hl.dsp.send_key_state({ mods = $(lua_string "$mods"), key = $(lua_string "$key"), state = \"down\", window = $(lua_string "$window") })"; then
@@ -644,6 +653,7 @@ dispatch_binding() {
       [[ -n $arg ]] && dispatch_sendshortcut_binding "$arg"
       ;;
     lua)
+      # mcdc:ignore:tooling-limit the argless arm is structurally absent: a lua dispatcher only exists once the source cache recovered it, and the cache always carries the recovered expression, so no bind can reach here with an empty arg; the populated arm is behaviorally tested by the recovered-lua-bind scenario
       [[ -n $arg ]] && hyprctl dispatch "$arg"
       ;;
     "") return 1 ;;

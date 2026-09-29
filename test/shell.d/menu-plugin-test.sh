@@ -38,6 +38,7 @@ cat >"$STUB_DIR/omarchy-menu-select" <<'STUB'
 #!/bin/bash
 cat >"$FAKE_ROWS"
 printf '%s\n' "$FAKE_PICK"
+exit "${FAKE_PICK_STATUS:-0}"
 STUB
 
 cat >"$STUB_DIR/omarchy-notification-send" <<'STUB'
@@ -66,6 +67,7 @@ pick() {
     FAKE_CALLS="$TMPDIR/calls" \
     FAKE_ROWS="$TMPDIR/rows" \
     FAKE_PICK="$choice" \
+    FAKE_PICK_STATUS="${FAKE_PICK_STATUS:-0}" \
     "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-plugin" "$verb" >/dev/null 2>&1 || STATUS=$?
 
   ROWS=$(cat "$TMPDIR/rows")
@@ -212,3 +214,28 @@ HOME="$TMPDIR/home" PATH="$STUB_DIR:$PATH" FAKE_PLUGINS="$TMPDIR/plugins.json" \
   fail "picker without a verb never offers rows" "rows: $(cat "$TMPDIR/rows")"
 # MCDC SW-REQ-260922-KRBH: picker_verb_given=F, verb_filter_applied=F => TRUE [no-action: the menu-select spy captured no rows -- no filter runs without a verb]
 pass "picker refuses a missing verb with usage and exit one"
+
+# A picker whose menu closes without an answer is a quiet no-op, whichever way
+# the close happens: the menu is dismissed (exit one) or answers with nothing.
+cat >"$TMPDIR/plugins.json" <<'JSON'
+[
+  {"id": "acme.fancy", "name": "Fancy", "kinds": ["bar-widget"], "enabled": false, "active": false, "canDisable": true, "firstParty": false}
+]
+JSON
+
+FAKE_PICK_STATUS=1 pick enable "$(printf 'Fancy\tacme.fancy')"
+[[ $STATUS -eq 0 ]] || fail "a dismissed plugin picker exits zero" "status: $STATUS"
+[[ -z $CALLS ]] || fail "a dismissal acts on no plugin" "calls: $CALLS"
+pass "a dismissed plugin picker exits zero"
+
+pick enable ""
+[[ $STATUS -eq 0 ]] || fail "an empty answer leaves the plugin untouched" "status: $STATUS"
+[[ -z $CALLS ]] || fail "an empty answer acts on no plugin" "calls: $CALLS"
+pass "an empty answer acts on no plugin"
+
+# A row whose id subtext is empty cannot be acted on: the picker refuses
+# rather than guessing.
+pick enable "$(printf 'Fancy\t')"
+[[ $STATUS -eq 1 ]] || fail "a row without an id exits one" "status: $STATUS"
+[[ -z $CALLS ]] || fail "a row without an id acts on nothing" "calls: $CALLS"
+pass "a row without an id exits one"

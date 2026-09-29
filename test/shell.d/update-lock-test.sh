@@ -407,3 +407,97 @@ if [[ -f $control_calls ]]; then
   fail "no update-lock action runs without an update request" "calls: $(cat "$control_calls")"
 fi
 pass "no update-lock action runs without an update request"
+
+# The lock script's own decision surface, driven against the patched copy:
+# the held check reads the caller's lock descriptor out of /proc, and run
+# takes the lock for real.
+# write_stub above replaced the sandbox copy with the held spy, so the
+# scenarios here drive the preserved sed-patched copy the spy execs.
+update_lock="$test_tmp/real-omarchy-update-lock"
+lock_file="$runtime_dir/$update_lock_name"
+
+held_status() {
+  local status=0
+  if [[ $# -eq 0 ]]; then
+    run_with_lock_env "$update_lock" held >/dev/null 2>&1 || status=$?
+  else
+    OMARCHY_UPDATE_LOCK_FD="$1" run_with_lock_env "$update_lock" held >/dev/null 2>&1 || status=$?
+  fi
+  return "$status"
+}
+
+# Without a descriptor exported the held check cannot even look.
+if held_status; then
+  fail "held answers zero without a lock descriptor exported"
+fi
+pass "held answers one without a lock descriptor exported"
+
+# A descriptor number with no /proc entry behind it is the same answer.
+if held_status 999; then
+  fail "held answers zero for a descriptor that does not exist"
+fi
+pass "held answers one for a descriptor that does not exist"
+
+exec {other_fd}>/dev/null
+if held_status "$other_fd"; then
+  fail "held claims a descriptor pointing elsewhere"
+fi
+pass "held answers one for a descriptor pointing at another file"
+
+# A descriptor open on the lock file itself, with nothing holding the lock, is
+# exactly what the re-exec'd updater carries: held says yes.
+exec {own_fd}>"$lock_file"
+if ! held_status "$own_fd"; then
+  fail "held says no to an unlocked descriptor on the lock file"
+fi
+pass "held answers zero for an unlocked descriptor on the lock file"
+
+# The held check flocks the descriptor it says yes to, and that hold lives as
+# long as this shell keeps the descriptor open -- exactly the updater's shape.
+# A fresh descriptor on the now-locked file is not that hold: flock on it
+# fails, so held says no.
+exec {fresh_fd}>"$lock_file"
+if held_status "$fresh_fd"; then
+  fail "held claims a descriptor whose lock is held elsewhere"
+fi
+pass "held answers one when another holder owns the lock file"
+
+# The hidden run subcommand takes the lock itself: contended, it refuses with
+# a diagnostic, and free, it runs the command under the lock.
+status=0
+run_with_lock_env "$update_lock" run true >"$test_tmp/contended.err" 2>&1 || status=$?
+[[ $status -eq 1 ]] || fail "a contended run exits one" "status: $status"
+grep -q "already running" "$test_tmp/contended.err" ||
+  fail "a contended run says the update is already running" "$(cat "$test_tmp/contended.err")"
+pass "a contended run refuses with the already-running diagnostic"
+
+exec {own_fd}>&- {fresh_fd}>&-
+status=0
+run_with_lock_env "$update_lock" run true >/dev/null 2>&1 || status=$?
+[[ $status -eq 0 ]] || fail "a free run executes the command under the lock" "status: $status"
+pass "a free run executes the command under the lock"
+
+# Usage errors: a run with nothing to execute, and an unknown subcommand.
+status=0
+run_with_lock_env "$update_lock" run >/dev/null 2>"$test_tmp/usage.err" || status=$?
+[[ $status -eq 2 ]] || fail "a run without a command exits two" "status: $status"
+grep -q "Usage: omarchy-update-lock run <command>" "$test_tmp/usage.err" ||
+  fail "a run without a command prints its usage" "$(cat "$test_tmp/usage.err")"
+
+status=0
+run_with_lock_env "$update_lock" bogus >/dev/null 2>"$test_tmp/usage.err" || status=$?
+[[ $status -eq 2 ]] || fail "an unknown subcommand exits two" "status: $status"
+grep -q "Usage: omarchy-update-lock <held|run>" "$test_tmp/usage.err" ||
+  fail "an unknown subcommand prints its usage" "$(cat "$test_tmp/usage.err")"
+pass "usage errors exit two with the usage line"
+
+# A runtime directory that cannot hold the lock file fails the run loudly
+# rather than silently locking nothing.
+ro_runtime="$test_tmp/ro-runtime"
+mkdir -m 555 -p "$ro_runtime"
+status=0
+XDG_RUNTIME_DIR="$ro_runtime/missing" "$update_lock" run true >/dev/null 2>&1 || status=$?
+[[ $status -ne 0 ]] || fail "a run whose lock cannot be created does not pretend to succeed"
+pass "a run whose lock cannot be created fails loudly"
+
+exec {other_fd}>&-

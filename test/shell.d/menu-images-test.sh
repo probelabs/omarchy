@@ -16,8 +16,9 @@ trap 'rm -rf "$tmp"' EXIT
 
 cache_home="$tmp/cache"
 images="$tmp/images"
+media="$tmp/media"
 stub_bin="$tmp/bin"
-mkdir -p "$images" "$stub_bin"
+mkdir -p "$images" "$media" "$stub_bin"
 
 cat >"$stub_bin/vipsthumbnail" <<'EOF'
 #!/bin/bash
@@ -43,6 +44,29 @@ printf 'thumbnail' >"$output"
 EOF
 chmod +x "$stub_bin/vipsthumbnail"
 
+cat >"$stub_bin/ffmpegthumbnailer" <<'EOF'
+#!/bin/bash
+
+image=""
+output=""
+
+while (( $# > 0 )); do
+  case "$1" in
+    -i) image="$2"; shift 2 ;;
+    -o) output="$2"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+
+if [[ -f ${FFMPEG_FAIL_FILE:-} ]] && grep -Fxq "$image" "$FFMPEG_FAIL_FILE"; then
+  exit 1
+fi
+
+[[ -z ${FFMPEG_CALLS_FILE:-} ]] || printf '%s\n' "$image" >>"$FFMPEG_CALLS_FILE"
+printf 'video-thumbnail' >"$output"
+EOF
+chmod +x "$stub_bin/ffmpegthumbnailer"
+
 for name in one two three; do
   printf 'image-%s' "$name" >"$images/$name.png"
 done
@@ -50,69 +74,131 @@ done
 cache_dir="$cache_home/omarchy/image-selector"
 mkdir -p "$cache_dir"
 
+# The cache keys a thumbnail by path and file signature, exactly as the menu
+# does, so a scenario can seed or inspect a single image's cache entry.
+thumbnail_hash() {
+  local signature
+  signature=$(stat -Lc '%s:%Y' "$1")
+  printf '%s\t%s' "$1" "$signature" | md5sum | cut -d ' ' -f 1
+}
+
+# Lazy rows hand generation to background jobs inside the menu process itself,
+# so the run answers before the pixels land; wait them out.
+wait_for_thumbnails() {
+  local expected="$1"
+
+  for _ in {1..200}; do
+    (( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) >= expected )) && return 0
+    sleep 0.05
+  done
+  return 1
+}
+
+run_images() {
+  PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
+    "$ROOT/bin/omarchy-menu-images" "$@"
+}
+
+cache_key=$(printf '%s' "$images" | md5sum | cut -d ' ' -f 1)
+
 stale_tmp=""
-live_lock=""
 for image in "$images"/*; do
-  signature=$(stat -Lc '%s:%Y' "$image")
-  hash=$(printf '%s\t%s' "$image" "$signature" | md5sum | cut -d ' ' -f 1)
+  hash=$(thumbnail_hash "$image")
   mkdir "$cache_dir/$hash.jpg.lock"
   touch -m -d '10 minutes ago' "$cache_dir/$hash.jpg.lock"
   stale_tmp="$cache_dir/$hash.jpg.4242.jpg"
-  live_lock="$cache_dir/$hash.jpg.lock"
 done
 printf 'partial' >"$stale_tmp"
 
-cache_key=$(printf '%s' "$images" | md5sum | cut -d ' ' -f 1)
+# A picker opens lazily: the rows answer with the media files while generation
+# runs inside the menu process. The aged legacy locks are the picker's own to
+# reap, and the partial thumbnails a killed generator left behind go with them.
+rows=$(run_images --print-rows --lazy-thumbnails "$images")
+
+(( $(wc -l <<<"$rows") == 3 )) || fail "the lazy menu offers every image while thumbnails generate" "$rows"
+wait_for_thumbnails 3 || fail "the lazy menu generates every thumbnail in-process" "$(ls "$cache_dir")"
+(( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) == 3 )) ||
+  fail "image menu recovers thumbnails from stranded locks"
+(( $(find "$cache_dir" -maxdepth 1 -name '*.jpg.lock' -type d | wc -l) == 0 )) ||
+  fail "image menu reaps the aged legacy locks it replaces"
+[[ ! -e $stale_tmp ]] ||
+  fail "image menu clears partial thumbnails left by killed generators"
+pass "image menu recovers stranded locks and stale rows"
+
+# A stale row cache left behind by an older release is invalid the moment its
+# signature no longer describes the directory: the next cache-only pass
+# rebuilds every row and re-signs.
 printf '%s\t%s' "$images/one.png" "$cache_dir/missing.jpg" >"$cache_dir/$cache_key.rows"
 printf 'v2\n%s:%s\n' "$images" "$(stat -Lc '%Y' "$images")" >"$cache_dir/$cache_key.signature"
 printf 'v1\n%s:%s\n' "$images" "$(stat -Lc '%Y' "$images")" >"$cache_dir/$cache_key.fast-signature"
 
-PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
-  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+run_images --cache-only "$images"
 
-(( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) == 3 )) ||
-  fail "image menu recovers thumbnails from stranded locks"
 (( $(awk 'END { print NR }' "$cache_dir/$cache_key.rows") == 3 )) ||
   fail "image menu rebuilds every row after cache invalidation"
 [[ $(head -n 1 "$cache_dir/$cache_key.signature") == "v4" ]] ||
   fail "image menu invalidates stale row caches"
-[[ ! -e $stale_tmp ]] ||
-  fail "image menu clears partial thumbnails left by killed generators"
 # MCDC SW-REQ-260922-MH9B: rows_rebuilt_and_cached=T, signature_mismatch=T => TRUE
 # MCDC SW-REQ-260922-43HQ: cached_rows_reused=F, dirs_unchanged=F => TRUE [no-action: every row is rebuilt and re-signed after the stale signature -- the reuse path is never entered]
-pass "image menu recovers stranded locks and stale rows"
+pass "image menu rebuilds and signs the rows after the stale cache is dropped"
 
+# A lost fast signature sends the next open through the full-signature
+# compare, which vouches for the same rows without a rebuild.
+before=$(<"$cache_dir/$cache_key.rows")
+rm -f "$cache_dir/$cache_key.fast-signature"
+run_images --cache-only "$images"
+[[ $(<"$cache_dir/$cache_key.rows") == "$before" ]] ||
+  fail "image menu keeps the rows a full-signature match vouches for"
+[[ -f $cache_dir/$cache_key.fast-signature ]] ||
+  fail "image menu re-signs the fast signature after a full-signature reuse"
+pass "image menu keeps the rows across a full-signature reuse"
+
+# A legacy generator that started recently may still own its lock, so its
+# thumbnail is left entirely alone while the others are served from the cache
+# entries the earlier run already published.
 rm -rf "$cache_home"
 mkdir -p "$cache_dir"
-mkdir "$live_lock"
+locked_hash=$(thumbnail_hash "$images/two.png")
+mkdir "$cache_dir/$locked_hash.jpg.lock"
+for name in one three; do
+  printf 'thumbnail' >"$cache_dir/$(thumbnail_hash "$images/$name.png").jpg"
+done
 
-PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
-  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+run_images --cache-only "$images"
 
 (( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) == 2 )) ||
   fail "image menu skips a thumbnail whose fresh legacy lock may still be owned"
-[[ -d $live_lock ]] ||
+[[ -d $cache_dir/$locked_hash.jpg.lock ]] ||
   fail "image menu leaves a fresh legacy lock directory alone"
 [[ ! -e $cache_dir/$cache_key.rows ]] ||
   fail "image menu does not cache rows while a legacy generator holds a lock"
+
+# The same fresh lock stops a lazy generator too: it refuses the lock file it
+# cannot create and leaves the row to a later open.
+run_images --print-rows --lazy-thumbnails "$images" >/dev/null
+(( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) == 2 )) ||
+  fail "a fresh legacy lock stops a lazy generator as well" "$(ls "$cache_dir")"
+[[ -d $cache_dir/$locked_hash.jpg.lock ]] ||
+  fail "a fresh legacy lock survives a lazy run" "$(ls "$cache_dir")"
 pass "image menu respects a live legacy generator's lock"
 
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 printf '%s\n' "$images/two.png" >"$tmp/failures"
 
-PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" VIPSTHUMBNAIL_FAIL_FILE="$tmp/failures" \
-  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+VIPSTHUMBNAIL_FAIL_FILE="$tmp/failures" run_images --cache-only "$images"
 
-cache_dir="$cache_home/omarchy/image-selector"
 [[ ! -e $cache_dir/$cache_key.rows ]] || fail "image menu does not cache incomplete rows"
 [[ ! -e $cache_dir/$cache_key.signature ]] || fail "image menu does not sign incomplete rows"
 [[ ! -e $cache_dir/$cache_key.fast-signature ]] || fail "image menu does not fast-cache incomplete rows"
 pass "image menu leaves failed thumbnail batches uncached"
 
 rm "$tmp/failures"
-PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
-  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+# The next open retries the thumbnail that failed: a lazy open generates it
+# in-process, and the cache-only pass that follows caches the complete rows.
+run_images --print-rows --lazy-thumbnails "$images" >/dev/null
+wait_for_thumbnails 3 || fail "the lazy menu retries a previously failed thumbnail"
+run_images --cache-only "$images"
 
 (( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) == 3 )) ||
   fail "image menu retries a previously failed thumbnail"
@@ -124,8 +210,7 @@ pass "image menu completes and caches a later retry"
 # the rows file alone: the fast signature matches, so no thumbnail generator
 # runs at all.
 : >"$tmp/calls"
-PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" \
-  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" run_images --cache-only "$images"
 
 [[ ! -s $tmp/calls ]] ||
   fail "image menu reuses cached rows without regenerating thumbnails" "calls: $(cat "$tmp/calls")"
@@ -139,37 +224,256 @@ rm -rf "$cache_home"
 mkdir -p "$cache_home"
 : >"$tmp/calls"
 
-# The delay keeps both runs inside the generation window so the locks are
-# actually contended rather than the second run arriving after the first.
+# The delay keeps both runs inside the generation window so the second run's
+# generators reach the lock while the first still holds it.
 pids=()
 for run in 1 2; do
-  PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
-    VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" VIPSTHUMBNAIL_DELAY=0.25 \
-    "$ROOT/bin/omarchy-menu-images" --cache-only "$images" &
+  VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" VIPSTHUMBNAIL_DELAY=0.25 \
+    run_images --print-rows --lazy-thumbnails "$images" >/dev/null &
   pids+=($!)
 done
 for pid in "${pids[@]}"; do
   wait "$pid" || fail "concurrent image menu runs exit cleanly"
 done
+wait_for_thumbnails 3 || fail "concurrent image menu runs generate every thumbnail"
 
-(( $(wc -l <"$tmp/calls") == 3 )) || fail "image menu serializes concurrent thumbnail generators"
+(( $(wc -l <"$tmp/calls") == 3 )) || fail "image menu serializes concurrent thumbnail generators" "$(cat "$tmp/calls")"
 
 rm -f "$cache_dir"/*.jpg
 rm -f "$cache_dir/$cache_key.rows" "$cache_dir/$cache_key.signature" "$cache_dir/$cache_key.fast-signature"
-PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" \
-  "$ROOT/bin/omarchy-menu-images" --cache-only "$images"
+VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" \
+  run_images --print-rows --lazy-thumbnails "$images" >/dev/null
+wait_for_thumbnails 3 || fail "the released locks let every thumbnail regenerate"
 
-(( $(wc -l <"$tmp/calls") == 6 )) || fail "image menu releases thumbnail locks after generation"
+(( $(wc -l <"$tmp/calls") == 6 )) || fail "image menu releases thumbnail locks after generation" "$(cat "$tmp/calls")"
 pass "image menu owns locks for exactly one generator lifetime"
 
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
-rows=$(PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
-  "$ROOT/bin/omarchy-menu-images" --print-rows "$images")
+
+# Rows are what the shell holds onto, so printing them hands back one row per
+# image with its generated thumbnail behind it.
+run_images --print-rows --lazy-thumbnails "$images" >/dev/null
+wait_for_thumbnails 3 || fail "the lazy menu generates the rows it prints"
+rows=$(run_images --print-rows "$images")
 
 (( $(wc -l <<<"$rows") == 3 )) || fail "image menu prints one row per image"
 while IFS=$'\t' read -r row_image row_thumbnail; do
   [[ $row_image == "$images"/* && -f $row_thumbnail ]] ||
-    fail "image menu prints each image with its generated thumbnail"
+    fail "image menu prints each image with its generated thumbnail" "$rows"
 done <<<"$rows"
 pass "image menu prints its rows for the shell to hold"
+
+# A directory with a video exercises the other half of the queue: pictures go
+# lazy, the video is queued for the fan-out, and the rows never block on it.
+printf 'still' >"$media/pic.png"
+printf 'video' >"$media/clip.mp4"
+pic_hash=$(thumbnail_hash "$media/pic.png")
+video_hash=$(thumbnail_hash "$media/clip.mp4")
+rm -rf "$cache_home"
+mkdir -p "$cache_home"
+
+rows=$(run_images --print-rows --lazy-thumbnails "$media")
+grep -q "^$media/pic.png" <<<"$rows" ||
+  fail "the lazy menu offers the picture while the video is queued" "$rows"
+while IFS=$'\t' read -r row_image row_thumbnail; do
+  [[ -f $row_thumbnail ]] || fail "every offered row points at a readable file" "$rows"
+done <<<"$rows"
+wait_for_thumbnails 1 || fail "the lazy menu generates the picture in-process"
+[[ -f $cache_dir/$pic_hash.jpg ]] || fail "the picture's thumbnail lands in the cache"
+# The video's pixels can only come from the fan-out child, which the
+# instrumentation cannot follow (see the ignore on generate_thumbnail), so its
+# presence is only asserted in the plain run.
+if [[ -z ${PROOF_MCDC_TRACE_DIR:-} ]]; then
+  [[ -f $cache_dir/$video_hash.jpg ]] ||
+    fail "the fan-out generates the video thumbnail" "$(ls "$cache_dir")"
+fi
+pass "the lazy menu serves pictures while the video queues"
+
+# With every thumbnail already on disk there is nothing left to queue.
+printf 'thumbnail' >"$cache_dir/$video_hash.jpg"
+run_images --print-rows --lazy-thumbnails "$media" >/dev/null
+pass "a queued video that already has its thumbnail queues nothing"
+
+# A single converter lane still drains a queued video. Dropping the thumbnail
+# alone is not enough -- cached rows are trusted on the directory's mtime, and
+# a same-second touch would not change it -- so the directory gets an
+# unambiguous mtime to send the next open through the rebuild.
+rm -f "$cache_dir/$video_hash.jpg"
+touch -d '2 days ago' "$media"
+OMP_NUM_THREADS=1 run_images --print-rows --lazy-thumbnails "$media" >/dev/null
+if [[ -z ${PROOF_MCDC_TRACE_DIR:-} ]]; then
+  [[ -f $cache_dir/$video_hash.jpg ]] ||
+    fail "a single video lane still drains the queue" "$(ls "$cache_dir")"
+fi
+pass "a single video lane still drains the queue"
+
+# A video the converter rejected is remembered, so it costs nothing on the
+# next open and the rows stay uncached over its absence.
+media_cache_key=$(printf '%s' "$media" | md5sum | cut -d ' ' -f 1)
+rm -rf "$cache_home"
+mkdir -p "$cache_dir"
+: >"$cache_dir/$video_hash.jpg.failed"
+
+rows=$(run_images --print-rows --lazy-thumbnails "$media")
+(( $(wc -l <<<"$rows") == 1 )) || fail "a rejected video keeps no row" "$rows"
+grep -q "^$media/pic.png" <<<"$rows" ||
+  fail "the picture stays while the rejected video drops" "$rows"
+[[ ! -e $cache_dir/$media_cache_key.rows ]] ||
+  fail "a rejected video leaves the rows uncached"
+pass "a rejected video keeps no row and leaves the rows uncached"
+
+# A converter that fails under a lazy open leaves nothing behind: no partial
+# file, no thumbnail, and no failure marker, since only videos get one.
+rm -rf "$cache_home"
+mkdir -p "$cache_home"
+faildir="$tmp/faildir"
+mkdir -p "$faildir"
+printf 'doomed' >"$faildir/doomed.png"
+printf '%s\n' "$faildir/doomed.png" >"$tmp/failures"
+
+rows=$(VIPSTHUMBNAIL_FAIL_FILE="$tmp/failures" run_images --print-rows --lazy-thumbnails "$faildir")
+grep -q "^$faildir/doomed.png" <<<"$rows" ||
+  fail "a failing picture still offers itself lazily" "$rows"
+wait_for_thumbnails 0 || true
+(( $(find "$cache_dir" -maxdepth 1 \( -name '*.jpg' -o -name '*.failed' \) | wc -l) == 0 )) ||
+  fail "a failed lazy converter leaves nothing behind" "$(ls "$cache_dir")"
+rm -rf "$faildir" "$tmp/failures"
+pass "a failed lazy converter leaves nothing behind"
+
+# The flag surface: every documented flag is accepted, and the ones that shape
+# the menu take effect without disturbing the rows.
+rm -rf "$cache_home"
+mkdir -p "$cache_home"
+
+run_images --help >/dev/null
+usage_status=0
+run_images >/dev/null 2>&1 || usage_status=$?
+[[ $usage_status -eq 1 ]] || fail "the menu without an image directory prints usage and exits one" "status: $usage_status"
+arg_status=0
+run_images --selected >/dev/null 2>&1 || arg_status=$?
+[[ $arg_status -eq 1 ]] || fail "--selected without a value prints usage and exits one" "status: $arg_status"
+pass "the menu refuses to run without an image directory or a value for --selected"
+
+run_images --print-name --show-labels --filterable --preload --print-rows "$media" >/dev/null
+pass "the menu accepts its display flags together with --print-rows"
+
+# The selected image is resolved within the directory it belongs to, by path,
+# by content, or not at all -- and a directory that does not exist is skipped
+# on the way.
+rows=$(run_images --print-rows --selected "$media/pic.png" --lazy-thumbnails "$media")
+grep -q "^$media/pic.png" <<<"$rows" ||
+  fail "a selected image inside the directory resolves to its row" "$rows"
+
+ln "$media/pic.png" "$tmp/pic-elsewhere.png"
+rows=$(run_images --print-rows --selected "$tmp/pic-elsewhere.png" --lazy-thumbnails "$tmp/not-a-dir" "$media")
+grep -q "^$media/pic.png" <<<"$rows" ||
+  fail "a selected file outside the directory still resolves by content" "$rows"
+rm "$tmp/pic-elsewhere.png"
+
+rows=$(run_images --print-rows --selected "$tmp/nowhere.png" --lazy-thumbnails "$media")
+grep -q "^$media/pic.png" <<<"$rows" ||
+  fail "a selection that matches nothing still prints the rows" "$rows"
+pass "the selected image resolves by directory, content, or not at all"
+
+# A directory prepared without generating anything leaves the picture's
+# thumbnail out of the cache: prepare answers without spending a converter.
+rm -rf "$cache_home"
+mkdir -p "$cache_home"
+run_images --print-rows --prepare-only --lazy-thumbnails "$media" >/dev/null
+[[ ! -f $cache_dir/$pic_hash.jpg ]] ||
+  fail "a prepared directory generates nothing" "$(ls "$cache_dir")"
+pass "a prepared directory offers its media without generating anything"
+
+# Several directories at once are all scanned, and one that does not exist is
+# skipped rather than fatal.
+rm -rf "$cache_home"
+mkdir -p "$cache_home"
+extra="$tmp/extra-media"
+mkdir -p "$extra"
+printf 'more' >"$extra/more.png"
+
+rows=$(run_images --print-rows --lazy-thumbnails "$media" "$extra" "$tmp/not-a-dir")
+grep -q "^$media/pic.png" <<<"$rows" && grep -q "^$extra/more.png" <<<"$rows" ||
+  fail "the menu scans every directory it is given" "$rows"
+wait_for_thumbnails 2 || fail "both directories generate their thumbnails"
+pass "the menu scans every directory it is given, skipping missing ones"
+
+# The interactive tail talks to the shell's image selector over its IPC. A
+# stub stands in for it: it accepts the open, publishes the pick into the
+# selection file, marks the done file, and answers.
+cat >"$stub_bin/omarchy-shell" <<'STUB'
+#!/bin/bash
+
+case "$1 $2" in
+  "image-selector preload")
+    printf '%s\n' "$*" >>"${OMARCHY_SHELL_LOG:-/dev/null}"
+    exit "${OMARCHY_SHELL_STATUS:-0}"
+    ;;
+  "image-selector open")
+    if [[ -n ${OMARCHY_SHELL_DELAY:-} ]]; then
+      # The done mark lands while the menu is already waiting, the way the
+      # real selector answers after it has rendered. The marker job lets go of
+      # the caller's pipes so the open answers before it fires.
+      ( sleep "$OMARCHY_SHELL_DELAY"; : >"$7" ) </dev/null >/dev/null 2>&1 &
+    else
+      : >"$7"
+    fi
+    if [[ -n ${PICKED_SELECTION:-} ]]; then
+      printf '%s\n' "$PICKED_SELECTION" >"$6"
+    fi
+    printf '%s\n' "${OMARCHY_SHELL_ANSWER:-ok}"
+    exit "${OMARCHY_SHELL_STATUS:-0}"
+    ;;
+  *)
+    exit 9
+    ;;
+esac
+STUB
+chmod +x "$stub_bin/omarchy-shell"
+
+run_picker() {
+  PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
+    "$ROOT/bin/omarchy-menu-images" "$@"
+}
+
+rm -rf "$cache_home"
+mkdir -p "$cache_home"
+
+# Preloading hands the rows to the shell and stops there.
+: >"$tmp/shell-log"
+OMARCHY_SHELL_LOG="$tmp/shell-log" run_picker --preload --lazy-thumbnails "$media"
+grep -q "image-selector preload" "$tmp/shell-log" ||
+  fail "a preloading menu hands its rows to the shell" "$(cat "$tmp/shell-log" 2>/dev/null)"
+pass "a preloading menu hands its rows to the shell and stops"
+
+# A normal open waits for the pick and prints it back.
+selection=$(PICKED_SELECTION="$media/pic.png" OMARCHY_SHELL_DELAY=0.05 \
+  run_picker --lazy-thumbnails "$media")
+[[ $selection == "$media/pic.png" ]] ||
+  fail "the menu waits for the picker and prints the pick" "$selection"
+pass "the menu waits for the picker and prints the pick"
+
+# With --print-name the pick comes back as the bare image name.
+selection=$(PICKED_SELECTION="$media/pic.png" \
+  run_picker --print-name --lazy-thumbnails "$media")
+[[ $selection == "pic" ]] ||
+  fail "--print-name answers with the bare image name" "$selection"
+pass "--print-name answers with the bare image name"
+
+# An empty pick is a closed picker: the menu answers with nothing.
+selection=$(run_picker --lazy-thumbnails "$media")
+[[ -z $selection ]] || fail "a closed picker answers with nothing" "$selection"
+pass "a closed picker answers with nothing"
+
+# A selector that took the request but answered oddly is refused loudly.
+status=0
+OMARCHY_SHELL_ANSWER=unexpected run_picker --lazy-thumbnails "$media" >/dev/null 2>&1 || status=$?
+[[ $status -eq 1 ]] || fail "an odd selector answer refuses the menu" "status: $status"
+pass "an odd selector answer refuses the menu"
+
+# A selector that never accepted the request is refused loudly too.
+status=0
+OMARCHY_SHELL_STATUS=9 run_picker --lazy-thumbnails "$media" >/dev/null 2>&1 || status=$?
+[[ $status -eq 1 ]] || fail "a selector that refuses the open fails the menu" "status: $status"
+pass "a selector that refuses the open fails the menu"
