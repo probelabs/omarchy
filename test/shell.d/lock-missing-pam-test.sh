@@ -36,7 +36,7 @@ assert(
 
 // "Configured" is not a guess: it tracks whether the password PAM module loaded.
 assert(
-  /onLoaded: root\.passwordPamConfigured = true\s*\n\s*onLoadFailed: root\.passwordPamConfigured = false/.test(serviceQml),
+  /onLoaded: root\.passwordPamConfigured = true\s*(?:\/\/[^\n]*\n\s*)*onLoadFailed: root\.passwordPamConfigured = false/.test(serviceQml),
   'passwordPamConfigured mirrors the password PAM module load outcome'
 )
 

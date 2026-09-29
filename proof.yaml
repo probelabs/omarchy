@@ -149,6 +149,7 @@ project:
                 command: >-
                     set -e; B=/usr/bin/bash;
                     "$B" test/shell.d/menu-test.sh;
+                    "$B" test/shell.d/menu-pointer-lifecycle-test.sh;
                     "$B" test/shell.d/tray-menu-test.sh;
                     "$B" test/shell.d/menu-plugin-test.sh;
                     "$B" test/shell.d/menu-dispatcher-test.sh;
