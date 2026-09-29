@@ -428,15 +428,20 @@ project:
                   test_command: menu-shell
                   min_decision_percent: 100
                   min_condition_percent: 100
-                # Disabled: first live QML-engine MC/DC attempt is recorded as
-                # the menu dogfood milestone outcome — structural mismatch.
-                # The qml engine instruments inline JS inside .qml files only
-                # (MenuModel.js gets zero markers), and menu-test.sh
-                # source-greps Menu.qml for exact JS patterns that probe
-                # rewriting breaks, so the run harvests 0 observations. The
-                # analyzer inventory (158 decisions across Menu.qml +
-                # BarWidget.qml) is recorded in the dogfood report; re-enable
-                # when a QML-side execution harness (qmltestrunner) exists.
+                # Disabled (true blocker, 2026-09-29 feasibility spike): the
+                # qml MC/DC engine itself works headless (synthetic project
+                # 100/100 under qmltestrunner offscreen; lock plugin
+                # harvested via quickshell offscreen + private headless sway
+                # — see the lock-qml-view/service targets). Menu.qml cannot
+                # be instantiated outside the production quickshell
+                # plugin-loader: offscreen fails "No PanelWindow backend
+                # loaded" (OverlayWindow :1146), and headless sway fails the
+                # external WlrLayershell attach ("Could not create attached
+                # properties object") or blocks the event loop after
+                # mapping. ~158 decisions (Menu.qml + BarWidget.qml) stay
+                # outside the executable gate; tracked upstream at
+                # probelabs/reqproof issues for the headless harness recipe
+                # and partial-scope support.
                 - id: menu-qml
                   enabled: false
                   language: qml
