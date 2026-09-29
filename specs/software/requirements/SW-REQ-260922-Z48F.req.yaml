@@ -21,9 +21,17 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-09-27T21:18:41.675438Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.351759696Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:revealCursor: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:underhang: file1:87d0cf18a278fd47c6dab9a563574b04
+        satisfies:
+            SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
         - reviewed_at: "2026-09-27T21:18:41.675438Z"
           reviewed_by: agent:kimi-zero-warnings

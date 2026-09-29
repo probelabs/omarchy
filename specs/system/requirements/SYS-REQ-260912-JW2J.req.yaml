@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-27T21:18:45.851036Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.479074908Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:502dfcd4710429a1f41020502764b1826688d0b76a01e2da416fd2983ca1c94c
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-apply-lock: file1:c07ad430124bfb6b4259ef144de3622c
+        satisfies:
+            STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
         - reviewed_at: "2026-09-27T21:18:45.851036Z"
           reviewed_by: agent:kimi-zero-warnings

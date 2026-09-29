@@ -22,9 +22,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-27T19:14:02.630895Z"
-    reviewed_by: agent:kimi-fix-jsonc-refresh
+    reviewed_at: "2026-09-29T10:09:06.388369317Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:edb05429dd6a72cf07d60ea9501c81d0844b42616e2d2c5dcccbf43f12962ad5
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
         - reviewed_at: "2026-09-27T19:14:02.630895Z"
           reviewed_by: agent:kimi-fix-jsonc-refresh
@@ -59,9 +64,9 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): the stripper silently corrupts a label like "x, ]y" to "x ]y" while the parse still succeeds - the user sees a wrong row name. FMEA mode (b), the realistic payload: an action such as mv f{.bak,} or awk ''{print $1, }'' loses its in-string comma to the string-blind strip. The MUTATED command then runs with the user''s full privileges on row activation. mv loses its brace expansion and targets a literal filename; awk silently changes output format for downstream pipelines. No error surfaces in either mode because JSON.parse accepts the stripped text; the corruption is invisible until the command misbehaves. Fixed on this branch by the string-aware scanner; the grading records the pre-fix worst case this requirement now forbids.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-09-27T19:20:42Z"
-    reviewed_by: agent:kimi-fix-jsonc-refresh
-    reviewed_against_catalog_version: 1.10.0
+    reviewed_at: "2026-09-29T10:06:05Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
     categories:
         - category: scenario
           disposition: reviewed
@@ -81,13 +86,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Implementation is GC'd JavaScript (QML JS engine). No manual memory, pointer arithmetic, binary framing, or format strings exist here. The structural catalog targets C-family hazards that cannot exist here.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T19:15:02Z"
-          from: draft
-          to: review
-          reason: '[fix/jsonc-trailing-comma-in-strings] fix branch review: formula verified against scanner by REVIEW-21 + independent fuzz (20k cases, 0 mismatch) this campaign'
-          changed_by: agent:kimi-fix-jsonc-refresh
 defect_review:
     reviewed_at: "2026-09-27T19:39:58Z"
     session: CRS-0017
@@ -97,3 +95,10 @@ defect_review:
         emitted: 4
         verified: 2
         dismissed: 2
+lifecycle:
+    change_history:
+        - date: "2026-09-27T19:15:02Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-trailing-comma-in-strings] fix branch review: formula verified against scanner by REVIEW-21 + independent fuzz (20k cases, 0 mismatch) this campaign'
+          changed_by: agent:kimi-fix-jsonc-refresh

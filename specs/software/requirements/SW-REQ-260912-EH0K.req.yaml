@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
-    reviewed_at: "2026-09-27T21:17:52.858344Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:05.57340518Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:318fada1f049836480b5144a32c53ffdbf09aec075d56e9b586eb807fafdaae2
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-hyprland-session-locked: file1:29c131c6b9f0363e3de279c1859e3bdb
+        satisfies:
+            SYS-REQ-260912-FRG0: req1:72431d69149a9c2f85ee97b2bfab8e2c
     review_history:
         - reviewed_at: "2026-09-27T21:17:52.858344Z"
           reviewed_by: agent:kimi-zero-warnings

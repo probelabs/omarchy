@@ -19,9 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-27T21:18:28.458517Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.145752864Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:0ace0f550b7bfb7d4fe437b2d1a480b8faba23c6adaf182dc75062a4ade2ca8f
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-menu-input: file1:d3dbd6e7144fadeabf3476b93114ea6a
+            bin/omarchy-menu-select: file1:c075537ceda54de590b5d8d0b646e125
+        satisfies:
+            SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
         - reviewed_at: "2026-09-27T21:18:28.458517Z"
           reviewed_by: agent:kimi-zero-warnings

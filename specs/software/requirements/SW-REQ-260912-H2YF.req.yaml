@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-HC86
-    reviewed_at: "2026-09-27T21:17:57.087029Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:05.633984114Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:14d4b110881d96b589a3316a576d0a5cc71189efddeef7bdc013a4c799fd7a55
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-system-sleep-lock:report_unsecured: file1:2515078ca1a1ae2608de48348bde8127
+        satisfies:
+            SYS-REQ-260912-HC86: req1:59e04f7a02aaff3acecb5cf057746a41
     review_history:
         - reviewed_at: "2026-09-27T21:17:57.087029Z"
           reviewed_by: agent:kimi-zero-warnings

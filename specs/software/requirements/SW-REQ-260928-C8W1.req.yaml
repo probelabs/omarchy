@@ -21,9 +21,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-27T23:58:50.63446Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.42684228Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:0c34f90de08562484d5c9874022b82d1f39c638e0821be235060518a2921f24e
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
         - reviewed_at: "2026-09-27T23:58:50.63446Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -58,9 +63,9 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): an inline comment tail survives stripping and JSON.parse rejects the whole menu file. Every menu row vanishes; the user loses the entire menu until the file is fixed. FMEA mode (b): a full-line comment containing a quote opens a fake string in a naive scanner. Then real content would be eaten as comment. The string-aware scanner on this branch forbids both modes. The grading records the pre-fix worst case this requirement now forbids.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-09-27T23:56:34Z"
-    reviewed_by: agent:kimi-zero-warnings
-    reviewed_against_catalog_version: 1.10.0
+    reviewed_at: "2026-09-29T10:06:26Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
     categories:
         - category: scenario
           disposition: reviewed

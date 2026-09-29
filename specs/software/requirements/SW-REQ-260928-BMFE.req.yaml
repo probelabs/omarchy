@@ -21,9 +21,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-27T23:32:07.303648Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.41318842Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:de0d01a59f68c77d9c6dfa460da6f400714e0a86ccc71f0335e3f8e73ee1c966
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
         - reviewed_at: "2026-09-27T23:32:07.303648Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -58,9 +63,9 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): a menu file whose root is a JSON array parses cleanly. for..in then walks the array indices and renders phantom rows id "0","1",... parented to root. Rows the config never defined appear in the menu. FMEA mode (b), the realistic payload: a phantom row carries a label and an action out of the array element. Activating it runs a command the user never placed in the menu, with the user''s full privileges. No error surfaces in either mode because JSON.parse accepts the array. The corruption is visible only as extra rows. Fixed on this branch by extending the root-type guard with Array.isArray. The grading records the pre-fix worst case this requirement now forbids.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-09-27T23:29:03Z"
-    reviewed_by: agent:kimi-zero-warnings
-    reviewed_against_catalog_version: 1.10.0
+    reviewed_at: "2026-09-29T10:06:25Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
     categories:
         - category: scenario
           disposition: reviewed

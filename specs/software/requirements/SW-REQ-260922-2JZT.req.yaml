@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-09-27T21:18:04.791309Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:05.754768763Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:a6db6c93dd4de43b8844bc0838374f66b8fea8928b43fdecebcbcc1b2b017a8f
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:substituteGuardReaders: file1:24c4fbe3020387b7c72c5ab9d14852fc
+        satisfies:
+            SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
         - reviewed_at: "2026-09-27T21:18:04.791309Z"
           reviewed_by: agent:kimi-zero-warnings

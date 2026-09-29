@@ -19,9 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-09-27T21:18:37.546913Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.284723254Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:1f82e7cfb359952b438ad645676ae21cc84c31dc2a41f478fde158dda5bfb4dc
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-menu: file1:76a45c4a34c3d8b7dfbc6ccde479d525
+            shell/plugins/menu/BarWidget.qml: file1:d540160c06fe1a0154c7d90ea2f5f496
+        satisfies:
+            SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
         - reviewed_at: "2026-09-27T21:18:37.546913Z"
           reviewed_by: agent:kimi-zero-warnings

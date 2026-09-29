@@ -19,9 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-09-27T21:21:26.881945Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.298183055Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:87d0cf18a278fd47c6dab9a563574b04
+        satisfies:
+            SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
         - reviewed_at: "2026-09-27T21:21:26.881945Z"
           reviewed_by: agent:kimi-zero-warnings

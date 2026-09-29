@@ -19,9 +19,18 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-09-27T21:21:22.284137Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.044658834Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:startNextProvider: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:24c4fbe3020387b7c72c5ab9d14852fc
+        satisfies:
+            SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
         - reviewed_at: "2026-09-27T21:21:22.284137Z"
           reviewed_by: agent:kimi-zero-warnings

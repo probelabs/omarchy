@@ -19,9 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-27T21:21:16.836675Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:05.834716503Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:stripJsonc: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/MenuModel.js:normalizeItem: file1:24c4fbe3020387b7c72c5ab9d14852fc
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
         - reviewed_at: "2026-09-27T21:21:16.836675Z"
           reviewed_by: agent:kimi-zero-warnings

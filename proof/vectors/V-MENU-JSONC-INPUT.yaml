@@ -12,9 +12,17 @@ stacks:
 related_residuals:
     - L-MENU-JSONC-001
 notes_path: proof/surfaces/threat-surface.md
-close_note: Angle hunted statically (claims CRS-0017/0019/0020 + reproduction + 20k fuzz). The comma-in-string mutation class was found and is FIXED on this branch - class closure recorded as DEFECT-260927-CMMA (covered_by_requirement), so no live KI is warranted. Two pre-existing LOW edges survive as deferred claims with PoC and are parked under residual L-MENU-JSONC-001's declared exclusions.
+close_note: 're-recorded closure through tool: Angle hunted statically (claims CRS-0017/0019/0020 + reproduction + 20k fuzz). The comma-in-string mutation class was found and is FIXED on this branch - class closure recorded as DEFECT-260927-CMMA (covered_by_requirement), so no live KI is warranted. Two pre-existing LOW edges survive as deferred claims with PoC and are parked under residual L-MENU-JSONC-001''s declared exclusions.'
 campaign_log:
     - at: "2026-09-27T19:42:59Z"
       status: closed-null
       note: Angle hunted statically (claims CRS-0017/0019/0020 + reproduction + 20k fuzz). The comma-in-string mutation class was found and is FIXED on this branch - class closure recorded as DEFECT-260927-CMMA (covered_by_requirement), so no live KI is warranted. Two pre-existing LOW edges survive as deferred claims with PoC and are parked under residual L-MENU-JSONC-001's declared exclusions.
+      actor: agent
+    - at: "2026-09-29T10:07:42Z"
+      status: closed-null
+      note: 're-recorded closure through tool: Angle hunted statically (claims CRS-0017/0019/0020 + reproduction + 20k fuzz). The comma-in-string mutation class was found and is FIXED on this branch - class closure recorded as DEFECT-260927-CMMA (covered_by_requirement), so no live KI is warranted. Two pre-existing LOW edges survive as deferred claims with PoC and are parked under residual L-MENU-JSONC-001s declared exclusions.'
+      actor: agent
+    - at: "2026-09-29T10:07:49Z"
+      status: closed-null
+      note: 're-recorded closure through tool: Angle hunted statically (claims CRS-0017/0019/0020 + reproduction + 20k fuzz). The comma-in-string mutation class was found and is FIXED on this branch - class closure recorded as DEFECT-260927-CMMA (covered_by_requirement), so no live KI is warranted. Two pre-existing LOW edges survive as deferred claims with PoC and are parked under residual L-MENU-JSONC-001''s declared exclusions.'
       actor: agent

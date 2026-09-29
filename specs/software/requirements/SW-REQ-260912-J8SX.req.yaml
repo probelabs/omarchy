@@ -19,9 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-28T09:08:13.615459Z"
+    reviewed_at: "2026-09-29T10:09:05.646973186Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:b8a4369841cdad3aea39dc8dca4da0b43beb8c41a757fc4067ebbfc732f193d4
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/lock/Service.qml:beginLock: file1:d479422c4ad115684d7d6cb8207928f5
+            shell/plugins/lock/Service.qml:lock: file1:d479422c4ad115684d7d6cb8207928f5
+        satisfies:
+            SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
     review_history:
         - reviewed_at: "2026-09-27T21:17:57.948378Z"
           reviewed_by: agent:kimi-zero-warnings

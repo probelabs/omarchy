@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-27T21:18:10.600454Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:05.859912602Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:8033c62b15709b6455b4bab8a36d6f5596d747d1ad0ed9824d345f9d63511ad4
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-menu-timezone: file1:06a12042807a1a74eab61bf4a3ca32f3
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
         - reviewed_at: "2026-09-27T21:18:10.600454Z"
           reviewed_by: agent:kimi-zero-warnings

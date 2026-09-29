@@ -9,11 +9,14 @@ related_obligation_classes:
     - edge_case
 stacks:
     - qml
-related_residuals: []
 notes_path: proof/surfaces/threat-surface.md
-close_note: Angle hunted in the 2026-09-28 upstream-sync refresh (claims CRS-0021, 4/4 dismissed with executed refutations). The fast path is governed by SW-REQ-260928-8VJQ with witnessed MC/DC rows in menu-test.sh. No live defect; the single divergence found is unreachable from shipped configuration and benign in direction, so no KI is warranted.
+close_note: 're-recorded closure through tool: Angle hunted in the 2026-09-28 upstream-sync refresh (claims CRS-0021, 4/4 dismissed with executed refutations). The fast path is governed by SW-REQ-260928-8VJQ with witnessed MC/DC rows in menu-test.sh. No live defect; the single divergence found is unreachable from shipped configuration and benign in direction, so no KI is warranted.'
 campaign_log:
     - at: "2026-09-28T08:20:00Z"
       status: closed-null
       note: Hunted during upstream_refresh_v1 for delta 3faafba2..324f0ba5. Battery + claims session clean; no KI.
+      actor: agent
+    - at: "2026-09-29T10:07:53Z"
+      status: closed-null
+      note: 're-recorded closure through tool: Angle hunted in the 2026-09-28 upstream-sync refresh (claims CRS-0021, 4/4 dismissed with executed refutations). The fast path is governed by SW-REQ-260928-8VJQ with witnessed MC/DC rows in menu-test.sh. No live defect; the single divergence found is unreachable from shipped configuration and benign in direction, so no KI is warranted.'
       actor: agent

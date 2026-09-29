@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-JW2J
-    reviewed_at: "2026-09-27T21:18:03.113469Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:05.722525547Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:626257907f61eef6debbb2193954f8875b477538a740f81dfd79a1dc939d3b83
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-apply-lock: file1:c07ad430124bfb6b4259ef144de3622c
+        satisfies:
+            SYS-REQ-260912-JW2J: req1:fdf396cd213c1dbb23f2efe1525ac6a5
     review_history:
         - reviewed_at: "2026-09-27T21:18:03.113469Z"
           reviewed_by: agent:kimi-zero-warnings

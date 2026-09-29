@@ -19,9 +19,12 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-09-27T21:21:32.130692Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.604753597Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:b1e66e8e118ad3ae2af8ea2e66f8f575007f2f35d6fff758a008ba5174472890
+    reviewed_targets:
+        satisfies:
+            STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
         - reviewed_at: "2026-09-27T21:21:32.130692Z"
           reviewed_by: agent:kimi-zero-warnings

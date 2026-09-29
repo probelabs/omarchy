@@ -19,9 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-28T11:42:26.094596Z"
+    reviewed_at: "2026-09-29T10:09:05.735257955Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-menu-keybindings: file1:bf748037397f7ed702684136da1715c0
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
         - reviewed_at: "2026-09-27T21:18:03.953793Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -60,9 +65,9 @@ obligation_suppressions:
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
 hazard_review:
-    reviewed_at: "2026-09-28T11:45:00Z"
-    reviewed_by: agent:kimi-upstream-watch
-    reviewed_against_catalog_version: 1.10.0
+    reviewed_at: "2026-09-29T10:06:04Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
     categories:
         - category: scenario
           disposition: reviewed
@@ -82,13 +87,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: 'Bash + GC''d Lua; table.concat over strings only. Lua nil-key read returns nil (no error), keeping the fall-through safe; no manual memory, pointers, or format strings.'
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:06Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-28T12:24:02Z"
     session: CRS-0022
@@ -96,3 +94,10 @@ defect_review:
     via: agent-review
     counts:
         emitted: 4
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:06Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings

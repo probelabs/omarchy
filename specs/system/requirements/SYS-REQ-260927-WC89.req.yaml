@@ -18,9 +18,12 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-27T21:21:32.96388Z"
-    reviewed_by: agent:kimi-zero-warnings
+    reviewed_at: "2026-09-29T10:09:06.631963837Z"
+    reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
+    reviewed_targets:
+        satisfies:
+            STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
         - reviewed_at: "2026-09-27T21:21:32.96388Z"
           reviewed_by: agent:kimi-zero-warnings
