@@ -260,16 +260,16 @@ project:
         code_mcdc:
             advisory: false
             min_statement_percent: 100
-            # Global floors are the measured project aggregate, pinned
-            # 2026-09-22 (35.3% decisions / 39.5% conditions across all
-            # enabled targets). Every enabled target ALSO carries an explicit
-            # per-target floor at its designed or measured level — the lock
-            # targets keep their purpose-built 100% gates, the menu targets
-            # pin their Phase-4b measured baselines — so a coverage drop in
-            # any single target fails its own gate and a broad regression
-            # fails this aggregate gate.
-            min_decision_percent: 35
-            min_condition_percent: 39
+            # 2026-09-29: floors raised to the 100/100 requirement — every
+            # enabled target must prove full MC/DC, no measured-baseline
+            # pins below it. Audits run on the Linux box, where the
+            # formerly mac-disabled Linux-capable targets are re-enabled;
+            # targets whose harness cannot exist on any current platform
+            # (quickshell-interactive paths, fixture-copy instrumentation
+            # gap, QML-side execution) stay explicitly disabled with their
+            # rationale inline.
+            min_decision_percent: 100
+            min_condition_percent: 100
             targets:
                 # Disabled: the harness never executes the shipped
                 # omarchy-apply-lock (it writes /etc/pam.d and pins absolute
@@ -293,10 +293,12 @@ project:
                 # flock + /proc and SKIPs elsewhere, so the measurement gets
                 # zero observations on macOS. Re-enable on Linux CI.
                 - id: lock-bash-update
-                  enabled: false
+                  enabled: true
                   language: bash
                   scope: bin/omarchy-update-lock
                   test_command: lock-shell
+                  min_decision_percent: 100
+                  min_condition_percent: 100
                 - id: lock-bash-session
                   enabled: true
                   language: bash
@@ -334,8 +336,8 @@ project:
                   scope: shell/plugins/menu
                   js_glob: MenuModel.js
                   test_command: menu-node
-                  min_decision_percent: 33
-                  min_condition_percent: 38
+                  min_decision_percent: 100
+                  min_condition_percent: 100
                 # menu-plugin-test.sh executes bin/omarchy-menu-plugin once per
                 # verb — the only menu bash script with a live execution path
                 # on this platform. Baseline measured 2026-09-22: 2/6
@@ -346,15 +348,17 @@ project:
                   language: bash
                   scope: bin/omarchy-menu-plugin
                   test_command: menu-shell
-                  min_decision_percent: 33
-                  min_condition_percent: 20
+                  min_decision_percent: 100
+                  min_condition_percent: 100
                 # Disabled: the harness never executes the menu entry-point
                 # scripts. menu-test.sh asserts them by source grep and by
                 # replaying MenuModel.js under node (covered by
                 # menu-js-menumodel); the omarchy-menu dispatcher and its
                 # select/input/share/timezone/file subprocesses only run
-                # interactively inside quickshell, which does not exist on
-                # this platform. Same disposition class as lock-bash-apply.
+                # inside a live quickshell Wayland session, and the Linux
+                # audit box is headless (no compositor / WAYLAND_DISPLAY),
+                # so no batch test command can produce observations. Same
+                # disposition class as lock-bash-apply.
                 - id: menu-bash-entry
                   enabled: false
                   language: bash
@@ -385,22 +389,23 @@ project:
                   language: bash
                   scope: bin/omarchy-menu-file
                   test_command: menu-shell
-                # Disabled on this platform: menu-images-test.sh requires
-                # Linux flock + /proc and SKIPs elsewhere, so the measurement
-                # gets zero observations on macOS. Re-enable on Linux CI.
+                # Enabled 2026-09-29: audits run on the Linux box (flock +
+                # /proc present), where this target executes and measures.
                 - id: menu-bash-images
-                  enabled: false
+                  enabled: true
                   language: bash
                   scope: bin/omarchy-menu-images
                   test_command: menu-shell
-                # Disabled on this platform: keybindings-menu-test.sh requires
-                # lua and SKIPs elsewhere, so the measurement gets zero
-                # observations on macOS. Re-enable where lua exists.
+                  min_decision_percent: 100
+                  min_condition_percent: 100
+                # Enabled 2026-09-29: lua exists on the Linux audit box.
                 - id: menu-bash-keybindings
-                  enabled: false
+                  enabled: true
                   language: bash
                   scope: bin/omarchy-menu-keybindings
                   test_command: menu-shell
+                  min_decision_percent: 100
+                  min_condition_percent: 100
                 # Disabled: first live QML-engine MC/DC attempt is recorded as
                 # the menu dogfood milestone outcome — structural mismatch.
                 # The qml engine instruments inline JS inside .qml files only
