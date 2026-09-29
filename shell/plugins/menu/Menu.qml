@@ -230,6 +230,7 @@ Item {
     return foldedListHeight(totals, available)
   }
 
+  // Implements: SW-REQ-260929-B8N9
   function item(id) {
     return root.items[id] || null
   }
@@ -975,10 +976,12 @@ Item {
     return "ok"
   }
 
+  // Implements: SW-REQ-260929-T378
   function disarmPointer() {
     pointerGate.reset()
   }
 
+  // Implements: SW-REQ-260929-T378
   function selectFromPointer(index, item, mouse) {
     if (!pointerGate.moved(item, mouse)) return
     if (!root.rowSelectable(index)) return
@@ -993,6 +996,7 @@ Item {
     property string collected: ""
     property int revision: 0
     stdout: SplitParser {
+      // Implements: SW-REQ-260922-EFNR
       onRead: function(data) { providerProc.collected += data + "\n" }
     }
     // Implements: SW-REQ-260922-EFNR
@@ -1007,6 +1011,7 @@ Item {
 
   Process {
     id: resultProc
+    // Implements: SW-REQ-260922-FGZQ
     onExited: {
       if (root.applySerial === root.requestSerial)
         root.opened = false
@@ -1153,6 +1158,7 @@ Item {
     property int maxRowsHeight: -1
     readonly property int centeredTop: Math.max(Style.gapsOut, Math.round((height - root.cardHeight) / 2))
     readonly property int effectiveCardTop: cardTop >= 0 ? cardTop : centeredTop
+    // Implements: SW-REQ-260929-DXFJ
     function freezeCardTop() {
       if (shown && cardTop < 0) {
         cardTop = effectiveCardTop
@@ -1160,6 +1166,7 @@ Item {
       }
     }
     // The surface stays mapped between opens, so closing is shown going false.
+    // Implements: SW-REQ-260929-DXFJ
     onShownChanged: if (!shown) { cardTop = -1; maxRowsHeight = -1 }
 
     Rectangle {

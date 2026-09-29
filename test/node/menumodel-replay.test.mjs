@@ -921,3 +921,25 @@ assert(
   'menu non-lock rows carry no lock invocation'
 )
 })
+
+// ---------------------------------------------------------------------------
+// Regression: JSONC strip edges (vector V-MENU-JSONC-STRIP-EDGES, closed-null
+// 2026-09-29). The two hunted defects: a string-aware stripping defect that
+// ate commas inside string literals, and an inline trailing comment after the
+// last entry that emptied the menu.
+// ---------------------------------------------------------------------------
+
+// C01: a comma inside a string label must survive stripping verbatim.
+test('jsonc strip edges: comma inside string label survives verbatim', () => {
+  const parsed = JSON.parse(menuModel.stripJsonc(JSON.stringify({ a: { label: 'x, ]y' } })))
+  assertEqual(parsed.a.label, 'x, ]y', 'stripJsonc keeps a comma inside a string label verbatim')
+})
+
+// C02: an inline trailing comment after the last entry must not empty the menu.
+test('jsonc strip edges: inline trailing comment does not empty the menu', () => {
+  assertEqual(
+    menuModel.parseMenuJsonc('{"a": {"label": "x"} // trailing comment\n}').length,
+    1,
+    'parseMenuJsonc returns one item when an inline trailing comment follows the last entry'
+  )
+})
