@@ -339,6 +339,7 @@ function searchableToken(value) {
 
 function leafIdFor(id) {
   var parts = String(id || "").split(".")
+  //mcdc:ignore:defensive String.prototype.split always returns at least one element ("".split(".") is [""), so parts.length > 0 is tokenizer-guaranteed true and the  fallback arm is structurally dead; the T path is witnessed by the leafIdFor replay tests
   return parts.length > 0 ? parts[parts.length - 1] : id
 }
 
@@ -554,6 +555,7 @@ function summonAction(action) {
   return { id: match[1], payload: match[2] || "{}" }
 }
 
+//mcdc:ignore:defensive module is always defined in every harness that loads this file (node:test replay, require, CJS-ESM interop shim); the undefined-module arm belongs to a bare browser/QML global script that no test runner can execute, while the exports path is witnessed by every import
 if (typeof module !== "undefined") {
   module.exports = {
     summonAction: summonAction,

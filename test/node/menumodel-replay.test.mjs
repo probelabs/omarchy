@@ -943,3 +943,320 @@ test('jsonc strip edges: inline trailing comment does not empty the menu', () =>
     'parseMenuJsonc returns one item when an inline trailing comment follows the last entry'
   )
 })
+// ---------------------------------------------------------------------------
+// MC/DC unique-cause cases for MenuModel.js (quattro, code_mcdc target
+// menu-js-menumodel). One test block per function; every decision arm and
+// every condition outcome is driven through the exported public API with
+// plain data arguments — no getters, no private reflection.
+// ---------------------------------------------------------------------------
+
+test('mcdc stripJsonc: escape tail, slash pairs, comma placement', () => {
+  // Backslash with a following byte is an escape pair: both bytes survive (T row).
+  assertEqual(menuModel.stripJsonc('"a\\"b"'), '"a\\"b"', 'stripJsonc keeps an escaped quote and its escape byte verbatim')
+  // A trailing backslash has no next byte: the escape arm finds nothing to consume (F row).
+  assertEqual(menuModel.stripJsonc('"a\\'), '"a\\', 'stripJsonc keeps a trailing backslash without consuming past the end')
+  // // outside a string starts a comment to end of line (T row).
+  assertEqual(menuModel.stripJsonc('{"a": 1} // tail'), '{"a": 1} ', 'stripJsonc drops a slash-slash comment outside strings')
+  // A lone slash outside a string is data (F row).
+  assertEqual(menuModel.stripJsonc('{"a": 1} /x'), '{"a": 1} /x', 'stripJsonc keeps a lone slash outside strings')
+  // Comma as the last byte of the input (F row of the whitespace scan; keep).
+  assertEqual(menuModel.stripJsonc('{"a": 1,'), '{"a": 1,', 'stripJsonc keeps a comma at end of input')
+  // Comma before } or ] across whitespace: dropped.
+  assertEqual(menuModel.stripJsonc('{"a": 1 , }'), '{"a": 1  }', 'stripJsonc drops a comma whose next non-whitespace is a brace')
+  assertEqual(menuModel.stripJsonc('["a", ]'), '["a" ]', 'stripJsonc drops a comma whose next non-whitespace is a bracket')
+  // Comma before any other byte: kept.
+  assertEqual(menuModel.stripJsonc('{"a": 1 ,"b": 2}'), '{"a": 1 ,"b": 2}', 'stripJsonc keeps a comma before another entry')
+})
+
+test('mcdc normalizeAliases: array, string, empty, non-string', () => {
+  assertDeepEqual(menuModel.normalizeAliases(['a', '', null, 'b']), ['a', 'b'], 'normalizeAliases drops falsy array elements')
+  assertDeepEqual(menuModel.normalizeAliases('theme'), ['theme'], 'normalizeAliases wraps a nonempty string')
+  assertDeepEqual(menuModel.normalizeAliases(''), [], 'normalizeAliases rejects an empty string')
+  assertDeepEqual(menuModel.normalizeAliases(5), [], 'normalizeAliases rejects a non-string non-array')
+})
+
+test('mcdc normalizeItem: parent inference edges', () => {
+  assertEqual(menuModel.normalizeItem('a.b', { parent: 'custom', label: 'X' }).parent, 'custom', 'normalizeItem keeps a declared parent')
+  assertEqual(menuModel.normalizeItem('a.b', { label: 'X' }).parent, 'a', 'normalizeItem derives a dotted parent')
+  assertEqual(menuModel.normalizeItem('plain', { label: 'X' }).parent, 'root', 'normalizeItem parents a dotless id to root')
+  assertEqual(menuModel.normalizeItem('root', { label: 'Go' }).parent, '', 'normalizeItem strips the parent of root itself')
+})
+
+test('mcdc parseMenuJsonc: scalar, null, and malformed item shapes', () => {
+  assertEqual(menuModel.parseMenuJsonc('42').length, 0, 'parseMenuJsonc rejects a number root')
+  assertEqual(menuModel.parseMenuJsonc('null').length, 0, 'parseMenuJsonc rejects a null root')
+  assertEqual(menuModel.parseMenuJsonc('{"items": 5}').length, 0, 'parseMenuJsonc falls back to the root when items is a scalar')
+  assertEqual(menuModel.parseMenuJsonc('{"items": [1]}').length, 0, 'parseMenuJsonc falls back to the root when items is an array')
+  assertEqual(menuModel.parseMenuJsonc('{"a": {"label": "A"}}').length, 1, 'parseMenuJsonc uses the root object when items is absent')
+  assertEqual(menuModel.parseMenuJsonc('{"a": null}').length, 0, 'parseMenuJsonc skips a null entry')
+  assertEqual(menuModel.parseMenuJsonc('{"a": 5}').length, 0, 'parseMenuJsonc skips a scalar entry')
+  assertEqual(menuModel.parseMenuJsonc('{"a": []}').length, 0, 'parseMenuJsonc skips an array entry')
+  assertEqual(menuModel.parseMenuJsonc('{"a": {"label": "A"}, "b": {"label": "B"}}').length, 2, 'parseMenuJsonc keeps object entries')
+})
+
+test('mcdc mergeMenuSources: null entries, id-less entries, null sources', () => {
+  const merged = menuModel.mergeMenuSources(
+    [null, { label: 'no id' }, { id: 'a', label: 'A' }],
+    [null, { id: 'b', label: 'B' }]
+  )
+  assertDeepEqual(merged.itemOrder, ['root', 'a', 'b'], 'mergeMenuSources skips null and id-less entries')
+  assertEqual(merged.items.a.label, 'A', 'mergeMenuSources keeps well-formed entries')
+  const nullSources = menuModel.mergeMenuSources(null, null)
+  assertDeepEqual(nullSources.itemOrder, ['root'], 'mergeMenuSources treats null sources as empty lists')
+})
+
+test('mcdc mergeAppRows: non-array inputs, orphan and app carryover, row guards', () => {
+  assertDeepEqual(menuModel.mergeAppRows({}, 'not-an-array', 'nope').itemOrder, [], 'mergeAppRows falls back to empty on non-array order and rows')
+  assertDeepEqual(menuModel.mergeAppRows(null, ['ghost'], []).itemOrder, [], 'mergeAppRows treats a null item map as empty')
+  assertDeepEqual(menuModel.mergeAppRows({ ap: { id: 'ap', kind: 'app', label: 'Z' } }, ['ap'], []).itemOrder, [], 'mergeAppRows drops app-kind rows from carryover')
+  assertDeepEqual(menuModel.mergeAppRows({ st: { id: 'st', kind: 'menu', label: 'S' } }, ['ghost', 'st'], []).itemOrder, ['st'], 'mergeAppRows drops order ids with no item behind them')
+  const dup = menuModel.mergeAppRows({ x: { id: 'x', kind: 'menu', label: 'X' } }, ['x'], [{ id: 'x', kind: 'app', label: 'R' }])
+  assertDeepEqual(dup.itemOrder, ['x'], 'mergeAppRows never lets an incoming row displace a carried id')
+  const guarded = menuModel.mergeAppRows({}, [], [{}, null, { id: 'x', kind: 'app', label: 'A' }, { id: 'x', kind: 'app', label: 'B' }])
+  assertDeepEqual(guarded.itemOrder, ['x'], 'mergeAppRows skips null, id-less, and duplicate rows')
+})
+
+test('mcdc swapProviderRows: non-array inputs, orphans, provider matches, row guards', () => {
+  assertDeepEqual(menuModel.swapProviderRows({}, 'nope', 'm', 'nope').itemOrder, [], 'swapProviderRows falls back to empty on non-array order and rows')
+  assertDeepEqual(menuModel.swapProviderRows(null, ['ghost'], 'm', []).itemOrder, [], 'swapProviderRows treats a null item map as empty')
+  assertDeepEqual(menuModel.swapProviderRows({}, ['ghost'], 'm', []).itemOrder, [], 'swapProviderRows drops order ids with no item behind them')
+  assertDeepEqual(menuModel.swapProviderRows({ f: { id: 'f', providerMenu: 'm' } }, ['f'], 'm', []).itemOrder, [], 'swapProviderRows drops rows the same provider contributed')
+  assertDeepEqual(menuModel.swapProviderRows({ k: { id: 'k' } }, ['k'], 'm', [{ id: 'k', label: 'R' }]).itemOrder, ['k'], 'swapProviderRows never lets an incoming row displace another row')
+  const dup = menuModel.swapProviderRows({}, [], 'm', [{}, null, { id: 'r1' }, { id: 'r1' }])
+  assertDeepEqual(dup.itemOrder, ['r1'], 'swapProviderRows skips null, id-less, and duplicate rows')
+})
+
+test('mcdc item: null map, miss, and hit', () => {
+  assertEqual(menuModel.item(null, 'x'), null, 'item returns null for a null map')
+  assertEqual(menuModel.item({}, 'x'), null, 'item returns null for a missing id')
+  assertEqual(menuModel.item({ x: 'v' }, 'x'), 'v', 'item returns the stored value')
+})
+
+test('mcdc resolveRoute: go/menu literals, orphans, alias-less and app entries', () => {
+  const routed = menuModel.mergeMenuSources(
+    [
+      { id: 'system', label: 'System', aliases: ['power-menu'] },
+      { id: 'plain', label: 'Plain' },
+      { id: 'sys', label: 'Sys', aliases: ['Other_Menu', null, ''] }
+    ],
+    []
+  )
+  routed.items['apps.htop'] = { id: 'apps.htop', kind: 'app', parent: 'apps', label: 'Htop', aliases: ['system'] }
+  routed.itemOrder.push('apps.htop')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'go'), 'root', 'resolveRoute routes the go literal to root')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'menu'), 'root', 'resolveRoute routes the menu literal to root')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'Go'), 'root', 'resolveRoute normalizes case before literal checks')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'system'), 'system', 'resolveRoute prefers an exact id over an app keyword')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'power-menu'), 'system', 'resolveRoute matches a declared alias')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'other_menu'), 'sys', 'resolveRoute normalizes underscores in aliases and skips falsy alias entries')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'plain'), 'plain', 'resolveRoute returns an exact id for an alias-less entry')
+  assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'nowhere'), 'nowhere', 'resolveRoute falls through to the literal input')
+  assertEqual(menuModel.resolveRoute({}, 'not-an-array', 'zz'), 'zz', 'resolveRoute treats a non-array order as empty')
+  assertEqual(menuModel.resolveRoute(routed.items, ['ghost', 'plain'], 'zz'), 'zz', 'resolveRoute skips order ids with no item')
+})
+
+function mcdcChain(n, tail) {
+  const items = {}
+  for (let i = 1; i <= n; i++) {
+    items['c' + i] = { id: 'c' + i, parent: i === 1 ? tail : 'c' + (i - 1), kind: 'menu', label: 'C' + i }
+  }
+  return items
+}
+
+test('mcdc depthFor: stop conditions and the 32-deep guard', () => {
+  assertEqual(menuModel.depthFor({}, 'zz'), 0, 'depthFor returns 0 for a missing id')
+  assertEqual(menuModel.depthFor({ x: { id: 'x', parent: '' } }, 'x'), 0, 'depthFor stops at an empty parent')
+  assertEqual(menuModel.depthFor({ x: { id: 'x', parent: 'root' } }, 'x'), 0, 'depthFor stops at the root parent')
+  assertEqual(menuModel.depthFor(mcdcChain(3, 'root'), 'c3'), 2, 'depthFor counts a two-step chain')
+  assertEqual(menuModel.depthFor(mcdcChain(40, 'root'), 'c40'), 32, 'depthFor stops counting at the 32-deep guard')
+})
+
+test('mcdc pathFor: missing id, root stop, parent-less stop, guard cap', () => {
+  assertEqual(menuModel.pathFor({}, 'zz'), '', 'pathFor returns empty for a missing id')
+  const rooted = mcdcChain(3, 'root')
+  rooted.root = { id: 'root', parent: '', kind: 'menu', label: 'Go' }
+  assertEqual(menuModel.pathFor(rooted, 'c3'), 'C1 › C2 › C3', 'pathFor stops at the root item')
+  assertEqual(menuModel.pathFor({ x: { id: 'x', parent: '', label: 'X' } }, 'x'), 'X', 'pathFor stops at an empty parent')
+  const parts = menuModel.pathFor(mcdcChain(40, 'root'), 'c40').split(' › ')
+  assertEqual(parts.length, 32, 'pathFor walks at most 32 links')
+  assert(parts[0] === 'C9' && parts[31] === 'C40', 'pathFor walks from the id toward the root')
+})
+
+test('mcdc parentPathFor: missing id, root parent, empty parent, real path', () => {
+  assertEqual(menuModel.parentPathFor({}, 'zz'), '', 'parentPathFor returns empty for a missing id')
+  assertEqual(menuModel.parentPathFor({ x: { id: 'x', parent: '' } }, 'x'), '', 'parentPathFor returns empty for an empty parent')
+  assertEqual(menuModel.parentPathFor({ x: { id: 'x', parent: 'root' } }, 'x'), '', 'parentPathFor returns empty for the root parent')
+  const items = { y: { id: 'y', parent: 'root', kind: 'menu', label: 'Y' }, x: { id: 'x', parent: 'y', kind: 'menu', label: 'X' } }
+  assertEqual(menuModel.parentPathFor(items, 'x'), 'Y', 'parentPathFor builds the parent chain')
+})
+
+test('mcdc isDescendantOf: root ancestor, missing id, chain walk, guard cap', () => {
+  assertEqual(menuModel.isDescendantOf({}, 'style', 'root'), true, 'isDescendantOf treats every non-root id as a root descendant')
+  assertEqual(menuModel.isDescendantOf({}, 'root', 'root'), false, 'isDescendantOf does not make root its own descendant')
+  assertEqual(menuModel.isDescendantOf({}, 'zz', 'style'), false, 'isDescendantOf returns false for a missing id')
+  const items = mcdcChain(3, 'root')
+  assertEqual(menuModel.isDescendantOf(items, 'c2', 'c1'), true, 'isDescendantOf finds a direct parent')
+  assertEqual(menuModel.isDescendantOf(items, 'c3', 'c1'), true, 'isDescendantOf finds an ancestor deeper in the chain')
+  assertEqual(menuModel.isDescendantOf(items, 'c3', 'nope'), false, 'isDescendantOf walks to the end without a match')
+  assertEqual(menuModel.isDescendantOf({ x: { id: 'x', parent: '' } }, 'x', 'nope'), false, 'isDescendantOf stops at an empty parent')
+  assertEqual(menuModel.isDescendantOf(mcdcChain(40, ''), 'c40', 'c1'), false, 'isDescendantOf stops walking at the 32-deep guard')
+})
+
+test('mcdc childCount: non-array order, orphans, matching parents', () => {
+  assertEqual(menuModel.childCount({}, 'nope', 'x'), 0, 'childCount treats a non-array order as empty')
+  assertEqual(menuModel.childCount({ x: { id: 'x', parent: 'p' } }, ['ghost', 'x'], 'p'), 1, 'childCount skips order ids with no item')
+  assertEqual(menuModel.childCount({ x: { id: 'x', parent: 'p' }, y: { id: 'y', parent: 'q' } }, ['x', 'y'], 'p'), 1, 'childCount counts only entries parented to the id')
+})
+
+test('mcdc isVisible: null entry, guards, kinds, recursion, guard cap', () => {
+  const items = {
+    menu2: { id: 'menu2', parent: 'root', kind: 'menu', label: 'M2' },
+    act: { id: 'act', parent: 'root', kind: 'action', label: 'Act', action: 'x' },
+    link2: { id: 'link2', parent: 'root', kind: 'link', label: 'L2', target: 'act' },
+    link3: { id: 'link3', parent: 'root', kind: 'link', label: 'L3', target: 'menuP' },
+    menuP: { id: 'menuP', parent: 'root', kind: 'menu', label: 'MP' },
+    kid: { id: 'kid', parent: 'menuP', kind: 'action', label: 'Kid' },
+    guarded: { id: 'guarded', parent: 'menuP', kind: 'action', label: 'G', when: 'q' },
+    menuQ: { id: 'menuQ', parent: 'root', kind: 'menu', label: 'MQ' },
+    gq: { id: 'gq', parent: 'menuQ', kind: 'action', label: 'GQ', when: 'q' },
+    stray: { id: 'stray', parent: 'nowhere', kind: 'action', label: 'Stray' }
+  }
+  const order = Object.keys(items)
+  assertEqual(menuModel.isVisible(items, order, {}, null), false, 'isVisible hides a missing entry')
+  assertEqual(menuModel.isVisible(items, order, null, items.guarded), true, 'isVisible treats null guard results as no answer')
+  assertEqual(menuModel.isVisible(items, order, {}, items.guarded), true, 'isVisible keeps a guarded action when the guard has no result')
+  assertEqual(menuModel.isVisible(items, order, { guarded: true }, items.guarded), true, 'isVisible keeps a guarded action whose guard passed')
+  assertEqual(menuModel.isVisible(items, order, { guarded: false }, items.guarded), false, 'isVisible hides a guarded action whose guard failed')
+  assertEqual(menuModel.isVisible(items, order, { act: false }, items.act), true, 'isVisible ignores guard results for entries without a guard')
+  assertEqual(menuModel.isVisible(items, order, {}, items.act), true, 'isVisible always shows action rows')
+  assertEqual(menuModel.isVisible(items, order, {}, items.link2), false, 'isVisible follows a link to a childless target')
+  assertEqual(menuModel.isVisible(items, order, {}, items.link3), true, 'isVisible follows a link to a target with visible children')
+  assertEqual(menuModel.isVisible(items, order, {}, items.menu2), false, 'isVisible hides a childless menu')
+  assertEqual(menuModel.isVisible(items, order, {}, items.menuP), true, 'isVisible keeps a menu with a visible child')
+  assertEqual(menuModel.isVisible(items, order, { gq: false }, items.menuQ), false, 'isVisible hides a menu whose every child is guard-hidden')
+  assertEqual(menuModel.isVisible(items, 'not-an-array', {}, items.menuP), false, 'isVisible treats a non-array order as empty')
+  assertEqual(menuModel.isVisible(items, ['ghost', 'menuP', 'kid'], {}, items.menuP), true, 'isVisible skips order ids with no item')
+  assertEqual(menuModel.isVisible(items, ['menuP', 'kid', 'stray'], {}, items.menuP), true, 'isVisible skips children parented elsewhere')
+  assertEqual(menuModel.isVisible(items, order, {}, items.menuQ, 32), false, 'isVisible hides anything at the recursion cap')
+  const deep = mcdcChain(40, 'root')
+  const deepOrder = Object.keys(deep)
+  assertEqual(menuModel.isVisible(deep, deepOrder, {}, deep.c1), false, 'isVisible stops recursing at the 32-deep guard')
+})
+
+test('mcdc isDisabled and labelFor: null entries and result maps', () => {
+  assertEqual(menuModel.isDisabled({}, null), false, 'isDisabled leaves a missing entry alone')
+  assertEqual(menuModel.isDisabled(null, { id: 'x', disabled: 'cmd' }), false, 'isDisabled treats null results as not disabled')
+  assertEqual(menuModel.isDisabled({}, { id: 'x', label: 'X' }), false, 'isDisabled leaves an entry without disabled: alone')
+  assertEqual(menuModel.isDisabled({ x: true }, { id: 'x', disabled: 'cmd' }), true, 'isDisabled marks a row whose disabled: succeeded')
+  assertEqual(menuModel.isDisabled({ x: false }, { id: 'x', disabled: 'cmd' }), false, 'isDisabled leaves a row whose disabled: failed')
+  assertEqual(menuModel.labelFor(null, {}, {}), '', 'labelFor returns empty for a missing entry')
+  assertEqual(menuModel.labelFor({ id: 'x', label: 'X' }, null, null), 'X', 'labelFor returns the plain label without results')
+  assertEqual(menuModel.labelFor({ id: 'x', label: 'X', checked: 'cmd' }, { x: true }, null), 'X ✓', 'labelFor marks a checked row')
+  assertEqual(menuModel.labelFor({ id: 'x', label: 'X', checked: 'cmd', disabled: 'cmd2' }, null, { x: true }), 'X ✓', 'labelFor marks a disabled row even without checked results')
+  assertEqual(menuModel.labelFor({ id: 'x', label: 'X', checked: 'cmd' }, null, null), 'X', 'labelFor leaves a row unmarked without results')
+  assertEqual(menuModel.labelFor({ id: 'x', label: 'X', checked: 'cmd' }, { x: false }, { x: false }), 'X', 'labelFor leaves a row unmarked when both guards failed')
+})
+
+test('mcdc leafIdFor and nameSearchText: token edges', () => {
+  assertEqual(menuModel.leafIdFor('a.b.c'), 'c', 'leafIdFor returns the last dotted segment')
+  assertEqual(menuModel.leafIdFor('plain'), 'plain', 'leafIdFor returns an undotted id whole')
+  assertEqual(menuModel.leafIdFor(''), '', 'leafIdFor returns empty for empty input')
+  assertEqual(menuModel.leafIdFor(null), '', 'leafIdFor returns empty for a missing id')
+  assertEqual(menuModel.nameSearchText(null), '', 'nameSearchText returns empty for a missing entry')
+  assertEqual(menuModel.nameSearchText({ id: 'a.b', label: 'Zen', aliases: ['color theme', 'zb'] }), 'zen b color theme zb', 'nameSearchText joins label, leaf, and alias tokens')
+  assertEqual(menuModel.nameSearchText({ id: 'x', label: 'L', aliases: 'str' }), 'l x ', 'nameSearchText ignores a non-array aliases field')
+  assertEqual(menuModel.searchableToken('a.b-c_d'), 'a b c d', 'searchableToken splits separator runs into spaces')
+})
+
+test('mcdc termInSearchWords and descriptionTextMatches: word edges', () => {
+  assertEqual(menuModel.termInSearchWords('theme', 'a theme b'), true, 'termInSearchWords finds a whole word')
+  assertEqual(menuModel.termInSearchWords('zz', 'a b'), false, 'termInSearchWords rejects a missing word')
+  assertEqual(menuModel.termInSearchWords('', 'x'), false, 'termInSearchWords rejects an empty term')
+  assertEqual(menuModel.descriptionTextMatches('zen', 'has zen here'), true, 'descriptionTextMatches accepts a query fully covered by words')
+  assertEqual(menuModel.descriptionTextMatches('zen now', 'has zen here'), false, 'descriptionTextMatches rejects a query with an uncovered word')
+  assertEqual(menuModel.descriptionTextMatches('', 'anything'), true, 'descriptionTextMatches accepts an empty query')
+  assertEqual(menuModel.descriptionTextMatches('   ', 'anything'), true, 'descriptionTextMatches accepts a whitespace query')
+})
+
+test('mcdc matchesQuery: null entry, root row, empty query, description-only terms', () => {
+  const entry = { id: 'a', label: 'Zed', description: 'the zen tool', aliases: [] }
+  assertEqual(menuModel.matchesQuery(null, 'x', true), false, 'matchesQuery rejects a missing entry')
+  assertEqual(menuModel.matchesQuery({ id: 'root', label: 'Go' }, 'go', true), false, 'matchesQuery never matches the root row')
+  assertEqual(menuModel.matchesQuery(entry, 'zen', false), false, 'matchesQuery rejects invisible rows')
+  assertEqual(menuModel.matchesQuery(entry, '', true), true, 'matchesQuery matches everything visible on an empty query')
+  assertEqual(menuModel.matchesQuery(entry, 'zen', true), true, 'matchesQuery matches a description word')
+  assertEqual(menuModel.matchesQuery(entry, 'zed zen', true), true, 'matchesQuery spans name and description terms')
+  assertEqual(menuModel.matchesQuery(entry, 'zed nowhere', true), false, 'matchesQuery rejects one uncovered term among many')
+  assertEqual(menuModel.matchesQuery(entry, '   ', true), true, 'matchesQuery treats a whitespace query as empty')
+})
+
+test('mcdc searchScore: every tier with a deterministic order and depth', () => {
+  const mk = (id, extra) => {
+    const entry = menuModel.normalizeItem(id, extra)
+    entry.order = 0
+    return entry
+  }
+  const m = {
+    ex: mk('ex', { label: 'zen' }),
+    px: mk('px', { label: 'P' }),
+    nx: mk('nx', { label: 'zen', parent: 'px' }),
+    ap: mk('ap', { label: 'Zen Browser' }),
+    ap2: mk('ap2', { label: 'zenbrowser' }),
+    pf: mk('pf', { label: 'zenith' }),
+    ct: mk('ct', { label: 'a zen b' }),
+    al: mk('al', { label: 'style', aliases: ['colors'] }),
+    ds: mk('ds', { label: 'nothing', description: 'has zen here' }),
+    nn: mk('nn', { label: 'nothing', description: 'blank' }),
+    lk: mk('lk', { label: 'zenith', target: 'x' }),
+    ax: mk('ax', { label: 'zen', action: 'run' })
+  }
+  m.ap.kind = 'app'
+  m.ap2.kind = 'app'
+  const sc = (key, query) => menuModel.searchScore(m, m[key], query)
+  assertEqual(sc('ex', 'zen'), 0, 'searchScore puts an exact root-level menu label at the top of its tier')
+  assertEqual(sc('ax', 'zen'), 2000, 'searchScore keeps an exact action label two points above an exact menu label')
+  assertEqual(sc('nx', 'zen'), -1975, 'searchScore drops a nested exact label below root-level and adds one depth step')
+  assertEqual(sc('ap', 'zen'), -5000, 'searchScore puts an app whole-word match in its own negative tier')
+  assertEqual(sc('ap2', 'zen'), 5000, 'searchScore keeps an app label that only prefixes the query out of the whole-word tier')
+  assertEqual(sc('pf', 'zen'), 8000, 'searchScore scores a label-prefix match at ten')
+  assertEqual(sc('lk', 'zen'), 8000, 'searchScore scores a link row like a menu row')
+  assertEqual(sc('ct', 'zen'), 28000, 'searchScore scores a mid-label match at thirty')
+  assertEqual(sc('al', 'colors'), 38000, 'searchScore scores an alias-only match at forty')
+  assertEqual(sc('ds', 'zen'), 58000, 'searchScore scores a description-only match at sixty')
+  assertEqual(sc('nn', 'zen'), 78000, 'searchScore scores an unmatched row at eighty')
+})
+
+test('mcdc guardScript: empty maps, per-field lines, reader capture and substitution', () => {
+  assertEqual(menuModel.guardScript({}), '', 'guardScript returns empty for an empty map')
+  assertEqual(menuModel.guardScript({ a: null }), '', 'guardScript skips a null entry')
+  assertEqual(menuModel.guardScript({ a: { id: 'a' } }), '', 'guardScript skips an entry with no guards')
+  const script = menuModel.guardScript({
+    a: { id: 'a', when: '$(omarchy-dns) == none', checked: 'omarchy-pkg-present git', disabled: 'omarchy-cmd-missing foot' }
+  })
+  assert(script.startsWith('declare -A __omarchy_pkgs=()'), 'guardScript opens with the batch helpers')
+  assert(script.includes('__omarchy_read_5=$(' + menuModel.guardReaders[5] + ' 2>/dev/null) || :'), 'guardScript captures only the readers a guard uses')
+  assert(!script.includes('__omarchy_read_0='), 'guardScript leaves unused readers uncaptured')
+  assert(script.includes('if { ${__omarchy_read_5} == none; } >/dev/null 2>&1; then echo a:w:1; else echo a:w:0;'), 'guardScript substitutes the captured reader into when:')
+  assert(script.includes('if { omarchy-pkg-present git; } >/dev/null 2>&1; then echo a:c:1; else echo a:c:0;'), 'guardScript emits checked: lines verbatim')
+  assert(script.includes('if { omarchy-cmd-missing foot; } >/dev/null 2>&1; then echo a:d:1; else echo a:d:0;'), 'guardScript emits disabled: lines verbatim')
+  const single = menuModel.guardScript({ b: { id: 'b', when: '$(omarchy-channel-current) == dev' } })
+  assert(single.includes('__omarchy_read_0='), 'guardScript captures the channel reader when a guard uses it')
+  assert(!single.includes('__omarchy_read_5='), 'guardScript does not capture the dns reader without a use')
+  assert(single.includes('if { ${__omarchy_read_0} == dev; }'), 'guardScript substitutes the channel reader slot')
+  const doubled = menuModel.guardScript({ c: { id: 'c', when: '$(omarchy-dns)$(omarchy-dns)' } })
+  assertEqual(doubled.split('${__omarchy_read_5}').length - 1, 2, 'guardScript substitutes every reader call in one expression')
+  const versioned = menuModel.guardScript({ d: { id: 'd', when: 'omarchy-pkg-present bash>=1' } })
+  assert(versioned.includes('if { omarchy-pkg-present bash>=1; }'), 'guardScript passes a version-constrained package check through unrewritten')
+  assert(!versioned.includes('__omarchy_read_'), 'guardScript captures nothing when no guard names a reader')
+})
+
+test('mcdc summonAction: in-process summon shape and every rejection', () => {
+  assertEqual(menuModel.summonAction(undefined), null, 'summonAction rejects a missing action')
+  assertEqual(menuModel.summonAction(''), null, 'summonAction rejects an empty action')
+  assertEqual(menuModel.summonAction('omarchy-theme-set dark'), null, 'summonAction rejects a non-summon action')
+  assertEqual(menuModel.summonAction('xomarchy-shell shell summon style'), null, 'summonAction rejects a lookalike prefix')
+  assertEqual(menuModel.summonAction('omarchy-shell shell summonx style'), null, 'summonAction rejects a corrupted verb')
+  assertEqual(menuModel.summonAction('omarchy-shell shell summon bad id'), null, 'summonAction rejects an id with a space')
+  assertDeepEqual(menuModel.summonAction('omarchy-shell shell summon style'), { id: 'style', payload: '{}' }, 'summonAction parses a bare summon to an empty payload')
+  assertDeepEqual(menuModel.summonAction("omarchy-shell shell summon style 'k=v'"), { id: 'style', payload: 'k=v' }, 'summonAction parses a quoted payload')
+})
