@@ -21,15 +21,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-09-29T13:06:52.67912747Z"
+    reviewed_at: "2026-09-29T14:26:57.123970864Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:revealCursor: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:underhang: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:revealCursor: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:underhang: file1:2a1cd5072d179950126df6cdf893eb47
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:

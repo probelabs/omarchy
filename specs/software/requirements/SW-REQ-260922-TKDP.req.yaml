@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-09-29T13:06:51.625402509Z"
+    reviewed_at: "2026-09-29T14:26:57.106923853Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:2a1cd5072d179950126df6cdf893eb47
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:

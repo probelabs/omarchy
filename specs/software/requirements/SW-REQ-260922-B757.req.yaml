@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-09-29T13:04:45.797677401Z"
+    reviewed_at: "2026-09-29T14:26:57.012432591Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:fc27f2279de1e5cd4ee33a70334305734f2c20198f543b39a6f9ffc758a8390f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:runAction: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:runAction: file1:2a1cd5072d179950126df6cdf893eb47
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:

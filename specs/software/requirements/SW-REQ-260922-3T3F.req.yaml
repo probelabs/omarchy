@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T13:06:44.233966152Z"
+    reviewed_at: "2026-09-29T14:26:56.954499196Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:stripJsonc: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
             shell/plugins/menu/MenuModel.js:stripJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
         satisfies:

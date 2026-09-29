@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T13:06:44.754710891Z"
+    reviewed_at: "2026-09-29T14:26:56.962693722Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:finishRequest: file1:b982e98b6fce3cd5e2683a14c4177ac1
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:finishRequest: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:

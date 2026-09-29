@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-29T13:08:42Z"
+updated_at: "2026-09-29T14:30:51Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -15,10 +15,35 @@ steps:
         scope_key: lock
     coverage:
         status: confirmed
-        confirmed_at: "2026-09-29T13:08:42Z"
-        confirmed_by: buger
-        note: 'Re-confirmed post annotation pass: coverage state unchanged by comment-only edits; lock bash MC/DC suite remains green from box run 1e0cf1f0; mcdc coverage cache revalidated on this worktree; no coverage-bearing source changed.'
+        confirmed_at: "2026-09-29T14:30:50Z"
+        confirmed_by: human:Leonid Bugaev
+        note: 'Re-confirmed after the v17 analyzer evidence refresh: lock bash MC/DC suite re-executed green on this box (fresh cohort run with code_mcdc_measure), js engine evidence regenerated for the updated menumodel-replay input, new menu-pointer-lifecycle-test.sh execution harness lands the three 260929 pointer/lifecycle guarantees at 0 uncovered of 316 witness rows; orphan_code_clean 231/231 traced, orphan_tests_clean 45/45 clean'
+        verify_result:
+            exit_code: 0
+            passed: true
+            at: "2026-09-29T14:30:51Z"
+            output: |
+                Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
+
+
+                Requirements: 88 total
+
+                  ━━━ IMPLEMENTATION ━━━
+                Refreshing trace index + annotations (88 requirements)…
+                    ▶ running orphan_tests_clean…
+                    ✓ orphan_tests_clean             45 test functions scanned, 0 orphans  (27ms)
+                    ▶ running orphan_code_clean…
+                    ✓ orphan_code_clean              231/231 code functions traced  (0ms)
+
+                  Errors: 0  Warnings: 0
+
+                Help: proof help audit
+                  Cache: 0 hits / 2 fresh / 2 stored (computed in 1s)
         scope_key: lock
+        check_results:
+            - id: code_mcdc_measure
+              status: pass
+              at: "2026-09-29T14:30:50Z"
     debt-standing:
         status: confirmed
         confirmed_at: "2026-09-27T23:02:46Z"
