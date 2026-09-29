@@ -52,6 +52,7 @@ Item {
   readonly property var batteryService: shell && shell.services ? shell.firstPartyServiceFor("omarchy.battery") : null
   readonly property bool powerSaverActive: batteryService ? batteryService.powerSaverOnBattery : false
 
+  // Implements: SYS-REQ-260912-T0XP
   function realScreenCount() {
     var screens = Quickshell.screens || []
     var count = 0
@@ -64,10 +65,12 @@ Item {
     return count
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function hasRealScreen() {
     return realScreenCount() > 0
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function queueSessionLock() {
     pendingSessionLock = true
     if (!sessionLockStabilizeTimer.running) logEvent("lock-pending: screen-stabilizing")
@@ -75,6 +78,7 @@ Item {
     if (!pendingSessionLockTimer.running) pendingSessionLockTimer.start()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function requestSessionLock() {
     if (!lockRequested || sessionLock.locked || sessionLock.secure) return
     if (sessionLockStabilizeTimer.running) return
@@ -116,10 +120,12 @@ Item {
     beginLock()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function refreshBackground() {
     if (!readlinkProc.running) readlinkProc.running = true
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function refreshPoster() {
     if (!root.videoBackground) {
       root.videoPosterPath = ""
@@ -130,16 +136,19 @@ Item {
     posterProc.running = true
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function refreshFingerprintStatus() {
     if (!fingerprintCheckProc.running) fingerprintCheckProc.running = true
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function logEvent(event) {
     lastEvent = event
     lastEventAt = new Date().toISOString()
     console.log("omarchy lock " + lastEventAt + " " + event)
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function resetAuthenticationState() {
     enteredPassword = ""
     pendingPassword = ""
@@ -173,6 +182,7 @@ Item {
     return true
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function finishUnlock() {
     if (!root.locked && !lockRequested) return
 
@@ -187,11 +197,13 @@ Item {
     runWake()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function armBlankTimer() {
     idleBlankTimer.armedAt = Date.now()
     idleBlankTimer.restart()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function runWake() {
     root.displaysBlank = false
     root.monitorDpmsKnown = false
@@ -199,18 +211,21 @@ Item {
     if (lockRequested) armBlankTimer()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function runBlank() {
     root.displaysBlank = true
     root.monitorDpmsKnown = false
     if (!blankProcess.running) blankProcess.running = true
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function screenBlank(screenName) {
     var name = String(screenName || "")
     if (!monitorDpmsKnown || !(name in monitorDpms)) return displaysBlank
     return !monitorDpms[name]
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function applyMonitorDpms(text) {
     var monitors
     try {
@@ -229,6 +244,7 @@ Item {
     monitorDpmsKnown = true
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function submitPassword(value) {
     var password = String(value || "")
     if (!lockRequested || authenticatingPassword || password.length === 0) return
@@ -246,11 +262,13 @@ Item {
     Qt.callLater(respondToPasswordPrompt)
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function respondToPasswordPrompt() {
     if (!authenticatingPassword || !passwordPam.active || !passwordPam.responseRequired) return
     passwordPam.respond(pendingPassword)
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function handlePasswordFailure() {
     if (!lockRequested) return
 
@@ -262,6 +280,7 @@ Item {
     runWake()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function startFingerprint() {
     if (!lockRequested || !sessionLock.secure || !fingerprintConfigured) return
     if (fingerprintPam.active || fingerprintAuthenticating) return
@@ -272,6 +291,7 @@ Item {
     }
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   function handleFingerprintFinished(result) {
     fingerprintAuthenticating = false
 
@@ -288,6 +308,7 @@ Item {
 
     locked: false
 
+    // Implements: SYS-REQ-260912-T0XP
     onSecureStateChanged: {
       root.logEvent("secure=" + secure)
       if (secure) {
@@ -298,6 +319,7 @@ Item {
       }
     }
 
+    // Implements: SYS-REQ-260912-T0XP
     onLockStateChanged: {
       root.logEvent("session-locked=" + locked)
 
@@ -336,9 +358,13 @@ Item {
         displaysBlank: root.screenBlank(lockSurface.screen ? lockSurface.screen.name : "")
         powerSaverActive: root.powerSaverActive
         passwordText: root.enteredPassword
+        // Implements: SYS-REQ-260912-T0XP
         onPasswordTextEdited: function(password) { root.enteredPassword = password }
+        // Implements: SYS-REQ-260912-T0XP
         onSubmitPassword: function(password) { root.submitPassword(password) }
+        // Implements: SYS-REQ-260912-T0XP
         onClearFailureRequested: root.failureMessage = ""
+        // Implements: SYS-REQ-260912-T0XP
         onWakeRequested: root.runWake()
       }
 
@@ -374,6 +400,7 @@ Item {
       id: previewDismissMouseArea
       anchors.fill: parent
       acceptedButtons: Qt.LeftButton | Qt.RightButton
+      // Implements: SYS-REQ-260912-T0XP
       onClicked: root.previewVisible = false
     }
   }
@@ -383,9 +410,12 @@ Item {
     config: "omarchy-lock-password"
     user: root.userName
 
+    // Implements: SYS-REQ-260912-T0XP
     onResponseRequiredChanged: root.respondToPasswordPrompt()
+    // Implements: SYS-REQ-260912-T0XP
     onPamMessage: root.respondToPasswordPrompt()
 
+    // Implements: SYS-REQ-260912-T0XP
     onCompleted: function(result) {
       root.authenticatingPassword = false
       root.pendingPassword = ""
@@ -395,6 +425,7 @@ Item {
       else root.handlePasswordFailure()
     }
 
+    // Implements: SYS-REQ-260912-T0XP
     onError: function(error) {
       root.handlePasswordFailure()
     }
@@ -405,10 +436,12 @@ Item {
     config: "omarchy-lock-fingerprint"
     user: root.userName
 
+    // Implements: SYS-REQ-260912-T0XP
     onCompleted: function(result) {
       root.handleFingerprintFinished(result)
     }
 
+    // Implements: SYS-REQ-260912-T0XP
     onError: function(error) {
       root.fingerprintAuthenticating = false
       if (root.lockRequested && root.fingerprintConfigured) fingerprintRetryTimer.restart()
@@ -445,6 +478,7 @@ Item {
     id: fingerprintRetryTimer
     interval: 250
     repeat: false
+    // Implements: SYS-REQ-260912-T0XP
     onTriggered: root.startFingerprint()
   }
 
@@ -453,6 +487,7 @@ Item {
     command: ["bash", "-c", "path=$(readlink -f -- \"$1\") && printf '%s\\n%s\\n' \"$path\" \"$(stat -Lc %Y:%s -- \"$path\" 2>/dev/null)\"", "_", root.currentBackgroundLink]
     stdout: StdioCollector {
       waitForEnd: true
+      // Implements: SYS-REQ-260912-T0XP
       onStreamFinished: {
         var lines = String(text || "").split("\n")
         var next = String(lines[0] || "").trim()
@@ -476,6 +511,7 @@ Item {
     property string sourcePath: ""
     command: ["bash", Quickshell.env("OMARCHY_PATH") + "/shell/plugins/lock/poster.sh", sourcePath]
     stdout: StdioCollector { id: posterOutput; waitForEnd: true }
+    // Implements: SYS-REQ-260912-T0XP
     onExited: function(exitCode) {
       if (sourcePath !== root.backgroundPath) {
         root.refreshPoster()
@@ -489,6 +525,7 @@ Item {
     id: fingerprintCheckProc
     command: ["bash", "-c", "if [[ -f /etc/pam.d/omarchy-lock-fingerprint ]] && command -v fprintd-list >/dev/null 2>&1 && fprintd-list \"$USER\" 2>/dev/null | grep -qi finger; then echo yes; else echo no; fi"]
     stdout: StdioCollector { id: fingerprintCheckStdout; waitForEnd: true }
+    // Implements: SYS-REQ-260912-T0XP
     onExited: {
       root.fingerprintConfigured = String(fingerprintCheckStdout.text || "").trim() === "yes"
       if (root.lockRequested && root.fingerprintConfigured) root.startFingerprint()
@@ -499,6 +536,7 @@ Item {
   Process {
     id: strandedLockCheckProc
     command: ["bash", "-c", "omarchy-hyprland-session-locked"]
+    // Implements: SYS-REQ-260912-T0XP
     onExited: function(exitCode) {
       // No output to read the lock off yet.
       if (exitCode === 2) return
@@ -528,6 +566,7 @@ Item {
     id: monitorDpmsProcess
     command: ["hyprctl", "monitors", "-j"]
     stdout: StdioCollector {
+      // Implements: SYS-REQ-260912-T0XP
       onStreamFinished: root.applyMonitorDpms(text)
     }
   }
@@ -538,9 +577,11 @@ Item {
     repeat: true
     triggeredOnStart: true
     running: root.locked && root.videoBackground
+    // Implements: SYS-REQ-260912-T0XP
     onTriggered: {
       if (!monitorDpmsProcess.running) monitorDpmsProcess.running = true
     }
+    // Implements: SYS-REQ-260912-T0XP
     onRunningChanged: {
       if (!running) root.monitorDpmsKnown = false
     }
@@ -552,6 +593,7 @@ Item {
     interval: 5000
     repeat: false
     property double armedAt: 0
+    // Implements: SW-REQ-260912-WJYM
     onTriggered: {
       // A countdown frozen by suspend fires right after resume, which would
       // blank the freshly woken unlock screen under the user. Wall-clock time
@@ -571,6 +613,7 @@ Item {
     id: sessionLockStabilizeTimer
     interval: 500
     repeat: false
+    // Implements: SYS-REQ-260912-T0XP
     onTriggered: root.requestSessionLock()
   }
 
@@ -578,6 +621,7 @@ Item {
     id: pendingSessionLockTimer
     interval: 100
     repeat: true
+    // Implements: SYS-REQ-260912-T0XP
     onTriggered: root.requestSessionLock()
   }
 
@@ -590,10 +634,12 @@ Item {
     property int remaining: 20
     running: !root.strandedLockResolved && remaining > 0
 
+    // Implements: SYS-REQ-260912-T0XP
     function rearm() {
       if (!root.strandedLockResolved) remaining = budget
     }
 
+    // Implements: SYS-REQ-260912-T0XP
     onTriggered: {
       remaining -= 1
       root.checkStrandedLock()
@@ -603,6 +649,7 @@ Item {
   Connections {
     id: screensChangedConnections
     target: Quickshell
+    // Implements: SYS-REQ-260912-T0XP
     function onScreensChanged() {
       // A panel coming back is a display turning on that runWake did not ask
       // for, so the blank state has to be given up here or a visible lock
@@ -616,6 +663,7 @@ Item {
     }
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   onAuthenticatingPasswordChanged: {
     if (!lockRequested) return
     if (authenticatingPassword) idleBlankTimer.stop()
@@ -627,13 +675,17 @@ Item {
     path: "/etc/pam.d/omarchy-lock-password"
     watchChanges: true
     printErrors: false
+    // Implements: SYS-REQ-260912-T0XP
     onLoaded: root.passwordPamConfigured = true
+    // Implements: SYS-REQ-260912-T0XP
     onLoadFailed: root.passwordPamConfigured = false
+    // Implements: SYS-REQ-260912-T0XP
     onFileChanged: reload()
   }
 
   // No lock before PAM is known good. An answer from before then may be stale --
   // the failsafe can be cleared from a TTY -- so re-ask rather than act on it.
+  // Implements: SYS-REQ-260912-T0XP
   onPasswordPamConfiguredChanged: {
     if (!passwordPamConfigured) return
 
@@ -643,6 +695,7 @@ Item {
     checkStrandedLock()
   }
 
+  // Implements: SYS-REQ-260912-T0XP
   Component.onCompleted: {
     refreshBackground()
     refreshFingerprintStatus()
@@ -662,10 +715,12 @@ Item {
       return "ok"
     }
 
+    // Implements: SYS-REQ-260912-FRG0
     function isLocked(): string {
       return root.locked ? "true" : "false"
     }
 
+    // Implements: SYS-REQ-260912-FRG0
     function status(): string {
       return JSON.stringify({
         locked: root.locked,
@@ -682,6 +737,7 @@ Item {
       })
     }
 
+    // Implements: SYS-REQ-260912-FRG0
     function preview(): string {
       root.refreshBackground()
       root.refreshFingerprintStatus()
@@ -689,6 +745,7 @@ Item {
       return "ok"
     }
 
+    // Implements: SYS-REQ-260912-FRG0
     function hidePreview(): string {
       root.previewVisible = false
       return "ok"

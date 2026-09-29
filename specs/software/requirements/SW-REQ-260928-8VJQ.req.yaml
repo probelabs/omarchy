@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-09-29T10:09:06.401090254Z"
+    reviewed_at: "2026-09-29T13:06:53.72266291Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:runAction: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:runAction: file1:b982e98b6fce3cd5e2683a14c4177ac1
             shell/plugins/menu/MenuModel.js:stripJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
             shell/plugins/menu/MenuModel.js:summonAction: file1:24c4fbe3020387b7c72c5ab9d14852fc
         satisfies:
@@ -43,6 +43,23 @@ traces:
             - shell/plugins/menu/MenuModel.js:553
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:38
+        - reviewed_at: "2026-09-29T13:06:53.72266291Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:550
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:6
+            - test/shell.d/menu-test.sh:918
+            - test/shell.d/menu-test.sh:919
+            - test/shell.d/menu-test.sh:932
+            - test/shell.d/menu-test.sh:943
 verification:
     assurance_level: C
     formalization_status: valid

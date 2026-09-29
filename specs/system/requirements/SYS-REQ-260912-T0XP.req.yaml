@@ -19,14 +19,20 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-29T10:09:06.494044198Z"
+    reviewed_at: "2026-09-29T13:06:54.785757364Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:3f77f2a80c0200f078baeed027d27f972b19dedd247714a44695c2aee3c41740
     reviewed_targets:
         implemented_by:
             bin/omarchy-system-lock: file1:c73a5cfa8c9660a364538063c5adbda8
-            shell/plugins/lock/LockView.qml: file1:080d879d5dea83899621587599392fa9
-            shell/plugins/lock/Service.qml: file1:d479422c4ad115684d7d6cb8207928f5
+            shell/plugins/lock/LockView.qml: file1:18b6974749ba33818fdff1eba0d3f551
+            shell/plugins/lock/LockView.qml:submitted: file1:18b6974749ba33818fdff1eba0d3f551
+            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml:finishUnlock: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml:lines: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml:realScreenCount: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml:submitPassword: file1:328e2d295f67b2767d3d8076382cdbe5
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -41,6 +47,41 @@ traces:
             - shell/plugins/lock/Service.qml:8
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-09-29T13:06:54.785757364Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:8
+            - shell/plugins/lock/LockView.qml:211
+            - shell/plugins/lock/LockView.qml:53
+            - shell/plugins/lock/LockView.qml:57
+            - shell/plugins/lock/LockView.qml:6
+            - shell/plugins/lock/LockView.qml:62
+            - shell/plugins/lock/LockView.qml:82
+            - shell/plugins/lock/Service.qml:123
+            - shell/plugins/lock/Service.qml:128
+            - shell/plugins/lock/Service.qml:139
+            - shell/plugins/lock/Service.qml:144
+            - shell/plugins/lock/Service.qml:151
+            - shell/plugins/lock/Service.qml:185
+            - shell/plugins/lock/Service.qml:200
+            - shell/plugins/lock/Service.qml:206
+            - shell/plugins/lock/Service.qml:214
+            - shell/plugins/lock/Service.qml:55
+            - shell/plugins/lock/Service.qml:68
+            - shell/plugins/lock/Service.qml:73
+            - shell/plugins/lock/Service.qml:8
+            - shell/plugins/lock/Service.qml:81
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/system-lock-test.sh:107
+            - test/shell.d/system-lock-test.sh:12
+            - test/shell.d/system-lock-test.sh:132
+            - test/shell.d/system-lock-test.sh:143
+            - test/shell.d/system-lock-test.sh:49
+            - test/shell.d/system-lock-test.sh:7
+            - test/shell.d/system-lock-test.sh:79
 verification:
     assurance_level: C
     formalization_status: valid

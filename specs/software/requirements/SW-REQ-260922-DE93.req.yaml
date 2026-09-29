@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-09-29T10:09:06.006357208Z"
+    reviewed_at: "2026-09-29T13:06:46.862445588Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:87d0cf18a278fd47c6dab9a563574b04
-            shell/plugins/menu/Menu.qml:underhang: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:underhang: file1:b982e98b6fce3cd5e2683a14c4177ac1
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -41,6 +41,23 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-compositor-test.sh:352
             - test/shell.d/menu-compositor-test.sh:362
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-09-29T13:06:46.862445588Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1197
+            - shell/plugins/menu/Menu.qml:782
+            - shell/plugins/menu/Menu.qml:798
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:23
+            - test/shell.d/menu-compositor-test.sh:352
+            - test/shell.d/menu-compositor-test.sh:353
+            - test/shell.d/menu-compositor-test.sh:362
+            - test/shell.d/menu-compositor-test.sh:363
+            - test/shell.d/menu-compositor-test.sh:364
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C

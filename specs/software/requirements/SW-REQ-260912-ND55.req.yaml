@@ -19,12 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-29T10:09:05.673083273Z"
+    reviewed_at: "2026-09-29T13:06:42.680354304Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:acfb8573e2a8aed78be868c02bdd4cd45d17441df3b6c22c283615ab65053bda
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml: file1:d479422c4ad115684d7d6cb8207928f5
+            shell/plugins/lock/LockView.qml: file1:18b6974749ba33818fdff1eba0d3f551
+            shell/plugins/lock/LockView.qml:submitted: file1:18b6974749ba33818fdff1eba0d3f551
+            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
         satisfies:
             SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
     review_history:
@@ -46,6 +48,25 @@ traces:
             - shell/plugins/lock/Service.qml:549
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-blank-fingerprint-test.sh:7
+        - reviewed_at: "2026-09-29T13:06:42.680354304Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:155
+            - shell/plugins/lock/LockView.qml:157
+            - shell/plugins/lock/LockView.qml:218
+            - shell/plugins/lock/LockView.qml:59
+            - shell/plugins/lock/Service.qml:590
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-blank-fingerprint-test.sh:10
+            - test/shell.d/lock-blank-fingerprint-test.sh:23
+            - test/shell.d/lock-blank-fingerprint-test.sh:24
+            - test/shell.d/lock-blank-fingerprint-test.sh:40
+            - test/shell.d/lock-blank-fingerprint-test.sh:41
+            - test/shell.d/lock-blank-fingerprint-test.sh:7
+            - test/shell.d/lock-blank-fingerprint-test.sh:9
 verification:
     assurance_level: C
     formalization_status: valid

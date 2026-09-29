@@ -19,12 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-29T10:09:05.697751588Z"
+    reviewed_at: "2026-09-29T12:22:34.325347281Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:10ef9988f240b45bd910270e9230a798bb0d2d142144566df155ec4b5da284fc
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/LockView.qml: file1:080d879d5dea83899621587599392fa9
+            shell/plugins/lock/LockView.qml: file1:18b6974749ba33818fdff1eba0d3f551
+            shell/plugins/lock/LockView.qml:submitted: file1:18b6974749ba33818fdff1eba0d3f551
         satisfies:
             SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
     review_history:
@@ -37,6 +38,21 @@ traces:
             - shell/plugins/lock/LockView.qml:37
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-password-overflow-test.sh:7
+        - reviewed_at: "2026-09-29T12:22:34.325347281Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:202
+            - shell/plugins/lock/LockView.qml:38
+            - shell/plugins/lock/LockView.qml:55
+            - shell/plugins/lock/LockView.qml:67
+            - shell/plugins/lock/LockView.qml:72
+            - shell/plugins/lock/LockView.qml:80
+            - shell/plugins/lock/LockView.qml:86
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-password-overflow-test.sh
 verification:
     assurance_level: C
     formalization_status: valid

@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T10:09:05.834716503Z"
+    reviewed_at: "2026-09-29T13:06:45.277520004Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:stripJsonc: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:stripJsonc: file1:b982e98b6fce3cd5e2683a14c4177ac1
             shell/plugins/menu/MenuModel.js:normalizeItem: file1:24c4fbe3020387b7c72c5ab9d14852fc
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
@@ -39,6 +39,21 @@ traces:
             - shell/plugins/menu/MenuModel.js:41
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-09-29T13:06:45.277520004Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:248
+            - shell/plugins/menu/Menu.qml:253
+            - shell/plugins/menu/MenuModel.js:47
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:66
+            - test/shell.d/menu-test.sh:9
+            - test/shell.d/menu-test.sh:97
 verification:
     assurance_level: C
     formalization_status: valid

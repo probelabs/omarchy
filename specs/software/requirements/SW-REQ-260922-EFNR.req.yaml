@@ -19,15 +19,17 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-09-29T10:09:06.044658834Z"
+    reviewed_at: "2026-09-29T13:06:48.456377386Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:87d0cf18a278fd47c6dab9a563574b04
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:87d0cf18a278fd47c6dab9a563574b04
-            shell/plugins/menu/Menu.qml:startNextProvider: file1:87d0cf18a278fd47c6dab9a563574b04
-            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:onAppsChanged: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:startNextProvider: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:b982e98b6fce3cd5e2683a14c4177ac1
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:24c4fbe3020387b7c72c5ab9d14852fc
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
@@ -42,6 +44,27 @@ traces:
             - shell/plugins/menu/MenuModel.js:172
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-09-29T13:06:48.456377386Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1024
+            - shell/plugins/menu/Menu.qml:354
+            - shell/plugins/menu/Menu.qml:375
+            - shell/plugins/menu/Menu.qml:421
+            - shell/plugins/menu/Menu.qml:438
+            - shell/plugins/menu/Menu.qml:445
+            - shell/plugins/menu/Menu.qml:464
+            - shell/plugins/menu/Menu.qml:998
+            - shell/plugins/menu/MenuModel.js:181
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:19
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:815
+            - test/shell.d/menu-test.sh:829
 verification:
     assurance_level: C
     formalization_status: valid

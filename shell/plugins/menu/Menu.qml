@@ -263,6 +263,7 @@ Item {
   // Merge defaults + user extension. Later entries override earlier ones
   // on a per-key basis (so the user can tweak label/icon/action without
   // re-declaring the whole row).
+  // Implements: SW-REQ-260922-7NPE
   function rebuildItemsFromSources() {
     var mergedMenu = MenuModel.mergeMenuSources(root.defaultMenuItems, root.userMenuItems)
     root.providerRevision += 1
@@ -878,6 +879,7 @@ Item {
     root.finishRequest(value)
   }
 
+  // Implements: SW-REQ-260922-N3RM
   function applySelected(id, action) {
     if (!id) { cancel(); return }
 
@@ -993,6 +995,7 @@ Item {
     stdout: SplitParser {
       onRead: function(data) { providerProc.collected += data + "\n" }
     }
+    // Implements: SW-REQ-260922-EFNR
     onExited: {
       if (providerProc.revision === root.providerRevision) {
         root.mergeProviderRows(providerProc.collected, providerProc.menuId, providerProc.providerKey)
@@ -1018,6 +1021,7 @@ Item {
   Connections {
     id: appLibraryConnections
     target: root.appLibrary
+    // Implements: SW-REQ-260922-EFNR
     function onAppsChanged() {
       if (root.providersLoaded["apps"]) root.mergeAppRows()
     }
@@ -1031,7 +1035,9 @@ Item {
     path: root.defaultMenuPath
     watchChanges: true
     printErrors: false
+    // Implements: SW-REQ-260922-50RE
     onLoaded: { root.defaultMenuItems = root.parseMenuJsonc(text()); root.rebuildItemsFromSources() }
+    // Implements: SW-REQ-260922-50RE
     onFileChanged: reload()
   }
 
@@ -1040,8 +1046,11 @@ Item {
     path: root.userMenuPath
     watchChanges: true
     printErrors: false
+    // Implements: SW-REQ-260922-50RE
     onLoaded: { root.userMenuItems = root.parseMenuJsonc(text()); root.rebuildItemsFromSources() }
+    // Implements: SW-REQ-260922-50RE
     onLoadFailed: { root.userMenuItems = []; root.rebuildItemsFromSources() }
+    // Implements: SW-REQ-260922-50RE
     onFileChanged: reload()
   }
 
@@ -1087,6 +1096,7 @@ Item {
     id: guardProc
     property string collected: ""
     stdout: SplitParser {
+      // Implements: SW-REQ-260922-4079
       onRead: function(data) { guardProc.collected += data + "\n" }
     }
     // Implements: SW-REQ-260922-4079
@@ -1160,6 +1170,7 @@ Item {
     MouseArea {
       id: scrimDismissArea
       anchors.fill: parent
+      // Implements: SW-REQ-260922-C8HX, SW-REQ-260922-3VTN
       onClicked: root.cancel()
     }
 
@@ -1243,7 +1254,9 @@ Item {
           selectedText: root.selectedText
           fontFamily: root.fontFamily
           cornerRadius: root.cornerRadius
+          // Implements: SW-REQ-260922-8CQ4
           onCanceled: root.cancelDelete()
+          // Implements: SW-REQ-260922-8CQ4
           onConfirmed: root.confirmDelete()
         }
       }
@@ -1453,13 +1466,16 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: row.disabled ? Qt.ArrowCursor : Qt.PointingHandCursor
+                // Implements: SYS-REQ-260922-P708
                 onEntered: root.selectFromPointer(row.index, row, {
                   x: mouseArea.mouseX,
                   y: mouseArea.mouseY
                 })
+                // Implements: SYS-REQ-260922-P708
                 onPositionChanged: function(mouse) {
                   root.selectFromPointer(row.index, row, mouse)
                 }
+                // Implements: SYS-REQ-260922-P708
                 onClicked: {
                   if (row.disabled) return
                   root.cursorActive = true

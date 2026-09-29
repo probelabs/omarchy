@@ -50,19 +50,26 @@ Item {
   readonly property bool video: Util.isVideoPath(root.backgroundPath)
   readonly property bool feedActive: root.video && root.loadBackground && !root.displaysBlank && !root.powerSaverActive
 
+  // Implements: SYS-REQ-260912-T0XP
   signal submitPassword(string password)
+  // Implements: SW-REQ-260912-WBS3
   signal passwordTextEdited(string password)
+  // Implements: SYS-REQ-260912-T0XP
   signal clearFailureRequested()
+  // Implements: SW-REQ-260912-ND55
   signal wakeRequested()
 
+  // Implements: SYS-REQ-260912-T0XP
   function forcePasswordFocus() {
     passwordInput.forceActiveFocus()
   }
 
+  // Implements: SW-REQ-260912-WBS3
   function clearPassword() {
     passwordTextEdited("")
   }
 
+  // Implements: SW-REQ-260912-WBS3
   function syncPasswordText() {
     if (passwordInput.text === passwordText) return
     syncingPasswordText = true
@@ -70,10 +77,13 @@ Item {
     syncingPasswordText = false
   }
 
+  // Implements: SW-REQ-260912-WBS3
   onPasswordTextChanged: syncPasswordText()
+  // Implements: SYS-REQ-260912-T0XP
   onInputEnabledChanged: {
     if (inputEnabled) Qt.callLater(forcePasswordFocus)
   }
+  // Implements: SW-REQ-260912-WBS3
   Component.onCompleted: {
     syncPasswordText()
     if (inputEnabled) Qt.callLater(forcePasswordFocus)
@@ -142,7 +152,9 @@ Item {
       id: wakeMouseArea
       anchors.fill: parent
       hoverEnabled: true
+      // Implements: SW-REQ-260912-ND55
       onClicked: { root.wakeRequested(); root.forcePasswordFocus() }
+      // Implements: SW-REQ-260912-ND55
       onPositionChanged: root.wakeRequested()
     }
 
@@ -187,6 +199,7 @@ Item {
           visible: passwordInput.cursorVisible
         }
 
+        // Implements: SW-REQ-260912-WBS3
         onTextChanged: {
           if (!root.syncingPasswordText) root.passwordTextEdited(text)
           if (text.length > 0) {
@@ -195,12 +208,14 @@ Item {
           if (text.length > 0 && root.failureMessage.length > 0) root.clearFailureRequested()
         }
 
+        // Implements: SYS-REQ-260912-T0XP
         onAccepted: {
           var submitted = root.passwordText
           root.passwordTextEdited("")
           if (submitted.length > 0) root.submitPassword(submitted)
         }
 
+        // Implements: SW-REQ-260912-ND55
         Keys.onPressed: function(event) {
           root.wakeRequested()
           if (event.key === Qt.Key_Escape || (event.modifiers & Qt.ControlModifier && event.key === Qt.Key_U)) {

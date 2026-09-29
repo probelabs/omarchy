@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-09-29T10:09:06.246668363Z"
+    reviewed_at: "2026-09-29T13:06:50.573344136Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:b982e98b6fce3cd5e2683a14c4177ac1
             shell/plugins/menu/MenuModel.js:searchScore: file1:24c4fbe3020387b7c72c5ab9d14852fc
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
@@ -38,6 +38,21 @@ traces:
             - shell/plugins/menu/Menu.qml:472
             - shell/plugins/menu/MenuModel.js:379
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-09-29T13:06:50.573344136Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:477
+            - shell/plugins/menu/Menu.qml:557
+            - shell/plugins/menu/MenuModel.js:388
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/shell.d/menu-test.sh:304
+            - test/shell.d/menu-test.sh:31
+            - test/shell.d/menu-test.sh:385
+            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C

@@ -19,12 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
-    reviewed_at: "2026-09-29T10:09:05.710245254Z"
+    reviewed_at: "2026-09-29T13:06:43.196778441Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:a1e2adef8ba0d8e38e0bef9e877664d69d4efe26d1e64d5eb6de56be02c4b08e
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:d479422c4ad115684d7d6cb8207928f5
+            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:328e2d295f67b2767d3d8076382cdbe5
         satisfies:
             SYS-REQ-260912-FRG0: req1:72431d69149a9c2f85ee97b2bfab8e2c
     review_history:
@@ -37,6 +38,25 @@ traces:
             - shell/plugins/lock/Service.qml:106
             - shell/plugins/lock/Service.qml:93
             - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-09-29T13:06:43.196778441Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:101
+            - shell/plugins/lock/Service.qml:114
+            - shell/plugins/lock/Service.qml:596
+            - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
+            - test/shell.d/lock-stranded-recovery-test.sh:10
+            - test/shell.d/lock-stranded-recovery-test.sh:100
+            - test/shell.d/lock-stranded-recovery-test.sh:11
+            - test/shell.d/lock-stranded-recovery-test.sh:12
+            - test/shell.d/lock-stranded-recovery-test.sh:19
+            - test/shell.d/lock-stranded-recovery-test.sh:31
+            - test/shell.d/lock-stranded-recovery-test.sh:41
+            - test/shell.d/lock-stranded-recovery-test.sh:42
             - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C

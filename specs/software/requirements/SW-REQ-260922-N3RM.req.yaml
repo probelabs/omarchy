@@ -20,13 +20,14 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-09-29T10:09:06.169439264Z"
+    reviewed_at: "2026-09-29T13:06:49.516998547Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:87d0cf18a278fd47c6dab9a563574b04
-            shell/plugins/menu/Menu.qml:runAction: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:runAction: file1:b982e98b6fce3cd5e2683a14c4177ac1
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
             SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
@@ -40,6 +41,24 @@ traces:
             - shell/plugins/menu/Menu.qml:143
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-09-29T13:06:49.516998547Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:882
+            - shell/plugins/menu/Menu.qml:959
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/shell.d/menu-test.sh:26
+            - test/shell.d/menu-test.sh:27
+            - test/shell.d/menu-test.sh:28
+            - test/shell.d/menu-test.sh:307
+            - test/shell.d/menu-test.sh:342
+            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C

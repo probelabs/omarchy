@@ -19,13 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T10:09:05.980075293Z"
+    reviewed_at: "2026-09-29T13:06:46.337651191Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:finishRequest: file1:87d0cf18a278fd47c6dab9a563574b04
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:87d0cf18a278fd47c6dab9a563574b04
+            shell/plugins/menu/Menu.qml: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:finishRequest: file1:b982e98b6fce3cd5e2683a14c4177ac1
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:b982e98b6fce3cd5e2683a14c4177ac1
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -40,6 +41,22 @@ traces:
             - shell/plugins/menu/Menu.qml:886
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-09-29T13:06:46.337651191Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1173
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:874
+            - shell/plugins/menu/Menu.qml:892
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:11
+            - test/shell.d/menu-dmenu-test.sh:5
+            - test/shell.d/menu-dmenu-test.sh:85
+            - test/shell.d/menu-dmenu-test.sh:98
+            - test/shell.d/menu-dmenu-test.sh:99
 verification:
     assurance_level: C
     formalization_status: valid
