@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-09-29T10:09:05.992521312Z"
+    reviewed_at: "2026-09-29T23:52:19.685149442Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:716560d628a0fb55aff91766c51e37799e934dbad95a1ffc54746081694551c3
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:resolveRoute: file1:24c4fbe3020387b7c72c5ab9d14852fc
+            shell/plugins/menu/MenuModel.js:resolveRoute: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:

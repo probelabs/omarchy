@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-29T13:06:42.680354304Z"
+    reviewed_at: "2026-09-29T23:51:35.286164006Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:acfb8573e2a8aed78be868c02bdd4cd45d17441df3b6c22c283615ab65053bda
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/LockView.qml: file1:18b6974749ba33818fdff1eba0d3f551
-            shell/plugins/lock/LockView.qml:submitted: file1:18b6974749ba33818fdff1eba0d3f551
-            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/LockView.qml: file1:be671342a01f19c36817051cd641d615
+            shell/plugins/lock/LockView.qml:submitted: file1:be671342a01f19c36817051cd641d615
+            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
             SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
     review_history:
@@ -67,6 +67,19 @@ traces:
             - test/shell.d/lock-blank-fingerprint-test.sh:41
             - test/shell.d/lock-blank-fingerprint-test.sh:7
             - test/shell.d/lock-blank-fingerprint-test.sh:9
+        - reviewed_at: "2026-09-29T23:51:35.286164006Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 're-stamped after MC/DC annotation campaign line drift: ND55 Implements marker in Service.qml moved 590->601 (idleBlankTimer) by inserted mcdc:ignore lines; LockView.qml markers 59/155/157/218 unchanged and still name ND55; blank/auth-in-flight/stale-rearm semantics unchanged (diff-verified); parent T0XP lifecycle-active; verified_by header at lock-blank-fingerprint-test.sh:7 intact'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:155
+            - shell/plugins/lock/LockView.qml:157
+            - shell/plugins/lock/LockView.qml:218
+            - shell/plugins/lock/LockView.qml:59
+            - shell/plugins/lock/Service.qml:601
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-blank-fingerprint-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

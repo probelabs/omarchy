@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-29T10:09:05.735257955Z"
+    reviewed_at: "2026-09-29T23:52:19.612584772Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-keybindings: file1:bf748037397f7ed702684136da1715c0
+            bin/omarchy-menu-keybindings: file1:35b7dda12f2a3fff9780172fe00e80ae
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:

@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-29T13:06:42.159220524Z"
+    reviewed_at: "2026-09-29T23:51:35.011755982Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:b8a4369841cdad3aea39dc8dca4da0b43beb8c41a757fc4067ebbfc732f193d4
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
             SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
     review_history:
@@ -64,6 +64,16 @@ traces:
             - test/shell.d/lock-missing-pam-test.sh:23
             - test/shell.d/lock-missing-pam-test.sh:7
             - test/shell.d/lock-missing-pam-test.sh:9
+        - reviewed_at: "2026-09-29T23:51:35.011755982Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 're-stamped after MC/DC annotation campaign line drift: Implements markers moved 164->168 (beginLock guard) and 712->725 (ShellIpc lock verb) by inserted mcdc:ignore lines; both still name J8SX with missing-pam semantics unchanged; parent T0XP lifecycle-active; verified_by header at lock-missing-pam-test.sh:7 intact'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:168
+            - shell/plugins/lock/Service.qml:725
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-missing-pam-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

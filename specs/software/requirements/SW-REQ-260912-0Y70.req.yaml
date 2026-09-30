@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-H8A5
-    reviewed_at: "2026-09-29T10:09:05.539012664Z"
+    reviewed_at: "2026-09-29T23:52:19.580335522Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:aadb46a7fe3f63ab9cf8f5327ba27d3c70da35a6fa8fd3b4ebe51cfb3279feea
     reviewed_targets:
         implemented_by:
-            bin/omarchy-update-lock:lock_is_held: file1:425e67b80ff868919cff64dec51fba2b
+            bin/omarchy-update-lock:lock_is_held: file1:005d6541aed1f06235e3e6794bc81665
         satisfies:
             SYS-REQ-260912-H8A5: req1:636d3e2d8464734ae9026269d3f333f8
     review_history:

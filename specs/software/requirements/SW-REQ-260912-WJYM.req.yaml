@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
-    reviewed_at: "2026-09-29T13:06:43.196778441Z"
+    reviewed_at: "2026-09-29T23:51:35.568608137Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:a1e2adef8ba0d8e38e0bef9e877664d69d4efe26d1e64d5eb6de56be02c4b08e
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
             SYS-REQ-260912-FRG0: req1:72431d69149a9c2f85ee97b2bfab8e2c
     review_history:
@@ -57,6 +57,17 @@ traces:
             - test/shell.d/lock-stranded-recovery-test.sh:31
             - test/shell.d/lock-stranded-recovery-test.sh:41
             - test/shell.d/lock-stranded-recovery-test.sh:42
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-09-29T23:51:35.568608137Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: 're-stamped after MC/DC annotation campaign line drift: WJYM Implements markers moved 101->105 (checkStrandedLock), 114->118 (recoverStrandedLock), 596->607 (blank-timer recovery hook) by inserted mcdc:ignore lines; all still name WJYM with once-only recovery + recovery-log semantics unchanged; parent FRG0 lifecycle-active; verified_by header at lock-stranded-recovery-test.sh:7 intact'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:105
+            - shell/plugins/lock/Service.qml:118
+            - shell/plugins/lock/Service.qml:607
+            - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
             - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C

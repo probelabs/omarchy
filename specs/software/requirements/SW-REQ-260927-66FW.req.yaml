@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T10:09:06.388369317Z"
+    reviewed_at: "2026-09-29T23:52:19.805280517Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:edb05429dd6a72cf07d60ea9501c81d0844b42616e2d2c5dcccbf43f12962ad5
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:stripJsonc: file1:24c4fbe3020387b7c72c5ab9d14852fc
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:

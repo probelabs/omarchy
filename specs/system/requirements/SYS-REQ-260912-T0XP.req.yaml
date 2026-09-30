@@ -19,20 +19,20 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-29T13:06:54.785757364Z"
+    reviewed_at: "2026-09-29T23:52:19.84586677Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:3f77f2a80c0200f078baeed027d27f972b19dedd247714a44695c2aee3c41740
     reviewed_targets:
         implemented_by:
             bin/omarchy-system-lock: file1:c73a5cfa8c9660a364538063c5adbda8
-            shell/plugins/lock/LockView.qml: file1:18b6974749ba33818fdff1eba0d3f551
-            shell/plugins/lock/LockView.qml:submitted: file1:18b6974749ba33818fdff1eba0d3f551
-            shell/plugins/lock/Service.qml: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:finishUnlock: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:lines: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:realScreenCount: file1:328e2d295f67b2767d3d8076382cdbe5
-            shell/plugins/lock/Service.qml:submitPassword: file1:328e2d295f67b2767d3d8076382cdbe5
+            shell/plugins/lock/LockView.qml: file1:be671342a01f19c36817051cd641d615
+            shell/plugins/lock/LockView.qml:submitted: file1:be671342a01f19c36817051cd641d615
+            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:finishUnlock: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:lines: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:realScreenCount: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:submitPassword: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:

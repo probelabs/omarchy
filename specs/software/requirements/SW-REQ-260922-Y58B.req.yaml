@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-09-29T10:09:06.335385171Z"
+    reviewed_at: "2026-09-29T23:52:19.788859843Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:ba0def97671b0819fd2c0220ae42864be60807c1de55ebfe4a1b1213973ad1da
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardScript: file1:24c4fbe3020387b7c72c5ab9d14852fc
+            shell/plugins/menu/MenuModel.js:guardScript: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
