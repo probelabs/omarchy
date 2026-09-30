@@ -73,6 +73,7 @@ project:
                 - '**/testdata/**'
                 # Omitted production roots, intentionally out of the dogfood
                 # universe (lock + menu components only):
+                - pocs/**
                 - test/**
                 - migrations/**
                 - install/**
