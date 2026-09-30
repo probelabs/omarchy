@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-29T23:56:48Z"
+updated_at: "2026-09-30T00:38:58Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -10,10 +10,10 @@ steps:
         check_results:
             - id: acceptance_criteria_witnessed
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: acceptance_witness_quality
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     annotations-heavy:
         status: confirmed
         confirmed_at: "2026-09-27T22:58:29Z"
@@ -23,41 +23,38 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: obligation_witness_grounded
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     coverage:
         status: confirmed
-        confirmed_at: "2026-09-29T14:30:50Z"
+        confirmed_at: "2026-09-30T00:38:47Z"
         confirmed_by: human:Leonid Bugaev
-        note: 'Re-confirmed after the v17 analyzer evidence refresh: lock bash MC/DC suite re-executed green on this box (fresh cohort run with code_mcdc_measure), js engine evidence regenerated for the updated menumodel-replay input, new menu-pointer-lifecycle-test.sh execution harness lands the three 260929 pointer/lifecycle guarantees at 0 uncovered of 316 witness rows; orphan_code_clean 231/231 traced, orphan_tests_clean 45/45 clean'
+        note: 'Coverage re-measured after the thumbnail-pipeline spec authoring: orphan_code_clean 231/231 code functions traced (comment-only delta, no new functions), orphan_tests_clean 53 test functions / 0 orphans, code_mcdc_measure re-measured green for bash/js/qml after the full suite re-ran, mcdc_coverage 88 reqs / 322 witness rows / 0 uncovered.'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-09-29T23:56:46Z"
+            at: "2026-09-30T00:38:57Z"
             output: |
                 Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
 
 
-                Requirements: 88 total
+                Requirements: 90 total
 
                   ━━━ IMPLEMENTATION ━━━
-                Refreshing trace index + annotations (88 requirements)…
-                    ▶ running orphan_tests_clean…
-                    ✓ orphan_tests_clean             53 test functions scanned, 0 orphans  (28ms)
-                    ▶ running orphan_code_clean…
                     ✓ orphan_code_clean              231/231 code functions traced  (0ms)
+                    ✓ orphan_tests_clean             53 test functions scanned, 0 orphans  (0ms)
 
                   Errors: 0  Warnings: 0
 
                 Help: proof help audit
-                  Cache: 0 hits / 2 fresh / 2 stored (computed in 1s)
-        scope_key: lock
+                  Cache: 2 hits / 0 fresh (computed in 737ms)
+        scope_key: menu
         check_results:
             - id: code_mcdc_measure
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     debt-standing:
         status: confirmed
         confirmed_at: "2026-09-27T23:02:46Z"
@@ -66,10 +63,10 @@ steps:
         check_results:
             - id: known_issues_reviewed
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: waivers_reviewed
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-27T21:57:07Z"
@@ -78,7 +75,7 @@ steps:
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     hazard:
         status: confirmed
         confirmed_at: "2026-09-27T22:57:42Z"
@@ -88,7 +85,7 @@ steps:
         check_results:
             - id: spec_lint_hazard_consequence
               status: info
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     history-mine:
         status: confirmed
         confirmed_at: "2026-09-28T00:27:14Z"
@@ -97,10 +94,10 @@ steps:
         check_results:
             - id: problem_reports_reviewed
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: change_evidence_complete
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     init:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:13Z"
@@ -124,14 +121,30 @@ steps:
         check_results:
             - id: residual_kill_hygiene
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     skeleton:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:33Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Breadth skeleton landed: 2 STK + SYS + 60 SW + INT SYS-REQ-260927-WC89 (menu->lock interface), all layers populated.'
     spec-review-1:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-09-30T00:29:45Z"
+        confirmed_by: human:Leonid Bugaev
+        note: 'Re-confirmed after authoring SW-REQ-260929-THMB and SW-REQ-260929-REJT (thumbnail pipeline spec) resolving the family_under_modeled finding: validate 90/90, 0 suspect links after citation re-reviews, under_modeled_requirements_clean PASS (36 decisions / 8 family vars = 4.5), spec_conformance reviews REVIEW-260930-WJQK and REVIEW-260930-VMF5 grounded, prose lint clean.'
+        check_results:
+            - id: spec_lint_decomposition_adds_refinement
+              status: pass
+              at: "2026-09-30T00:38:57Z"
+            - id: spec_lint_formalization_quality
+              status: pass
+              at: "2026-09-30T00:38:57Z"
+            - id: solver_modeling_opportunity
+              status: pass
+              at: "2026-09-30T00:38:57Z"
+            - id: under_modeled_requirements_clean
+              status: pass
+              at: "2026-09-30T00:38:57Z"
     spec-review-2:
         status: confirmed
         confirmed_at: "2026-09-29T13:08:31Z"
@@ -140,10 +153,10 @@ steps:
         check_results:
             - id: spec_lint_spec_conformance_review_grounded
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: software_formalization_complete
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     surface-matrix:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:48Z"
@@ -159,7 +172,7 @@ steps:
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-29T13:08:25Z"
@@ -169,10 +182,10 @@ steps:
         check_results:
             - id: annotation_validity
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: orphan_code_clean
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
     variables:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:22Z"
@@ -181,10 +194,10 @@ steps:
         check_results:
             - id: variable_orphans_clean
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: variables_declared
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"
             - id: variable_drift
               status: pass
-              at: "2026-09-29T23:56:46Z"
+              at: "2026-09-30T00:38:57Z"

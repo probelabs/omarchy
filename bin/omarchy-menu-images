@@ -3,7 +3,7 @@
 # omarchy:summary=Open a generic image selector menu
 # omarchy:args=[--selected <image>] [--print-name] [--show-labels] [--filterable] [--lazy-thumbnails] [--preload] [--cache-only] [--print-rows] <image-dir>...
 
-# Implements: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B
+# Implements: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B, SW-REQ-260929-THMB, SW-REQ-260929-REJT
 
 selected_image=""
 print_name=false
@@ -152,10 +152,15 @@ else
   done
 fi
 
+# The extension decides the converter lane and whether a rejection may be
+# recorded at all.
 is_video_path() {
   [[ ${1,,} =~ \.(mp4|m4v|mov|webm|mkv|avi)$ ]]
 }
 
+# One generator per file: reap an aged legacy directory lock, serialize on a
+# content-hash lock, dispatch to the format-appropriate converter, and record
+# a rejection marker when a video is refused.
 generate_thumbnail() {
   local image="$1"
   local thumbnail="$2"
@@ -212,6 +217,9 @@ generate_thumbnail() {
   fi
 }
 
+# Resolve one row: index the file by content hash, serve a cached thumbnail,
+# hand back a recorded rejection, or route the file to the lazy or queued
+# generation lane.
 thumbnail_for() {
   local image="$1"
   local signature hash thumbnail
@@ -262,6 +270,8 @@ thumbnail_for() {
 # Each vips run is single-threaded, so still images can fill every core.
 # ffmpegthumbnailer leaves FFmpeg's automatic threading on, so a full-width fan
 # out of those would put a codec thread pool on every core at once.
+# Drain the queued files: still images fill every core, videos take one lane
+# per four cores with a floor of one.
 drain_pending_thumbnails() {
   local video_jobs
 

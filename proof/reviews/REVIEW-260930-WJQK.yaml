@@ -1,0 +1,23 @@
+id: REVIEW-260930-WJQK
+kind: spec_conformance
+reviewer: agent:opencode
+reviewed_at: '2026-09-30T00:18:00Z'
+subject: SW-REQ-260929-THMB
+decision: approved
+comment: 'Read the full pipeline in bin/omarchy-menu-images. is_video_path (157) matches
+  case-insensitive video extensions. generate_thumbnail (165-222) reaps a legacy directory
+  lock only after 120s, refuses a fresh one, serializes under flock -w 30, clears
+  stale partial tmps, dispatches video to timeout -k 5 10 ffmpegthumbnailer and stills
+  to single-threaded vipsthumbnail, and moves the finished file into the content-hash
+  path. thumbnail_for (225-270) resolves the index hash, serves a cached thumbnail,
+  or routes to the lazy lane (stills, in-process background) or the queued lanes.
+  drain_pending_thumbnails (278-295) fans stills out over nproc and videos over nproc/4
+  with a floor of one. Formula: a missing thumbnail settles by generation at its content-hash
+  path; every scanned file routes through thumbnail_for, so no generation path is
+  missed.'
+citations:
+- bin/omarchy-menu-images:6
+- bin/omarchy-menu-images:157
+- bin/omarchy-menu-images:165
+- bin/omarchy-menu-images:225
+- bin/omarchy-menu-images:278

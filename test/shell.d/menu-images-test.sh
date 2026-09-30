@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B
+# Verifies: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B, SW-REQ-260929-THMB, SW-REQ-260929-REJT
 #mcdc:ignore:defensive SW-REQ-260922-43HQ: cached_rows_reused=F, dirs_unchanged=T => FALSE -- a matching fast signature loads the rows file before any rebuild path runs, and rows plus signatures are published together under one lock; unchanged dirs with the reuse skipped needs a broken signature compare [reviewed: REVIEW-M6]
 #mcdc:ignore:defensive SW-REQ-260922-MH9B: rows_rebuilt_and_cached=F, signature_mismatch=T => FALSE -- a full-signature mismatch falls unconditionally into the rebuild branch that rewrites and re-signs the rows; a mismatch without a rebuild needs a broken branch [reviewed: REVIEW-M6]
+#mcdc:ignore:defensive SW-REQ-260929-THMB: thumbnail_generated=F, thumbnail_missing=T => FALSE -- the directory scan is the pipeline entry and every scanned file routes through thumbnail_for; a missing thumbnail that generates nothing needs a broken branch [reviewed: REVIEW-260930-WJQK]
+#mcdc:ignore:defensive SW-REQ-260929-REJT: rejection_marker_recorded=F, media_rejected=T => FALSE -- a refused video either writes its marker in the fan-out child or is honored through the standing marker; a rejection with neither needs a broken branch [reviewed: REVIEW-260930-WJQK]
 # mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
@@ -191,6 +193,7 @@ VIPSTHUMBNAIL_FAIL_FILE="$tmp/failures" run_images --cache-only "$images"
 [[ ! -e $cache_dir/$cache_key.rows ]] || fail "image menu does not cache incomplete rows"
 [[ ! -e $cache_dir/$cache_key.signature ]] || fail "image menu does not sign incomplete rows"
 [[ ! -e $cache_dir/$cache_key.fast-signature ]] || fail "image menu does not fast-cache incomplete rows"
+# SW-REQ-260929-REJT:error_handling:negative
 pass "image menu leaves failed thumbnail batches uncached"
 
 rm "$tmp/failures"
@@ -204,6 +207,9 @@ run_images --cache-only "$images"
   fail "image menu retries a previously failed thumbnail"
 (( $(awk 'END { print NR }' "$cache_dir/$cache_key.rows") == 3 )) ||
   fail "image menu caches every row after retry"
+# The missing thumbnail entered the pipeline and settled: the lazy lane
+# regenerated it, and the cache-only pass signed the complete rows.
+# MCDC SW-REQ-260929-THMB: thumbnail_generated=T, thumbnail_missing=T => TRUE
 pass "image menu completes and caches a later retry"
 
 # With the cache warm and the directory untouched, the next run answers from
@@ -288,11 +294,15 @@ if [[ -z ${PROOF_MCDC_TRACE_DIR:-} ]]; then
   [[ -f $cache_dir/$video_hash.jpg ]] ||
     fail "the fan-out generates the video thumbnail" "$(ls "$cache_dir")"
 fi
+# SW-REQ-260929-REJT:error_handling:nominal
+# SW-REQ-260929-REJT:malformed_input:nominal
+# MCDC SW-REQ-260929-REJT: rejection_marker_recorded=F, media_rejected=F => TRUE [no-action: both files convert, no marker is written or honored, and every row offers its pixels -- no refusal happens]
 pass "the lazy menu serves pictures while the video queues"
 
 # With every thumbnail already on disk there is nothing left to queue.
 printf 'thumbnail' >"$cache_dir/$video_hash.jpg"
 run_images --print-rows --lazy-thumbnails "$media" >/dev/null
+# MCDC SW-REQ-260929-THMB: thumbnail_generated=F, thumbnail_missing=F => TRUE [no-action: the thumbnail already sits at its content-hash path, so the row serves from cache and no lane runs -- nothing generates]
 pass "a queued video that already has its thumbnail queues nothing"
 
 # A single converter lane still drains a queued video. Dropping the thumbnail
@@ -321,6 +331,8 @@ grep -q "^$media/pic.png" <<<"$rows" ||
   fail "the picture stays while the rejected video drops" "$rows"
 [[ ! -e $cache_dir/$media_cache_key.rows ]] ||
   fail "a rejected video leaves the rows uncached"
+# SW-REQ-260929-REJT:malformed_input:negative
+# MCDC SW-REQ-260929-REJT: rejection_marker_recorded=T, media_rejected=T => TRUE
 pass "a rejected video keeps no row and leaves the rows uncached"
 
 # A converter that fails under a lazy open leaves nothing behind: no partial

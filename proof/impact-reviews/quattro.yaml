@@ -1,6 +1,6 @@
 schema_version: 1
 branch: quattro
-generated_at: "2026-09-29T14:09:10Z"
+generated_at: "2026-09-30T00:46:43Z"
 reviews:
     - requirement: SW-REQ-260922-4079
       artifact: shell/plugins/menu/Menu.qml
@@ -12,6 +12,16 @@ reviews:
       approval_fingerprint: sha256:8d2c60a33a0b947458d733ce0fa039a926f3ecc06c2c2f89c4115bf100a6ef70
       artifact_fingerprint: sha256:5c32afcdc6e8eafd82f1e7b68c1e9a0b66d2e65fa0f740b435fa9f412327efeb
       reviewed_at: "2026-09-29T14:09:10Z"
+    - requirement: SW-REQ-260922-43HQ
+      artifact: bin/omarchy-menu-images
+      decision: no-authored-change
+      reviewer: human:Leonid Bugaev
+      reason: 'The bin/omarchy-menu-images delta is comment-only: the Implements header gained SW-REQ-260929-THMB and SW-REQ-260929-REJT ids and eight prose comment lines above the four pipeline functions. No executable line changed (bash -n clean; full suite green; 322 witness rows 0 uncovered), so the fast-signature reuse and rebuild-and-recache guarantees of 43HQ and MH9B are behaviorally untouched.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:f8c7007ed0cadf8073d2d92ad02b419c0071977c8d56731a3766f70a122f5415
+      approval_fingerprint: sha256:ecf985ec5e42702980c1c838d0b680c4b4854c3f1f0b272f71b9b3e15c7a5389
+      artifact_fingerprint: sha256:f939d639cd714455876b1c2a1641e22efc62fe68060e90360c51fe0bfc0b3f61
+      reviewed_at: "2026-09-30T00:46:43Z"
     - requirement: SW-REQ-260922-50RE
       artifact: shell/plugins/menu/Menu.qml
       decision: no-authored-change
@@ -42,6 +52,16 @@ reviews:
       approval_fingerprint: sha256:e9eaac850eaf43e3a74208f52f0f1c2b300f3dda5da745e3fc8856bf7896daf3
       artifact_fingerprint: sha256:5c32afcdc6e8eafd82f1e7b68c1e9a0b66d2e65fa0f740b435fa9f412327efeb
       reviewed_at: "2026-09-29T14:09:10Z"
+    - requirement: SW-REQ-260922-MH9B
+      artifact: bin/omarchy-menu-images
+      decision: no-authored-change
+      reviewer: human:Leonid Bugaev
+      reason: 'The bin/omarchy-menu-images delta is comment-only: the Implements header gained SW-REQ-260929-THMB and SW-REQ-260929-REJT ids and eight prose comment lines above the four pipeline functions. No executable line changed (bash -n clean; full suite green; 322 witness rows 0 uncovered), so the fast-signature reuse and rebuild-and-recache guarantees of 43HQ and MH9B are behaviorally untouched.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:29500a90b89216a2ebcae8a7915c7791832018d295459e7d33bccb41621aa10b
+      approval_fingerprint: sha256:de9f820f24b098880ad263fa4714debc2ca8cc9f2fd84d0978879fbec0a96e82
+      artifact_fingerprint: sha256:f939d639cd714455876b1c2a1641e22efc62fe68060e90360c51fe0bfc0b3f61
+      reviewed_at: "2026-09-30T00:46:43Z"
     - requirement: SW-REQ-260922-NM45
       artifact: shell/plugins/menu/Menu.qml
       decision: no-authored-change
@@ -62,6 +82,26 @@ reviews:
       approval_fingerprint: sha256:9d40a025a18084200d9eaef984ea54f0bfaee5fec654040096a7e9d8687e4b6a
       artifact_fingerprint: sha256:5c32afcdc6e8eafd82f1e7b68c1e9a0b66d2e65fa0f740b435fa9f412327efeb
       reviewed_at: "2026-09-29T14:09:10Z"
+    - requirement: SW-REQ-260929-REJT
+      artifact: bin/omarchy-menu-images
+      decision: no-authored-change
+      reviewer: human:Leonid Bugaev
+      reason: 'The bin/omarchy-menu-images delta is comment-only: the file Implements header gained THMB and REJT ids and eight prose comment lines above the four pipeline functions describing existing behavior. No executable line changed (bash -n clean; full suite green, 322 witness rows 0 uncovered); the authored FRETish intent of the siblings 43HQ and MH9B is untouched, and the new reqs are authored in the same commit.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:3c82a5486f47c5c683c498a84a02ac97fe6295d335fe5e7427eb49d62e2acfb7
+      approval_fingerprint: sha256:e0f60827070e0d65c587d74368136994bf01981a6bc22fc27802bc44ee259533
+      artifact_fingerprint: sha256:f939d639cd714455876b1c2a1641e22efc62fe68060e90360c51fe0bfc0b3f61
+      reviewed_at: "2026-09-30T00:46:23Z"
+    - requirement: SW-REQ-260929-THMB
+      artifact: bin/omarchy-menu-images
+      decision: no-authored-change
+      reviewer: human:Leonid Bugaev
+      reason: 'The bin/omarchy-menu-images delta is comment-only: the file Implements header gained THMB and REJT ids and eight prose comment lines above the four pipeline functions describing existing behavior. No executable line changed (bash -n clean; full suite green, 322 witness rows 0 uncovered); the authored FRETish intent of the siblings 43HQ and MH9B is untouched, and the new reqs are authored in the same commit.'
+      base: HEAD~1
+      requirement_fingerprint: sha256:b27c5433b7ec52fbcdf13bfdfdc4ca30f96495c6d153c32482f1c83f4fa0730a
+      approval_fingerprint: sha256:fd86f937c2da3b7f155317985f4193560d8fc3ab0c6a53c4e1fd9093f3d1861f
+      artifact_fingerprint: sha256:f939d639cd714455876b1c2a1641e22efc62fe68060e90360c51fe0bfc0b3f61
+      reviewed_at: "2026-09-30T00:46:23Z"
     - requirement: SYS-REQ-260922-P708
       artifact: shell/plugins/menu/Menu.qml
       decision: no-authored-change

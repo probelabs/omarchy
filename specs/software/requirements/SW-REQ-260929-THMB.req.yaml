@@ -1,0 +1,72 @@
+id: SW-REQ-260929-THMB
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when thumbnail_missing the image_selector shall eventually satisfy thumbnail_generated
+description: The pipeline detects video paths by extension and dispatches each media file to a format-appropriate converter. Videos go to ffmpegthumbnailer under a timeout; still images go to single-threaded vipsthumbnail. A lazy open generates stills inside the menu process and queues videos for the fan-out. The queued fan-out fills every core with still images and gives videos one lane per four cores. A content-hash lock serializes the generators per file; the generator reaps an aged legacy directory lock and leaves a fresh one to its owner. The finished thumbnail lands at the content-hash cache path and its row serves it.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: 'bin/omarchy-menu-images is_video_path, generate_thumbnail, thumbnail_for, and drain_pending_thumbnails carry the thumbnail pipeline between the directory scan and the row cache. Authored with SW-REQ-260929-REJT to resolve the family_under_modeled finding on the shared target.'
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+    reviewed_at: "2026-09-30T00:26:03.174644845Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_fingerprint: sha256:b27c5433b7ec52fbcdf13bfdfdc4ca30f96495c6d153c32482f1c83f4fa0730a
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-menu-images: file1:065ecdefa6de9537f0acdf2dc349ae98
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
+    review_history:
+        - reviewed_at: "2026-09-30T00:19:48.365159852Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-images:157
+            - bin/omarchy-menu-images:165
+            - bin/omarchy-menu-images:225
+            - bin/omarchy-menu-images:278
+            - bin/omarchy-menu-images:6
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-images-test.sh:5
+        - reviewed_at: "2026-09-30T00:26:03.174644845Z"
+          reviewed_by: human:Leonid Bugaev
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-images:6
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-images-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:opencode
+        reviewed_at: "2026-09-30T00:40:00Z"
+        ai_generated: true
+history:
+    created_by: agent:opencode
+    created_at: "2026-09-30T00:16:34Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T00:28:32Z"
+lifecycle:
+    change_history:
+        - date: "2026-09-30T00:19:43Z"
+          from: draft
+          to: review
+          reason: 'Authored to resolve the family_under_modeled finding on bin/omarchy-menu-images: enumerates the thumbnail pipeline (video detection, format dispatch, lazy and queued lanes, lock reaping, cache write, rejection markers) that the two cache-discipline siblings did not cover.'
+          changed_by: agent:opencode
