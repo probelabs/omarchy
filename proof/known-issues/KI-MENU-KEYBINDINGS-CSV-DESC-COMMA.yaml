@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-CSV-DESC-COMMA
 title: 'Comma in a binding description shifts every later CSV field: truncated label, wrong dispatcher, failed dispatch'
-description: 'dynamic_bindings prints cache rows as raw comma-joined CSV with no quoting (printf ''%s,%s,%s,%s,%s'', bin/omarchy-menu-keybindings:333). parse_binding_records sets FS='','' and takes action=$3/dispatcher=$4, so a description containing a comma (''Save, quit'') shifts every later field. The menu shows the truncated label, and dispatch receives the literal string '' quit'' as dispatcher and ''exec,alacritty'' as arg. dispatch_binding treats that pair as an unknown dispatcher.'
+description: dynamic_bindings prints cache rows as raw comma-joined CSV with no quoting (printf '%s,%s,%s,%s,%s', bin/omarchy-menu-keybindings:333). parse_binding_records sets FS=',' and takes action=$3/dispatcher=$4, so a description containing a comma ('Save, quit') shifts every later field. The menu shows the truncated label, and dispatch receives the literal string ' quit' as dispatcher and 'exec,alacritty' as arg. dispatch_binding treats that pair as an unknown dispatcher.
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:
@@ -33,6 +33,10 @@ history:
       detail: set-mitigation
     - at: "2026-09-30T19:01:01Z"
       by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
+    - at: "2026-09-30T21:02:56Z"
+      by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
 poc_quality:

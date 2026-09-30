@@ -1,6 +1,6 @@
 id: KI-MENU-OPEN-NULL-PAYLOAD
 title: 'open() throws on a JSON null payload: parse succeeds, the catch does not run, the property read throws'
-description: 'JSON.parse(''null'') returns null without throwing, so the try/catch in open() does not cover the dereference. payload.fontFamily throws TypeError and no mode dispatch runs, so nothing answers the summon lifecycle (anchors; SX26/C05 reproduced the null hole).'
+description: JSON.parse('null') returns null without throwing, so the try/catch in open() does not cover the dereference. payload.fontFamily throws TypeError and no mode dispatch runs, so nothing answers the summon lifecycle (anchors; SX26/C05 reproduced the null hole).
 affected_requirements:
     - SW-REQ-260922-50RE
 evidence_manifests:
@@ -42,6 +42,10 @@ history:
       detail: set-dedup-armor
     - at: "2026-09-30T19:02:05Z"
       by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-null-payload.yaml
+    - at: "2026-09-30T21:02:57Z"
+      by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-null-payload.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-DMENU-NAN-GEOMETRY (dmenu geometry coercion, not payload parsing) and not of KI-MENU-NORMALIZE-EDGE-CASES (item field normalization, not the summon payload): this defect is open() dereferencing a JSON null payload so the catch never runs and the property read throws before mode dispatch'

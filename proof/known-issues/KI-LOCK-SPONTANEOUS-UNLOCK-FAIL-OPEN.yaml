@@ -47,6 +47,10 @@ history:
       by: agent:opencode-quattro
       action: refresh-evidence
       detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
+    - at: "2026-09-30T21:02:49Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false

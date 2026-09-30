@@ -1,6 +1,6 @@
 id: KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
 title: Exported bash functions execute as root inside apply-lock despite the trusted-PATH replacement
-description: 'The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact. Bash imports the exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into the function table, and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48). An imported command_not_found_handle returning 0 makes ''if omarchy-shell lock status'' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.'
+description: The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact. Bash imports the exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into the function table, and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48). An imported command_not_found_handle returning 0 makes 'if omarchy-shell lock status' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
@@ -55,6 +55,14 @@ history:
       detail: set-dedup-armor
     - at: "2026-09-30T19:01:00Z"
       by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-09-30T21:02:32Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-09-30T21:02:49Z"
+      by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
 poc_quality:

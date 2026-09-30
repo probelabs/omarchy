@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-3vzg-menu.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T19:01:01Z"
+      executed_at: "2026-09-30T21:02:50Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-CLI-EXIT-CODE-WRITE-RACES` from the KnownIssue''s reproducer command: ./pocs/crs-260930-3vzg-menu.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-3vzg-menu.sh
       freshness_hashes:
         pocs/crs-260930-3vzg-menu.sh: sha256:d2223b7ee279fbae09266dc4d18fc0c8d061f888ae7daea708e6962600a6720f
-        proof/known-issues/KI-MENU-CLI-EXIT-CODE-WRITE-RACES.yaml: ki-content-v1:sha256:619b0c8ff101ead803424deccb16f5c2ef0a2759afbfa4d79f8b075f362e734b
+        proof/known-issues/KI-MENU-CLI-EXIT-CODE-WRITE-RACES.yaml: ki-content-v1:sha256:4018ab785af11e80d7055f2be412665d32f4475b1c6c7c83d120f06cc6ecc86f
       known_issues:
         - KI-MENU-CLI-EXIT-CODE-WRITE-RACES
       config:

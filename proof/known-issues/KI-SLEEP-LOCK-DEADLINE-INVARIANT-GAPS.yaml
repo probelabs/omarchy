@@ -1,6 +1,6 @@
 id: KI-SLEEP-LOCK-DEADLINE-INVARIANT-GAPS
 title: Header invariant 'every call bounded by the budget remainder' unenforced on three external calls
-description: 'The script header promises the deadline enforces itself on every call, but three sites break it. (1) sync_clamshell uses a fixed timeout 0.4s+0.1s and never consults remaining_ms - with a 100ms budget it runs the script 4x past the deadline. (2) derive''s busctl read gets a full 1s timeout but the deadline clock starts only at line 52. A slow reply therefore consumes exactly the 1000ms reserve held back for logind (lifetime measured at 5102ms against a 5000ms window). (3) report_unsecured''s omarchy-notification-send has no timeout wrapper and ''|| true'' does not bound the sd-bus default (~25s). The unlocked-suspend warning can therefore stall for the whole remaining window and never land.'
+description: The script header promises the deadline enforces itself on every call, but three sites break it. (1) sync_clamshell uses a fixed timeout 0.4s+0.1s and never consults remaining_ms - with a 100ms budget it runs the script 4x past the deadline. (2) derive's busctl read gets a full 1s timeout but the deadline clock starts only at line 52. A slow reply therefore consumes exactly the 1000ms reserve held back for logind (lifetime measured at 5102ms against a 5000ms window). (3) report_unsecured's omarchy-notification-send has no timeout wrapper and '|| true' does not bound the sd-bus default (~25s). The unlocked-suspend warning can therefore stall for the whole remaining window and never land.
 affected_requirements:
     - SW-REQ-260912-FAWV
     - SW-REQ-260912-H2YF
@@ -34,6 +34,10 @@ history:
       detail: set-title
     - at: "2026-09-30T19:01:09Z"
       by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-sleep-lock-deadline-invariant-gaps.yaml
+    - at: "2026-09-30T21:03:08Z"
+      by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-sleep-lock-deadline-invariant-gaps.yaml
 kill_domain: unbounded_wait

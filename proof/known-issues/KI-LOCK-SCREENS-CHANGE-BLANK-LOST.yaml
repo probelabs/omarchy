@@ -39,6 +39,10 @@ history:
       by: agent:opencode-quattro
       action: refresh-evidence
       detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
+    - at: "2026-09-30T21:02:49Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
 kill_domain: state_loss
 do_not_refile_as: blank never engages (the initial idle path works; only the post-screens-change re-arm is missing)
 source_claim: CRS-260930-TTVK/C04

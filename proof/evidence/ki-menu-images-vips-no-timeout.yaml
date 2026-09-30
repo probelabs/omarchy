@@ -5,13 +5,13 @@ results:
       command: ./pocs/menu-images-vips-still-no-timeout.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T18:58:48Z"
+      executed_at: "2026-09-30T21:02:51Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-IMAGES-VIPS-NO-TIMEOUT` from the KnownIssue''s reproducer command: ./pocs/menu-images-vips-still-no-timeout.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - pocs/menu-images-vips-still-no-timeout.sh
       freshness_hashes:
         pocs/menu-images-vips-still-no-timeout.sh: sha256:d82bc051492c6e4ee01e5cb6905802d4ed53d87bbc69716832f051e4c1ad3f72
-        proof/known-issues/KI-MENU-IMAGES-VIPS-NO-TIMEOUT.yaml: ki-content-v1:sha256:05f13bb51d272849b4952d01198fe4e2208b39984f45f0121821eebb630d7884
+        proof/known-issues/KI-MENU-IMAGES-VIPS-NO-TIMEOUT.yaml: ki-content-v1:sha256:c091cd3c9c32226fc5e8828bcc7ff65c02657546e9d9dcca280f4224351f97c5
       known_issues:
         - KI-MENU-IMAGES-VIPS-NO-TIMEOUT
       config:

@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-jvx8-c04.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T19:01:03Z"
+      executed_at: "2026-09-30T21:02:57Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c04.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-jvx8-c04.sh
       freshness_hashes:
         pocs/crs-260930-jvx8-c04.sh: sha256:991af2ea1d20182084cee5de3fa99c1a1339c094aa0bc167cf98424f6bd33c7f
-        proof/known-issues/KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK.yaml: ki-content-v1:sha256:c50af40d3c7e337d986319f38a0642c8e0d0b58f17952eafb0a37cfd5ab6b545
+        proof/known-issues/KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK.yaml: ki-content-v1:sha256:09292709171c3f0a37aad9f79e3dcd1cf7687880409f5b0d3a1047b044595d56
       known_issues:
         - KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK
       config:

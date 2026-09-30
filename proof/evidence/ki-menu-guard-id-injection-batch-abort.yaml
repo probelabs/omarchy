@@ -7,14 +7,14 @@ results:
       command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T19:01:01Z"
+      executed_at: "2026-09-30T21:02:51Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT` from the KnownIssue''s reproducer command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes3.js
       freshness_hashes:
         pocs/menu-probes3.js: sha256:567bae61cf43abb5e39e7673dce01c66df95b8a34d2e1fbed86e158b48bd1584
-        proof/known-issues/KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT.yaml: ki-content-v1:sha256:8388d51852ef25eb2958848dea7832f9df57a784057cad884857cdddaaf45d17
+        proof/known-issues/KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT.yaml: ki-content-v1:sha256:097180e02eaa98b602ada4570e790d81f8399e29032bfbe77521543bcc81a3b0
       known_issues:
         - KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT
       config:

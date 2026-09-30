@@ -7,14 +7,14 @@ results:
       command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T19:00:59Z"
+      executed_at: "2026-09-30T21:02:56Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-ITEM-PROTOTYPE-LEAK` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes.js
       freshness_hashes:
         pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-ITEM-PROTOTYPE-LEAK.yaml: ki-content-v1:sha256:599e13cc4f1fcc6e5ef102eba2f190938a8d81526315c0d839659df0817c316e
+        proof/known-issues/KI-MENU-ITEM-PROTOTYPE-LEAK.yaml: ki-content-v1:sha256:6523feea2e6cb39ff1435e0fcdc7f945ac2db2a9d75e877359b73e0001c0bb61
       known_issues:
         - KI-MENU-ITEM-PROTOTYPE-LEAK
       config:

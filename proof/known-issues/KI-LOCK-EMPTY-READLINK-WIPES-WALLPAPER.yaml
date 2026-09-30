@@ -39,6 +39,10 @@ history:
       by: agent:opencode-quattro
       action: refresh-evidence
       detail: proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
+    - at: "2026-09-30T21:02:49Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
 kill_domain: state_loss
 do_not_refile_as: wallpaper never refreshes (the success path works; the failure path destroys prior state instead of keeping it)
 source_claim: CRS-260930-TTVK/C05

@@ -1,6 +1,6 @@
 id: KI-MENU-FILEVIEW-FAILURE-ASYMMETRY
 title: 'Failed menu FileView reloads are asymmetric: user handler wipes last good items, default keeps stale set'
-description: 'Only the user menu FileView has onLoadFailed, and it clears userMenuItems to [] before rebuilding (anchors FV1/FV2). A transient read failure of the user extension erases every user entry until the next successful load. A failed default-file reload meanwhile silently keeps the old set. Neither behavior matches the documented behavior for a failed reload.'
+description: Only the user menu FileView has onLoadFailed, and it clears userMenuItems to [] before rebuilding (anchors FV1/FV2). A transient read failure of the user extension erases every user entry until the next successful load. A failed default-file reload meanwhile silently keeps the old set. Neither behavior matches the documented behavior for a failed reload.
 affected_requirements:
     - SW-REQ-260922-50RE
 evidence_manifests:
@@ -38,6 +38,10 @@ history:
       detail: set-title
     - at: "2026-09-30T19:02:05Z"
       by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-fileview-failure-asymmetry.yaml
+    - at: "2026-09-30T21:02:50Z"
+      by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-fileview-failure-asymmetry.yaml
 kill_domain: failure_handling

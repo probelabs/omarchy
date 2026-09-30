@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-gzq0-c03.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T19:01:05Z"
+      executed_at: "2026-09-30T21:02:59Z"
       input_set:
         - 'Captured by `proof evidence capture KI-SLEEP-LOCK-BUDGET-ARG-OCTAL` from the KnownIssue''s reproducer command: ./pocs/crs-260930-gzq0-c03.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-gzq0-c03.sh
       freshness_hashes:
         pocs/crs-260930-gzq0-c03.sh: sha256:ac0231bdf88b2d4a9f91d3248522a379e366b75b207de3dfee552763ebf113a2
-        proof/known-issues/KI-SLEEP-LOCK-BUDGET-ARG-OCTAL.yaml: ki-content-v1:sha256:68132f3cf680fa5458197ae1f431fb990309574e051f2681dc5f8b8ff81ceaae
+        proof/known-issues/KI-SLEEP-LOCK-BUDGET-ARG-OCTAL.yaml: ki-content-v1:sha256:c121143bbf432f52bd3983d7b57cac5cfccdc2ae74b9563f80f2d64b6e9396a4
       known_issues:
         - KI-SLEEP-LOCK-BUDGET-ARG-OCTAL
       config:

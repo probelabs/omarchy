@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-jvx8-c07.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T19:01:03Z"
+      executed_at: "2026-09-30T21:02:57Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c07.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-jvx8-c07.sh
       freshness_hashes:
         pocs/crs-260930-jvx8-c07.sh: sha256:2f97d594c99ecca373ddf25de9471b458ef09e0c160b3ad2929b22336c96d455
-        proof/known-issues/KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH.yaml: ki-content-v1:sha256:31d0b7bcbd6eec0050fd7c043d7e901ceeb4385330e9b52a949e1840fd0308b7
+        proof/known-issues/KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH.yaml: ki-content-v1:sha256:1267f7f76e862b7676c625983bd182791b661cf10712bf5e0655b77a86f7a3a2
       known_issues:
         - KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH
       config:
