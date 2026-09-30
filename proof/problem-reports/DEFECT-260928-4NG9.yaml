@@ -37,10 +37,18 @@ impact_analysis:
     affected_code:
         - shell/plugins/menu/MenuModel.js
 disposition:
+    known_issues:
+        - KI-MENU-JSONC-STRIP-GAPS
+        - KI-MENU-ITEMS-KEY-AMBIGUITY
     status: covered_by_requirement
     requirements:
         - SW-REQ-260928-BMFE
     rationale: >
+        Known-issue overlap: this closure covers only the array-root guard
+        class. KI-MENU-JSONC-STRIP-GAPS and KI-MENU-ITEMS-KEY-AMBIGUITY still
+        track live parser gaps on the same requirements (3T3F, E4J2), so this
+        closure does not make the parser clean.
+
         SW-REQ-260928-BMFE models the decision as a guard over
         array_root_present. All MC/DC rows carry witnesses in
         test/shell.d/menu-test.sh, replayed 1/1 by

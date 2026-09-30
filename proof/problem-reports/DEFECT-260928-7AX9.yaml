@@ -35,10 +35,18 @@ impact_analysis:
     affected_code:
         - shell/plugins/menu/MenuModel.js
 disposition:
+    known_issues:
+        - KI-MENU-JSONC-STRIP-GAPS
+        - KI-MENU-ITEMS-KEY-AMBIGUITY
     status: covered_by_requirement
     requirements:
         - SW-REQ-260928-C8W1
     rationale: >
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS and
+        KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same
+        requirements, so this closure covers only the inline-comment-tail
+        class.
+
         SW-REQ-260928-C8W1 models the decision as an equivalence over
         comment_in_string. All MC/DC rows carry witnesses in
         test/shell.d/menu-test.sh, replayed 1/1 by
