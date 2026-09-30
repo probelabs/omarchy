@@ -90,14 +90,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Ranking chooses display order among rows the user already owns and could reach by scrolling; it grants no authority, and the traced scorer has no network, crypto, privilege, or cross-process wait surface.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:38Z"
-    session: CRS-0013
-    fingerprint_sha: sha256:8c779321595dac6896863d973aee66c473feeff6261a97ea18bcfc7c49452414
-    via: agent-review
-    counts:
-        emitted: 1
-        dismissed: 1
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -105,3 +97,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-KV89
+    fingerprint_sha: sha256:3a8dc5426df6fb4264e103f53b603cbc3b6d92a47683c6bbacb989abeeb37428
+    via: cli-session
+    counts:
+        emitted: 40
+        verified: 16
+        dismissed: 24

@@ -1,0 +1,39 @@
+id: KI-MENU-PATH-HELPERS-COERCION
+title: pathFor coerces a null parent to the id 'null'/'0' row while parentPathFor returns empty - the two breadcrumb helpers disagree
+description: pathFor walks through item(items, null), whose key coercion can land on a row literally keyed 'null'/'0' and appends its label (F21), while parentPathFor returns [] for the same entry - one breadcrumb shows a phantom parent, the other shows none.
+affected_requirements:
+    - SW-REQ-260922-SJ7P
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-path-helpers-coercion.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: guard the walk on non-empty string parents and make both helpers share one walk
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:19Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-path-helpers-coercion.yaml
+kill_domain: coercion
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C20
+    - CRS-260930-09QC/C38

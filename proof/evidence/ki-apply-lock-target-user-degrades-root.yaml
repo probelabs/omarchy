@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260912-EKJP
+      command: ./pocs/crs-260930-g166-c05-c06.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:06:10Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT` from the KnownIssue''s reproducer command: ./pocs/crs-260930-g166-c05-c06.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-g166-c05-c06.sh
+      freshness_hashes:
+        pocs/crs-260930-g166-c05-c06.sh: sha256:d91030bf83a010875efd612ac6cc9691c4779e2162e9459ed139ebd7aeac9b94
+        proof/known-issues/KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT.yaml: ki-content-v1:sha256:8d3750b3e806a10b7ab6c0cd1d4db00932438908ebf5c90ca016e43e7f198dd9
+      known_issues:
+        - KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

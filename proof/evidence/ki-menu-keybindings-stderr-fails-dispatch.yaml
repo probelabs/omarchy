@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-0W96
+      command: ./pocs/crs-260930-jvx8-c07.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T11:54:37Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c07.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-jvx8-c07.sh
+      freshness_hashes:
+        pocs/crs-260930-jvx8-c07.sh: sha256:dd01c1f6203dc145b4e9d6e8deaebef68e91d9f79ad56bb2c21f577dcba0ec5a
+        proof/known-issues/KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH.yaml: ki-content-v1:sha256:f526f9283265743e74b6f514723e8be56cbba526f8daa7dba5015467c92630a2
+      known_issues:
+        - KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

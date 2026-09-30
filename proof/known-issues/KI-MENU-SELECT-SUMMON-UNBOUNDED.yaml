@@ -1,0 +1,33 @@
+id: KI-MENU-SELECT-SUMMON-UNBOUNDED
+title: omarchy-menu-select blocks forever inside the omarchy-shell summon call when the IPC never returns
+description: bin/omarchy-menu-select:91 executes omarchy-shell shell summon with no timeout wrapper. A hung IPC (summon never returns) blocks the synchronous caller indefinitely - the external-call leg of the bounded-wait obligation. Distinct from KI-MENU-SELECT-POLL-DEADLOCK, which covers the post-summon done_file poll; here the process never even reaches the poll.
+affected_requirements:
+    - SW-REQ-260922-Q6ZS
+evidence_manifests:
+    - proof/evidence/ki-menu-select-summon-unbounded.yaml
+severity: medium
+severity_basis: risk
+risk: availability
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-k02d-c02.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none - wrap caller-side invocations in an external timeout
+remediation: 'Bound the summon: timeout <bound> omarchy-shell shell summon ... with a non-zero exit and a diagnostic on expiry'
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:00:43Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:00:58Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-select-summon-unbounded.yaml
+kill_domain: unbounded_wait
+do_not_refile_as: done_file poll hangs (that is KI-MENU-SELECT-POLL-DEADLOCK; this is the summon call itself)
+affected_file: bin/omarchy-menu-select
+source_claim: CRS-260930-K02D/C02

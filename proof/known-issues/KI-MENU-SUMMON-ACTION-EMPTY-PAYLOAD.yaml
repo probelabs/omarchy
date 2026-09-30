@@ -1,0 +1,43 @@
+id: KI-MENU-SUMMON-ACTION-EMPTY-PAYLOAD
+title: summonAction rewrites an explicitly empty quoted payload to {} - the in-process summon diverges from the bash bytes
+description: summonAction's regex captures '' for an explicit empty payload and the 'match[2] || "{}"' fallback rewrites it (F22), while the bash path would pass the empty argument - the mcdc note itself names argv divergence as the forbidden defect.
+affected_requirements:
+    - SW-REQ-260928-8VJQ
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-summon-action-empty-payload.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: distinguish 'absent group' from 'empty string' via match[2] === undefined
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:50Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-summon-action-empty-payload.yaml
+kill_domain: payload_divergence
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C21
+    - CRS-260930-2T3A/C09
+    - CRS-260930-BW4T/C20
+    - CRS-260930-KV89/C37
+    - CRS-260930-VVSS/C21
+    - CRS-260930-WK59/C01

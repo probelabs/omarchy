@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-SJ7P
+      command: pocs/menu-probes.js
+      status: fail
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-09-30T12:50:40Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-SEARCH-SCORE-RANKING` from the KnownIssue''s reproducer command: pocs/menu-probes.js. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/menu-probes.js
+      freshness_hashes:
+        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
+        proof/known-issues/KI-MENU-SEARCH-SCORE-RANKING.yaml: ki-content-v1:sha256:15cde459df24bf298a34e2076e28fbe111d07bc13f0a180ccbb4f53f367df498
+      known_issues:
+        - KI-MENU-SEARCH-SCORE-RANKING
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

@@ -1,0 +1,33 @@
+id: KI-SLEEP-LOCK-BUDGET-ARG-OCTAL
+title: argv budget with a leading zero (08/09) bypasses the validation guard via an octal arithmetic error and suspends without locking
+description: 'The argv budget guard (bin/omarchy-system-sleep-lock:45) matches ^[0-9]+$ then evaluates (( budget_ms < 1 )) in bash arithmetic, which reads a leading zero as octal: ''08''/''09'' raise ''value too great for base'', the guard compound goes false, and the script keeps the literal token as its budget. The deadline assignment at line 52 errors the same way, every lock_ipc fails its remaining guard, and the run ends in report_unsecured claiming ''within 08ms'' with no lock request issued. ''010'' is silently accepted as octal 8.'
+affected_requirements:
+    - SW-REQ-260912-FAWV
+evidence_manifests:
+    - proof/evidence/ki-sleep-lock-budget-arg-octal.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-gzq0-c03.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: Force decimal (10#) in the guard and deadline arithmetic, or reject any budget token bash cannot evaluate in base 10 with a usage error
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:12:35Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:12:40Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-sleep-lock-budget-arg-octal.yaml
+kill_domain: input_validation
+do_not_refile_as: non-numeric budgets accepted (not-a-number and out-of-range values fall through to derive correctly; only base-8-valid leading-zero tokens break)
+affected_file: bin/omarchy-system-sleep-lock
+source_claim: CRS-260930-GZQ0/C03

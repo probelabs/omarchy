@@ -75,14 +75,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: stderr text to the user own terminal from the user own argv; no trust boundary is crossed, and no network, crypto, privilege, or wait surface exists in the dispatcher arm.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:38Z"
-    session: CRS-0008
-    fingerprint_sha: sha256:75f8f41abff5b487db8be398624b8772d504f78931fb5ee576515eb30a53c132
-    via: agent-review
-    counts:
-        emitted: 2
-        dismissed: 1
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -90,3 +82,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:18Z"
+    session: CRS-260930-3VZG
+    fingerprint_sha: sha256:98e7a77bdaf6c79873d35bf3e0bdcc4da573ada125d9b1754bfaa4d10edeb166
+    via: cli-session
+    counts:
+        emitted: 20
+        verified: 4
+        dismissed: 16

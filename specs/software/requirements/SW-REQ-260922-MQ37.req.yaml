@@ -84,13 +84,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Guard predicates are user-authored shell from user-owned menu config executing with the user own authority on every open - the same authority row actions already exercise on click, so open-time evaluation adds no new trust boundary; third-party plugin menus gain only earlier timing of authority they already hold, and no network or privilege surface exists in the generator itself.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:39Z"
-    session: CRS-0016
-    fingerprint_sha: sha256:b5262366c2551a5ec91ca937068fb718b85a3f7137f5e3c6e1668fb750d67c6f
-    via: agent-review
-    counts:
-        emitted: 2
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -98,3 +91,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:18Z"
+    session: CRS-260930-09QC
+    fingerprint_sha: sha256:cfc8bddbe49d2ea33f1999719bcd9debd012c5bb4b88e91e2027ca00fe88f5c8
+    via: cli-session
+    counts:
+        emitted: 41
+        verified: 21
+        dismissed: 20

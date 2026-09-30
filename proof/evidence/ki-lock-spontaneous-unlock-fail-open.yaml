@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SYS-REQ-260912-T0XP
+      command: ./pocs/crs-260930-ttvk-qml-static.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:18:21Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-ttvk-qml-static.sh
+      freshness_hashes:
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:b5f71de546ab2b3323ad797dbc0365bc8f06c7fb09779d99d483d6aa1c9fcdb8
+        proof/known-issues/KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN.yaml: ki-content-v1:sha256:c1122685efefebf1ef7af6b338fb7933e8c0129a821ca2d07b9e9bf0555b185d
+      known_issues:
+        - KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

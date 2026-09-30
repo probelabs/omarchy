@@ -1,0 +1,33 @@
+id: KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH
+title: Successful hyprctl dispatch with a stderr warning is treated as a refusal and the exec command runs twice
+description: dispatch_lua_expression captures 'hyprctl dispatch ... 2>&1' and accepts only status 0 with an empty or exactly-'ok' body (bin/omarchy-menu-keybindings:605-608). A compositor that succeeds but warns on stderr fails the body test, the function returns 1, and dispatch_exec_binding's '|| hyprctl dispatch exec' (line 620) runs the command a second time - double execution for any warned-but-accepted dispatch.
+affected_requirements:
+    - SW-REQ-260922-0W96
+evidence_manifests:
+    - proof/evidence/ki-menu-keybindings-stderr-fails-dispatch.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-jvx8-c07.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: Decide success on the exit status alone (or capture stderr separately and ignore it), so a warning can never flip an accepted dispatch into a fallback re-execution
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T11:54:25Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T11:54:36Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-keybindings-stderr-fails-dispatch.yaml
+kill_domain: error_propagation
+do_not_refile_as: refused dispatches fall back correctly (a genuinely refused dispatch falling back is the intended design; only the stderr-poisoned success double-fires)
+affected_file: bin/omarchy-menu-keybindings
+source_claim: CRS-260930-JVX8/C07

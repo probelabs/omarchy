@@ -1,0 +1,23 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirements:
+        - SW-REQ-260912-J8SX
+        - SYS-REQ-260912-T0XP
+      command: ./pocs/crs-260930-ttvk-qml-static.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T13:07:06Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-LOCK-PAM-FLIP-ENGAGES-LOCK` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-ttvk-qml-static.sh
+      freshness_hashes:
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:b5f71de546ab2b3323ad797dbc0365bc8f06c7fb09779d99d483d6aa1c9fcdb8
+        proof/known-issues/KI-LOCK-PAM-FLIP-ENGAGES-LOCK.yaml: ki-content-v1:sha256:c4b6f6ce0bd3134cc011dc39eea184e58c0f78461f55a14c46a59e84bdc7daee
+      known_issues:
+        - KI-LOCK-PAM-FLIP-ENGAGES-LOCK
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

@@ -1,0 +1,23 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirements:
+        - SW-REQ-260922-T257
+        - SW-REQ-260922-SNZG
+      command: ./pocs/crs-260930-3vzg-menu.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:20:59Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS` from the KnownIssue''s reproducer command: ./pocs/crs-260930-3vzg-menu.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-3vzg-menu.sh
+      freshness_hashes:
+        pocs/crs-260930-3vzg-menu.sh: sha256:d2223b7ee279fbae09266dc4d18fc0c8d061f888ae7daea708e6962600a6720f
+        proof/known-issues/KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS.yaml: ki-content-v1:sha256:bb167f14dbffc9c7af7bc268a77d4ef01380ac68eaeeae859e031644990a6f51
+      known_issues:
+        - KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

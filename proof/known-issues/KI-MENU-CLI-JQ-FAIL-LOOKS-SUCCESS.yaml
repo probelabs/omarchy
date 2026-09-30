@@ -1,0 +1,38 @@
+id: KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS
+title: Failed jq payload build still execs the menu IPC with an empty payload and exits 0
+description: 'toggle and summon (bin/omarchy-menu:23,26) embed $(menu_payload ...) inside the exec with no status check: when jq fails, the substitution is empty, the script still execs omarchy-shell shell toggle/summon omarchy.menu '''' and exits 0. A broken payload builder presents as a successful menu open that silently does nothing (the plugin receives an empty payload).'
+affected_requirements:
+    - SW-REQ-260922-T257
+    - SW-REQ-260922-SNZG
+evidence_manifests:
+    - proof/evidence/ki-menu-cli-jq-fail-looks-success.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-3vzg-menu.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: jq is a core dependency; failure is rare
+remediation: Build the payload first with a status check (payload=$(menu_payload ...) || exit 1) and refuse to exec with an empty payload
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:20:52Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:20:58Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-cli-jq-fail-looks-success.yaml
+kill_domain: error_propagation
+do_not_refile_as: unknown-verb or help exit codes (those are separate KI-MENU-CLI-EXIT-CODE entries)
+affected_file: bin/omarchy-menu
+source_claim:
+    - CRS-260930-3VZG/C01
+    - CRS-260930-3VZG/C02
+    - CRS-260930-KY78/C01
+    - CRS-260930-KY78/C02

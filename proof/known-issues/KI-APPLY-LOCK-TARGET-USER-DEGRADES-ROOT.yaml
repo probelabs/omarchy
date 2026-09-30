@@ -1,0 +1,35 @@
+id: KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
+title: Failed PKEXEC_UID/user mapping silently degrades target_user to root; lock PAM and fingerprint probe configured for the wrong account
+description: 'target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent: with OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd probe and both PAM files are then configured for the wrong account (usually root), leaving the installing user''s lock authentication misconfigured.'
+affected_requirements:
+    - SW-REQ-260912-EKJP
+evidence_manifests:
+    - proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-g166-c05-c06.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: callers set OMARCHY_INSTALL_USER explicitly (install scripts do; ad-hoc pkexec callers may not)
+remediation: Abort with a diagnostic when the mapping yields an empty target_user instead of falling back to $USER; never configure PAM for uid 0
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:06:04Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:06:09Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+kill_domain: input_validation
+do_not_refile_as: PATH pin failure (the PATH pin is a separate control; this is identity resolution)
+affected_file: bin/omarchy-apply-lock
+source_claim:
+    - CRS-260930-G166/C05
+    - CRS-260930-G166/C06

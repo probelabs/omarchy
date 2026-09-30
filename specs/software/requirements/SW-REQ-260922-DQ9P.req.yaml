@@ -100,13 +100,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: In-process text matching over the loaded model; the query arrives through the menu's own text field and no file, IPC transport, network, crypto, or privilege surface participates.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:38Z"
-    session: CRS-0012
-    fingerprint_sha: sha256:9d797e6fe19167c8fe55e8b7eb0e17b41875bbef29b336114536e9739f458254
-    via: agent-review
-    counts:
-        emitted: 1
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -114,3 +107,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:18Z"
+    session: CRS-260930-2EMZ
+    fingerprint_sha: sha256:06e8550dc320e218f1a36f788d8ccd825c22b771978f57c360e2e4f4d46b617c
+    via: cli-session
+    counts:
+        emitted: 33
+        verified: 17
+        dismissed: 16

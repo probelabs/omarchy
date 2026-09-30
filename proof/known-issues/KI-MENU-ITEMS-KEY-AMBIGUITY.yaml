@@ -1,0 +1,43 @@
+id: KI-MENU-ITEMS-KEY-AMBIGUITY
+title: A flat menu containing an entry id 'items' is parsed as a wrapper and every sibling entry is silently discarded
+description: 'parseMenuJsonc (MenuModel.js:96-98) treats an object-valued top-level ''items'' key as the wrapper form: {''items'': {...}, ''b'': {...}} parses to only the inner rows (F14) - a user menu that legitimately names an entry ''items'' loses all siblings with no diagnostic.'
+affected_requirements:
+    - SW-REQ-260922-E4J2
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-items-key-ambiguity.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: reserve the wrapper form to documents that carry ONLY an items key (or require an explicit marker), else treat 'items' as an entry id
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:18Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-items-key-ambiguity.yaml
+kill_domain: parsing
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C11
+    - CRS-260930-2T3A/C02
+    - CRS-260930-4KQ8/C08
+    - CRS-260930-BW4T/C08
+    - CRS-260930-VVSS/C06
+    - CRS-260930-WK59/C11

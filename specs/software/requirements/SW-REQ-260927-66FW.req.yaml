@@ -86,15 +86,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Implementation is GC'd JavaScript (QML JS engine). No manual memory, pointer arithmetic, binary framing, or format strings exist here. The structural catalog targets C-family hazards that cannot exist here.
-defect_review:
-    reviewed_at: "2026-09-27T19:39:58Z"
-    session: CRS-0017
-    fingerprint_sha: sha256:cbebc37d9574a7284db976630d1d24a84f197af58f67f4cd00cc7e326c8a590a
-    via: agent-review
-    counts:
-        emitted: 4
-        verified: 2
-        dismissed: 2
 lifecycle:
     change_history:
         - date: "2026-09-27T19:15:02Z"
@@ -102,3 +93,12 @@ lifecycle:
           to: review
           reason: '[fix/jsonc-trailing-comma-in-strings] fix branch review: formula verified against scanner by REVIEW-21 + independent fuzz (20k cases, 0 mismatch) this campaign'
           changed_by: agent:kimi-fix-jsonc-refresh
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-VVSS
+    fingerprint_sha: sha256:25d0069d34d4c927ba988b43a070577bf83032d32baed9300c06ac7afa379909
+    via: cli-session
+    counts:
+        emitted: 40
+        verified: 20
+        dismissed: 20

@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260912-ND55
+      command: ./pocs/crs-260930-ttvk-qml-static.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:18:20Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-LOCK-SCREENS-CHANGE-BLANK-LOST` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-ttvk-qml-static.sh
+      freshness_hashes:
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:b5f71de546ab2b3323ad797dbc0365bc8f06c7fb09779d99d483d6aa1c9fcdb8
+        proof/known-issues/KI-LOCK-SCREENS-CHANGE-BLANK-LOST.yaml: ki-content-v1:sha256:8fddcb3fd907800d0ea45e2a99b0a1a68c11a68e017634010472313c3d40f48f
+      known_issues:
+        - KI-LOCK-SCREENS-CHANGE-BLANK-LOST
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

@@ -1,0 +1,44 @@
+id: KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE
+title: foldedListHeight returns a height above the available cap; availableRowsHeight never clamps at zero - the fold can land off-card at a row boundary
+description: The full==1 path returns totals[0]+rowSpacing+peek with no clamp to available/maxHeight (anchor FOLD1; measured 82 against a cap of 50), and availableRowsHeight can return a negative budget (chrome larger than panel.height) that sends every branch past the cap (SX26/C36) - the card clamp then cuts the visible list exactly at a row boundary, removing the fold peek the function exists to provide.
+affected_requirements:
+    - SW-REQ-260922-B757
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-fold-height-exceeds-available.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: clamp available at >= 1px, and min the return against available (accepting the lost peek on tiny budgets)
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:21Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:47Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-fold-height-exceeds-available.yaml
+kill_domain: layout
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-2EMZ/C06
+    - CRS-260930-DMTP/C05
+    - CRS-260930-HFY2/C05
+    - CRS-260930-HFY2/C20
+    - CRS-260930-KV89/C16
+    - CRS-260930-WK59/C06
+    - CRS-260930-SX26/C01
+    - CRS-260930-SX26/C02
+    - CRS-260930-SX26/C36

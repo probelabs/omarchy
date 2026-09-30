@@ -1,0 +1,35 @@
+id: KI-MENU-GUARD-BATCH-STALE-APPLY
+title: 'Guard batches carry no generation token: a batch computed for the previous items publishes onto the new set, and the empty-script case never re-renders'
+description: 'guardProc.onExited publishes collected output with no comparison against the items generation (providerProc has a revision check, guards do not): overlapping ids keep the previous when:false on screen; when the newer script is EMPTY the deferred path clears the maps and returns without rebuildDisplay, so the open menu stays stuck on stale visibility (SX26/C09).'
+affected_requirements:
+    - SW-REQ-260922-MQ37
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-guard-batch-stale-apply.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: tag each batch with an items serial and drop stale commits; rebuildDisplay after clearing the maps
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:23Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-guard-batch-stale-apply.yaml
+kill_domain: stale_state
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim: CRS-260930-SX26/C09

@@ -1,0 +1,33 @@
+id: KI-MENU-KEYBINDINGS-STALE-LUA-CACHE
+title: Warm keybindings cache serves a stale Lua command after the user edits only the command a __lua bind runs
+description: keybindings_cache_key hashes a version literal, keymap lines and hyprctl binds only (bin/omarchy-menu-keybindings:541-546) - never the Lua source the __lua rows were recovered from. A __lua row's arg is empty in hyprctl output, so a command-only edit leaves the hash unchanged; output_binding_records cats the warm cache (line 575) and the menu keeps dispatching the previous command until some other hash input changes.
+affected_requirements:
+    - SW-REQ-260922-0W96
+evidence_manifests:
+    - proof/evidence/ki-menu-keybindings-stale-lua-cache.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-jvx8-c03.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: omarchy-menu keybindings --print forces the uncached path
+remediation: Fold the Lua config content (or its hash) into keybindings_cache_key so source edits invalidate the cache
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T11:54:25Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T11:54:36Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-keybindings-stale-lua-cache.yaml
+kill_domain: stale_state
+do_not_refile_as: cache never rebuilds at all (it rebuilds on keymap/binds changes; only Lua-command-only edits are missed)
+affected_file: bin/omarchy-menu-keybindings
+source_claim: CRS-260930-JVX8/C03

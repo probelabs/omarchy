@@ -97,6 +97,10 @@ history:
       by: agent:opencode-hazard-c
       action: edit
       detail: add-requirement=SW-REQ-260922-SWFT (auto-synced from --defer-obligation --ki)
+    - at: "2026-09-30T12:00:43Z"
+      by: human:Leonid Bugaev
+      action: edit
+      detail: add-source-claim=CRS-260930-K02D/C01
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -122,4 +126,6 @@ poc_quality:
         attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
         reachability_verified: 'local-behavioral correctness defect: no ingress access-control or trust boundary to traverse; the poll runs inside the user''s own session script'
         untrusted_attacker: 'local-behavioral reliability defect: the trigger is peer-process death (Quickshell crash/compositor restart), not an adversary; no actor model applies'
-source_claim: CRS-0014/C01
+source_claim:
+    - CRS-0014/C01
+    - CRS-260930-K02D/C01

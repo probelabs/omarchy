@@ -1,0 +1,45 @@
+id: KI-MENU-REVEAL-CURSOR-PEEK
+title: 'revealCursor loses the directional peek: an uninstantiated delegate skips the adjustment and the unconditional underhang write undoes the forward peek'
+description: itemAtIndex returning null (delegate not built) aborts before any adjustment (anchor REV1); with a delegate, the overhang (down) and underhang (up) writes both run unconditionally, so on a short viewport the second undoes the first and the cursor row parks flush with the viewport edge - the exact state the Contain comment forbids; positionViewAtIndex can also apply deferred contentY over the manual tweak.
+affected_requirements:
+    - SW-REQ-260922-Z48F
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-reveal-cursor-peek.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: carry travel direction into select()/revealCursor and apply only the matching side; force delegate instantiation (or compute from geometry) before adjusting
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:21Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:47Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-reveal-cursor-peek.yaml
+    - at: "2026-09-30T12:57:10Z"
+      by: human:Leonid Bugaev
+      action: edit
+      detail: add-source-claim=CRS-260930-WK59/C30
+kill_domain: scroll_anchoring
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-2EMZ/C31
+    - CRS-260930-DMTP/C06
+    - CRS-260930-HFY2/C19
+    - CRS-260930-KV89/C17
+    - CRS-260930-SX26/C17
+    - CRS-260930-WK59/C30

@@ -1,0 +1,38 @@
+id: KI-MENU-PENDING-INITIAL-MENU-DEAD
+title: 'pendingInitialMenu is stored and never read: a route summoned before the JSONC loads opens root and stays there'
+description: 'openRoute stores the resolved id in pendingInitialMenu (Menu.qml:974) and nothing reads it (anchor PIM1: exactly two occurrences) - with items still empty at summon time, resolveRoute returns the literal, item() misses, openExistingMenu rewrites to root, and after onLoaded nothing applies the stored route. A misspelled route also silently becomes root, undoing resolveRoute''s documented literal fallthrough in the same turn.'
+affected_requirements:
+    - SW-REQ-260922-N3RM
+    - SW-REQ-260922-50RE
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: apply pendingInitialMenu after onLoaded (or block the first open until sources load)
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:22Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+kill_domain: startup_race
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-KV89/C15
+    - CRS-260930-SX26/C03

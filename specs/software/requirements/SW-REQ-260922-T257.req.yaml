@@ -102,14 +102,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: A local session-bus IPC call to the user own shell instance with user-chosen route data; no network, crypto, or privilege boundary, and no authority moves that the called plugin does not already hold.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:38Z"
-    session: CRS-0007
-    fingerprint_sha: sha256:815e2d93de4f7b9ba56cca3673aeb0d335572470d24bd2a49688a77e5242b4f8
-    via: agent-review
-    counts:
-        emitted: 2
-        dismissed: 2
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -117,3 +109,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-KY78
+    fingerprint_sha: sha256:91cd09e507a6d8053b9d1c415e27b6dde7ceceea976c5744dd4983afa1530a59
+    via: cli-session
+    counts:
+        emitted: 21
+        verified: 4
+        dismissed: 17

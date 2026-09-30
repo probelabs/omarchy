@@ -1,0 +1,23 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirements:
+        - SW-REQ-260912-S154
+        - SW-REQ-260912-Y0WT
+      command: ./pocs/crs-260930-g166-c01-c13.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:06:10Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/crs-260930-g166-c01-c13.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-g166-c01-c13.sh
+      freshness_hashes:
+        pocs/crs-260930-g166-c01-c13.sh: sha256:06c6d333b21a3034ae58517bcdeee0c265250d73fb32f2924f8fbf91023d7894
+        proof/known-issues/KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN.yaml: ki-content-v1:sha256:ce760d5282373781fe9cf4d2db8a7e67ca03be1dc707ab0f7810a92039f69fb6
+      known_issues:
+        - KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

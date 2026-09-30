@@ -1,0 +1,35 @@
+id: KI-MENU-OPEN-LEAVES-CONFIRM
+title: A new menu summon re-opens with the stale uninstall confirmation still up
+description: openExistingMenu resets mode/paths/filters but never clears deleteConfirmOpen/deleteTarget (anchor CNF1) and cancel() does not either - the confirm dialog renders over the fresh item set targeting an app row that may no longer exist.
+affected_requirements:
+    - SW-REQ-260922-8CQ4
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-open-leaves-confirm.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: cancelDelete() in openExistingMenu (or on opened transitions)
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:22Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+kill_domain: dialog_lifecycle
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim: CRS-260930-WK59/C08

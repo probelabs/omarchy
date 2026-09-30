@@ -1,0 +1,35 @@
+id: KI-MENU-SELECT-GEOMETRY-INT-COERCION
+title: 'Geometry flags silently coerce non-numeric and flag-like values: --width abc summons width 0, --width --height 400 swallows both'
+description: parse_arguments accepts any following word as a geometry value (arity check only, bin/omarchy-menu-select:42) and encode_payload's Perl int() silently coerces non-integers (int(abc)=0, int(10.9)=10, line 86). A value that is itself a known flag (--width --height 400) is consumed as the width, the 400 is dropped as an unknown token, and the summon proceeds with corrupted geometry and no error.
+affected_requirements:
+    - SW-REQ-260922-Q6ZS
+evidence_manifests:
+    - proof/evidence/ki-menu-select-geometry-int-coercion.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-k02d-c04-c16.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: 'Validate geometry values at parse time: reject non-numeric tokens and a value that matches a known flag, with a usage error'
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:00:43Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:00:58Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-select-geometry-int-coercion.yaml
+kill_domain: input_validation
+do_not_refile_as: payload encoding corrupts valid integers (valid integers round-trip; only non-numeric/flag-like tokens are hit)
+affected_file: bin/omarchy-menu-select
+source_claim:
+    - CRS-260930-K02D/C04
+    - CRS-260930-K02D/C16

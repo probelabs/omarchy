@@ -83,14 +83,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Local mktemp paths and the session shell IPC summon; the far side of the protocol is the shell plugin siblings own surface, and this side carries no network, crypto, or privilege boundary.
-defect_review:
-    reviewed_at: "2026-09-23T17:07:46Z"
-    session: CRS-0014
-    fingerprint_sha: sha256:022fb18e34eb7346e17af69d42e814b52878bad666405acc2a6f4f2e37ac44f2
-    via: agent-review
-    counts:
-        emitted: 3
-        verified: 1
 verification_state: failing
 lifecycle:
     change_history:
@@ -104,3 +96,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-K02D
+    fingerprint_sha: sha256:543bdaba6f78786e87b8a584e2864906b7dc2f1b078a79c6d6b5a459da02d8cf
+    via: cli-session
+    counts:
+        emitted: 16
+        verified: 4
+        dismissed: 11

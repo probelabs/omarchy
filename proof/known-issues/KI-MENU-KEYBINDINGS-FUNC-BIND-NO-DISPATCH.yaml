@@ -1,0 +1,33 @@
+id: KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH
+title: Lua function binds (Select all, Universal copy/paste/cut, Zoom in, Reset zoom) render in the menu but dispatch nothing
+description: 'Binds whose dispatcher is a raw Lua function never register in o.bind_commands, so build_lua_bind_cache caches them with kind=""/arg="" (bin/omarchy-menu-keybindings:217-219). dynamic_bindings then overwrites the __lua dispatcher with the empty map value (lines 309-312) and the row still prints. dispatch_binding''s empty-dispatcher arm returns 1: the six shipped function binds appear selectable but perform no action.'
+affected_requirements:
+    - SW-REQ-260922-0W96
+evidence_manifests:
+    - proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-jvx8-c02.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none - the rows are visible, selecting them silently does nothing
+remediation: Cache a dispatchable expression for function binds (emit the Lua body or register bind_commands entries for the shipped function binds) and refuse to render rows whose recovered dispatcher is empty
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T11:54:25Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T11:54:36Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+kill_domain: functional_gap
+do_not_refile_as: all Lua binds fail to dispatch (exec-arg binds via o.bind_commands dispatch fine; only raw-function binds are hit)
+affected_file: bin/omarchy-menu-keybindings
+source_claim: CRS-260930-JVX8/C02

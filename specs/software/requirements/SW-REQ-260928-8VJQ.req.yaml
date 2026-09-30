@@ -99,14 +99,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: GC'd JavaScript (QML JS engine); no manual memory, pointers, binary framing, or format strings.
-defect_review:
-    reviewed_at: "2026-09-28T08:43:35Z"
-    session: CRS-0021
-    fingerprint_sha: sha256:66205ecfd9c77a641786da76028ff8a243747a2811b242534ef2f90476d3b2b5
-    via: agent-review
-    counts:
-        emitted: 4
-        dismissed: 4
 lifecycle:
     change_history:
         - date: "2026-09-28T08:20:36Z"
@@ -114,3 +106,12 @@ lifecycle:
           to: review
           reason: '[upstream-sync-324f0ba5] [upstream-324f0ba5 refresh] new guarantee for the summonAction fast path absorbed from c231097d; equivalence to bash path verified by construction (omarchy-shell:51 ''{}'' default) and 10/10 edge battery; witnesses in menu-test.sh node block'
           changed_by: agent:kimi-upstream-watch
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-WK59
+    fingerprint_sha: sha256:e64a06aa7828d97daa7a10ef7b9c78e52adf294621b313527475b9776629228b
+    via: cli-session
+    counts:
+        emitted: 30
+        verified: 11
+        dismissed: 19

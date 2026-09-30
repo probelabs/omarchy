@@ -1,0 +1,36 @@
+id: KI-SLEEP-LOCK-BUDGET-NONPOSITIVE
+title: 'Non-positive sleep-lock budget for logind windows <= 1s: heal guard re-derives the same value, lock_ipc refuses silently, suspend proceeds with no lock attempt'
+description: 'derive_budget_ms reserves max(window/5, 1000ms) with no floor (bin/omarchy-system-sleep-lock:37-40): a 1s InhibitDelayMaxUSec yields budget 0 and any sub-second window yields a NEGATIVE budget. The line-45 heal guard re-derives instead of flooring - a second identical busctl read that reinstalls the same illegal value. With budget <= 0 the deadline is already past, so every lock_ipc hits the remaining<=0 guard and returns 1 with empty stdout, request_lock''s case silently falls through, and the machine suspends with the lock NEVER attempted - only a ''within 0ms'' notification marks it.'
+affected_requirements:
+    - SW-REQ-260912-FAWV
+evidence_manifests:
+    - proof/evidence/ki-sleep-lock-budget-nonpositive.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-gzq0-c01-c02-c10.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: default 5s window is unaffected; only logind drop-ins with windows <= 1s hit the chain
+remediation: Floor the derived budget at 1ms (or clamp the reserve to window-1ms), make the heal guard substitute a safe constant instead of re-deriving, and surface lock_ipc's refusal instead of swallowing it
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:12:35Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:12:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-sleep-lock-budget-nonpositive.yaml
+kill_domain: boundary
+do_not_refile_as: cap arithmetic wrong for large windows (the 12s cap works; only windows <= 1s produce non-positive budgets)
+affected_file: bin/omarchy-system-sleep-lock
+source_claim:
+    - CRS-260930-GZQ0/C01
+    - CRS-260930-GZQ0/C02
+    - CRS-260930-GZQ0/C10

@@ -1,0 +1,48 @@
+id: KI-LOCK-PAM-FLIP-ENGAGES-LOCK
+title: Lock engages when password PAM disappears during the stabilize window; the missing-pam gate runs only at the IPC instant and the stranded watchdog stands down
+description: The missing-pam gate (lockIpc.lock, shell/plugins/lock/Service.qml:741-746) checks passwordPamConfigured once; beginLock then schedules requestSessionLock through the 500ms stabilize delay, and requestSessionLock (87-99) re-checks only lockRequested/sessionLock state - never PAM. A FileView reload whose onLoadFailed lands inside that window (config removed / TTY-cleared failsafe) flips the flag after the gate but before line 99 sets sessionLock.locked = true; onPasswordPamConfiguredChanged early-returns on the false transition and checkStrandedLock explicitly stands down once lockRequested is set ('a lock this shell took is nobody's orphan'), so the session locks with no password PAM behind it and nothing releases it.
+affected_requirements:
+    - SW-REQ-260912-J8SX
+    - SYS-REQ-260912-T0XP
+evidence_manifests:
+    - proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+severity: high
+severity_basis: reproducer
+risk: correctness
+cve_surface: none
+affected_api: shell/plugins/lock/Service.qml (session lock lifecycle, missing-pam gate)
+reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+tripwire_mutation: 'Re-check passwordPamConfigured inside requestSessionLock (shell/plugins/lock/Service.qml:87-99) and stand the lock back down on the false transition: the anchored C01 assertions in pocs/crs-260930-ttvk-qml-static.sh flip from PRESENT to ABSENT and the script exits 1'
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: fingerprint PAM (if configured) can still unlock; TTY remains
+remediation: Re-check passwordPamConfigured in requestSessionLock before sessionLock.locked = true and stand the lock back down (with the missing-pam notification) when it went false; treat a PAM flip while lockRequested as a teardown trigger
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:17:50Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:18:19Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+    - at: "2026-09-30T13:06:45Z"
+      by: human:Leonid Bugaev
+      action: edit
+      detail: set-severity-basis=reproducer,set-affected-api,set-tripwire-mutation
+    - at: "2026-09-30T13:06:58Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+    - at: "2026-09-30T13:07:05Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+kill_domain: check_race
+do_not_refile_as: IPC returns missing-pam while PAM is already gone (that gate works; the defect is the flip AFTER the gate, during stabilize)
+affected_file: shell/plugins/lock/Service.qml
+source_claim: CRS-260930-TTVK/C01

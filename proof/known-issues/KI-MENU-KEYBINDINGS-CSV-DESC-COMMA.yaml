@@ -1,0 +1,33 @@
+id: KI-MENU-KEYBINDINGS-CSV-DESC-COMMA
+title: 'Comma in a binding description shifts every later CSV field: truncated label, wrong dispatcher, failed dispatch'
+description: 'dynamic_bindings prints cache rows as raw comma-joined CSV with no quoting (printf ''%s,%s,%s,%s,%s'', bin/omarchy-menu-keybindings:333). parse_binding_records sets FS='','' and takes action=$3/dispatcher=$4, so a description containing a comma (''Save, quit'') shifts every later field: the menu shows the truncated label, and dispatch receives the literal string '' quit'' as dispatcher and ''exec,alacritty'' as arg - which dispatch_binding treats as an unknown dispatcher.'
+affected_requirements:
+    - SW-REQ-260922-0W96
+evidence_manifests:
+    - proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-jvx8-c06.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: Quote or escape the description field, or switch the internal record format to a separator descriptions cannot contain (TAB), parsing with that separator end to end
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T11:54:25Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T11:54:36Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
+kill_domain: parsing
+do_not_refile_as: comma in the command/arg breaks parsing (args are rebuilt from field 5 onward and round-trip; only the middle description field is unquoted)
+affected_file: bin/omarchy-menu-keybindings
+source_claim: CRS-260930-JVX8/C06

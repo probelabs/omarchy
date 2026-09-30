@@ -1,0 +1,23 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirements:
+        - SW-REQ-260922-PRNV
+        - SW-REQ-260922-50RE
+      command: pocs/menu-probes.js
+      status: fail
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-09-30T12:50:40Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-ITEM-PROTOTYPE-LEAK` from the KnownIssue''s reproducer command: pocs/menu-probes.js. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/menu-probes.js
+      freshness_hashes:
+        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
+        proof/known-issues/KI-MENU-ITEM-PROTOTYPE-LEAK.yaml: ki-content-v1:sha256:b70207dc9b2c717d068479ab3417a23712d1c97b509a60f5be92adc6a277c651
+      known_issues:
+        - KI-MENU-ITEM-PROTOTYPE-LEAK
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

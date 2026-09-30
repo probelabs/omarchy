@@ -1,0 +1,42 @@
+id: KI-MENU-MERGE-PROTOTYPE-IDS
+title: mergeMenuSources stores prototype-named ids but drops them from itemOrder - the row is written and never rendered
+description: mergeMenuSources' presence test !nextItems[entry.id] is truthy for inherited properties, so an id like 'constructor' skips the nextOrder push while the assignment still stores the row (F9); __proto__ additionally invokes the prototype setter. Later order-walks iterate itemOrder and never see the entry.
+affected_requirements:
+    - SW-REQ-260922-7NPE
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-merge-prototype-ids.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: use Object.hasOwn / hasOwnProperty for the presence test and a non-prototype map (Object.create(null)) for storage
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:18Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-merge-prototype-ids.yaml
+kill_domain: prototype_pollution
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C23
+    - CRS-260930-4KQ8/C09
+    - CRS-260930-BW4T/C16
+    - CRS-260930-HFY2/C04
+    - CRS-260930-VVSS/C07

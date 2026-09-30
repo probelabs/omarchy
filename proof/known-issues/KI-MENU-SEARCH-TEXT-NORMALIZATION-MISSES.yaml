@@ -1,0 +1,47 @@
+id: KI-MENU-SEARCH-TEXT-NORMALIZATION-MISSES
+title: 'Search text misses: whole-word description matching drops punctuation-glued words, and separator folding drops exact hyphenated alias/leaf forms'
+description: termInSearchWords requires whole-word equality, so a description word with trailing punctuation ('system.') never matches the term (F24a) and a mixed-case term never matches the lowercased haystack (F24b); matchesQuery's name path only sees the separator-folded rewrite of aliases and leaf ids, so querying the exact hyphenated form ('power-menu') misses even though the alias is declared that way.
+affected_requirements:
+    - SW-REQ-260922-DQ9P
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-search-text-normalization-misses.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: case handling is correct for every in-tree caller (all pre-lowercase); only punctuation and exact-form matching are defective
+remediation: strip edge punctuation before the whole-word compare and keep the untokenized alias/id text as an additional nameText component
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:21Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-search-text-normalization-misses.yaml
+    - at: "2026-09-30T12:58:10Z"
+      by: human:Leonid Bugaev
+      action: edit
+      detail: add-source-claim=CRS-260930-2EMZ/C26
+kill_domain: search_normalization
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-2EMZ/C01
+    - CRS-260930-2EMZ/C02
+    - CRS-260930-4KQ8/C27
+    - CRS-260930-KV89/C23
+    - CRS-260930-WK59/C14
+    - CRS-260930-2EMZ/C26

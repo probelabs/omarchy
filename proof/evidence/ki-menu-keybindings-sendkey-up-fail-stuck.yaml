@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-0W96
+      command: ./pocs/crs-260930-jvx8-c04.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T11:54:37Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c04.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-jvx8-c04.sh
+      freshness_hashes:
+        pocs/crs-260930-jvx8-c04.sh: sha256:991af2ea1d20182084cee5de3fa99c1a1339c094aa0bc167cf98424f6bd33c7f
+        proof/known-issues/KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK.yaml: ki-content-v1:sha256:3143313cab15783bb5a85cc503459496ff26bba82b3630e08f326cdf10a7963f
+      known_issues:
+        - KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

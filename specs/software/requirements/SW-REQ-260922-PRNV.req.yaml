@@ -74,13 +74,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Routing picks which user-owned action to run; no new authority is granted by the choice, and the traced resolver carries no network, crypto, or privilege surface.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:38Z"
-    session: CRS-0009
-    fingerprint_sha: sha256:f316f513242a180930fca883ec71011da13cc15e30dbcb70dee1fc6d6d09f168
-    via: agent-review
-    counts:
-        emitted: 2
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -88,3 +81,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:18Z"
+    session: CRS-260930-4KQ8
+    fingerprint_sha: sha256:9cf087eb928fb4ed17556c5a2cdf7a86203aec2e27cd81f48c7a5fe5ed4025c5
+    via: cli-session
+    counts:
+        emitted: 39
+        verified: 13
+        dismissed: 26

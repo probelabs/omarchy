@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-Q6ZS
+      command: ./pocs/crs-260930-k02d-c08.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:01:00Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-SELECT-HANDSHAKE-TMP-LEAK` from the KnownIssue''s reproducer command: ./pocs/crs-260930-k02d-c08.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-k02d-c08.sh
+      freshness_hashes:
+        pocs/crs-260930-k02d-c08.sh: sha256:bca0313f658b41603a4c022e4296275bb7b74568e65fc67470e872a2fd2f062d
+        proof/known-issues/KI-MENU-SELECT-HANDSHAKE-TMP-LEAK.yaml: ki-content-v1:sha256:33b4d6804b395aad4ac0644c534832c65cb469a8ecdbd42af82ad1732d45353d
+      known_issues:
+        - KI-MENU-SELECT-HANDSHAKE-TMP-LEAK
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

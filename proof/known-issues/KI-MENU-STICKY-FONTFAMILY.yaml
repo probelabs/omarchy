@@ -1,0 +1,35 @@
+id: KI-MENU-STICKY-FONTFAMILY
+title: 'Payload fontFamily is sticky: a later open that omits it keeps the previous caller''s font'
+description: fontFamily is written only when the payload field is truthy and no path restores the style default (SX26/C44) - two different summons inherit the first caller's face.
+affected_requirements:
+    - SW-REQ-260922-50RE
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-sticky-fontfamily.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: reset fontFamily to the Style default in cancel()/openRoute when the payload omits it
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:23Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-sticky-fontfamily.yaml
+kill_domain: state_restoration
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim: CRS-260930-SX26/C44

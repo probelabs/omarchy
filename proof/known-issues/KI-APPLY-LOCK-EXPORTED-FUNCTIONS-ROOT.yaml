@@ -1,0 +1,53 @@
+id: KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
+title: Exported bash functions execute as root inside apply-lock despite the trusted-PATH replacement (defeats trusted_path_only)
+description: 'The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact: exported bash functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) are imported into the function table and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48) and an imported command_not_found_handle returning 0 makes ''if omarchy-shell lock status'' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.'
+affected_requirements:
+    - SW-REQ-260912-EKJP
+evidence_manifests:
+    - proof/evidence/ki-apply-lock-exported-functions-root.yaml
+severity: high
+severity_basis: reproducer
+risk: availability
+cve_surface: none
+affected_api: bin/omarchy-apply-lock (root lock-screen PAM provisioning)
+reproducer_command: ./pocs/crs-260930-g166-c07-c09.sh
+tripwire_mutation: 'Unset imported bash functions under EUID 0 in bin/omarchy-apply-lock before any decision point (or run the body via env -i bash --noprofile --norc): the imported grep()/command_not_found_handle no longer execute, pocs/crs-260930-g166-c07-c09.sh flips from SYMPTOM to PASS-REFUTED (exit 1)'
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: sudo env_reset strips exported functions for the non-root arm; the already-root arm (install/upgrade, no sudo) is exposed
+remediation: Unset imported functions before any decision point (eval 'unset -f $(compgen -A function)' under EUID 0, or run the body via env -i bash --noprofile --norc), and use 'command' for the pinned lookups
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:06:05Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:06:09Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-09-30T13:06:45Z"
+      by: human:Leonid Bugaev
+      action: edit
+      detail: set-severity-basis=reproducer,set-affected-api,set-tripwire-mutation
+    - at: "2026-09-30T13:06:58Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-09-30T13:07:05Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-09-30T13:07:10Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+kill_domain: privileged_code_injection
+do_not_refile_as: PATH shadowing via user-writable directory (the PATH pin closes that; this is the function-table bypass of the same guarantee)
+affected_file: bin/omarchy-apply-lock
+source_claim:
+    - CRS-260930-G166/C07
+    - CRS-260930-G166/C09

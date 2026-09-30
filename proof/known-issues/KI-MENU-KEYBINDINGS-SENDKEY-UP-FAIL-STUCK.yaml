@@ -1,0 +1,33 @@
+id: KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK
+title: Refused key-up after an accepted key-down leaves a synthetic key stuck down and skips the sendshortcut fallback
+description: dispatch_sendshortcut_binding commits on the down call (bin/omarchy-menu-keybindings:635), ignores the up call's failure (line 637) and returns unconditionally (line 638). When the compositor accepts the down but refuses the up, the synthetic key is left in the down state - the exact stuck-state the clipboard helper's comment warns about - and the sendshortcut fallback at line 641 is never tried.
+affected_requirements:
+    - SW-REQ-260922-0W96
+evidence_manifests:
+    - proof/evidence/ki-menu-keybindings-sendkey-up-fail-stuck.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-jvx8-c04.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: 'Treat the up failure as a failed dispatch: return its status so the fallback chord runs, or send a compensating key-up before falling back'
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T11:54:25Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T11:54:36Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-keybindings-sendkey-up-fail-stuck.yaml
+kill_domain: error_propagation
+do_not_refile_as: sendshortcut fallback never works (it works when the down call itself fails - that path is tested by the status-7 scenario)
+affected_file: bin/omarchy-menu-keybindings
+source_claim: CRS-260930-JVX8/C04

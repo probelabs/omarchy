@@ -1,0 +1,50 @@
+id: KI-MENU-ITEM-PROTOTYPE-LEAK
+title: 'Map reads walk Object.prototype: item(), results maps, providersLoaded and the QML item() treat constructor/toString/valueOf as real entries'
+description: 'item() is a raw truthy read (items[id] ? ... : null), so inherited prototype properties look up as menu rows (probe F7): they beat aliases in resolveRoute, defeat the root fallback in openExistingMenu/setActiveMenu, and mark provider menus already-loaded (loadProviderForMenu''s providersLoaded truthiness, SX26/C21). The same class on results maps: isDisabled/labelFor read disabledResults[id] off a fresh {} and get the inherited function, dimming and check-marking a row whose id collides (HFY2/C16).'
+affected_requirements:
+    - SW-REQ-260922-PRNV
+    - SW-REQ-260922-50RE
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-item-prototype-leak.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: requires a menu id that collides with an Object.prototype name - user-authored JSONC can do this
+remediation: 'hasOwnProperty checks (or null-prototype maps / Object.hasOwn) at every dynamic map read: item(), results lookups, providersLoaded'
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:18Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-item-prototype-leak.yaml
+kill_domain: prototype_pollution
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C04
+    - CRS-260930-4KQ8/C02
+    - CRS-260930-BW4T/C02
+    - CRS-260930-HFY2/C02
+    - CRS-260930-HFY2/C16
+    - CRS-260930-HFY2/C17
+    - CRS-260930-DMTP/C11
+    - CRS-260930-KV89/C25
+    - CRS-260930-VVSS/C08
+    - CRS-260930-WK59/C13
+    - CRS-260930-SX26/C21
+    - CRS-260930-SX26/C22

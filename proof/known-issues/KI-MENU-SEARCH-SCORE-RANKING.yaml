@@ -1,0 +1,43 @@
+id: KI-MENU-SEARCH-SCORE-RANKING
+title: 'searchScore ranking anomalies: apps promoted within their tier against the documented ordering, root exact-labels swamped by the nested band, multi-term cross-field matches collapse into the miss band'
+description: 'Executed probes: an app and a menu row with equal scores rank app-FIRST (the -5 within-tier nudge) although the code comment contracts ''App rows sort after all menu items'' (F15d); an exact label at root scores base 2 while the identical exact label nested deeper scores base 0, so the root row ranks below its nested twin and the depth tie-break is swamped (F15f); a multi-term query that matchesQuery accepts across fields (one term on the label, one on the description) scores in the unmatched baseline band, below a single-field pure match (F15e2 - measured 78000 for an accepted query).'
+affected_requirements:
+    - SW-REQ-260922-SJ7P
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-search-score-ranking.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: give multi-term queries an aggregation across per-term scores; make the root/nested exact-label bands consistent; reconcile the app nudge with the documented ordering
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:19Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-search-score-ranking.yaml
+kill_domain: scoring
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-KV89/C01
+    - CRS-260930-KV89/C04
+    - CRS-260930-KV89/C06
+    - CRS-260930-BW4T/C18
+    - CRS-260930-VVSS/C20
+    - CRS-260930-2EMZ/C03

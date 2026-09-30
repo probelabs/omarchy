@@ -1,0 +1,36 @@
+id: KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN
+title: 'Fingerprint gate fail-open: substring grep treats not-enrolled and failed fprintd-list probes as enrolled and installs pam_fprintd'
+description: The fingerprint gate (bin/omarchy-apply-lock:47-48) greps fprintd-list output for the substring 'finger' with stderr discarded and no pipefail. Real fprintd empty-enrollment text ('User alice has no fingers enrolled ...') contains 'fingers', so the gate takes the ENROLLED branch and installs pam_fprintd for a user with zero prints; a daemon error banner ('Fingerprints' then non-zero exit) also passes because the pipeline status is grep's. Fingerprint PAM is then configured for an account that can never match a print.
+affected_requirements:
+    - SW-REQ-260912-S154
+    - SW-REQ-260912-Y0WT
+evidence_manifests:
+    - proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-g166-c01-c13.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: Match the enrollment table (line-anchored 'Fingerprints' header plus per-finger rows) and require fprintd-list exit 0 with pipefail; treat any probe failure as not-enrolled
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:06:04Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:06:09Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
+kill_domain: oracle_confusion
+do_not_refile_as: fingerprint PAM never installs (it installs - the defect is that it installs when it must not)
+affected_file: bin/omarchy-apply-lock
+source_claim:
+    - CRS-260930-G166/C01
+    - CRS-260930-G166/C13

@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SYS-REQ-260912-T0XP
+      command: ./pocs/crs-260930-ttvk-c02.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T12:18:20Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-LOCK-FPRINT-PROBE-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-c02.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-ttvk-c02.sh
+      freshness_hashes:
+        pocs/crs-260930-ttvk-c02.sh: sha256:13123eaf92e1d1614be8ffa9f4cd69ee600cc87a443a1551e7f0346fd76c760b
+        proof/known-issues/KI-LOCK-FPRINT-PROBE-FAIL-OPEN.yaml: ki-content-v1:sha256:d5d07d385628bac3e814b3908aa686f217aa320bec9bd7ce51dee7c1a52f4d33
+      known_issues:
+        - KI-LOCK-FPRINT-PROBE-FAIL-OPEN
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

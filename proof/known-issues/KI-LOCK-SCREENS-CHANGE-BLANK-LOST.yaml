@@ -1,0 +1,23 @@
+id: KI-LOCK-SCREENS-CHANGE-BLANK-LOST
+title: Screen add/remove while locked clears the blank intent and never re-arms the idle blank timer
+description: onScreensChanged (shell/plugins/lock/Service.qml:666-674) sets displaysBlank = false (so a returning panel shows the wallpaper) but calls neither armBlankTimer nor runWake. After the one-shot idleBlankTimer has fired, nothing restarts the 5s countdown, and a newly added output falls back to displaysBlank in the DPMS map - so after any hotplug/unplug while locked, all displays stay awake until the next keypress re-runs the idle path.
+affected_requirements:
+    - SW-REQ-260912-ND55
+evidence_manifests:
+    - proof/evidence/ki-lock-screens-change-blank-lost.yaml
+severity: low
+reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+mitigation: any keypress restarts the cycle
+remediation: After clearing displaysBlank in onScreensChanged, re-arm the idle blank timer (or runWake-then-arm) so the power path resumes
+status: open
+history:
+    - at: "2026-09-30T12:18:14Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:18:19Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
+kill_domain: state_loss
+do_not_refile_as: blank never engages (the initial idle path works; only the post-screens-change re-arm is missing)
+source_claim: CRS-260930-TTVK/C04

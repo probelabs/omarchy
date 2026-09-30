@@ -1,0 +1,35 @@
+id: KI-MENU-GOBACK-ROOT-STRAND
+title: goBack refuses to retrace while activeMenu is root, stranding navStack after a drill that landed on root
+description: A missing link target is rewritten to root before its source is pushed (Menu.qml:786-787), an explicit root link or a reload-forced root does the same - then goBack's root early-return (801) never pops the stack and Back is a permanent no-op (SX26/C04).
+affected_requirements:
+    - SW-REQ-260922-N3RM
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-goback-root-strand.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: pop navStack in goBack even when activeMenu is root, or clear navStack when rewriting the target to root
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:22Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-goback-root-strand.yaml
+kill_domain: navigation
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim: CRS-260930-SX26/C04

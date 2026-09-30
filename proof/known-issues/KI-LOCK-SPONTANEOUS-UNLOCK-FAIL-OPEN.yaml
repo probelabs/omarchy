@@ -1,0 +1,23 @@
+id: KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
+title: 'Compositor-side lock loss while a request is outstanding is treated as a finished unlock: request dropped, displays woken, no re-lock'
+description: 'WlSessionLock.onLockStateChanged (shell/plugins/lock/Service.qml:339-345): when locked flips false while lockRequested is still set - an ext-session-lock finish/acquire failure delivered by the compositor rather than finishUnlock - the branch clears lockRequested and pendingSessionLock, resets auth state and calls runWake() with no queueSessionLock/beginLock. finishUnlock sets lockRequested=false BEFORE locked=false, so this branch only runs for an external drop: a spontaneous protocol-level unlock fails open (session visible, no re-lock attempted), unlike the no-real-screen path which keeps retrying.'
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+evidence_manifests:
+    - proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
+severity: medium
+reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+mitigation: 'rare in practice: requires a compositor-side lock drop while the shell still holds the request'
+remediation: Re-queue the lock (queueSessionLock) when locked flips false while lockRequested is outstanding, instead of treating it as an unlock
+status: open
+history:
+    - at: "2026-09-30T12:18:14Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:18:20Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
+kill_domain: fail_open
+do_not_refile_as: normal unlock double-handled (finishUnlock pre-clears lockRequested, so the user-driven path never reaches this branch)
+source_claim: CRS-260930-TTVK/C08

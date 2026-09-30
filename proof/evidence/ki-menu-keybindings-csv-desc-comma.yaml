@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-0W96
+      command: ./pocs/crs-260930-jvx8-c06.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T11:54:37Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-CSV-DESC-COMMA` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c06.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-jvx8-c06.sh
+      freshness_hashes:
+        pocs/crs-260930-jvx8-c06.sh: sha256:745eff1f0e256a7d080912b125d3eb65f804b51192e72beff62b4b943bcbb2d4
+        proof/known-issues/KI-MENU-KEYBINDINGS-CSV-DESC-COMMA.yaml: ki-content-v1:sha256:70db0f9da050fed3bfd5dc5f9ad3cfdef91b3cade7afee787667a054f172e204
+      known_issues:
+        - KI-MENU-KEYBINDINGS-CSV-DESC-COMMA
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

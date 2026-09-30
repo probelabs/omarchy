@@ -97,15 +97,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: GC'd JavaScript; no C-family structural hazard surface.
-defect_review:
-    reviewed_at: "2026-09-27T19:39:58Z"
-    session: CRS-0019
-    fingerprint_sha: sha256:28f10f1f8752d325249eb074737cda33523e3ea9fd8419d557c5109584153aec
-    via: agent-review
-    counts:
-        emitted: 4
-        verified: 2
-        dismissed: 2
 lifecycle:
     change_history:
         - date: "2026-09-28T00:00:20Z"
@@ -113,3 +104,12 @@ lifecycle:
           to: review
           reason: '[fix/jsonc-trailing-comma-in-strings] defect_review stamp gained verified:2 (CRS-0017/C03 array-root claim closed by SW-REQ-260928-BMFE; CRS-0017/C01 inline-comment claim closed by SW-REQ-260928-C8W1); promoted out of draft so the changed requirement clears changed_requirements_reviewed'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-HFY2
+    fingerprint_sha: sha256:f3284f5be13ae613a9a348d6b3e5762dd4cf139a75f8739a3c5fe26825a588fb
+    via: cli-session
+    counts:
+        emitted: 40
+        verified: 21
+        dismissed: 19

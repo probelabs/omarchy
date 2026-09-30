@@ -1,0 +1,38 @@
+id: KI-MENU-OPEN-NULL-PAYLOAD
+title: 'open() throws on a JSON null payload: parse succeeds, the catch does not run, and the property read throws before mode dispatch'
+description: 'JSON.parse(''null'') returns null without throwing, so the try/catch in open() does not cover the dereference: payload.fontFamily throws TypeError, no mode dispatch runs, the summon lifecycle is never answered (anchors; SX26/C05 reproduced the null hole).'
+affected_requirements:
+    - SW-REQ-260922-50RE
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-open-null-payload.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: guard the parse result with an object type check before dereferencing
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:22Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-open-null-payload.yaml
+kill_domain: input_validation
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-2EMZ/C09
+    - CRS-260930-HFY2/C07
+    - CRS-260930-SX26/C05

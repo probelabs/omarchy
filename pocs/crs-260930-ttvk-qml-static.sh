@@ -1,0 +1,80 @@
+#!/bin/bash
+# Anchored evidence for CRS-260930-TTVK QML-runtime claims:
+#   C01 (PAM flip during stabilize engages lock; watchdog stands down)
+#   C03 (abnormal PAM error double-counts failedAttempts)
+#   C04 (screensChanged clears blank intent, never re-arms the blank timer)
+#   C05 (empty readlink result wipes a good backgroundPath)
+#   C06 (in-place wallpaper overwrite keeps the stale poster)
+#   C07 (fingerprintPam.start()==false disables fingerprint with no retry)
+#   C08 (spontaneous compositor unlock drops the request and wakes displays)
+# Method: each assertion extracts the LIVE lines from shell/plugins/lock/
+# Service.qml and asserts the defect mechanism's code shape. Every assertion
+# is tied to the runtime scenario documented in the claim (traced end-to-end
+# by the reviewer's ATTACK phase); a fix that changes the mechanism flips the
+# corresponding assertion and this script exits 1.
+set -u
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+F="$REPO/shell/plugins/lock/Service.qml"
+[[ -f $F ]] || { echo "Service.qml missing"; exit 2; }
+
+fail=0
+chk() { # chk <claim> <description> <pattern-found> <file-with-match>
+  if grep -q "$3" "$4" 2>/dev/null; then
+    echo "  [$1] PRESENT: $2"
+  else
+    echo "  [$1] ABSENT: $2 (fix present?)"
+    fail=1
+  fi
+}
+
+T="$(mktemp)"; trap 'rm -f "$T"' EXIT
+
+echo "== C01: requestSessionLock has no passwordPamConfigured re-check =="
+sed -n '/function requestSessionLock/,/^  }/p' "$F" > "$T"
+chk C01 "gate only on lockRequested/sessionLock state, not PAM config" "if (!lockRequested || sessionLock.locked || sessionLock.secure) return" "$T"
+if grep -q "passwordPamConfigured" "$T"; then echo "  [C01] ABSENT: PAM re-check exists (fix present?)"; fail=1; else echo "  [C01] PRESENT: no passwordPamConfigured re-check before sessionLock.locked = true"; fi
+sed -n '/function checkStrandedLock/,/^  }/p' "$F" > "$T"
+chk C01 "stranded watchdog stands down once lockRequested is set" "if (locked || lockRequested) {" "$T"
+
+echo "== C03: onError and onCompleted both call handlePasswordFailure =="
+sed -n '/onCompleted: function(result)/,/onError: function(error)/p' "$F" > "$T"
+chk C03 "onCompleted error path calls handlePasswordFailure" "else root.handlePasswordFailure()" "$T"
+sed -n '/onError: function(error)/,+2p' "$F" > "$T"
+chk C03 "onError ALSO calls handlePasswordFailure (Quickshell pairs error->completed(Error))" "onError: function(error) {" "$T"
+grep -q "handlePasswordFailure" "$T" && echo "  [C03] PRESENT: double-call pairing confirmed" || { echo "  [C03] ABSENT (fix present?)"; fail=1; }
+sed -n '/function handlePasswordFailure/,/^  }/p' "$F" > "$T"
+chk C03 "failedAttempts += 1 with no per-transaction latch" "failedAttempts += 1" "$T"
+
+echo "== C04: screensChanged clears displaysBlank without re-arming blank =="
+sed -n '/function onScreensChanged/,/^    }/p' "$F" > "$T"
+chk C04 "displaysBlank = false on screens change" "root.displaysBlank = false" "$T"
+if grep -qE "armBlankTimer|idleBlankTimer" "$T"; then echo "  [C04] ABSENT: blank re-arm exists (fix present?)"; fail=1; else echo "  [C04] PRESENT: no armBlankTimer/idleBlankTimer call in the handler"; fi
+
+echo "== C05: readlink handler stores an empty result unconditionally =="
+sed -n '/onStreamFinished: {/,/^      }/p' "$F" | head -20 > "$T"
+chk C05 "next !== backgroundPath branch overwrites path even when empty" "if (next !== root.backgroundPath)" "$T"
+if grep -qE 'next === ""|next !== ""|!next' "$T"; then echo "  [C05] ABSENT: empty guard exists (fix present?)"; fail=1; else echo "  [C05] PRESENT: no non-empty guard before backgroundPath = next"; fi
+
+echo "== C06: refreshPoster drops a request while running; onExited commits stale poster =="
+sed -n '/function refreshPoster/,/^  }/p' "$F" > "$T"
+chk C06 "running guard returns without queueing the new request" "if (posterProc.running) return" "$T"
+sed -n '/id: posterProc/,/^  }/p' "$F" > "$T"
+chk C06 "onExited commits when sourcePath still equals backgroundPath (in-place overwrite)" "sourcePath !== root.backgroundPath" "$T"
+
+echo "== C07: startFingerprint false-arm arms no retry =="
+sed -n '/function startFingerprint/,/^  }/p' "$F" > "$T"
+chk C07 "false return only clears the flag" "if (!fingerprintPam.start()) {" "$T"
+if grep -q "fingerprintRetryTimer" "$T"; then echo "  [C07] ABSENT: retry armed (fix present?)"; fail=1; else echo "  [C07] PRESENT: fingerprintRetryTimer not armed on start() failure"; fi
+
+echo "== C08: spontaneous unlock branch drops the request without re-locking =="
+sed -n '/if (!locked && root.lockRequested)/,/^      }/p' "$F" > "$T"
+chk C08 "lockRequested cleared on external lock loss" "root.lockRequested = false" "$T"
+chk C08 "displays woken" "root.runWake()" "$T"
+if grep -qE "queueSessionLock|beginLock" "$T"; then echo "  [C08] ABSENT: re-lock exists (fix present?)"; fail=1; else echo "  [C08] PRESENT: no queueSessionLock/beginLock re-lock in the branch"; fi
+
+if (( fail )); then
+  echo "ANCHORED-EVIDENCE: one or more mechanisms no longer present in the live file - claims possibly fixed"
+  exit 1
+fi
+echo "ANCHORED-EVIDENCE: all 7 QML mechanism claims match the live code (C01 C03 C04 C05 C06 C07 C08)"
+exit 0

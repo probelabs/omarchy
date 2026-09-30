@@ -1,0 +1,47 @@
+id: KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS
+title: mergeAppRows/swapProviderRows keep stale .order values and mutate caller-owned rows in place, breaking the declaration-order tiebreak and the engine-safety contract
+description: Both merges copy kept rows by reference without restamping .order, so after any row is dropped the survivors' order values no longer match their itemOrder indexes (F11a/F12b) - searchScore's declaration-order tiebreak then compares stale numbers; both merges also write row.order/providerMenu into the CALLER's row objects (F11b), exactly the in-place write the module header says must never happen ('an in-place write into such an object is occasionally dropped by the engine').
+affected_requirements:
+    - SW-REQ-260922-Z680
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-merge-stale-order-aliased-rows.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: shallow-copy kept rows and restamp order for every survivor; never write into the row objects handed in
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:18Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-merge-stale-order-aliased-rows.yaml
+kill_domain: state_consistency
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C07
+    - CRS-260930-09QC/C08
+    - CRS-260930-09QC/C09
+    - CRS-260930-2T3A/C06
+    - CRS-260930-4KQ8/C10
+    - CRS-260930-4KQ8/C30
+    - CRS-260930-BW4T/C10
+    - CRS-260930-BW4T/C28
+    - CRS-260930-VVSS/C12
+    - CRS-260930-VVSS/C14

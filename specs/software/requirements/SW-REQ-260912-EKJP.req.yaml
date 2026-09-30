@@ -77,3 +77,12 @@ lifecycle:
           to: review
           reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
           changed_by: agent:kimi-dogfood
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-G166
+    fingerprint_sha: sha256:8d0b96730bdf0a3634ad098e8b7c4e9718a876ee43e48a8662b92d1c33dc6496
+    via: cli-session
+    counts:
+        emitted: 15
+        verified: 6
+        dismissed: 9

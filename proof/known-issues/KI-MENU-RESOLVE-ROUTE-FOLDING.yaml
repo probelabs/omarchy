@@ -1,0 +1,52 @@
+id: KI-MENU-RESOLVE-ROUTE-FOLDING
+title: resolveRoute folds the input before the exact-id lookup and returns the normalized string as fallthrough; exact app ids are routable and prototype aliases can never win
+description: resolveRoute (MenuModel.js:220-234) lowercases and underscore-folds the input BEFORE the exact-id test, so a stored id 'Setup' is missed by route 'setup' (F8a); the misspelling fallthrough returns the NORMALIZED string instead of the literal input the contract states (F8b); an exact app id is returned despite the header comment 'app rows are never routable' (F8c); and an alias named like a prototype property can never win because item() already reports a hit.
+affected_requirements:
+    - SW-REQ-260922-PRNV
+    - SW-REQ-260922-CYB9
+    - SW-REQ-260922-74BZ
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-resolve-route-folding.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: non-normalized ids and app-id routes are edge authoring; aliases still work
+remediation: test the exact id before folding (or fold ids at normalize time), return the original input on fallthrough, and skip kind==='app' on the exact-id hit
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:18Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-resolve-route-folding.yaml
+kill_domain: input_normalization
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C05
+    - CRS-260930-2EMZ/C07
+    - CRS-260930-2T3A/C03
+    - CRS-260930-4KQ8/C01
+    - CRS-260930-4KQ8/C05
+    - CRS-260930-BW4T/C01
+    - CRS-260930-BW4T/C03
+    - CRS-260930-HFY2/C03
+    - CRS-260930-DMTP/C03
+    - CRS-260930-KV89/C08
+    - CRS-260930-KV89/C09
+    - CRS-260930-VVSS/C09
+    - CRS-260930-VVSS/C11

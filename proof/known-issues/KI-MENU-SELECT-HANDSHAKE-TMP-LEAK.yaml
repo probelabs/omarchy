@@ -1,0 +1,33 @@
+id: KI-MENU-SELECT-HANDSHAKE-TMP-LEAK
+title: 'Failed second mktemp leaks the selection handshake temp file: cleanup trap installed only after both files exist'
+description: prepare_handshake_files creates selection_file (line 72) then done_file (line 73) but installs the EXIT cleanup trap only at line 75. If the second mktemp fails, set -e exits before the trap exists and the first temp file - the private selection file - stays behind in TMPDIR.
+affected_requirements:
+    - SW-REQ-260922-Q6ZS
+evidence_manifests:
+    - proof/evidence/ki-menu-select-handshake-tmp-leak.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: ./pocs/crs-260930-k02d-c08.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: Install the EXIT trap before the first mktemp, wiring the variables as they are assigned (trap 'rm -f "${selection_file:-}" "${done_file:-}"' EXIT)
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:00:43Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:00:59Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-select-handshake-tmp-leak.yaml
+kill_domain: resource_leak
+do_not_refile_as: temp files leak on every exit (normal and error paths after line 75 are covered by the trap; only the between-mktemp window leaks)
+affected_file: bin/omarchy-menu-select
+source_claim: CRS-260930-K02D/C08

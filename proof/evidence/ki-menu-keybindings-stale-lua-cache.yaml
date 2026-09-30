@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-0W96
+      command: ./pocs/crs-260930-jvx8-c03.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T11:54:37Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-STALE-LUA-CACHE` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c03.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/crs-260930-jvx8-c03.sh
+      freshness_hashes:
+        pocs/crs-260930-jvx8-c03.sh: sha256:9c4f52ee9783e7096ce67b71fb57217d7b3eacc0e5683687fac1361300dadc80
+        proof/known-issues/KI-MENU-KEYBINDINGS-STALE-LUA-CACHE.yaml: ki-content-v1:sha256:e7c03de3b6e7f3ecee8926ca60b326d0ddb41b8f5b6b25ad9aeb7b94112da5e7
+      known_issues:
+        - KI-MENU-KEYBINDINGS-STALE-LUA-CACHE
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

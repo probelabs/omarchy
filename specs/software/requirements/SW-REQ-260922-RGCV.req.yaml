@@ -85,14 +85,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Read-only pacman queries against the local package database; -Q takes no database lock and performs no network access, and the shadow adds no authority - it only answers what pacman would answer, faster.
-defect_review:
-    reviewed_at: "2026-09-23T17:08:39Z"
-    session: CRS-0015
-    fingerprint_sha: sha256:52b4fa680e885f8f5d12aec494ef8b04cf702b6d07b2f3e214abb14c4c9c9c17
-    via: agent-review
-    counts:
-        emitted: 2
-        dismissed: 1
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -100,3 +92,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:18Z"
+    session: CRS-260930-2T3A
+    fingerprint_sha: sha256:c8b2e69432b7eec075d680f73a7df3ddadf998d6b2015a58382a4422e9e4d6ee
+    via: cli-session
+    counts:
+        emitted: 15
+        verified: 8
+        dismissed: 7

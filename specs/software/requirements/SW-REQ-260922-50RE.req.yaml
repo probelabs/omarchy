@@ -128,3 +128,12 @@ lifecycle:
           to: review
           reason: '[zero-warnings-campaign] genuine re-review 2026-09-27: FRETish verified against implementation (JRW1 isVisible/isDisabled/labelFor MenuModel.js:284+, 50RE open/close/refresh/ping Menu.qml:21-44, C8HX finishRequest Menu.qml:122, B757 foldedListHeight/availableRowsHeight Menu.qml:164-216, 8CQ4 requestDeleteSelected/cancelDelete/confirmDelete Menu.qml:841-875); all MC/DC witness rows already covered by shell suites; activates the 9 declared variables these reqs own'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-SX26
+    fingerprint_sha: sha256:15148e1b8e1f256590c529f3ac609e2029c849d9d2de9f6bc52aeca1831ae614
+    via: cli-session
+    counts:
+        emitted: 48
+        verified: 23
+        dismissed: 25

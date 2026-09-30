@@ -1,0 +1,35 @@
+id: KI-MENU-FILEVIEW-FAILURE-ASYMMETRY
+title: 'Failed menu FileView reloads are asymmetric: the user handler wipes the last good items, the default handler keeps a stale set'
+description: 'Only the user menu FileView has onLoadFailed, and it clears userMenuItems to [] before rebuilding (anchors FV1/FV2): a transient read failure of the user extension erases every user entry until the next successful load, while a failed default-file reload silently keeps the old set - neither is the documented behavior for a failed reload.'
+affected_requirements:
+    - SW-REQ-260922-50RE
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-fileview-failure-asymmetry.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: keep the last good items on failure for both files (drop the wipe), or surface the failure in the menu
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:22Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:48Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-fileview-failure-asymmetry.yaml
+kill_domain: failure_handling
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim: CRS-260930-HFY2/C26

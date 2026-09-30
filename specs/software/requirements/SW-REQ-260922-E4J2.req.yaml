@@ -92,15 +92,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: The parser consumes the two fixed local menu JSONC paths (same-user, no egress sink in the traced files), and the parse-failure recovery policy (empty list, defaults preserved) is owned by the failure-arm siblings (3T3F/66FW), so no domain class binds to the strip contract reviewed here.
-defect_review:
-    reviewed_at: "2026-09-27T19:39:58Z"
-    session: CRS-0020
-    fingerprint_sha: sha256:5bb75c4ce434bb73c7ded1be0a56f7a59f92ade45d833bec8746cb04c8f12cf4
-    via: agent-review
-    counts:
-        emitted: 4
-        verified: 1
-        dismissed: 3
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -108,3 +99,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-DMTP
+    fingerprint_sha: sha256:a7af68cbd233e2d0aa61e31dc24462fa1a5b8391fde95adbb96dc0013305925a
+    via: cli-session
+    counts:
+        emitted: 15
+        verified: 8
+        dismissed: 7

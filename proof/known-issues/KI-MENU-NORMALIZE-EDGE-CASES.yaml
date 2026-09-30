@@ -1,0 +1,42 @@
+id: KI-MENU-NORMALIZE-EDGE-CASES
+title: 'normalizeItem edge cases: parent:null kept as null, boolean guards preserved (later crashes guard generation), action:0 mis-kinded, numeric labels, object aliases become ''[object Object]'' search text'
+description: normalizeItem infers the parent only when it is undefined, so an explicit null parent stays null (F17a) and the path helpers then coerce it; a boolean when/checked/disabled passes the ||-default and later throws inside guard generation (F17b); kind derives from truthiness so action:0 yields a menu row (F17c); a numeric label is stored as a number and a non-string alias stringifies to '[object Object]', which the search index then matches for the term 'object' (F23).
+affected_requirements:
+    - SW-REQ-260922-46HY
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-normalize-edge-cases.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: treat null like undefined for parent, coerce when/checked/disabled to strings or reject non-strings, String() the label, and filter aliases to strings
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:19Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-normalize-edge-cases.yaml
+kill_domain: input_validation
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C24
+    - CRS-260930-4KQ8/C22
+    - CRS-260930-HFY2/C32
+    - CRS-260930-VVSS/C25
+    - CRS-260930-VVSS/C39

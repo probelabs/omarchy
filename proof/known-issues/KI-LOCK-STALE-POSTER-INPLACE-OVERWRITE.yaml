@@ -1,0 +1,23 @@
+id: KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE
+title: In-place video wallpaper overwrite during a running poster job keeps the stale poster frame
+description: 'refreshPoster drops the new request while posterProc is running (running guard, Service.qml:138) without queueing, and posterProc.onExited (523-527) commits whenever sourcePath === backgroundPath. An in-place overwrite (same path, new bytes) therefore keeps the poster hashed from the pre-overwrite stat: backgroundVersion changes the URL but the jpeg bytes are stale, and no second refresh is scheduled.'
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+evidence_manifests:
+    - proof/evidence/ki-lock-stale-poster-inplace-overwrite.yaml
+severity: low
+reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+mitigation: another wallpaper change or re-lock regenerates it
+remediation: Queue (or re-arm) the poster request when the running guard fires, and compare the stat signature - not just the path - in onExited before committing
+status: open
+history:
+    - at: "2026-09-30T12:18:14Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:18:20Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-lock-stale-poster-inplace-overwrite.yaml
+kill_domain: stale_state
+do_not_refile_as: poster never regenerates on wallpaper CHANGE (a path change takes the mismatch arm and re-runs; only the same-path overwrite is dropped)
+source_claim: CRS-260930-TTVK/C06

@@ -1,0 +1,54 @@
+id: KI-MENU-JSONC-STRIP-GAPS
+title: 'stripJsonc parser gaps: comma behind a // comment survives, // eats the newline (tokens glue), block comments and CR-only endings pass through'
+description: stripJsonc (shell/plugins/menu/MenuModel.js:2-37) drops a comma only when the next non-whitespace char is }/], so a // comment between them keeps the comma and JSON.parse rejects the file; the // eater consumes through end-of-line WITHOUT keeping the newline, gluing adjacent tokens ([1//c\n2] parses as [12]); block comments /* */ have no branch and are copied through; a // comment under CR-only line endings eats to the next LF or EOF. Each corruption makes parseMenuJsonc return an empty item set for a valid JSONC menu.
+affected_requirements:
+    - SW-REQ-260922-E4J2
+    - SW-REQ-260922-3T3F
+evidence_manifests:
+    - pocs/menu-probes.js
+    - pocs/menu-probes2.js
+    - pocs/menu-probes3.js
+    - proof/evidence/ki-menu-jsonc-strip-gaps.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-probes.js
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: a whole-file comment or comma-shape already breaks the menu (parse returns []), which is visible
+remediation: strip only the comment bytes, preserving the line break; add a block-comment branch; treat CR as a line terminator
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:49:17Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-jsonc-strip-gaps.yaml
+kill_domain: parsing
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-09QC/C01
+    - CRS-260930-09QC/C02
+    - CRS-260930-09QC/C03
+    - CRS-260930-2EMZ/C05
+    - CRS-260930-2T3A/C01
+    - CRS-260930-2T3A/C10
+    - CRS-260930-4KQ8/C06
+    - CRS-260930-BW4T/C06
+    - CRS-260930-DMTP/C01
+    - CRS-260930-HFY2/C12
+    - CRS-260930-HFY2/C14
+    - CRS-260930-VVSS/C01
+    - CRS-260930-VVSS/C03
+    - CRS-260930-VVSS/C04
+    - CRS-260930-VVSS/C05
+    - CRS-260930-WK59/C02

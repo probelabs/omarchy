@@ -87,13 +87,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: 'Bash + GC''d Lua; table.concat over strings only. Lua nil-key read returns nil (no error), keeping the fall-through safe; no manual memory, pointers, or format strings.'
-defect_review:
-    reviewed_at: "2026-09-28T12:24:02Z"
-    session: CRS-0022
-    fingerprint_sha: sha256:2833b52b9d7cdc5016f0d953528b747f43ba10bb96e7460b7f0b908880663e28
-    via: agent-review
-    counts:
-        emitted: 4
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:06Z"
@@ -101,3 +94,12 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-JVX8
+    fingerprint_sha: sha256:6f2c8562c53e19e8798ce5202740b4fe8741691483fe0aec4b8cab83a5d8a132
+    via: cli-session
+    counts:
+        emitted: 11
+        verified: 7
+        dismissed: 4

@@ -1,0 +1,45 @@
+id: KI-MENU-PROVIDER-PARTIAL-COMMIT
+title: Failed/killed providers commit their partial stdout and stay marked loaded; the apps provider marks itself loaded with no AppLibrary
+description: providerProc.onExited merges collected stdout whenever the revision matches, with no exitCode/exitStatus check - the guardProc beside it does check (asymmetry in the same file, anchors PRV1) - so a failed script replaces a good row set with a partial read; providersLoaded is committed BEFORE the process proves itself (PRV2), and never cleared on failure, so the submenu is stuck until a full source rebuild; the apps branch marks providersLoaded unconditionally even when appLibrary is null and mergeAppRows returns empty (PRV3), leaving an empty Apps menu with no retry.
+affected_requirements:
+    - SW-REQ-260922-EFNR
+    - SW-REQ-260922-Z680
+evidence_manifests:
+    - pocs/menu-qml-static.sh
+    - proof/evidence/ki-menu-provider-partial-commit.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: pocs/menu-qml-static.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: candidate
+mitigation: none
+remediation: check exitCode/exitStatus before merging (keep last good rows otherwise), set providersLoaded only on success, and re-run mergeAppRows when appLibrary appears
+owner: agent:opencode-quattro
+review_date: "2026-09-30"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-09-30T12:50:21Z"
+      by: human:Leonid Bugaev
+      action: created
+    - at: "2026-09-30T12:50:47Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-provider-partial-commit.yaml
+kill_domain: provider_lifecycle
+affected_file:
+    - shell/plugins/menu/MenuModel.js
+    - shell/plugins/menu/Menu.qml
+source_claim:
+    - CRS-260930-2EMZ/C11
+    - CRS-260930-2EMZ/C29
+    - CRS-260930-DMTP/C07
+    - CRS-260930-HFY2/C15
+    - CRS-260930-KV89/C19
+    - CRS-260930-KV89/C20
+    - CRS-260930-SX26/C11
+    - CRS-260930-SX26/C12
+    - CRS-260930-WK59/C09
