@@ -93,6 +93,27 @@ history:
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:50Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - concurrent
+            - boundary
+            - edge_case
+          rationale: 'Worst case: the idle countdown blanks the display while a password check is in flight, hiding the field mid-authentication, or a suspend-frozen timer fires on resume and blanks the freshly woken unlock screen under the user. concurrent: the timer fire interleaves with in-flight authentication, so the gate reads authenticatingPassword only, deliberately excluding the long-lived fingerprint PAM. boundary: the interval+2000ms wall-clock threshold is the frozen-timer detector. edge_case: the post-suspend stale countdown re-arms instead of blanking.'
+        - category: property
+          disposition: not_applicable
+          rationale: Declarative timer policy over two boolean gates; no algebraic or ordering surface beyond the recorded interleaving.
+        - category: structural
+          disposition: not_applicable
+          rationale: QML timer plus boolean guards; no memory, encoding, or numeric surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: In-process QML timer policy; no external call or trust boundary.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

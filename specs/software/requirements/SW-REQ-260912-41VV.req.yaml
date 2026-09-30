@@ -63,6 +63,27 @@ history:
     created_at: "2026-09-12T19:51:16Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:38Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+          rationale: 'Worst case: an indicator shown with no sensor invites a touch that can never authenticate, and reserved space for a missing sensor shifts the password field. The configured/not-configured threshold is the whole trigger: the binding is fingerprintConfigured ? iconWidth+12 : 0, so both arms are the boundary pair.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every fingerprintConfigured value yields a fully defined layout (indicator visibility plus reserved margins); both arms are witnessed by lock-fingerprint-indicator-test.sh.
+        - category: structural
+          disposition: not_applicable
+          rationale: QML declarative binding over a boolean and a measured glyph width; the icon text is a static string, so there is no encoding transform, numeric edge, or memory surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: Display-only layout; no trust boundary is crossed, no external call is made, and no auth decision is computed here.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

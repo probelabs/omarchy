@@ -33,6 +33,27 @@ obligation_checklist:
     - nominal
     - error_handling
     - boundary
+hazard_review:
+    reviewed_at: "2026-09-30T06:51:05Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - nominal
+            - error_handling
+            - boundary
+          rationale: 'Story-level partitions that decompose through the nine derived menu requirements: nominal (menu presents and routes verbs, pickers return answers) through J0AN and X6Z5, error_handling (unknown verbs and missing options answer loudly) through the dispatcher and dmenu protocol children such as SNZG and B839, boundary (comma-before-closing-brace text kept verbatim through JSONC trailing-comma stripping, per AC-002) through PPDW. Menu rows reflecting current state without stale display is the sum of the state-query children.'
+        - category: property
+          disposition: not_applicable
+          rationale: Story-level intent; the verbatim-text property is specified and witnessed at child PPDW, and no algebraic property is stated at this level.
+        - category: structural
+          disposition: not_applicable
+          rationale: Stakeholder story with no implementation at this level; the menu parser structural surfaces are recorded on the children.
+        - category: domain
+          disposition: not_applicable
+          rationale: Menu actions execute with user privileges from the user's own config; no privilege boundary is crossed and no domain class applies_when fires for the story as written.
 acceptance_review:
     reviewed_at: "2026-09-23T17:09:27Z"
     reviewed_by: agent:kimi-dogfood

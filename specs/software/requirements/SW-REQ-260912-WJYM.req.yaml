@@ -84,6 +84,29 @@ history:
     last_modified_at: "2026-09-23T17:20:48Z"
 obligation_checklist:
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:54Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - concurrent
+            - boundary
+          rationale: 'Worst case: a shell restart leaves an orphan ext-session-lock nobody can unlock, or the recovery itself flaps, taking the lock repeatedly. error_handling: an undetermined probe answer (exit 2) leaves the strand unresolved instead of acting, and recovery refuses without passwordPamConfigured, deferring to the J8SX fail-closed denial. concurrent: checkStrandedLock refuses to probe while locked or lockRequested, and the probe onExited verdict re-checks the same flags, closing the probe-in-flight versus lock-taken race. boundary: recovered-once is the strandedLock plus strandedLockResolved latch.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+          rationale: 'recoverStrandedLock is idempotent per strand: the flag pair plus the probe running guard make every repeated trigger, whether the screens-changed re-arm, the retry timer, or the PAM reload, converge on at most one beginLock and one journal line.'
+        - category: structural
+          disposition: not_applicable
+          rationale: QML flags plus one guarded beginLock call; no memory, encoding, or numeric surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: In-process recovery plus a local probe process; no external call, transport, or trust boundary.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

@@ -50,6 +50,26 @@ history:
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:45Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: a stuck Hyprland IPC call during a lid transition consumes the lock window before Quickshell begins securing the session, so the machine suspends unlocked. error_handling: the reconciliation helper is bounded at 0.4s with kill-after and its failure is absorbed, so a stalled IPC cannot consume the budget. edge_case: the lid transition that temporarily stalls Hyprland IPC is exactly the trigger condition, and the ordering requirement is what keeps it from pre-empting the lock request.'
+        - category: property
+          disposition: not_applicable
+          rationale: A single ordering statement between two calls; no algebraic or repeated-application surface beyond the sequence itself.
+        - category: structural
+          disposition: not_applicable
+          rationale: Two sequential bash calls; no memory, encoding, or numeric surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: The clamshell call deadline is bounded in-code and its budget ownership lives with FAWV and HC86; no additional domain class applies to the ordering statement itself.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

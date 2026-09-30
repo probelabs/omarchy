@@ -52,6 +52,27 @@ history:
     last_modified_at: "2026-09-23T17:16:46Z"
 obligation_checklist:
     - boundary
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:58Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - concurrent
+            - error_handling
+            - boundary
+          rationale: 'Parent-level partitions carried by satisfying children: concurrent via FVHS (flock contention arbiter) and 0Y70 (live held answer against holders), error_handling via FVHS (refusal diagnostic, usage exit 2) and 0Y70 (stale or foreign descriptor answers non-zero), boundary via FVHS (zero-arg, missing lock dir) and 0Y70 (descriptor edges). The embedding suggester independently ranked concurrent top for this requirement, matching the rule pass.'
+        - category: property
+          disposition: not_applicable
+          rationale: Decomposition-level statement; totality of the probe and run partitions is recorded on children 0Y70 and FVHS respectively.
+        - category: structural
+          disposition: not_applicable
+          rationale: Decomposition-level statement over one bash helper; structural surfaces are recorded at the child level.
+        - category: domain
+          disposition: not_applicable
+          rationale: Local flock surface only; no domain class applies_when fires for filesystem mutual exclusion.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:24Z"

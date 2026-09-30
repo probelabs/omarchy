@@ -52,6 +52,30 @@ history:
     last_modified_at: "2026-09-23T17:20:48Z"
 obligation_checklist:
     - boundary
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:43Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - concurrent
+            - error_handling
+            - access_denied
+            - boundary
+          rationale: 'Worst case: a second update enters its pre-update snapshot while the first runs, interleaving snapshots and package transactions. concurrent: flock -n on a dedicated descriptor is the mutual-exclusion arbiter; contention is the trigger. error_handling: a failed flock prints a diagnostic and exits 1, and a missing command answers usage with exit 2. access_denied: an unopenable lock file, including permission denial on the runtime directory, refuses the run under set -e with the failure on stderr rather than running unlocked. boundary: the zero-argument edge and the missing lock directory (mkdir best-effort) are the tested edges of the open path.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'The full argument partition is answered: no command gives usage exit 2, contention gives diagnostic exit 1, acquisition execs the child with the descriptor exported; flock -n never blocks, so every invocation terminates.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Bash fd open plus exec; no memory, encoding, or format-string surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: Local file lock only; no external call, transport, crypto, or policy surface a domain class names.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

@@ -53,6 +53,27 @@ history:
 obligation_checklist:
     - boundary
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:59Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - error_handling
+            - edge_case
+          rationale: 'Parent-level partitions carried by satisfying children: boundary via FAWV (cap, reserve, validation thresholds), error_handling via H2YF (unsecured report and exit 1) and FAWV (busctl fallback), edge_case via FAWV (zero window, locale edge) and GGGS (lid-transition IPC stall). The suspend-mid-lock worst case is owned jointly: the budget bounds it and the report surfaces it.'
+        - category: property
+          disposition: not_applicable
+          rationale: Decomposition-level statement; totality of the bounded wait is recorded on child FAWV.
+        - category: structural
+          disposition: not_applicable
+          rationale: Decomposition-level statement; the locale-encoding surface is recorded on child FAWV where EPOCHREALTIME is parsed.
+        - category: domain
+          disposition: not_applicable
+          rationale: Deadline declaration across the path is recorded on child FAWV (external_call_timeout_bounded); no additional domain class applies at this level.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:24Z"

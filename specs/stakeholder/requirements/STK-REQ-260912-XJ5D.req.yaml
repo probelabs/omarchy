@@ -33,6 +33,27 @@ obligation_checklist:
     - nominal
     - error_handling
     - boundary
+hazard_review:
+    reviewed_at: "2026-09-30T06:51:03Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - nominal
+            - error_handling
+            - boundary
+          rationale: 'Story-level partitions that decompose through the SYS layer: nominal (lock on demand results in a compositor-reported locked session) through T0XP and WC89, error_handling (suspends that beat the lock are reported, missing PAM refuses to lock) through HC86, H2YF, FRG0, and J8SX, boundary (lock-before-suspend deadlines, enrollment-driven PAM provisioning, exclusive update lock) through HC86, FAWV, JW2J, and H8A5. Unlock only after successful authentication is witnessed by the AC-001 acceptance test.'
+        - category: property
+          disposition: not_applicable
+          rationale: Story-level intent; no algebraic property is stated at this level, and the at-most-once and bounded-wait properties are recorded on the SYS and SW children that specify them.
+        - category: structural
+          disposition: not_applicable
+          rationale: Stakeholder story with no implementation at this level; structural surfaces are recorded on the children.
+        - category: domain
+          disposition: not_applicable
+          rationale: Stakeholder story over local session state; no HTTP, crypto, transport, or multi-tenant workload exists anywhere in the decomposition.
 acceptance_review:
     reviewed_at: "2026-09-23T17:09:27Z"
     reviewed_by: agent:kimi-dogfood

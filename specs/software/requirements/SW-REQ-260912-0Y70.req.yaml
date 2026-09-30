@@ -50,6 +50,29 @@ history:
     created_at: "2026-09-12T19:49:43Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:09Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:37Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - concurrent
+            - error_handling
+            - boundary
+          rationale: 'Worst case: a forged or stale OMARCHY_UPDATE_LOCK_FD makes held answer 0 while no lock is held, so a caller proceeds into a snapshot while another update runs and pacman transactions interleave. The /proc fd-existence check, readlink -f identity against the canonical lock path, and the final flock -n arbiter close that chain; -f vs -m canonicalization means alias paths compare equal only for the true lock inode. concurrent: the answer is defined against live lock contention and flock -n can never block. error_handling: unset, dangling, and wrong-file descriptors must answer non-zero, never crash or hang. boundary: descriptor-present-but-foreign and vanishing-between-check-and-readlink are the tested stale-descriptor edges.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every reachable OMARCHY_UPDATE_LOCK_FD value yields an exit 0/1 answer; flock -n is non-blocking so the probe is total over its input space and cannot hang waiting on a holder.
+        - category: structural
+          disposition: not_applicable
+          rationale: Pure bash byte-comparison of two readlink outputs against a fixed path; no manual memory, pointers, format-string sinks, or encoding round-trips. The unset-variable case is the nil case and is specified by the contract itself.
+        - category: domain
+          disposition: not_applicable
+          rationale: Local filesystem plus flock only; no network, crypto, SQL, transport, or browser workload, and the requirement carries no domain tags, so no domain class applies_when fires.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

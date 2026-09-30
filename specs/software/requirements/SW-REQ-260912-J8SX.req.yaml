@@ -87,6 +87,29 @@ history:
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:07Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:47Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - access_denied
+            - error_handling
+            - boundary
+          rationale: 'Worst case: the lock engages without the password PAM stack, producing a session that can never authenticate and stranding the user at the lock screen. access_denied: the requirement is the denial itself, beginLock and the lock IPC verb both refuse to engage when the PAM config is absent. error_handling: a FileView load failure drives passwordPamConfigured false and into the refusal path. boundary: the present/absent threshold of /etc/pam.d/omarchy-lock-password is the trigger edge, re-evaluated live by watchChanges so a mid-session config removal flips the answer.'
+        - category: property
+          disposition: not_applicable
+          rationale: A refusal gate over one predicate; no algebraic, ordering, or repeated-application surface, and the once-only aspects of locking belong to WJYM.
+        - category: structural
+          disposition: not_applicable
+          rationale: QML boolean guard over a FileView state; no memory, encoding, or numeric surface.
+        - category: domain
+          disposition: reviewed
+          applied:
+            - control_not_silently_disabled
+          rationale: 'The lock control fails closed on its unmet precondition: a missing PAM stack is a reject path with a distinct missing-pam answer and a lock-denied journal event, never a skip path, and no alternate admission bypasses the check. lock-missing-pam-test.sh witnesses the denial.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

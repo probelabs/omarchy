@@ -48,8 +48,37 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:42:00Z"
-    last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T23:58:22Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T06:51:06Z"
+obligation_checklist:
+    - atomic_write
+obligation_deferrals:
+    - obligation_class: atomic_write
+      reason: as_root tee truncates and rewrites /etc/pam.d/omarchy-lock-password in place; an interrupted run can leave a torn PAM stack that breaks password unlock until the helper reruns; write-temp-rename is not implemented
+      tracking: hazard-batch-A/JW2J-nonatomic-pam-write
+      owner: agent:opencode-hazard-a
+hazard_review:
+    reviewed_at: "2026-09-30T06:51:01Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - access_denied
+            - boundary
+            - error_handling
+            - edge_case
+          rationale: 'Parent-level partitions carried by satisfying children: access_denied via EKJP (root PATH restriction) and S154 (absolute-path fprintd), boundary via EKJP (EUID threshold), S154 (executable-bit edge) and Y0WT (enrollment threshold), error_handling via S154 and Y0WT (probe failure routes to removal), edge_case via Y0WT (multi-user enrollment). No obligation is held at this level alone.'
+        - category: property
+          disposition: not_applicable
+          rationale: Decomposition-level statement; the branch idempotence of rerunning the helper is observed but not specified here, and no other algebraic surface exists at this level.
+        - category: structural
+          disposition: not_applicable
+          rationale: Decomposition-level statement over one bash helper; structural surfaces are recorded at the child level.
+        - category: domain
+          disposition: reviewed
+          rationale: 'atomic_write evaluated and DEFERRED (see obligation_deferrals): both PAM stacks are written by as_root tee in place rather than write-temp-rename, so an interrupted run can leave a torn /etc/pam.d/omarchy-lock-password that breaks password unlock until the helper reruns. The child Y0WT carries the same deferral for the fingerprint stack, so the class decomposes. Tracked debt, not an accepted gap.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:24Z"

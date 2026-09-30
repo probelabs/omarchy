@@ -54,6 +54,35 @@ history:
     last_modified_at: "2026-09-23T17:20:48Z"
 obligation_checklist:
     - boundary
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:42Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - error_handling
+            - malformed_input
+            - empty_input
+            - edge_case
+          rationale: 'Worst case: a derived budget that overshoots the real logind window strands a closed laptop suspended mid-lock. boundary: the 12000 ms cap, the at-least-1000 ms logind reserve, and the positive-int-within-cap argument validation are the requirement threshold set (capped-window and invalid-arg scenarios). error_handling: an unreadable InhibitDelayMaxUSec, including a busctl timeout, falls back to 5000 ms. malformed_input: a non-numeric busctl tail or caller argument fails the ^[0-9]+$ regex and routes to the derived budget. empty_input: an absent argument is the default derivation path. edge_case: a zero window cannot drive the reserve negative because of the max(window/5,1000) floor.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every entry condition terminates inside the budget, either exit 0 on secure or the unsecured report and exit 1; the remaining>0 entry guard stops a frozen or jumped clock from looping forever, so the wait is total and terminating.
+        - category: structural
+          disposition: reviewed
+          applied:
+            - encoding_safety
+          rationale: 'EPOCHREALTIME renders with the locale decimal separator; the [!0-9] digit strip prevents a comma locale from being re-read as the bash comma operator, which would silently void the deadline. overflow_safety not applicable: bash 64-bit arithmetic, epoch micros near 1.7e15 sit far below 2^63, and 10# stripping cannot grow the magnitude. nil_safety not applicable: unset and empty argument are the specified empty_input default path.'
+        - category: domain
+          disposition: reviewed
+          applied:
+            - external_call_timeout_bounded
+          rationale: 'Every cross-process call declares a deadline: busctl is wrapped in timeout 1s with kill-after, both omarchy-shell calls are clamped to the remaining budget, and the clamshell reconciliation is bounded at 0.4s; nothing defaults to unbounded.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

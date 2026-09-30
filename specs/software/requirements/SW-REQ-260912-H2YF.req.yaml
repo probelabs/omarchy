@@ -52,6 +52,28 @@ history:
     last_modified_at: "2026-09-23T17:20:47Z"
 obligation_checklist:
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:46Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: the machine suspends with the session exposed and nobody ever finds out, because the failure is silent. error_handling: budget expiry unconditionally prints the stderr diagnostic, sends the critical notification, and exits 1; that path is the requirement. edge_case: the notification service may be absent right after resume, so the send is declared best-effort while the stderr report and exit 1 still fire; a notification failure never downgrades the report to success.'
+        - category: property
+          disposition: not_applicable
+          rationale: Single-shot reporter; each expiry produces exactly one report and one exit, with no repeated-application or ordering surface.
+        - category: structural
+          disposition: not_applicable
+          rationale: printf uses a literal %s format with no user-controlled format string; no memory, pointer, or encoding surface.
+        - category: domain
+          disposition: reviewed
+          applied:
+            - errors_propagated
+          rationale: 'The wait-loop failure is propagated as a typed outcome: nonzero exit plus stderr reason plus critical notification, never silently dropped. The absorbed notification failure is the declared best-effort policy the class names, with the stderr report as the authoritative channel.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

@@ -50,6 +50,27 @@ history:
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:51Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - access_denied
+            - error_handling
+            - boundary
+          rationale: 'Worst case: a PATH-resolved fprintd-list runs attacker-controlled code as root during install or upgrade. access_denied: invoking /usr/bin/fprintd-list by packaged absolute path refuses any PATH-supplied substitute; the requirement is the refusal. error_handling: a probe failure or nonzero exit is treated as not-enrolled and routes to the removal branch, the fail-safe direction. boundary: the executable-bit check on the absolute path is the present-but-not-executable edge feeding the same removal branch.'
+        - category: property
+          disposition: not_applicable
+          rationale: One probe feeding one branch; no algebraic or repeated-application surface.
+        - category: structural
+          disposition: not_applicable
+          rationale: Fixed literal path invocation; no encoding, memory, or format-string surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: 'Local exec of a packaged binary under a restricted PATH; name_resolution_pre_chroot evaluated and not applicable: there is no chroot or sandbox entry, and the absolute path leaves nothing to resolution.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

@@ -66,6 +66,30 @@ history:
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:53Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+          rationale: 'Worst case: an unbounded dot row overflows the field and leaks the password length beyond the field edge. boundary: the overflow threshold where measured advance exceeds usable width is the scaling trigger, and Math.min(1, ...) caps the scale at full size for short passwords.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+            - idempotency
+          rationale: 'totality: every text length yields a defined scale, with the advanceWidth>0 guard covering the pre-measure zero case. idempotency: the equality guard plus the syncingPasswordText latch break the onTextChanged to passwordTextEdited to sync feedback loop, so repeated edits converge with no re-entry.'
+        - category: structural
+          disposition: reviewed
+          applied:
+            - overflow_safety
+          rationale: The shrink ratio can go negative when the measured advance exceeds the usable width by enough; Math.max(1, Math.floor(...)) on the derived pixel size clamps that underflow so the field never requests a non-positive font.
+        - category: domain
+          disposition: not_applicable
+          rationale: Pure view-layer layout arithmetic; no external call, trust boundary, or auth surface.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

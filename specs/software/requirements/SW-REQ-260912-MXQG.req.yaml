@@ -52,6 +52,27 @@ history:
     last_modified_at: "2026-09-23T17:20:47Z"
 obligation_checklist:
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:49Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+            - concurrent
+          rationale: 'Worst case: ttfx survives or ignores the signal and its terminal closes over a stuck fullscreen process at lock time. error_handling: pkill no-match and missing-binary exits are absorbed by explicit best-effort policies, so the signal step can never fail the lock. boundary: the 1s pidwait cap is the specified wait bound. concurrent: ttfx handles SIGTERM asynchronously, so the wait observes the interleaving of signal delivery and process exit instead of assuming a fixed ordering.'
+        - category: property
+          disposition: not_applicable
+          rationale: Fire-and-observe sequence run once per lock; no algebraic or repeated-application surface.
+        - category: structural
+          disposition: not_applicable
+          rationale: pkill, pidwait, and timeout invocations; no memory, encoding, or format-string surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: The one bounded external wait is the requirement itself; no other domain class names this surface.
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

@@ -48,8 +48,36 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:43:26Z"
-    last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T23:32:08Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T06:51:07Z"
+obligation_checklist:
+    - atomic_write
+obligation_deferrals:
+    - obligation_class: atomic_write
+      reason: the fingerprint install branch writes /etc/pam.d/omarchy-lock-fingerprint via as_root tee in place; a torn write leaves a partial stack; same write-temp-rename gap as the password stack deferred on JW2J
+      tracking: hazard-batch-A/Y0WT-nonatomic-pam-write
+      owner: agent:opencode-hazard-a
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:55Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+            - edge_case
+          rationale: 'Worst case: a stale fingerprint PAM stack without an enrolled finger offers an authentication path that can never succeed and shadows the password path. error_handling: a missing or non-executable fprintd-list, or a failed probe, routes to the removal branch, the fail-safe direction. boundary: the enrolled/not-enrolled threshold is the grep on probe output feeding the if/else. edge_case: on a multi-user host the system-wide stack is keyed to one target user enrollment, so another user without enrolled fingers meets a failing fingerprint option; the password path stays intact and the lock service retries then falls back, so the residual is confusion and delay, not a lockout.'
+        - category: property
+          disposition: not_applicable
+          rationale: Single-branch installer derived from probe state; rerunning the helper reproduces the same branch, and there is no other algebraic surface.
+        - category: structural
+          disposition: not_applicable
+          rationale: Branch plus rm -f / tee of a fixed heredoc; no memory, encoding, or format-string surface.
+        - category: domain
+          disposition: reviewed
+          rationale: 'atomic_write evaluated and DEFERRED (see obligation_deferrals): the fingerprint stack is written by as_root tee in place, so an interrupted run can leave a torn /etc/pam.d/omarchy-lock-fingerprint; the same write-temp-rename gap is tracked on JW2J for the password stack. Tracked debt, not an accepted gap.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"

@@ -50,6 +50,26 @@ history:
     created_at: "2026-09-12T19:43:26Z"
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:50:41Z"
+    reviewed_by: agent:opencode-hazard-a
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - access_denied
+            - boundary
+          rationale: 'Worst case: root runs the helper with a hostile inherited PATH, so a user-writable directory supplies a shadow binary executed with full root privileges during install or upgrade. access_denied: the unconditional PATH export inside the EUID==0 guard is the permission posture; the hostile-PATH execution attempt is refused by construction before any optional command runs. boundary: the EUID 0-vs-non-0 threshold is the trigger itself; the non-root arm keeps user PATH but executes nothing privileged (as_root prefixes sudo, which re-derives secure_path).'
+        - category: property
+          disposition: not_applicable
+          rationale: A single unconditional assignment; there is no multi-input behavior, ordering, or repeated-application surface to constrain.
+        - category: structural
+          disposition: not_applicable
+          rationale: One static PATH string export; no memory, encoding, or format-string surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: 'control_not_silently_disabled evaluated: the control has no silently-skippable precondition path. The guard keys on EUID, not on configuration that can be absent, and the non-root arm never executes privileged commands, so there is no fail-open shape for the class to close.'
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"
