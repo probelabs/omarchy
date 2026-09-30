@@ -50,8 +50,40 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:01Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:42Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:35:33Z"
+obligation_suppressions:
+    - id: external_call_timeout_bounded
+      reason: The guard script runs user-authored shell predicates by contract; a deadline would break validly slow predicates, and the design already accepts the consequence - the menu opens on the last evaluation results, so a stalled predicate degrades answer freshness, never UI liveness. This is a documented tradeoff (MenuModel.js guardScript comment), not an unbounded wait the code forgot to bound.
+      suppressed_by: agent:opencode-hazard-c
+      suppressed_at: "2026-09-30T07:35:33Z"
+      framework_refs:
+        - CWE CWE-1088,CWE-400
+        - NIST-800-53 SC-5
+        - OWASP-ASVS-v4 V11.1.4
+hazard_review:
+    reviewed_at: "2026-09-30T07:35:31Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - malformed_input
+          rationale: 'Worst case: a malformed predicate (unbalanced quote, stray newline) breaks the generated script wholesale, so every guard fails to answer and the view falls open (JRW1 renders unguarded rows) - honest degradation, and the failure is visible in the guard script exit rather than a wrong 0/1 verdict. boundary: exactly one if-line per declared when/checked/disabled is the whole contract, with the zero case (items with no guard emit no lines) as the tested half. edge_case: a predicate that blocks stalls the refresh for as long as it runs - accepted design per the documented tradeoff that the menu opens on the last evaluation results; GUARD_READER substitution is slot-based so reader output never re-enters shell parsing.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'The generator is a total function of the item map: every declared guard yields exactly one <id>:<w|c|d> if-line and every undeclared item yields none, so the emitted script is a faithful index of declared guards with no duplication or omission across the id space.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'The string concatenation is the contract, not a hazard: the artifact is generated bash by design, ids come from config keys of the same authority as the expressions, and the JS side never evals the result.'
+        - category: domain
+          disposition: not_applicable
+          rationale: Guard predicates are user-authored shell from user-owned menu config executing with the user own authority on every open - the same authority row actions already exercise on click, so open-time evaluation adds no new trust boundary; third-party plugin menus gain only earlier timing of authority they already hold, and no network or privilege surface exists in the generator itself.
 defect_review:
     reviewed_at: "2026-09-23T17:08:39Z"
     session: CRS-0016

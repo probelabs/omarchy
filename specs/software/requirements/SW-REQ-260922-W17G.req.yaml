@@ -48,8 +48,40 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:02Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:44Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:46:56Z"
+obligation_suppressions:
+    - id: external_call_timeout_bounded
+      reason: 'Reader capture shares the MQ37/Y58B disposition of the generated-script family: user-authored shell runs unbounded by design because a deadline would break validly slow readers, the eager capture concentrates any stall in the prelude but the consequence remains answer staleness for the next refresh, never UI liveness, and the spawn itself is skipped when no guard references a reader.'
+      suppressed_by: agent:opencode-hazard-c
+      suppressed_at: "2026-09-30T07:46:56Z"
+      framework_refs:
+        - CWE CWE-1088,CWE-400
+        - NIST-800-53 SC-5
+        - OWASP-ASVS-v4 V11.1.4
+hazard_review:
+    reviewed_at: "2026-09-30T07:46:54Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: a shared reader with side effects (a counter, a cache write) executes once per referencing guard line instead of once per batch - the substitution covers only the plain $(reader) form, and documented non-plain forms (VAR=x reader, command -v reader, nested substitutions) are deliberately left to run the real command at eval time, so read-once holds exactly for the contract shape and degrades to repeated execution outside it; consequence is duplicate side effects and a slower batch, accepted and documented in MenuModel.js. boundary: a reader referenced by zero guards emits no capture line at all (the slot-membership test) - the read-once-only-when-shared half. edge_case: a reader exiting nonzero captures empty under the ||: isolation, so its dependents evaluate against an empty value (typically a false answer) instead of killing the batch, and one hung reader stalls the eager prelude - the freshness-only stall family dispositioned at MQ37.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - idempotency
+          rationale: 'determinism: slot numbering is fixed by GUARD_READERS order and the same items always produce the same prelude with the same captured values. idempotency: re-deriving the script over unchanged items repeats no reader execution beyond the one eager capture per used reader - the read-once property the requirement names.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Literal string substitution of $(reader) for an index-derived slot name over config-owned text; no eval on the JS side, no collision across slot indices, and an adversarial literal slot in a user expression is same-authority self-config, not an injection path.
+        - category: domain
+          disposition: not_applicable
+          rationale: Readers are user-authored shell running with the user own authority - the same boundary MQ37 dispositioned for the generated script; the substitution adds no privilege, network, or crypto surface.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

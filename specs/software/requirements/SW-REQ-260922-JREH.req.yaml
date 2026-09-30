@@ -48,8 +48,8 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:06Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:41Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:29:18Z"
 obligation_checklist:
     - error_handling
 obligation_suppressions:
@@ -57,6 +57,39 @@ obligation_suppressions:
       reason: 'Same artifact-wide contract as SW-REQ-260922-8ERH: bin/omarchy-menu-share must observe the chooser exit status (captured via || status=$?) to distinguish cancel from chooser-failure. This req implements the failure branch (critical notification + exit 1). It depends on set -e NOT aborting before the script inspects the status.'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
+    - id: external_call_timeout_bounded
+      reason: The chooser is omarchy-file-select, the portal D-Bus client that declares its total wait deadline internally (ANSWER_TIMEOUT_SEC=600, documented as the no-answer guard); the share script synchronous wait inherits that bounded callee, and the unbounded done_file poll mechanism behind KI-MENU-SELECT-POLL-DEADLOCK does not exist on the portal path.
+      suppressed_by: agent:opencode-hazard-c
+      suppressed_at: "2026-09-30T07:29:18Z"
+      framework_refs:
+        - CWE CWE-1088,CWE-400
+        - NIST-800-53 SC-5
+        - OWASP-ASVS-v4 V11.1.4
+hazard_review:
+    reviewed_at: "2026-09-30T07:29:16Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - error_handling
+          rationale: 'Worst case: a chooser that writes a pick then exits above 1 makes the share drop a file the user explicitly chose - defined fail-safe (nothing is sent without a clean success), though the critical message (chooser did not open) can be mildly misleading about the real failure. boundary: the status 1 vs above-1 partition is the entire trigger; status 1 and the portal client EXIT_NOTHING_PICKED both land in the silent exit-0 arm because the chooser taxonomy calls both a decision rather than a fault. edge_case: a newline inside a picked filename splits readarray entries along the line protocol and the bad entry fails at the send step, never sending a wrong file; a notification-send failure under set -e aborts nonzero anyway.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every chooser ending the portal client can emit (picked, cancelled, nothing-picked, crashed) resolves to exactly one share-script ending - detached send, silent exit 0, silent exit 0, critical notification with exit 1 - and the tests witness the failure and cancel quadrants.
+        - category: structural
+          disposition: not_applicable
+          rationale: 'Bash orchestration only: command substitution capturing the chooser, one readarray line split, string emptiness test; no parsing of chooser payloads beyond the line protocol, no arithmetic, no encoding transforms.'
+        - category: domain
+          disposition: reviewed
+          suppressed:
+            - external_call_timeout_bounded
+          rationale: The traced file does reach the network, but through the systemd-run detached localsend send that is SW-REQ-260922-8ERH own send contract, not the chooser-failure arm this requirement governs; the arm itself performs only the portal call. Disposition stays reviewed rather than not_applicable because of that egress sink.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

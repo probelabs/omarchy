@@ -48,8 +48,40 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:06Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:43Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:42:16Z"
+obligation_checklist:
+    - external_call_timeout_bounded
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: The timezone list flows through omarchy-menu-select, so this caller waits downstream of the unbounded done_file poll with no deadline and no peer-liveness probe - a selector that dies after summon hangs the timezone dialog, the KI reproduced defect class reaching this caller; the bound belongs to the KI fix at the poll site and bounds this caller transitively.
+      tracking: KI-MENU-SELECT-POLL-DEADLOCK
+      owner: agent:opencode-hazard-c
+      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
+      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
+hazard_review:
+    reviewed_at: "2026-09-30T07:42:14Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: a confirmation notification fires for a timezone that was never set (user trusts a wrong clock until it matters) - closed by the set -e ladder ordering: sudo failure aborts before the clock refresh and the confirmation, so a sent notification implies a completed set. boundary: the zero case is the cancel arm - no pick exits 1 before sudo runs, touching nothing. edge_case: the picked value originates from timedatectl list-timezones (system tz database names) and is still double-quoted into the sudo call, so even a corrupted zone list cannot re-enter shell parsing; a stale zone list entry that timedatectl rejects aborts mid-ladder with no notification, which is the honest direction.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - atomicity
+          rationale: The apply is a strict four-step sequence - pick, set, refresh, notify - where every failure before the notification aborts with nonzero and leaves the prior timezone intact, so the observable state transitions only on full success and the notification can never precede the commit.
+        - category: structural
+          disposition: not_applicable
+          rationale: Four fixed commands with the only variable data (the zone string) quoted end to end; no arithmetic, parsing of command output, or dynamic dispatch.
+        - category: domain
+          disposition: reviewed
+          rationale: 'The slice contains the scripts one privileged step, sudo timedatectl set-timezone, with the zone argument quoted and the privilege shape fixed to exactly that whitelisted binary invocation - no shipped catalog class covers quoted-argument sudo hygiene, so the category records the review: least-privilege holds by construction, the menu context supplies no terminal for a password prompt (a sudo failure aborts, it never retries), and no network egress exists in the traced file. The menu-select upstream wait is dispositioned under the deferral below.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

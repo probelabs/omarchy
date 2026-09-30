@@ -48,8 +48,41 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:05Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:41Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:33:35Z"
+obligation_checklist:
+    - external_call_timeout_bounded
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: 'The picker hands its rows to omarchy-menu-select and waits synchronously downstream of the unbounded done_file poll with no deadline and no peer-liveness probe: a menu that dies after summon hangs every omarchy-menu-plugin caller - the KI reproduced defect class reaching this caller. The bound belongs to the KI fix at the poll site, which bounds this caller transitively.'
+      tracking: KI-MENU-SELECT-POLL-DEADLOCK
+      owner: agent:opencode-hazard-c
+      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
+      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
+hazard_review:
+    reviewed_at: "2026-09-30T07:33:33Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - error_handling
+          rationale: 'Worst case: a jq filter bug turns remove into a destructive verb aimed at first-party plugins, which cannot be re-fetched after deletion. The filter is (.firstParty | not), so a plugin record whose firstParty marker is absent (structural-trust inversion: the inventory flag gates a destructive verb) falls on the removable side - mitigated by the fact that clones are legitimately non-first-party, the id is cut from the returned row not re-derived, and omarchy-plugin-remove re-checks what it is deleting; residual consequence needs a defective inventory generator. boundary: one filter per verb is the exact partition, allowlisted by the case. edge_case: a tab inside a plugin name shifts the cut -f2 id column (line protocol), and the action then misses the intended plugin - ids are slugs, so a collision with a different plugin is implausible. error_handling: a plugin-list failure kills under set -e before any listing; empty rows notify and exit 0 per the sibling QMWP contract.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: rows preserve the jq array order of the plugin-list JSON for a given inventory state; every verb yiedlds the same set across runs. totality: every (verb, plugin state) combination resolves to a defined row set - enabled, canDisable-and-enabled, firstParty-not-cloned, or non-firstParty - and every downstream ending (empty notify, dismissal, missing-id exit 1, dispatch) is pinned.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'Bash with all dynamic values safe by construction: the id reaches jq-free dispatch as a single quoted argv (omarchy-plugin-$1 with a case-allowlisted verb), terminal launchers receive printf %q-quoted ids, and no payload is evald or word-split beyond the row tab protocol.'
+        - category: domain
+          disposition: not_applicable
+          rationale: Local plugin inventory plus the omarchy-menu-select IPC summon owned by the protocol siblings (Q6ZS/9ABD); no network egress, crypto, or privilege boundary in the filter-and-dispatch slice this requirement governs.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

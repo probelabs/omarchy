@@ -71,8 +71,40 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:00Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:05:21Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:35:33Z"
+obligation_suppressions:
+    - id: external_call_timeout_bounded
+      reason: 'execDetached is fire-and-forget by design: nothing in this slice waits on the action, so there is no synchronous wait to bound; the menu has already closed before the child starts, and a hung action cannot block or stall any caller of this contract.'
+      suppressed_by: agent:opencode-hazard-c
+      suppressed_at: "2026-09-30T07:35:33Z"
+      framework_refs:
+        - CWE CWE-1088,CWE-400
+        - NIST-800-53 SC-5
+        - OWASP-ASVS-v4 V11.1.4
+hazard_review:
+    reviewed_at: "2026-09-30T07:35:31Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - error_handling
+          rationale: 'Worst case: a route resolves to an action item, the menu closes, and the action silently never runs (execDetached is fire-and-forget) - the user loses the interaction with no reopen path in this slice; consequence is a lost launch, not a wrong one. boundary: the zero cases are pinned - empty id cancels, empty action no-ops, and applySelected closes the menu before dispatch so a failed action cannot leave the menu half-open. edge_case: the summonAction fast path passes the single-quoted payload literally to the in-process summon while the bash path would have shell-expanded it - same user authority, different expansion timing; the divergence is owned by SW-REQ-260928-8VJQ which pins the fast path, and N3RM only requires that a resolved action runs directly without opening a menu.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'Every resolved (kind, action) ending is defined: action item with non-empty action runs directly with no menu open, empty action no-ops, empty id cancels - no route ends with the menu reopening or the action firing twice.'
+        - category: structural
+          disposition: not_applicable
+          rationale: The fast-path regex is bounded ([A-Za-z0-9._-]+ for the id, single-quote-delimited payload), the action string dispatches as one argv to execDetached, and no payload is string-built or evald in QML.
+        - category: domain
+          disposition: not_applicable
+          rationale: Actions are user-authored commands from user-owned config executing with the user own privileges; the fast path only changes spawn plumbing (in-process summon vs bash), not authority, and the traced files carry no network, crypto, or privilege surface.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:05:21Z"

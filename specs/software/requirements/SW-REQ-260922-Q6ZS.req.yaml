@@ -48,8 +48,41 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:04Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:42Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:46:53Z"
+obligation_checklist:
+    - external_call_timeout_bounded
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: 'This requirement implementation carries the done_file poll itself (while [[ ! -e $done_file ]]; sleep 0.05) with no deadline and no peer-liveness probe: a selector that dies after a successful summon hangs the script and every synchronous dmenu caller - the reproduced defect the KI pins. The bound belongs to the KI fix at this site.'
+      tracking: KI-MENU-SELECT-POLL-DEADLOCK
+      owner: agent:opencode-hazard-c
+      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
+      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
+hazard_review:
+    reviewed_at: "2026-09-30T07:46:51Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - malformed_input
+          rationale: 'Worst case: caller-supplied bytes corrupting the summon payload into a shape the shell misreads as a different mode or destination - closed structurally: every string field passes an explicit UTF-8 decode and JSON encode in perl, so any argv bytes arrive as payload values, never structure. boundary: the options-source partition is the contract spine - argv options, or stdin lines when no arguments and stdin is non-terminal, or the B839 usage exit when neither source exists; width/maxHeight appear only when given and are int-coerced. edge_case: an empty pipe yields an empty options array (defined empty menu rather than an error, with B839 owning the no-source case); invalid UTF-8 argv dies loudly at the decode instead of mojibake-ing into the payload.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+            - determinism
+          rationale: 'totality: every (argv, stdin-kind, width/maxheight-presence) combination resolves to exactly one payload shape or the usage exit, with no combination emitting a partial or mis-typed field set. determinism: fields serialize in fixed order from fixed sources, so the same invocation always produces the same payload.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Encode/decode boundaries are explicit (UTF-8 decode before JSON encode, integer coercion for dimensions); no eval, shell interpolation of payload fields, or pointer work - the payload is built in perl structures and printed once.
+        - category: domain
+          disposition: not_applicable
+          rationale: Local mktemp paths and the session shell IPC summon; the far side of the protocol is the shell plugin siblings own surface, and this side carries no network, crypto, or privilege boundary.
 defect_review:
     reviewed_at: "2026-09-23T17:07:46Z"
     session: CRS-0014

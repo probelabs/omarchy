@@ -14,8 +14,6 @@ informal_verification:
 parent: SYS-REQ-260922-P708
 component: menu
 rationale: Menu.qml nextSelectable lines 530-542 and select lines 706-717.
-obligation_checklist:
-    - boundary
 tags: []
 variables: []
 traces:
@@ -84,6 +82,31 @@ history:
     created_at: "2026-09-22T13:34:03Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:45Z"
+obligation_checklist:
+    - boundary
+hazard_review:
+    reviewed_at: "2026-09-30T07:44:44Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: the cursor parks on a disabled row where Enter silently does nothing - a cursor trap that reads as a dead menu. Closed on both input paths: movement scans rowSelectable and Enter and pointer activation gate on it too, so a skipped row cannot be fired from any direction, and the all-disabled menu ends at -1 with the cursor hidden rather than parked (settleCursor keeps the index defined but cursorActive false). boundary: the declared class covers the exact edges the scan exists for - count 0 and 1, from below zero or past the end normalized by double modulo, and the wrap scan bounded at count iterations. edge_case: a non-unit direction normalizes to a ±1 step, and a menu that grows a selectable row immediately grows a cursor on the next settle.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+            - determinism
+          rationale: 'totality: every (from, direction, disabled-set) combination returns a defined index or -1, with the all-disabled -1 as the named third outcome. determinism: the scan walks one fixed step from a normalized start, so the same rows and cursor state always land on the same target.'
+        - category: structural
+          disposition: not_applicable
+          rationale: The bounded for-loop is itself the termination argument (at most count iterations, no while-true wrap), double-modulo normalizes any integer from, and no arithmetic beyond index stepping exists in the slice.
+        - category: domain
+          disposition: not_applicable
+          rationale: Cursor placement is display state inside one shell window; no trust boundary, network, crypto, or privilege surface, and no cross-process wait exists in the traced functions.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

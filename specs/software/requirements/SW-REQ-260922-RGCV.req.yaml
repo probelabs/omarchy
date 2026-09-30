@@ -48,10 +48,43 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:02Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:43Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:39:24Z"
 obligation_checklist:
     - error_handling
+obligation_suppressions:
+    - id: external_call_timeout_bounded
+      reason: 'The shadow calls lock-free read-only pacman queries once per refresh; the pipeline runs async with the documented staleness tradeoff (the menu opens on the last evaluations answers), so the only worst case from an undeclared pacman runtime is degraded answer freshness on a huge database, never a hang, a lock wait, or a blocked caller - queries never touch db.lck and readers are isolated by the prelude ||: guard.'
+      suppressed_by: agent:opencode-hazard-c
+      suppressed_at: "2026-09-30T07:39:24Z"
+      framework_refs:
+        - CWE CWE-1088,CWE-400
+        - NIST-800-53 SC-5
+        - OWASP-ASVS-v4 V11.1.4
+hazard_review:
+    reviewed_at: "2026-09-30T07:39:22Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - error_handling
+          rationale: 'Worst case: pacman -Qq fails (broken db) and stderr is suppressed, so the mapfile seeds empty and every plain package name reads missing - Install rows flip to installable and already-installed marks vanish; consequence is wrong UI state until the next open, with no destructive action firing automatically (installs are user-clicked) and the guarded verb re-evaluating each refresh. boundary: the no-argument case is pinned by contract - present of nothing is true (vacuous all-loop), missing of nothing is false - and the tested half matches the implementation exactly. edge_case: provides entries are extracted by the awk field split with version operations stripped, multi-provide lists split on spaces, and the literal None skipped; version-constraint arguments (containing <,>,=) bypass the snapshot and defer to a live pacman -Q, so a mid-session install makes constrained args fresh while plain names stay snapshot-stale - bounded staleness inherent to the one-shot mapfile design. error_handling is the declared class: the all-missing degrade above is the failure mode, silent but recoverable and UI-level.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: the shadow map is a pure function of the pacman database state at read time - same db, same answers, sorted input order irrelevant to the associative array. totality: every (argument list, argument form) combination resolves to one boolean - snapshot hit, live constraint check, or plain miss - with no form falling through undefined, and the no-arg extremes pinned.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Generated bash with quoted expansions, literal associative-array keys, and a character-class test routing constraint forms to pacman; no eval of package names, no arithmetic, no encoding transform - names with glob metacharacters are impossible in arch package names.
+        - category: domain
+          disposition: not_applicable
+          rationale: Read-only pacman queries against the local package database; -Q takes no database lock and performs no network access, and the shadow adds no authority - it only answers what pacman would answer, faster.
 defect_review:
     reviewed_at: "2026-09-23T17:08:39Z"
     session: CRS-0015

@@ -65,6 +65,29 @@ history:
     created_at: "2026-09-22T13:34:03Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:44Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:46:53Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: the divider renders with only one group populated, presenting a phantom drilldown section for a query with no deep matches (or hiding the split for a query with both) - the exactly-when-both-nonempty half is the whole risk surface. boundary: the zero cases are pinned - both groups empty renders no divider and no rows, either single group renders alone, and the divider exists only at the current/deep boundary. edge_case: the depth partition of rows into current versus drilldown groups is total per item (an item sits at exactly one depth), so no row can appear in both groups and flip the split; group membership recomputes per keystroke without accumulating stale sections.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: current-menu rows list before drilldown rows with the SJ7P score chain inside each group, so identical items and query yield identical section order every render. totality: every query result resolves to one defined layout - current only, deep only, both with divider, or empty - with no query producing an ambiguous or duplicated section structure.'
+        - category: structural
+          disposition: not_applicable
+          rationale: List-model construction with a boolean divider flag; no parsing, arithmetic beyond depth comparison, or encoding transform in the section slice.
+        - category: domain
+          disposition: not_applicable
+          rationale: Search layout is display state inside the shell window; no trust boundary, network, crypto, privilege, or cross-process wait surface exists in the traced section logic.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

@@ -50,6 +50,30 @@ history:
     created_at: "2026-09-22T13:33:59Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:42Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:37:49Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - malformed_input
+          rationale: 'Worst case: an installed app keyword shadows a menu route (htop ships Keywords=system), so typing a menu id launches an unrelated app instead - closed structurally by skipping kind==app in the alias scan so app aliases can never enter route resolution, while exact ids are checked first against the item map apps never join. boundary: the zero cases are pinned - empty input and the reserved words go/menu route to root before any lookup. edge_case: two menu items sharing one id resolve to whichever entry the merged item map holds (collision semantics owned by the merge sibling), duplicate aliases resolve by itemOrder position (deterministic but config-order dependent), and the id normalizer (lowercase, underscore-to-dash) means ids outside that folded space match only verbatim; unknown strings fall through as literal input by design so misspellings still attempt their id.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: resolution walks itemOrder in order after the single exact-id map hit, so the same items and input always route identically. totality: every input string resolves to exactly one target - exact id, first matching alias, root for reserved words, or verbatim passthrough - with no input leaving the router undefined.'
+        - category: structural
+          disposition: not_applicable
+          rationale: A lowercased string compare over a bounded alias list with the same normalization applied to both sides; no eval, regex over user input, or pointer work.
+        - category: domain
+          disposition: not_applicable
+          rationale: Routing picks which user-owned action to run; no new authority is granted by the choice, and the traced resolver carries no network, crypto, or privilege surface.
 defect_review:
     reviewed_at: "2026-09-23T17:08:38Z"
     session: CRS-0009

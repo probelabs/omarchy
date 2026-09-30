@@ -73,6 +73,30 @@ history:
     created_at: "2026-09-22T14:27:02Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T20:47:45Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:29:17Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - error_handling
+          rationale: 'Worst case: a row whose guard said no stays rendered and activatable, so the user fires an action the menu was configured to refuse - the guard here is preference-level (already-installed software, target-less entries), not a privilege boundary, so the consequence is a wasted or duplicate action, not authority. boundary: the depth-32 recursion guard is the cycle bound for link/menu graphs that reference each other; members beyond the bound hide (fail-closed) instead of hanging the view. edge_case: a when: expression with no entry in whenResults is fail-open visible (strict === false means only an explicit false result hides) - defined, with result population owned by the guard-pipeline sibling SYS-REQ-260922-47T8; a guard string that errors is not false and therefore does not hide. error_handling: missing checkedResults/disabledResults maps degrade to plain labels, not crashes.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: visibility and marking derive from itemOrder array walks and per-id map reads, never from object key iteration, so the same model and results render identically each frame. totality: every (kind, when-result, descendant-visibility, provider) combination resolves to one defined visible/hidden/marked outcome, including the all-hidden static submenu (hidden), the provider-backed menu (kept visible for on-demand load), and the cyclic graph (bounded hide at depth 32).'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'QML/JS view logic: recursion is depth-guarded at 32, map reads use strict equality on entry ids, and there is no manual memory, pointer arithmetic, or encoding transform; the depth guard is recorded under scenario/boundary.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'No trust boundary in the view slice: menu rows already execute with full user privileges by design, guard results come from the local guard pipeline over the user own config, and the traced files (MenuModel.js, Menu.qml) contain no network, crypto, or privilege-escalation surface.'
 lifecycle:
     change_history:
         - date: "2026-09-27T20:41:27Z"

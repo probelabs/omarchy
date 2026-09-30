@@ -50,6 +50,29 @@ history:
     created_at: "2026-09-22T13:34:06Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:42Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:39:22Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: a caller scripting omarchy-menu-plugin <verb> && next-step reads exit 0 as success and proceeds having done nothing - the contract chooses notify-and-exit-zero over an empty picker deliberately, so the distinction nothing-to-do vs done rides on the notification text, not the status; consequence is a skipped step in a hand-rolled chain, bounded and visible. boundary: zero matching rows per verb is the exact trigger, and the arm sits before the picker opens so no empty list can ever render. error_handling: a notification-send failure kills under set -e with nonzero - loud, and the arm idempotent. edge_case: a row set that filters to whitespace-only cannot reach the arm (rows come from jq over non-empty name/id fields), so empty means genuinely empty.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: The verb pipeline has exactly two endings from this trigger onward - notification plus exit 0 when the filtered set is empty, picker handoff when it is not - with no intermediate state rendering an empty menu or exiting twice.
+        - category: structural
+          disposition: not_applicable
+          rationale: A single -n test on the jq-emitted row string plus a notification call; no parsing, arithmetic, or dynamic dispatch in this arm.
+        - category: domain
+          disposition: not_applicable
+          rationale: A local notification to the session bus and a process exit; the plugin inventory and picker IPC are the sibling requirements surfaces (KRBH/Q6ZS family), and no network, crypto, or privilege boundary exists in the empty-set arm.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

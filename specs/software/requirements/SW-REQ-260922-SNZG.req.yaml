@@ -52,6 +52,29 @@ history:
     last_modified_at: "2026-09-27T21:25:43Z"
 obligation_checklist:
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-30T07:40:47Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: a caller scripts omarchy-menu <typo> in a chain and misreads exit 2 as success - the taxonomy is the mitigation: usage errors (missing args) exit 1, unknown verbs exit 2, so programmatic callers get two distinct failure classes, and the diagnostic names the offending verb plus the --help pointer on stderr where it cannot be mistaken for output. boundary: the case dispatch is total - every known verb, --help (exit 0), and the catch-all unknown arm - with no argv shape falling off the dispatcher. edge_case: the raw verb is echoed unquoted into the message, so terminal escape bytes in a hand-typed verb render raw in the user own terminal; the source is the user own command line (self-owned authority, same as any command echoing its arguments), and the bytes pass to stderr only, never to a parser.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every argv resolves to exactly one dispatcher ending - a known verb dispatch, help text with exit 0, or the unknown diagnostic with exit 2 - with no input reaching an undefined fall-through or double exit.
+        - category: structural
+          disposition: not_applicable
+          rationale: A case allowlist, one stderr echo, and exit codes; the verb is never evald, dispatched through, or interpolated into a command - unknown input can only become message text.
+        - category: domain
+          disposition: not_applicable
+          rationale: stderr text to the user own terminal from the user own argv; no trust boundary is crossed, and no network, crypto, privilege, or wait surface exists in the dispatcher arm.
 defect_review:
     reviewed_at: "2026-09-23T17:08:38Z"
     session: CRS-0008

@@ -48,8 +48,40 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:01Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:44Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:43:35Z"
+obligation_suppressions:
+    - id: external_call_timeout_bounded
+      reason: 'The guard script run is the spawn side of the same contract MQ37 dispositioned on the generator side: user-authored shell predicates run unbounded by design because a deadline would break validly slow predicates, the menu opens on the last evaluations answers so a stalled run degrades freshness and never UI liveness, and the spawn is skipped entirely when no guards are declared (the early return this requirement pins).'
+      suppressed_by: agent:opencode-hazard-c
+      suppressed_at: "2026-09-30T07:43:35Z"
+      framework_refs:
+        - CWE CWE-1088,CWE-400
+        - NIST-800-53 SC-5
+        - OWASP-ASVS-v4 V11.1.4
+hazard_review:
+    reviewed_at: "2026-09-30T07:43:34Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: a guard process spawns for a menu with nothing to guard - wasted spawn plus a stale-answers window - closed by the empty-script early return that also clears all three result maps, so a zero-guard menu renders with no marks and no bash at all. boundary: both halves of the zero case are pinned - no declared guards yields the empty script (the generator contract this consumption sits on) and the empty script yields no process. edge_case: an evaluation while a guard run is in flight defers to the in-flight run (guardsPending), and a guard expression that never completes keeps that run alive forever, stalling all future refreshes - consequence bounded to answer staleness per the documented menu-opens-on-last-answers tradeoff, with the UI itself unaffected.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+            - idempotency
+          rationale: 'totality: declared-guard and zero-guard item sets each resolve to exactly one outcome (spawn and collect, or clear-and-skip), with no third path. idempotency: repeated evaluation over unchanged items re-derives the same script and the same results, and the result maps are replaced wholesale rather than merged, so no state accumulates across evaluations.'
+        - category: structural
+          disposition: not_applicable
+          rationale: An emptiness test on the generated script plus a Process command array with fixed argv (bash -lc script); results are plain object swaps with no parsing of the script on this side.
+        - category: domain
+          disposition: not_applicable
+          rationale: A local bash spawn over user-authored guards with the user own authority - the same boundary dispositioned at the generator (MQ37) - and no network, crypto, or privilege surface in the spawn-and-collect slice.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

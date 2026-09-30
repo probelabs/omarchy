@@ -63,6 +63,29 @@ history:
     created_at: "2026-09-22T13:34:00Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:44Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:43:32Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: a link silently lands somewhere other than its target - the misdirect cost is one wrong panel the user navigates away from, since routing grants no authority. boundary: the zero case is the targetless link - a link entry with an empty target skips the follow branch and opens at the link itself rather than dereferencing undefined. edge_case: the follow is single-hop by construction (id = entry.target, then open) so a chain a->b->c lands on the b row and needs a second follow, and a link whose target is an action bypasses the direct-run branch (that check ran on the original resolved entry) and opens a childless panel - both config-authored cosmetic edges, no hang and no route loop (one dereference, no iteration).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: two map lookups (resolved entry, target field) with no iteration, so the same items and input always land on the same panel. totality: every resolved link ends defined - followed for a non-empty target, self-landing otherwise - and every other kind takes its own branch, with no input leaving openRoute without a landing id and an ok return.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Two property reads and an assignment; the target id is never evaluated, interpolated, or parsed - it only selects an existing map key downstream.
+        - category: domain
+          disposition: not_applicable
+          rationale: Choosing which menu panel to render moves no authority; the traced slice has no network, crypto, privilege, or cross-process surface.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

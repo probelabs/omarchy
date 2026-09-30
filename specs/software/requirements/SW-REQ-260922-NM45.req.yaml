@@ -76,6 +76,30 @@ history:
     created_at: "2026-09-22T13:34:04Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:42Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:37:49Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - malformed_input
+          rationale: 'Worst case: a row shaped label TAB subtext with no glyph - an illegal shape under this protocol - is silently reinterpreted (label becomes the icon, subtext renders as the label, detail is lost), so the caller sees different text than it sent and gets subtext back as the pick; consequence is a confused display and a shifted stable key on a caller-contract violation, with no crash and no cross-row bleed. boundary: the zero cases are pinned - a glyph-less row takes the label-first branch, an empty label after the shift renders as empty, and an empty query keeps every row. edge_case: a label containing embedded tabs re-splits for display but the returned key round-trips the original tail intact (label TAB detail reassembles everything after the glyph), so same-named-row disambiguation stays faithful; query filtering covers label and subtext together.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: rows iterate dmenuOptions in order with score=i, so display order and selection indices are stable functions of the option list. totality: every option string maps to exactly one display row (or is filtered by the query) and every activation resolves to glyph-free label or label TAB detail - the glyph can never leak into a pick and no row lacks a defined return.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Split/shift/join over one row string; the synthetic itemId dmenu.<i> is display-only and never returned; no eval, arithmetic, or encoding transform.
+        - category: domain
+          disposition: not_applicable
+          rationale: Caller-supplied dmenu rows render back to the same user who supplied them; no trust boundary, network, crypto, or privilege surface in the compositor-side display slice, and no cross-process wait exists in it either.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

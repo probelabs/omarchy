@@ -57,13 +57,47 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:07Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:41Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:33:47Z"
+obligation_checklist:
+    - external_call_timeout_bounded
 obligation_suppressions:
     - id: error_handling
       reason: 'bin/omarchy-menu-images handles its failure points explicitly per call. || return guards flock and stat (lines 166-167, 205): one unreadable image or a lost lock skips that item instead of aborting the batch. set -e/pipefail would invert the design: one corrupt image in a directory would kill the entire thumbnail rebuild (this req) instead of skipping it. Usage errors exit 1 explicitly (lines 27, 74, 352, 357).'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: 'The rebuilt rows feed omarchy-shell image-selector open and the script then polls its own done_file (while [[ ! -e $done_file ]]; sleep 0.01) with no deadline and no peer-liveness probe: a selector that dies after a successful summon hangs this script and every synchronous caller. It is the image-selector instance of the KI reproduced done_file poll mechanism, so the bound is tracked with that fix rather than suppressed.'
+      tracking: KI-MENU-SELECT-POLL-DEADLOCK
+      owner: agent:opencode-hazard-c
+      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
+      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
+hazard_review:
+    reviewed_at: "2026-09-30T07:33:46Z"
+    reviewed_by: agent:opencode-hazard-c
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          suppressed:
+            - error_handling
+          rationale: 'Worst case: a signature collision makes a stale cache look fresh and the picker shows rows that no longer match the directory - deleted or re-saved images listed, thumbnails wrong. The fast tier hashes directory mtimes plus per-image size:mtime; a repaired-in-place file that keeps mtime defeats the fast tier, which is why the slow tier re-checks on the fast-signature miss and the rebuild path drops in-place-repaired rows from cacheability outright (rows_cacheable=false). boundary: the three-tier partition (fast cmp, slow cmp, full rebuild) is exact and each tier transition is defined; the stat-race on a vanishing image drops that one row via continue instead of aborting. edge_case: the fast-signature promotion write on the slow-tier hit (line 296) is in-place rather than temp-renamed and sits outside the cache lock - a torn write only fails the next fast cmp and re-enters the slow tier, which recomputes from the authoritative signature file: one redundant rebuild, then self-heals. error_handling is dispositioned by the standing kimi-dogfood suppression (explicit per-call guards instead of set -e aborts).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - atomicity
+            - determinism
+          rationale: 'atomicity: the rebuild rewrites rows, signature, and fast-signature under the flock -w 30 cache lock through $$.tmp temp-renames, so a concurrent picker reads the old or the new triple, never a torn mix. determinism: the scan iterates dirs in argument order with find -print0 piped through sort -z, so the signature string and row order are stable functions of directory state.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Bash over null-delimited find output (find -print0 with IFS= read -r -d %s) preserves filenames containing newlines and tabs through the signature and row build; no eval, arithmetic on sizes, or encoding transforms in the rebuild slice.
+        - category: domain
+          disposition: not_applicable
+          rationale: Local filesystem reads and XDG cache writes with content-hash keys, plus the image-selector IPC summon; no network egress, secrets, or privilege surface in the signature-and-cache slice this requirement governs.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
