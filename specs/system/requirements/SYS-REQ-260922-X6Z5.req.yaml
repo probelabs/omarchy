@@ -45,10 +45,36 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:33:49Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:47Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T08:09:08Z"
 obligation_checklist:
     - error_handling
+obligation_hazards:
+    - class: error_handling
+      worst_case: 'the summoned picker surface dies after a successful select IPC and before writing the answer file: the synchronous caller waits on a file that will never appear - the reproduced poll-deadlock class; the bound is owned at the dmenu children (9ABD/Q6ZS) as a KI-tracked deferral on KI-MENU-SELECT-POLL-DEADLOCK, so the parent records the decision rather than duplicating the debt row'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-09-30T08:09:09Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - malformed_input
+          rationale: 'Worst case graded above (peer death after summon hangs the synchronous caller - medium, tracked at the children under the KI). error_handling: cancellation reaches the caller as a clean no-selection (exit 1) rather than an error, so cancel is a protocol answer, not a failure; the answer file empty-vs-absent distinction is the no-selection contract. malformed_input: the picked value is delivered glyph-stripped with subtext preserved as the stable key, so decorative drift in labels cannot corrupt the payload; unknown/empty payloads are refused by the payload-shape child rather than passed through. boundary: single-select and multi-select modes answer through one delivery path so the caller needs no mode-specific wait logic.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: the same pick answers the same payload - glyph stripping and key extraction are pure string functions of the chosen row; delivery order (exit code, answer file content) is fixed by the protocol, not by timing. idempotency: rewriting the answer file with the same pick converges; a second pick overwrites the first, which is the documented last-writer contract.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'payload is a stripped string written to a file: no memory/pointer/format surface; encoding is preserved byte-wise by the shell write path, and the shape guard on the caller side is dispositioned under scenario.malformed_input.'
+        - category: domain
+          disposition: reviewed
+          rationale: 'external_call_timeout_bounded evaluated: the wait-on-answer-file poll inside the dmenu flow is exactly the KI-MENU-SELECT-POLL-DEADLOCK mechanism, and it is deferred at the children that carry the poll (9ABD and Q6ZS under the KI, with reproducer); the parent adds no duplicate deferral - decomposition keeps the debt row where the fix will land, and obligation_decomposition stays honest because both children carry the class. cancel-as-answer means the protocol never relies on a timeout for its normal path. No trust boundary: the answer travels from the user own picker surface to their own script through a mode-600 file in the session tmpdir.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

@@ -45,10 +45,36 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:33:49Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:46Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T08:06:53Z"
 obligation_checklist:
     - error_handling
+obligation_hazards:
+    - class: error_handling
+      worst_case: 'an action script that neither performs its side effect nor refuses loudly: the menu closes (the row activation consumed the click), nothing happens, and the user cannot tell success from failure - silent wrong-target execution is this project documented historical bug class (wrong same-named plugin enabled), which is why the loud-refusal half of the contract is graded high'
+      severity: high
+hazard_review:
+    reviewed_at: "2026-09-30T08:06:54Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - malformed_input
+          rationale: 'Worst case graded above on the existing error_handling obligation (silent no-op or wrong-target action, high - the documented historical class). error_handling: every script in the family carries set -euo pipefail and explicit exit-coded refusals (usage errors exit 1/2, IPC acceptance checked, failed handbacks printed to stderr), so refusal is loud and exit-coded by construction. malformed_input: unknown verb/route/argument shapes are refused with usage text rather than guessed at. The two known unbounded-wait sites in the family are owned downstream, not here: the done_file poll by SW-REQ-260922-MH9B under KI-MENU-SELECT-POLL-DEADLOCK, and the still-image converter lane by SW-REQ-260929-THMB under KI-MENU-IMAGES-VIPS-NO-TIMEOUT (both deferred there; this parent adds no duplicate debt row).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+          rationale: 'idempotency: the family scripts are one-shot per invocation and safe to re-invoke (toggle/refresh verbs converge, generation is content-keyed), so a retried activation cannot compound a half-applied side effect; determinism/commutativity do not pertain to a fork-and-exit contract. atomicity of the underlying side effects is owned by each target component (lock, shell IPC, file ops) under its own requirements.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'bash scripts with explicit exit codes: no memory/pointer/format-string surface; encoding-sensitive handoffs (base64 rows) are owned by the images open-flow children, not by the loud-refusal contract.'
+        - category: domain
+          disposition: reviewed
+          rationale: 'external_call_timeout_bounded evaluated: the family scripts external calls are bounded at their owning requirements - ffmpegthumbnailer under timeout -k 5 10 and the done_file poll deferred on the children (KI-MENU-SELECT-POLL-DEADLOCK; KI-MENU-IMAGES-VIPS-NO-TIMEOUT); omarchy-shell IPC calls fail fast on a dead peer (connect refusal), so the dispatcher-side verbs need no deadline here. external_call_failure_observable is satisfied by the contract itself: refusal must be loud and exit-coded, silent black-holing is the exact forbidden shape. No trust boundary: all scripts run as the invoking user on their own machine; nothing here authenticates or authorizes.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

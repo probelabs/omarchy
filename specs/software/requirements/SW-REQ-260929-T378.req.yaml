@@ -39,7 +39,35 @@ history:
     created_by: human:Leonid Bugaev
     created_at: "2026-09-29T13:51:08Z"
     last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-29T14:07:43Z"
+    last_modified_at: "2026-09-30T08:04:41Z"
+obligation_checklist:
+    - edge_case
+obligation_hazards:
+    - class: edge_case
+      worst_case: synthetic hover churn under a stationary pointer (a redraw loop or a stray device emitting move events with sub-threshold deltas) repeatedly re-enters selectFromPointer; the gate exists precisely so this cannot walk the selection, but a gate threshold crossed by accumulated sub-threshold jitter across one event burst would land the cursor on a row the user never aimed at - the disarm enumeration (keyboard nav, filtering, menu transition, delete dialog, open) must keep covering every interaction that should reset intent
+      severity: low
+hazard_review:
+    reviewed_at: "2026-09-30T08:04:55Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+            - malformed_input
+          rationale: 'Worst case graded above: synthetic hover churn is the exact threat the movement gate exists to defeat, and the residual is jitter accumulating across a burst - graded low, guarded by the moved() threshold plus the rowSelectable second guard. edge_case: every interaction that should reset intent (keyboard nav, filtering, menu transitions, the delete dialog, opening the menu) calls disarmPointer, so gate state cannot survive a context switch. malformed_input: a non-selectable row answer short-circuits the write before cursorActive/selectedIndex change - selection can never park on a disabled row. nominal is witnessed by the executing assertions in menu-pointer-lifecycle-test.sh.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: the same pointer trajectory over the same rows answers the same selection - gate state is a pure function of movement history since the last disarm, and QML event-loop serialization means no interleaving can reorder moved()/rowSelectable() against the writes they guard. concurrency does not pertain (single-threaded); totality of the disarm enumeration is the accepted residual graded above.'
+        - category: structural
+          disposition: not_applicable
+          rationale: the gate is scalar pointer arithmetic (deltas against a threshold) with an explicit reset - no memory, encoding, or sentinel surface beyond what scenario/property already carry; no nil object reaches the guard (rows pass resolved entries).
+        - category: domain
+          disposition: not_applicable
+          rationale: 'no cross-process call, no timeout, no IPC, no trust boundary: the gate guards QML-internal pointer events inside one compositor surface. The dmenu/picker poll surfaces that DO carry timeout debt live in the dmenu protocol reqs (deferred under KI-MENU-SELECT-POLL-DEADLOCK), not here.'
 lifecycle:
     change_history:
         - date: "2026-09-29T14:07:43Z"

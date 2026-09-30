@@ -45,10 +45,38 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:33:48Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:45Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T08:06:25Z"
 obligation_checklist:
     - error_handling
+    - external_call_timeout_bounded
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: 'the whole guard batch runs as one bash -lc child with no deadline: a user guard expression that blocks (waiting on a lock, a slow probe, stdin - guardLine wraps the expression but does not redirect stdin) wedges guardProc.running forever, guardsPending then defers every later evaluation, and the menu shows the last complete answer set indefinitely - rows checked/visible per state that no longer holds. Mitigation by design: a when: only hides on explicit false, so a dead batch fails visible, and a killed batch (exitStatus set) keeps the last complete set rather than adopting a half-read one. This is a child-process-without-deadline site, NOT the reproduced done_file poll-loop mechanism, so it takes its own tracking ref rather than KI-MENU-SELECT-POLL-DEADLOCK. The fix shape is a Process-side watchdog (kill + re-arm) with an explicit staleness policy on guard answers.'
+      tracking: hazard-batch-D/47T8-guard-bash-no-deadline
+      owner: human:Leonid Bugaev
+hazard_review:
+    reviewed_at: "2026-09-30T08:06:26Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - edge_case
+          rationale: 'Worst case graded in the deferral above: a blocking guard expression freezes the answer set for the session (tracked debt). error_handling: a batch killed by signal (exitStatus set) or a non-zero exit keeps the previous complete answer set - a half-read batch never adopts; a reader exiting non-zero cannot kill the batch (|| : guard); unparsable output lines are skipped by the id:tag:value shape guard. edge_case: a run arriving while one is in flight is coalesced via guardsPending and re-run once the flight lands, so concurrent evaluation requests cannot interleave collected output. nominal: one batched run drives visibility, checkmarks, and dimming from per-item answers, exactly the contract.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: the same guard expressions over the same system state answer the same batch, and the batched pipeline (one bash run for all when/checked/disabled) means no per-row forking can reorder answers within an evaluation - the perf defect the req was authored against. Freshness across evaluations is bounded by the deferral above, not by non-determinism.'
+        - category: structural
+          disposition: not_applicable
+          rationale: expressions are config-authored (user is the trust root for their own menu config, same disposition as the keybindings script review) and are interpolated into bash -lc after reader-slot substitution; no memory/pointer/encoding surface in the QML parser, which is a shape-guarded line splitter dispositioned under scenario.error_handling.
+        - category: domain
+          disposition: reviewed
+          rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): the bash -lc guard child has no deadline and a blocking expression freezes guard freshness for the session, tracked as hazard-batch-D/47T8-guard-batch-no-deadline - a child-process site, deliberately NOT attached to the KI-MENU-SELECT-POLL-DEADLOCK poll-loop KI. No other domain class fires: no network, no identity crossing, single consumer of the answers.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

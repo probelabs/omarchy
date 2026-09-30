@@ -39,7 +39,37 @@ history:
     created_by: human:Leonid Bugaev
     created_at: "2026-09-29T13:51:21Z"
     last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-29T14:07:42Z"
+    last_modified_at: "2026-09-30T08:03:53Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'an id that names an Object.prototype member (constructor, toString, valueOf - all pure a-z, so slugify preserves them and a desktop app literally named Constructor gets slug id constructor) escapes the || null fallback: root.items[id] resolves up the prototype chain to a truthy function instead of null, so the callers null check passes and a function object flows where an entry is expected - the root-menu fallback this req promises is skipped and the row/bind path throws on the missing entry fields'
+      severity: low
+hazard_review:
+    reviewed_at: "2026-09-30T08:03:53Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - edge_case
+          rationale: 'Worst case: prototype-member id (constructor/toString) resolves to an inherited truthy function, skipping the || null fallback and the root-menu fallback the req promises - slugify keeps pure a-z ids and desktop-derived app rows share the items map, so the mechanism is reachable, graded low (menu-surface error, no data or privilege). malformed_input: any other absent id answers null and the caller falls back to root, the exact contract. edge_case: an id present with a falsy value would also fall through the || chain, but every merged entry is an object (truthy), so only inherited members can take the wrong arm.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: item() is a pure map read - the same tree and id answer identically on every call; no ordering or collection dependence. totality: the function is defined for every string id by construction (fall-through to null), so the answer space is total; the one non-total corner (inherited-member ids) is graded under scenario.malformed_input. idempotency/commutativity do not pertain to a lookup.'
+        - category: structural
+          disposition: reviewed
+          applied:
+            - nil_safety
+          rationale: 'nil_safety IS this requirement: the || null fallback distinguishes absent from present and the callers documented fallback-to-root consumes the null answer; MenuModel parents walk with depth/path guards capped at 32, so a malformed parent chain cannot loop the model. No memory, pointer, or encoding surface in the QML/JS lookup itself; the prototype-chain read is graded as malformed_input (scenario), not a structural class - the catalog carries no JS-prototype-membership class and forking one for a single low-graded site would be catalog noise, not a gap.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'no cross-process call, no timeout surface, no concurrency (QML single-threaded event loop), no trust boundary crossed: ids come from the repo-shipped default JSONC, the user own config, or slugified desktop-file ids on the same machine - the lookup map is written with own properties (merge assigns nextItems[id]) so only never-written prototype names can resolve inherited, and no privileged sink consumes item(). external_call/concurrency/identity classes do not fire.'
 lifecycle:
     change_history:
         - date: "2026-09-29T14:07:42Z"

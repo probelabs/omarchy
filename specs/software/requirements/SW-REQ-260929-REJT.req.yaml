@@ -49,10 +49,57 @@ history:
     created_by: agent:opencode
     created_at: "2026-09-30T00:23:53Z"
     last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T00:28:32Z"
+    last_modified_at: "2026-09-30T08:02:59Z"
 obligation_checklist:
     - error_handling
     - malformed_input
+obligation_suppressions:
+    - id: atomic_write
+      reason: the marker is an empty file created by a single :> creat - there is no partial-write window to close, unlike the rows cache where write-temp-rename applies (and is owned by the sibling 43HQ/MH9B reviews); the thumbnail itself is published by mv, already atomic
+      suppressed_by: human:Leonid Bugaev
+      suppressed_at: "2026-09-30T08:02:59Z"
+      framework_refs:
+        - CWE CWE-362,CWE-367
+        - NIST-800-53 SI-7
+        - OWASP-ASVS-v4 V11.1.5
+    - id: errors_propagated
+      reason: generator failures are deliberately consumed by the xargs fan-out children (|| true) so one bad file cannot abort a batch; the .failed marker IS the propagation channel this req mandates - a converter refusal reaches the user as a withheld row, which is the documented observable, and a timeout deliberately propagates as retry-by-absence instead
+      suppressed_by: human:Leonid Bugaev
+      suppressed_at: "2026-09-30T08:02:59Z"
+      framework_refs:
+        - CWE CWE-703,CWE-252,CWE-754
+        - NIST-800-53 SI-11
+        - OWASP-ASVS-v4 V7.4.1,V7.4.2,V7.4.3
+obligation_hazards:
+    - class: error_handling
+      worst_case: a converter that fails for an environmental reason rather than a file reason (e.g. ffmpegthumbnailer briefly missing during a partial upgrade, or a transient ENOSPC) records a standing .failed marker, and the video row stays suppressed on every later open until the file signature (size+mtime) changes - the marker conflates file defect with environment defect
+      severity: medium
+    - class: malformed_input
+      worst_case: a corrupt video that crashes ffmpegthumbnailer with a non-timeout status is marker-suppressed until edited; acceptable by design, but a file whose size+mtime are restored (touch -d) after a real repair re-inherits the stale marker
+      severity: low
+hazard_review:
+    reviewed_at: "2026-09-30T08:03:18Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - edge_case
+            - concurrent
+          rationale: 'Worst case: an environmental converter failure (ffmpegthumbnailer briefly absent, transient ENOSPC) writes a standing marker whose row stays suppressed until the file signature changes - the marker conflates file defect with environment defect, graded medium in obligation_hazards. error_handling: every refusal arm is dispositioned - non-timeout failure records the marker, timeout(124)/kill(137) deliberately record nothing so the next open retries, and success publishes the thumbnail; a failed lazy generation leaves nothing behind by the same failure arm. edge_case: still images never produce markers even on failure, so the marker asymmetry between lanes is contract, not accident. concurrent: two generators racing one file serialize on the content-hash flock and write byte-identical empty markers, so interleaving cannot produce a partial marker.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+          rationale: 'idempotency: marker creation is a single creat of an empty file - repeating it (racing generators, repeated opens) converges on the same on-disk state, and re-running a failed open either reproduces the marker or clears the picture by succeeding; the marker key (path+size+mtime hash) makes retry-after-repair deterministic. determinism: marker decisions depend only on converter exit status and file identity, never on fan-out order. atomicity is suppressed with rationale (single creat, no partial window).'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'bash + one creat + one mv: no memory, pointer, or format-string surface; the marker carries no bytes to encode. The only structural question (empty-file create races) is dispositioned under scenario.concurrent.'
+        - category: domain
+          disposition: reviewed
+          rationale: 'external_call_timeout_bounded evaluated: the video converter IS bounded (timeout -k 5 10), and the marker policy deliberately distinguishes bounded-timeout (no marker, retry) from refusal (marker, suppress) - operation_outcome_recorded_faithfully holds because the record faithfully reflects the declared policy rather than merely the exit status. The still-lane timeout gap is owned by the sibling SW-REQ-260929-THMB deferral under KI-MENU-IMAGES-VIPS-NO-TIMEOUT; REJT contractually adds nothing there (stills never write markers). errors_propagated and atomic_write suppressed with standing rationales (marker is the propagation channel; single creat has no partial window). No trust boundary: markers live in the user cache dir keyed by content hash of user-owned files; a hostile co-tenant is outside this desktop threat model.'
 lifecycle:
     change_history:
         - date: "2026-09-30T00:24:00Z"

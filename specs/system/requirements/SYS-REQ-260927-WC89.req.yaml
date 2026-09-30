@@ -44,8 +44,36 @@ verification:
 history:
     created_by: agent:kimi-zero-warnings
     created_at: "2026-09-27T20:58:23Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:01:10Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T08:09:48Z"
+obligation_checklist:
+    - error_handling
+obligation_hazards:
+    - class: error_handling
+      worst_case: 'the Lock row activation closes the menu and forks omarchy-system-lock, which then fails silently (binary absent after a partial sync, or the lock component refuses without a notification surface): the menu is already dismissed so no error reaches the user, and the user walks away from a session they believe locked - impact high, likelihood near zero (the lock binary is a default-set runtime invariant), graded medium on impact times the one-way visibility loss; the callees own lock engagement and its failure surfacing (SYS-REQ-260912-T0XP family, reviewed in batch A)'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-09-30T08:09:48Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - nominal
+            - error_handling
+          rationale: 'Worst case graded on the error_handling obligation above (silent lock failure behind an already-closed menu - medium). nominal: the row is a fixed zero-argument invocation, the callee engages the lock and exits 0, and the row is the single menu-to-lock path (lock never calls menu), so no recursion or re-entry loop can exist. error_handling: a callee refusal exits coded and the menu-side runner prints non-zero exits to its stderr - but the menu has already dismissed, which is exactly the visibility gap graded above; the contract deliberately scopes this req to the invocation wiring and leaves engagement/failure surfacing to the lock component. malformed_input does not fire: no user-shaped input reaches the row (action string is repo-shipped).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: the wiring is static - one row, one fixed action string, zero arguments, so every activation dispatches identically; nothing about the invocation depends on state or ordering. Atomicity/idempotency are owned by the lock component (re-entrant lock requests are its contract, batch A review), not by the row wiring.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'a JSONC action string referencing a fixed binary name: no memory, pointer, or encoding surface; the argument list is empty by contract, so no quoting or injection surface exists.'
+        - category: domain
+          disposition: reviewed
+          rationale: 'cross_structure_key_identity evaluated and suppressed with rationale: the action string omarchy-system-lock and the invoked binary name live in one repo-shipped artifact pair (default/omarchy/omarchy-menu.jsonc:38 plus bin/), line-cited in REVIEW-28 and pinned by the menu tests - there are no two independently-maintained structures to drift. external_call_timeout_bounded evaluated and suppressed with rationale: the row handoff is fire-and-forget by design (menu dismisses, lock engages asynchronously), the menu side performs no wait, and the lock component engagement deadlines are owned by the lock requirements (SYS-REQ-260912-T0XP family, batch A) - deferring here would duplicate debt one level above its owner. control-not-silently-disabled is met at this boundary by the same ownership split: the wiring cannot disable the control, and the callees fail-visible contract is theirs. tampering/replay classes do not fire: the call is an in-session fork, not a message.'
 interface:
     caller: menu
     callee: lock

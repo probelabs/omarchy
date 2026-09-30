@@ -47,6 +47,28 @@ history:
     created_at: "2026-09-22T13:33:48Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:47Z"
+hazard_review:
+    reviewed_at: "2026-09-30T08:08:56Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'boundary: the empty/whitespace query degenerates to all visible rows (no term to AND), and a query of only non-matching terms yields zero rows - both partition edges are contract, not accident. edge_case: multi-term AND semantics (every term must hit name or description) with rank tiers (prefix beats substring beats field position), so a term matching only description still ranks below a name hit; visible-only and selectable-only filters run before matching, so hidden/disabled rows can never be searched into view. malformed_input: the query is never compiled to a RegExp - matching is indexOf over lowercased text, so metacharacters are inert data.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: rank is a pure function of the row labels and the query - the same query over the same tree orders identically; ties keep tree order. totality: every row is classified (match/no-match) by the same predicate, so the partition is total. monotonicity is deliberately not carried: adding a term can only narrow (AND semantics), which is the contract.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'indexOf/lowercase comparisons over config-authored labels: no regex engine, no encoding transform beyond locale-stable toLowerCase on the same host, no memory/pointer surface.'
+        - category: domain
+          disposition: reviewed
+          rationale: 'redos_resistant evaluated and suppressed with rationale: the matcher constructs no RegExp from the query and uses linear-time indexOf scans, so catastrophic backtracking is structurally impossible on this surface - the class precondition (regex evaluation on the input path) does not fire, which is stronger than tuning a bounded pattern set. No external call, IPC, or trust boundary: search narrows an in-memory tree built from the user own config and same-machine providers.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

@@ -69,10 +69,36 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:33:48Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:46Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T08:07:44Z"
 obligation_checklist:
     - boundary
+obligation_hazards:
+    - class: boundary
+      worst_case: 'a drill-down or filter rebuild lands the cursor on a row that is now disabled (row set changed under the held selection index): the user presses Enter and the activation targets a row that renders dimmed - the contract forbids cursor-on-disabled and the children guard it (disabled rows skipped on cursor moves, no parked cursor when all rows are disabled), so the residual is only a rebuild racing an open dialog, graded low'
+      severity: low
+hazard_review:
+    reviewed_at: "2026-09-30T08:07:45Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case graded above (rebuild parks cursor on newly-disabled row - low, guarded by the child skip/no-park guarantees the trace carries). boundary: an all-disabled submenu admits no cursor at all (child no-parked-cursor), and back navigation retraces the drill path rather than popping to root - the two partition edges this contract names. edge_case: activating a link-type row follows its target instead of running an action, and submenu rows drill instead of executing - kind inferred at merge decides which, so a mis-inferred kind is the malformed half and is owned by the merge children. The direct implementation site (Menu.qml row activation + back stack) carries the Implements marker.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: activation is a pure function of the row contract (kind + target/action) and back navigation is a pure stack pop - the same row answers the same way on every activation; no algebraic or ordering surface beyond that. idempotency is deliberately not carried: activating Toggle X twice is two toggles by design (the verb owns idempotency, not the navigation).'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'QML selection state (int index + model flags): no memory/pointer/encoding surface; the sentinel arithmetic on cursor state is dispositioned under scenario.boundary via the children.'
+        - category: domain
+          disposition: not_applicable
+          rationale: activation dispatches the row action through the same action-script family under SYS-REQ-260922-6642 (its hazard_review carries the timeout/observability decisions); navigation itself makes no external call, crosses no trust boundary, and has no concurrency surface (single-threaded QML input handling).
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

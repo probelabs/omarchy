@@ -1,0 +1,12 @@
+id: V-MENU-ACTION-SILENT-REFUSAL
+title: 'Menu action script family: silent no-op or wrong-target execution behind the loud-refusal contract'
+description: '6642 family hazard: an action script that neither performs its documented side effect nor refuses loudly, or acts on the wrong target (the documented historical wrong-same-named-plugin class). Hunt: per-script inventory of exit paths - every failure arm must end in a non-zero exit with stderr text, every success arm must have executed the side effect; wrong-target candidates are name-collision and stale-state dispatch sites. Angles: missing binary mid-family, set -e inversion by a future edit, IPC accept-success-but-no-op, wrong-target enable/disable among same-named entries.'
+priority: P1
+status: researched
+axes:
+    - control-plane
+related_obligation_classes:
+    - error_handling
+stacks:
+    - bash
+notes_path: /dev/null

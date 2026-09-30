@@ -45,8 +45,36 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:33:48Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:46Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T08:08:22Z"
+obligation_checklist:
+    - boundary
+obligation_hazards:
+    - class: boundary
+      worst_case: 'route precedence ambiguity: a user-declared alias that equals another item exact id (alias power on the item whose id is also power, or a slugified app claiming a menu id) flips which entry an alias route opens - resolution iterates itemOrder, so merged order (default-then-user, provider swaps) decides the winner; the exact-id-first partition and single-claim merge keep the wrong-target window at config-authoring time, graded low'
+      severity: low
+hazard_review:
+    reviewed_at: "2026-09-30T08:08:38Z"
+    reviewed_by: human:Leonid Bugaev
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case graded on the boundary obligation above (alias/exact-id shadowing across merged sources - low). boundary: the resolution partition is exact id first, then declared alias (lowercased, underscore-normalized), then normalized-spelling fallthrough, then the unknown string opened as a literal id - each arm is a child contract (exact/alias/normalized/literal), so the parent partition is covered arm by arm. edge_case: the unknown-string-as-literal-id fallthrough means a typo route opens a menu row named by the typo text instead of erroring - documented behavior, loud by row presence, and the fallback-to-root guarantee lives in the lookup child (B8N9 family).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: the same route string answers the same item on every resolution - the precedence order is fixed by itemOrder and alias matching is a pure string comparison; no algebraic/ordering surface on a route lookup. idempotency: resolving twice cannot change the tree.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'string comparisons over config-authored ids: normalization is toLowerCase + underscore-to-dash, applied uniformly before comparison (so case/separator drift is closed by construction); no memory, pointer, or encoding surface. Depth-guarded walks (32 cap) protect the tree traversal behind routing.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'routing is in-process string resolution: no external call, no timeout surface, no IPC, no trust boundary (routes come from the user own keybinds/scripts on their own machine). Identity classes are met by construction: route keys, item ids, and alias tokens flow through one normalization before every comparison.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
