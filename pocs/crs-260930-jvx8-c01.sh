@@ -31,19 +31,49 @@ LUA
 FUNCS="$(sed '/^if \[\[ $1 == "--print"/,$d' "$SCRIPT")"
 eval "$FUNCS"
 
-OUT="$(HOME="$TMP/home" OMARCHY_PATH="$REPO" DEBUG=1 build_lua_bind_cache 2>"$TMP/err")"
-RC=$?
+cache_has_ssh() {
+  local k
+  for k in "${!LUA_BIND_DISPATCHER_MAP[@]}"; do
+    [[ $k == *,SSH,* ]] && return 0
+  done
+  return 1
+}
+
+HOME="$TMP/home" OMARCHY_PATH="$REPO" DEBUG=1 build_lua_bind_cache 2>"$TMP/err"
 
 echo "== scan stderr =="
 cat "$TMP/err"
-echo "== scan rows =="
-echo "$OUT"
+echo "== scanned SSH bind =="
+if cache_has_ssh; then echo present; else echo absent; fi
 
 fail=0
 grep -q "lua bind scan failed" "$TMP/err" || { echo "FAIL: scan did not die on qconsole (fix present?)"; fail=1; }
-echo "$OUT" | grep -q "SSH" || echo "SYMPTOM: SSH bind absent from cache (defect present)"
-if echo "$OUT" | grep -q "SSH"; then
+if cache_has_ssh; then
   echo "PASS-REFUTED: SSH bind present in cache - defect fixed"
   fail=1
+else
+  echo "SYMPTOM: SSH bind absent from the scanned cache after the qconsole abort (defect present)"
+fi
+
+# Negative control (PoC rules 3/10): with the console module made tolerant of
+# the scanner's mock (type-guards on the scale comparisons), the same scan
+# caches the binds - the scan machinery is intact and the abort is
+# attributable to the throwing comparison.
+mkdir -p "$TMP/home2/.config/hypr"
+cp -r "$REPO/default" "$TMP/home2/.config/default"
+sed -e 's/if not monitor or not monitor.scale or monitor.scale <= 0 then/if not monitor or not monitor.scale or type(monitor.scale) ~= "number" or monitor.scale <= 0 then/' \
+    -e 's/if mon and mon.scale and mon.scale > 0 then/if mon and mon.scale and type(mon.scale) == "number" and mon.scale > 0 then/' \
+  "$REPO/default/hypr/qconsole.lua" > "$TMP/home2/.config/default/hypr/qconsole.lua"
+cp "$REPO"/config/hypr/*.lua "$TMP/home2/.config/hypr/"
+cat >> "$TMP/home2/.config/hypr/bindings.lua" <<'LUA'
+o.rebind("SUPER + RETURN", "Terminal", { launch = "alacritty" })
+o.bind("SUPER + SHIFT + R", "SSH", { launch = "alacritty -e ssh your-server" })
+LUA
+HOME="$TMP/home2" OMARCHY_PATH="$REPO" build_lua_bind_cache 2>/dev/null
+if cache_has_ssh; then
+  echo "control ok: with the throwing comparisons guarded, the SSH bind is cached (scan machinery intact)"
+else
+  echo "CONTROL FAILED: scan drops binds even with the throwing comparisons guarded; PoC inconclusive"
+  fail=2
 fi
 exit $fail

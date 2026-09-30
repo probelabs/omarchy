@@ -13,7 +13,7 @@ reproducer_command: ./pocs/crs-260930-jvx8-c07.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Requires a compositor that warns on stderr while accepting the dispatch; current Hyprland accepts cleanly with empty stderr
 remediation: Decide success on the exit status alone (or capture stderr separately and ignore it), so a warning can never flip an accepted dispatch into a fallback re-execution
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,44 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-stderr-fails-dispatch.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T19:01:02Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-stderr-fails-dispatch.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-jvx8-c07.sh drives the real dispatch_exec_binding from bin/omarchy-menu-keybindings with a stubbed hyprctl that accepts and warns.
+        quantitative_impact: 2 dispatch invocations for one accepted dispatch (the fallback exec re-runs the command); the clean control runs exactly 1 with no fallback.
+        control_test: the same accepted dispatch without a stderr warning runs once - only the warning flips it to refusal (control arm in the same script).
+        current_deployment_relevance: the captured-stderr acceptance test is live on this branch.
+        honest_severity: medium - an accepted dispatch whose command runs twice; real impact depends on the command's tolerance of re-execution.
+        reproducible: single command ./pocs/crs-260930-jvx8-c07.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated double execution.
+        operational_path_verified: the clean control exercises the intended single-dispatch path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+dedup_armor: 'Not a duplicate of KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT (cache-build abort, not dispatch) and not of KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK (synthetic chord path, not stderr handling): this defect is dispatch_lua_expression treating a stderr warning on an accepted dispatch as refusal and re-running the command via the exec fallback'
 kill_domain: error_propagation
 do_not_refile_as: refused dispatches fall back correctly (a genuinely refused dispatch falling back is the intended design; only the stderr-poisoned success double-fires)
 affected_file: bin/omarchy-menu-keybindings

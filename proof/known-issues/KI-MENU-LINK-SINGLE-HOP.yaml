@@ -1,5 +1,5 @@
 id: KI-MENU-LINK-SINGLE-HOP
-title: 'openRoute follows a link one hop and never re-inspects the target kind: link-to-action opens as a menu, link-to-link stops short'
+title: 'openRoute follows a link one hop and never re-inspects the target kind: link-to-action opens as a menu'
 description: 'After id = entry.target there is no second kind test and no loop (SX26/C18): a link whose target is an action falls into openExistingMenu instead of runAction, and a chained link stops at the intermediate id.'
 affected_requirements:
     - SW-REQ-260922-N3RM
@@ -15,7 +15,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Shipped menus chain no link-to-link rows; single-hop links to menus and to actions resolve as documented
 remediation: loop the link resolution (with a hop cap) and run the action branch on the final kind
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -28,6 +28,18 @@ history:
     - at: "2026-09-30T12:50:48Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-menu-link-single-hop.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T19:02:05Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-link-single-hop.yaml
 kill_domain: routing
 affected_file:

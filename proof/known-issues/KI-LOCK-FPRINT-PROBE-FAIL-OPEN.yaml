@@ -27,6 +27,35 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-lock-fprint-probe-fail-open.yaml
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-fprint-probe-fail-open.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: the PoC extracts the live probe command from shell/plugins/lock/Service.qml verbatim and runs it with a PATH-stubbed fprintd-list emitting the real zero-enrollment text.
+        quantitative_impact: the probe answers yes for a zero-enrollment store (wrong) and yes for an enrolled store (control, correct) - the same code path, discriminated only by the input.
+        control_test: an enrolled-store stub through the same extracted probe answers yes for the right reason (control arm in pocs/crs-260930-ttvk-c02.sh).
+        current_deployment_relevance: the substring probe is live in Service.qml on this branch; extracted at run time.
+        honest_severity: medium - a zero-enrollment user is offered fingerprint auth that can never succeed; password fallback still works, so the impact is a wrong offer plus failed attempts, not a bypass.
+        reproducible: single command ./pocs/crs-260930-ttvk-c02.sh, deterministic, sub-second.
+        no_inflation: no bypass claim; impact limited to the misconfigured offer.
+        operational_path_verified: the enrolled control exercises the intended reading of the same probe.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 dedup_armor: KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN covers the install-time gate in bin/omarchy-apply-lock; this is the lock-service runtime probe in shell/plugins/lock/Service.qml - disjoint files, disjoint fix sites, per the ACC-08 same-domain/disjoint-file rule
 kill_domain: oracle_confusion
 do_not_refile_as: install-time fingerprint PAM gate (that is KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN)

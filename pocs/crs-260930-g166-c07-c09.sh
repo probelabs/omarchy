@@ -51,6 +51,22 @@ else
   V2=1
 fi
 
+# Negative control (PoC rules 3/10): with a CLEAN environment (no imported
+# functions) the pinned /usr/bin/grep evaluates a genuinely enrolled user
+# through the same extracted condition - the intended path the vectors abuse.
+cat > "$TMP/fprintd-list" <<'EOF'
+#!/bin/bash
+printf 'Fingerprints\n  right-index-finger: LFT\n'
+EOF
+chmod +x "$TMP/fprintd-list"
+rm -f "$MARK"
+if ( export PATH="$TMP:/usr/bin:/bin"; target_user="alice"; eval "$COND" >/dev/null 2>&1 ); then
+  echo "control clean-env: pinned grep evaluated an enrolled user as enrolled (intended path intact)"
+else
+  echo "CONTROL FAILED: clean-environment gate mis-evaluated an enrolled user; PoC inconclusive"
+  exit 2
+fi
+
 if (( V1 == 0 || V2 == 0 )); then
   echo "SYMPTOM: exported bash functions execute inside the root helper's decision points despite the trusted-PATH replacement (caller code runs as root - defect present)"
   exit 0

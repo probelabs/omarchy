@@ -17,15 +17,18 @@ FUNCS="$(sed '/^if \[\[ $1 == "--print"/,$d' "$SCRIPT")"
 eval "$FUNCS"
 
 EXEC_COUNT=0
+WARN=${CTRL_WARN:-1}
 hyprctl() {
   if [[ $1 == dispatch && $2 == exec ]]; then
     (( EXEC_COUNT++ ))
     echo "ok"
     return 0
   fi
-  # the hl.dsp.exec_cmd dispatch: accepted by the compositor, which also
-  # writes a warning on stderr
-  echo "warning: deprecated dispatcher form" >&2
+  if (( WARN )); then
+    # the hl.dsp.exec_cmd dispatch: accepted by the compositor, which also
+    # writes a warning on stderr
+    echo "warning: deprecated dispatcher form" >&2
+  fi
   echo "ok"
   return 0
 }
@@ -35,10 +38,24 @@ dispatch_exec_binding "omarchy-launch-terminal"
 echo "== fallback hyprctl dispatch exec invocations: $EXEC_COUNT =="
 # The first dispatch (hl.dsp.exec_cmd) was ACCEPTED by the compositor
 # (status 0). Any fallback exec dispatch means the command ran a second time.
+rc=1
 if (( EXEC_COUNT >= 1 )); then
   echo "SYMPTOM: accepted dispatch with a stderr warning treated as refusal; command dispatched by the accepted call AND by the fallback exec (double execution, defect present)"
-  exit 0
+  rc=0
 else
   echo "PASS-REFUTED: single dispatch despite the warning - defect fixed"
-  exit 1
 fi
+
+# Negative control (PoC rules 3/10): the same accepted dispatch without a
+# stderr warning runs exactly once - no fallback, no double execution.
+EXEC_COUNT=0
+CTRL_WARN=0
+WARN=0
+dispatch_exec_binding "omarchy-launch-terminal"
+if (( EXEC_COUNT == 0 )); then
+  echo "control ok: clean accepted dispatch runs once with no fallback exec"
+else
+  echo "CONTROL FAILED: clean dispatch also triggers the fallback; PoC inconclusive"
+  rc=2
+fi
+exit $rc

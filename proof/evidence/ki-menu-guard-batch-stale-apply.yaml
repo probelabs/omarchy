@@ -5,13 +5,13 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:50:49Z"
+      executed_at: "2026-09-30T19:02:06Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-GUARD-BATCH-STALE-APPLY` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
         pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-GUARD-BATCH-STALE-APPLY.yaml: ki-content-v1:sha256:f34bb8cc2928f8a6c852aac1fe2c9996400e85425bf1155c9c88dd00aa75b85a
+        proof/known-issues/KI-MENU-GUARD-BATCH-STALE-APPLY.yaml: ki-content-v1:sha256:888cd683d3e3718cb7f6eea67f51adf14fdafc40244dfe4b5a8717d9f127583c
       known_issues:
         - KI-MENU-GUARD-BATCH-STALE-APPLY
       config:

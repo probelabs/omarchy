@@ -13,7 +13,7 @@ reproducer_command: ./pocs/crs-260930-jvx8-c05.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Corruption needs code:N or mouse:N text inside a description or command; shipped binds keep such tokens in the key field only
 remediation: 'Confine the substitution to the key field: apply match/sub per CSV field instead of on $0, rewriting only field 2'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,39 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-code-rewrite-overreach.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-code-rewrite-overreach.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-jvx8-c05.sh evals the real parse_keycodes from bin/omarchy-menu-keybindings and runs it over corrupted records.
+        quantitative_impact: 3 of 3 planted prose tokens are rewritten (description 'Count code:10 items' to 'Count 1 items', command 'echo code:20' to 'echo MINUS', 'notify-send mouse:272' to 'notify-send LEFT MOUSE BUTTON'); control records: 0 rewrites.
+        control_test: records without code:/mouse: prose round-trip untouched through the same parse_keycodes.
+        current_deployment_relevance: the whole-record match/sub in parse_keycodes is live on this branch.
+        honest_severity: medium - user-visible description and command corruption in the keybindings menu; no data loss beyond the displayed record.
+        reproducible: single command ./pocs/crs-260930-jvx8-c05.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated rewrites.
+        operational_path_verified: the clean-record control exercises the intended single-field rewrite path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: input_confusion
 do_not_refile_as: key field code:N not resolved (that resolution works and is the intended behavior)
 affected_file: bin/omarchy-menu-keybindings

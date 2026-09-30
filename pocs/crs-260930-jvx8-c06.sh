@@ -26,12 +26,25 @@ echo "$OUT"
 ACTION=$(printf '%s\n' "$OUT" | awk -F'\t' '{split($1,a,"→"); sub(/^ +/,"",a[2]); print a[2]}')
 DISPATCHER=$(printf '%s\n' "$OUT" | awk -F'\t' '{print $2}')
 
+rc=2
 if [[ $ACTION == "Save" && $DISPATCHER == " quit" ]]; then
   echo "SYMPTOM: action=[$ACTION] dispatcher=[$DISPATCHER] - comma in description shifted the CSV fields; menu shows a truncated label and dispatch fails (defect present)"
-  exit 0
+  rc=0
 elif [[ $ACTION == "Save, quit" && $DISPATCHER == "exec" ]]; then
   echo "PASS-REFUTED: fields round-tripped correctly - defect fixed"
-  exit 1
+  rc=1
 else
-  echo "UNEXPECTED parse: action=[$ACTION] dispatcher=[$DISPATCHER]"; exit 2
+  echo "UNEXPECTED parse: action=[$ACTION] dispatcher=[$DISPATCHER]"
 fi
+
+# Negative control (PoC rules 3/10): a comma-free description round-trips.
+COUT="$(printf '%s\n' 'SUPER,Q,Save now,exec,alacritty' | parse_binding_records)"
+CACTION=$(printf '%s\n' "$COUT" | awk -F'\t' '{split($1,a,"→"); sub(/^ +/,"",a[2]); print a[2]}')
+CDISPATCHER=$(printf '%s\n' "$COUT" | awk -F'\t' '{print $2}')
+if [[ $CACTION == "Save now" && $CDISPATCHER == "exec" ]]; then
+  echo "control ok: comma-free description round-trips (record parser intact)"
+else
+  echo "CONTROL FAILED: comma-free description also mis-parses; PoC inconclusive"
+  rc=2
+fi
+exit $rc

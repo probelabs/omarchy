@@ -6,10 +6,15 @@ affected_requirements:
 evidence_manifests:
     - proof/evidence/ki-lock-screens-change-blank-lost.yaml
 severity: low
+severity_basis: risk
+risk: correctness
 reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+introduced_in: inception
+defect_class: latent
 mitigation: any keypress restarts the cycle
 remediation: After clearing displaysBlank in onScreensChanged, re-arm the idle blank timer (or runWake-then-arm) so the power path resumes
-status: open
+review_date: "2026-09-30"
+status: reviewed
 history:
     - at: "2026-09-30T12:18:14Z"
       by: human:Leonid Bugaev
@@ -17,6 +22,22 @@ history:
     - at: "2026-09-30T12:18:19Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: introduced-in=inception,defect-class=latent
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-severity-basis=risk,set-risk
+    - at: "2026-09-30T18:58:27Z"
+      by: agent:opencode-quattro
+      action: review
+      detail: reviewer=agent:opencode-quattro,new_review_date=2026-09-30
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
 kill_domain: state_loss
 do_not_refile_as: blank never engages (the initial idle path works; only the post-screens-change re-arm is missing)

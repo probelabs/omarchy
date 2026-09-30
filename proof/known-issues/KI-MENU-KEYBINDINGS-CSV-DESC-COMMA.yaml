@@ -13,7 +13,7 @@ reproducer_command: ./pocs/crs-260930-jvx8-c06.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Shipped binding descriptions contain no commas; only user-authored descriptions with commas shift the CSV fields
 remediation: Quote or escape the description field, or switch the internal record format to a separator descriptions cannot contain (TAB), parsing with that separator end to end
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,39 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-jvx8-c06.sh runs the real parse_binding_records from bin/omarchy-menu-keybindings over the exact CSV row dynamic_bindings prints for a comma description.
+        quantitative_impact: every field after the comma shifts by one - action reads 'Save' (truncated) and dispatcher reads ' quit' instead of exec; control round-trips a comma-free record exactly.
+        control_test: a comma-free description through the same parser keeps action and dispatcher intact.
+        current_deployment_relevance: the unquoted comma-joined row format is live on this branch.
+        honest_severity: medium - a user-authored comma in a binding description corrupts the menu row and breaks its dispatch; shipped descriptions contain no commas.
+        reproducible: single command ./pocs/crs-260930-jvx8-c06.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated field shift.
+        operational_path_verified: the comma-free control exercises the intended parse.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: parsing
 do_not_refile_as: comma in the command/arg breaks parsing (args are rebuilt from field 5 onward and round-trip; only the middle description field is unquoted)
 affected_file: bin/omarchy-menu-keybindings

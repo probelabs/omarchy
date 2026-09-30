@@ -1,5 +1,5 @@
 id: KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED
-title: 'Provider rows colliding with a static id are silently dropped: takenIds only records batch-minted ids and swapProviderRows discards the collision'
+title: 'Provider rows colliding with a static id are silently dropped: takenIds only records batch-minted ids'
 description: 'mergeProviderRows nudges slug collisions only within the current batch (takenIds is batch-local, QML anchor PRV4); a generated id that matches a STATIC item already in the menu is handed unchanged to swapProviderRows, whose nextItems guard drops it (F13: the provider version of a colliding id vanishes without a trace).'
 affected_requirements:
     - SW-REQ-260922-Z680
@@ -13,11 +13,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Collisions need a provider row whose id equals a static id; shipped providers namespace their ids away from static ones
 remediation: seed takenIds with the ids already in root.items (or make swapProviderRows nudge incoming collisions)
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -31,6 +31,18 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-provider-slug-collision-dropped.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: silent_drop
 affected_file:
     - shell/plugins/menu/MenuModel.js

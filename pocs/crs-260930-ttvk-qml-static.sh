@@ -72,6 +72,28 @@ chk C08 "lockRequested cleared on external lock loss" "root.lockRequested = fals
 chk C08 "displays woken" "root.runWake()" "$T"
 if grep -qE "queueSessionLock|beginLock" "$T"; then echo "  [C08] ABSENT: re-lock exists (fix present?)"; fail=1; else echo "  [C08] PRESENT: no queueSessionLock/beginLock re-lock in the branch"; fi
 
+echo "== controls: intended safe paths present (PoC rules 3/10) =="
+# C01 control: the missing-pam gate exists at the lock IPC instant - the check
+# the stabilize window bypasses is present and load-bearing on the main path.
+sed -n '/function lock(/,/^  }/p' "$F" > "$T"
+if grep -q "passwordPamConfigured" "$T"; then
+  echo "  [CTRL-C01] OK: the lock IPC still gates on passwordPamConfigured at the request instant"
+else
+  echo "  [CTRL-C01] FAILED: main-path PAM gate not found; PoC cannot distinguish the stabilize-window bypass from a missing gate"
+  fail=2
+fi
+# C08 control: the user-driven unlock path (finishUnlock) pre-clears
+# lockRequested BEFORE locked=false, so it never reaches the fail-open branch.
+sed -n '/function finishUnlock/,/^  }/p' "$F" > "$T"
+LREQ=$(grep -n "lockRequested = false" "$T" | head -1 | cut -d: -f1)
+LLOCK=$(grep -n "locked = false" "$T" | head -1 | cut -d: -f1)
+if [[ -n $LREQ && -n $LLOCK ]] && (( LREQ < LLOCK )); then
+  echo "  [CTRL-C08] OK: finishUnlock clears the request before the lock state, so the user path never hits the fail-open branch"
+else
+  echo "  [CTRL-C08] FAILED: safe-path ordering not found in finishUnlock; PoC inconclusive"
+  fail=2
+fi
+
 if (( fail )); then
   echo "ANCHORED-EVIDENCE: one or more mechanisms no longer present in the live file - claims possibly fixed"
   exit 1

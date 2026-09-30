@@ -1,5 +1,5 @@
 id: KI-LOCK-PAM-FLIP-ENGAGES-LOCK
-title: Lock engages when password PAM disappears during the stabilize window; the missing-pam gate runs only at the IPC instant and the stranded watchdog stands down
+title: Lock engages when password PAM disappears during the stabilize window; the stranded watchdog stands down
 description: The missing-pam gate (lockIpc.lock, shell/plugins/lock/Service.qml:741-746) checks passwordPamConfigured once; beginLock then schedules requestSessionLock through the 500ms stabilize delay, and requestSessionLock (87-99) re-checks only lockRequested/sessionLock state - never PAM. A FileView reload whose onLoadFailed lands inside that window (config removed / TTY-cleared failsafe) flips the flag after the gate but before line 99 sets sessionLock.locked = true; onPasswordPamConfiguredChanged early-returns on the false transition and checkStrandedLock explicitly stands down once lockRequested is set ('a lock this shell took is nobody's orphan'), so the session locks with no password PAM behind it and nothing releases it.
 affected_requirements:
     - SW-REQ-260912-J8SX
@@ -11,7 +11,7 @@ severity_basis: reproducer
 risk: correctness
 cve_surface: none
 affected_api: shell/plugins/lock/Service.qml (session lock lifecycle, missing-pam gate)
-reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+reproducer_command: ./pocs/lock-service-failopen-runtime.sh
 tripwire_mutation: 'Re-check passwordPamConfigured inside requestSessionLock (shell/plugins/lock/Service.qml:87-99) and stand the lock back down on the false transition: the anchored C01 assertions in pocs/crs-260930-ttvk-qml-static.sh flip from PRESENT to ABSENT and the script exits 1'
 introduced_in: inception
 defect_class: latent
@@ -42,6 +42,49 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T18:57:45Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
+    - at: "2026-09-30T18:59:04Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: false
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/lock-service-failopen-runtime.sh extracts the LIVE requestSessionLock body verbatim from shell/plugins/lock/Service.qml and executes it - the shipped code runs unmodified; only the Quickshell/compositor boundaries (timers, wake, auth reset) are stubbed as recorded calls, because a WlSessionLock session cannot be driven headlessly.
+        quantitative_impact: the impact is a boolean lock-state violation - sessionLock.locked=true while passwordPamConfigured=false - not a measurable quantity.
+        control_test: the control run of the same verbatim function with PAM present engages the lock legitimately, and the static control asserts the IPC-instant gate is present and load-bearing (pocs/crs-260930-ttvk-qml-static.sh).
+        current_deployment_relevance: the gate-then-stabilize-then-engage sequence is live in Service.qml on this branch; the harness extracts it at run time.
+        honest_severity: high - the session locks with no password PAM behind it and the stranded watchdog stands down; only fingerprint or TTY remains.
+        reproducible: single command ./pocs/lock-service-failopen-runtime.sh, deterministic, about 100ms, exit 0 while the defect is present.
+        no_inflation: claim limited to the demonstrated engage-without-PAM transition; no lock-out persistence is asserted.
+        operational_path_verified: the PAM-present control exercises the intended engage path of the same function.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        quantitative_impact: 'impact is a boolean lock-state violation, not a measurable quantity: C01 pins sessionLock.locked=true while passwordPamConfigured=false, C08 pins the request dropped with runWake fired and no re-lock'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+dedup_armor: 'Not mergeable into KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN without raising severity: that sibling fails open (lock lost, session exposed) while this one fails shut (lock engages although password PAM vanished, risking a lock-out with only fingerprint or TTY left); opposite failure directions in the same state machine need different fixes'
 kill_domain: check_race
 do_not_refile_as: IPC returns missing-pam while PAM is already gone (that gate works; the defect is the flip AFTER the gate, during stabilize)
 affected_file: shell/plugins/lock/Service.qml

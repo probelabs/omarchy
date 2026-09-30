@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-k02d-c04-c16.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:00:59Z"
+      executed_at: "2026-09-30T19:01:03Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-SELECT-GEOMETRY-INT-COERCION` from the KnownIssue''s reproducer command: ./pocs/crs-260930-k02d-c04-c16.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-k02d-c04-c16.sh
       freshness_hashes:
         pocs/crs-260930-k02d-c04-c16.sh: sha256:f40807ef63d8d25ec07a6305ab50d762fbff2724f16778dd7521193cab6ae5ee
-        proof/known-issues/KI-MENU-SELECT-GEOMETRY-INT-COERCION.yaml: ki-content-v1:sha256:5471ba4c6a609d01adeaca8bdfc287ecb28d12eddc21ae7ecf8c41114e8616eb
+        proof/known-issues/KI-MENU-SELECT-GEOMETRY-INT-COERCION.yaml: ki-content-v1:sha256:d8675c6a3d49b951e47776d1b3c894612073a478b5400687a655c47e92d39cf6
       known_issues:
         - KI-MENU-SELECT-GEOMETRY-INT-COERCION
       config:

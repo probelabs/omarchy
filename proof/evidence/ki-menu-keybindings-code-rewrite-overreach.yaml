@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-jvx8-c05.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T11:54:37Z"
+      executed_at: "2026-09-30T19:01:02Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-CODE-REWRITE-OVERREACH` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c05.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-jvx8-c05.sh
       freshness_hashes:
-        pocs/crs-260930-jvx8-c05.sh: sha256:caf1900d18d40416d2f0c0411e71df37bfe0089736bc72bad1846cf2010bfe12
-        proof/known-issues/KI-MENU-KEYBINDINGS-CODE-REWRITE-OVERREACH.yaml: ki-content-v1:sha256:6da0bda6bd0c5e4f7803f5c6a4e738803872348e27dc7176ee5c9be50c7d2021
+        pocs/crs-260930-jvx8-c05.sh: sha256:cb590f2d09e6e68db4295d1ecb13df0b48d194052944e3523e7f9bd9d38d2339
+        proof/known-issues/KI-MENU-KEYBINDINGS-CODE-REWRITE-OVERREACH.yaml: ki-content-v1:sha256:ea80b72d3bc1ebd6557b5add84c7d3f75184719ece8beb46d218e1f4ef712653
       known_issues:
         - KI-MENU-KEYBINDINGS-CODE-REWRITE-OVERREACH
       config:

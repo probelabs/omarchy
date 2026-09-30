@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-jvx8-c06.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T11:54:37Z"
+      executed_at: "2026-09-30T19:01:02Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-CSV-DESC-COMMA` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c06.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-jvx8-c06.sh
       freshness_hashes:
-        pocs/crs-260930-jvx8-c06.sh: sha256:745eff1f0e256a7d080912b125d3eb65f804b51192e72beff62b4b943bcbb2d4
-        proof/known-issues/KI-MENU-KEYBINDINGS-CSV-DESC-COMMA.yaml: ki-content-v1:sha256:70db0f9da050fed3bfd5dc5f9ad3cfdef91b3cade7afee787667a054f172e204
+        pocs/crs-260930-jvx8-c06.sh: sha256:06fa74c160e2c682e64bf2f99543d24abb06fd123a6157f182d3f9aa54b8a31b
+        proof/known-issues/KI-MENU-KEYBINDINGS-CSV-DESC-COMMA.yaml: ki-content-v1:sha256:8a7c70c35fe2b536785173b37f97a5a21fa4e6d021c4ff6172a083d06943fdc5
       known_issues:
         - KI-MENU-KEYBINDINGS-CSV-DESC-COMMA
       config:

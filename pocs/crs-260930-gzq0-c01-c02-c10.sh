@@ -57,4 +57,37 @@ else
   echo "PASS-REFUTED: budget floored and the lock was attempted - defect fixed"
   fail=1
 fi
+
+# Negative control (PoC rules 3/10): a healthy 5s logind window derives a
+# legal budget and the lock IS attempted - the intended path the 1s window
+# degenerates.
+mkdir -p "$TMP/bin2"
+LOG2="$TMP/shell2.log"
+cat > "$TMP/bin2/busctl" <<'EOF'
+#!/bin/bash
+echo "t 5000000"
+EOF
+cat > "$TMP/bin2/omarchy-shell" <<EOF
+#!/bin/bash
+echo "omarchy-shell \$*" >> "$LOG2"
+exit 0
+EOF
+cat > "$TMP/bin2/omarchy-hyprland-monitor-clamshell" <<EOF
+#!/bin/bash
+echo clamshell >> "$LOG2"
+exit 0
+EOF
+cat > "$TMP/bin2/omarchy-notification-send" <<EOF
+#!/bin/bash
+echo notify >> "$LOG2"
+exit 0
+EOF
+chmod +x "$TMP/bin2/"*
+PATH="$TMP/bin2:$PATH" "$REPO/bin/omarchy-system-sleep-lock" >/dev/null 2>"$TMP/err2" || true
+if grep -q "lock lock" "$LOG2" 2>/dev/null; then
+  echo "control ok: a 5s window attempts the lock (lock_ipc reachable on a legal budget)"
+else
+  echo "CONTROL FAILED: even a healthy 5s window attempts no lock; PoC inconclusive"
+  fail=2
+fi
 exit $fail

@@ -13,7 +13,7 @@ reproducer_command: ./pocs/crs-260930-jvx8-c04.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: A refused key-up is rare; the stuck synthetic key clears on the next real key event or on the next compositor focus change
 remediation: 'Treat the up failure as a failed dispatch: return its status so the fallback chord runs, or send a compensating key-up before falling back'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,19 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-sendkey-up-fail-stuck.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T19:01:02Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-sendkey-up-fail-stuck.yaml
+dedup_armor: 'Not a duplicate of KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT: this is the dispatch-side sendshortcut key-up refusal leaving a synthetic key stuck, that one is cache-build-side dofile abort dropping binds; different commands and stages'
 kill_domain: error_propagation
 do_not_refile_as: sendshortcut fallback never works (it works when the down call itself fails - that path is tested by the status-7 scenario)
 affected_file: bin/omarchy-menu-keybindings

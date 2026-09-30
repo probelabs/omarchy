@@ -1,5 +1,5 @@
 id: KI-SLEEP-LOCK-BUDGET-NONPOSITIVE
-title: 'Non-positive sleep-lock budget for logind windows <= 1s: heal guard re-derives the same value, lock_ipc refuses silently, suspend proceeds with no lock attempt'
+title: 'Non-positive sleep-lock budget for logind windows <= 1s: suspend proceeds with no lock attempt'
 description: 'derive_budget_ms reserves max(window/5, 1000ms) with no floor (bin/omarchy-system-sleep-lock:37-40): a 1s InhibitDelayMaxUSec yields budget 0 and any sub-second window yields a NEGATIVE budget. The line-45 heal guard re-derives instead of flooring - a second identical busctl read that reinstalls the same illegal value. With budget <= 0 the deadline is already past, so every lock_ipc hits the remaining<=0 guard and returns 1 with empty stdout, request_lock''s case silently falls through, and the machine suspends with the lock NEVER attempted - only a ''within 0ms'' notification marks it.'
 affected_requirements:
     - SW-REQ-260912-FAWV
@@ -27,6 +27,39 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-sleep-lock-budget-nonpositive.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T19:01:09Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-sleep-lock-budget-nonpositive.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-gzq0-c01-c02-c10.sh runs the real bin/omarchy-system-sleep-lock with stubbed busctl and session binaries, exercising the real budget derive, heal guard and lock dispatch.
+        quantitative_impact: a 1s logind window derives a 0ms budget that survives the heal guard unchanged; the lock is attempted 0 times before suspend; a 5s control window attempts the lock.
+        control_test: the healthy 5s window through the same script attempts the lock - the lock path is reachable whenever the budget is legal (control arm in the same script).
+        current_deployment_relevance: derive_budget_ms and the line-45 heal guard are live on this branch.
+        honest_severity: medium - the machine suspends with the lock never attempted on sub-second logind windows; the default 5s window is unaffected.
+        reproducible: single command ./pocs/crs-260930-gzq0-c01-c02-c10.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated skipped lock.
+        operational_path_verified: the 5s control exercises the intended lock path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: boundary
 do_not_refile_as: cap arithmetic wrong for large windows (the 12s cap works; only windows <= 1s produce non-positive budgets)
 affected_file: bin/omarchy-system-sleep-lock

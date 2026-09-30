@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-gzq0-c01-c02-c10.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:12:40Z"
+      executed_at: "2026-09-30T19:01:05Z"
       input_set:
         - 'Captured by `proof evidence capture KI-SLEEP-LOCK-BUDGET-NONPOSITIVE` from the KnownIssue''s reproducer command: ./pocs/crs-260930-gzq0-c01-c02-c10.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-gzq0-c01-c02-c10.sh
       freshness_hashes:
-        pocs/crs-260930-gzq0-c01-c02-c10.sh: sha256:c27f2ed92bce3f4668a97ca28d7eb4788b12ee76af3192922aabc7a8f16186bf
-        proof/known-issues/KI-SLEEP-LOCK-BUDGET-NONPOSITIVE.yaml: ki-content-v1:sha256:66e4f98e9b0ec8e4d70e1a5349ba0a022d2e61e98fcac7ba6f761053492505b8
+        pocs/crs-260930-gzq0-c01-c02-c10.sh: sha256:24ecdead269b361a0f5de78f8efaa05d149cb7762e7b96ba2f8720bb25426a68
+        proof/known-issues/KI-SLEEP-LOCK-BUDGET-NONPOSITIVE.yaml: ki-content-v1:sha256:f2100e262adb223b89b494913ebe5bbd2d582134f743ea7834c67c86e813c6e6
       known_issues:
         - KI-SLEEP-LOCK-BUDGET-NONPOSITIVE
       config:

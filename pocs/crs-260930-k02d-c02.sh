@@ -22,6 +22,26 @@ sleep 30
 EOF
 chmod +x "$TMP/bin/omarchy-shell"
 
+# Negative control (PoC rules 3/10): a healthy summon peer that writes the
+# done file lets the script complete within the deadline - the hang is the
+# missing bound, not the protocol.
+mkdir -p "$TMP/ctrlbin"
+cat > "$TMP/ctrlbin/omarchy-shell" <<'SH'
+#!/bin/bash
+payload="${@: -1}"
+done_file=$(printf '%s' "$payload" | /usr/bin/python3 -c 'import json,sys; print(json.load(sys.stdin)["doneFile"])')
+touch "$done_file"
+exit 0
+SH
+chmod +x "$TMP/ctrlbin/omarchy-shell"
+PATH="$TMP/ctrlbin:$PATH" timeout 3 "$REPO/bin/omarchy-menu-select" "Pick one" alpha beta >/dev/null 2>&1
+ctrl_rc=$?
+if [[ $ctrl_rc == 124 ]]; then
+  echo "CONTROL FAILED: healthy peer hung; PoC cannot distinguish defect from design"
+  exit 2
+fi
+echo "control ok: healthy summon peer completes within the deadline (rc=$ctrl_rc)"
+
 OUT="$(PATH="$TMP/bin:$PATH" timeout 2 "$REPO/bin/omarchy-menu-select" Pick one alpha beta 2>"$TMP/err")"
 RC=$?
 

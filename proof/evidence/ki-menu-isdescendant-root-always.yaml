@@ -2,16 +2,17 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-DQ9P
-      command: pocs/menu-probes.js
-      status: fail
-      observed_result: known_issue_not_reproduced
-      executed_at: "2026-09-30T12:50:40Z"
+      command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T19:01:00Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-ISDESCENDANT-ROOT-ALWAYS` from the KnownIssue''s reproducer command: pocs/menu-probes.js. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Captured by `proof evidence capture KI-MENU-ISDESCENDANT-ROOT-ALWAYS` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes.js
       freshness_hashes:
         pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-ISDESCENDANT-ROOT-ALWAYS.yaml: ki-content-v1:sha256:e69ed0faf5441839701d56dd7c0f1c3d933d8062d6a5a4b2db6e8f36a167aa3e
+        proof/known-issues/KI-MENU-ISDESCENDANT-ROOT-ALWAYS.yaml: ki-content-v1:sha256:84f0e2c500cb4c2f82c262ba6038b6034f048c10af228b2559d9a7fdd2b3df58
       known_issues:
         - KI-MENU-ISDESCENDANT-ROOT-ALWAYS
       config:

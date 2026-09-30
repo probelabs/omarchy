@@ -1,5 +1,5 @@
 id: KI-MENU-JSONC-STRIP-GAPS
-title: 'stripJsonc parser gaps: comma behind a // comment survives, // eats the newline (tokens glue), block comments and CR-only endings pass through'
+title: 'stripJsonc parser gaps: comma behind a // comment survives, // eats the newline, block comments and CR pass through'
 description: stripJsonc (shell/plugins/menu/MenuModel.js:2-37) drops a comma only when the next non-whitespace char is }/], so a // comment between them keeps the comma and JSON.parse rejects the file; the // eater consumes through end-of-line WITHOUT keeping the newline, gluing adjacent tokens ([1//c\n2] parses as [12]); block comments /* */ have no branch and are copied through; a // comment under CR-only line endings eats to the next LF or EOF. Each corruption makes parseMenuJsonc return an empty item set for a valid JSONC menu.
 affected_requirements:
     - SW-REQ-260922-E4J2
@@ -13,7 +13,7 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
@@ -31,6 +31,19 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-jsonc-strip-gaps.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
+dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY: this is the stripJsonc comment/comma stripper losing or gluing tokens, that one is wrapper-shape detection discarding siblings of an items id; different parser stages'
 kill_domain: parsing
 affected_file:
     - shell/plugins/menu/MenuModel.js

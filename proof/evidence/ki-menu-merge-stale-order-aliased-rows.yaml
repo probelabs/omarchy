@@ -2,16 +2,17 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-Z680
-      command: pocs/menu-probes.js
-      status: fail
-      observed_result: known_issue_not_reproduced
-      executed_at: "2026-09-30T12:50:40Z"
+      command: node pocs/menu-probes2.js ../shell/plugins/menu/MenuModel.js
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T19:01:01Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS` from the KnownIssue''s reproducer command: pocs/menu-probes.js. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/menu-probes.js
+        - 'Captured by `proof evidence capture KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS` from the KnownIssue''s reproducer command: node pocs/menu-probes2.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - ../shell/plugins/menu/MenuModel.js
+        - pocs/menu-probes2.js
       freshness_hashes:
-        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS.yaml: ki-content-v1:sha256:b32685b315a6da752c61296319f639765029d9533e4a2fe90c9ea1edb5f69df2
+        pocs/menu-probes2.js: sha256:199d70de8e76ea2d66f76643426b0849423923425b1ddab580fd08b499d6d15e
+        proof/known-issues/KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS.yaml: ki-content-v1:sha256:56febd71ddba08c199e3264ec0713340ca3c1c65bcf9410944d7e29cfe57ad02
       known_issues:
         - KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS
       config:

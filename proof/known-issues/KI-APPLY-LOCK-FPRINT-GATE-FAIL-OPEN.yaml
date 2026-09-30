@@ -1,5 +1,5 @@
 id: KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN
-title: 'Fingerprint gate fail-open: substring grep treats not-enrolled and failed fprintd-list probes as enrolled and installs pam_fprintd'
+title: 'Fingerprint gate fail-open: substring grep treats not-enrolled or failed fprintd-list probes as enrolled'
 description: The fingerprint gate (bin/omarchy-apply-lock:47-48) greps fprintd-list output for the substring 'finger' with stderr discarded and no pipefail. Real fprintd empty-enrollment text ('User alice has no fingers enrolled ...') contains 'fingers', so the gate takes the ENROLLED branch and installs pam_fprintd for a user with zero prints; a daemon error banner ('Fingerprints' then non-zero exit) also passes because the pipeline status is grep's. Fingerprint PAM is then configured for an account that can never match a print.
 affected_requirements:
     - SW-REQ-260912-S154
@@ -14,7 +14,7 @@ reproducer_command: ./pocs/crs-260930-g166-c01-c13.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Impact is limited to installs where fprintd-list reports no enrollment or fails; password PAM stays primary and fingerprint is additive, so auth keeps working while misconfigured
 remediation: Match the enrollment table (line-anchored 'Fingerprints' header plus per-finger rows) and require fprintd-list exit 0 with pipefail; treat any probe failure as not-enrolled
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -28,6 +28,43 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
+    - at: "2026-09-30T18:35:21Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T19:01:00Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: the PoC evals the live gate condition (bin/omarchy-apply-lock lines 47-48) verbatim against a stubbed fprintd-list emitting real daemon output shapes.
+        quantitative_impact: 2 of 2 fail-open inputs (zero-enrollment text, daemon-error banner) take the ENROLLED branch; the enrolled control takes the intended branch.
+        control_test: a genuinely enrolled store reads TRUE through the same extracted condition (control arm in pocs/crs-260930-g166-c01-c13.sh).
+        current_deployment_relevance: the substring gate is live on this branch; the PoC extracts lines 47-48 at run time.
+        honest_severity: medium - pam_fprintd gets configured for an account with no prints; password PAM stays primary, so the wrong-gate outcome misconfigures rather than bypasses auth.
+        reproducible: single command ./pocs/crs-260930-g166-c01-c13.sh, deterministic, sub-second.
+        no_inflation: no auth-bypass claim; impact limited to wrong fingerprint PAM configuration.
+        operational_path_verified: the enrolled control exercises the intended path of the same gate.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: oracle_confusion
 do_not_refile_as: fingerprint PAM never installs (it installs - the defect is that it installs when it must not)
 affected_file: bin/omarchy-apply-lock

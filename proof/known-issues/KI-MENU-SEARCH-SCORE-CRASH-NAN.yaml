@@ -1,5 +1,5 @@
 id: KI-MENU-SEARCH-SCORE-CRASH-NAN
-title: searchScore throws on a label-less merged row and returns a NaN rank on missing order, which displayRow coerces to the best tier
+title: searchScore throws on a label-less merged row and returns a NaN rank that displayRow coerces to the best tier
 description: searchScore calls entry.label.toLowerCase() and throws for a row without a label - mergeAppRows accepts rows carrying only an id (F15a); a missing entry.order makes the rank NaN (F15b), and displayRow's NaN handling sorts the row into the top band. Both row shapes are producible through the real merge pipeline.
 affected_requirements:
     - SW-REQ-260922-SJ7P
@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: The throw needs a merged row without a label; mergeAppRows-supplied rows carry labels for every in-tree provider
 remediation: default label to the id and order to a large sentinel (or Number.isFinite guard) in searchScore; have mergeAppRows require a label
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,18 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-search-score-crash-nan.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: robustness
 affected_file:
     - shell/plugins/menu/MenuModel.js

@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-ttvk-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:18:21Z"
+      executed_at: "2026-09-30T19:01:02Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-FPRINT-START-FAIL-NO-RETRY` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-ttvk-qml-static.sh
       freshness_hashes:
-        pocs/crs-260930-ttvk-qml-static.sh: sha256:b5f71de546ab2b3323ad797dbc0365bc8f06c7fb09779d99d483d6aa1c9fcdb8
-        proof/known-issues/KI-LOCK-FPRINT-START-FAIL-NO-RETRY.yaml: ki-content-v1:sha256:5fcf9e906ef8b60f40d0daef68acc14d722d3094eed09051e8a914661b767b2e
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:f85f3e1b6ee61ac6e0dfeca87061137ef28cf6269337570b662577123be33bb0
+        proof/known-issues/KI-LOCK-FPRINT-START-FAIL-NO-RETRY.yaml: ki-content-v1:sha256:80bd65d380b0b475b08a20baa540c5e1d8c11b0bf17ed3736f08f9611a7120b9
       known_issues:
         - KI-LOCK-FPRINT-START-FAIL-NO-RETRY
       config:

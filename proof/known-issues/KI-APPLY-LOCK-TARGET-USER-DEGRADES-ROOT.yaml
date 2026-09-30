@@ -1,5 +1,5 @@
 id: KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
-title: Failed PKEXEC_UID/user mapping silently degrades target_user to root; lock PAM and fingerprint probe configured for the wrong account
+title: Failed PKEXEC_UID/user mapping silently degrades target_user to root, configuring PAM for the wrong account
 description: 'target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent: with OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd probe and both PAM files are then configured for the wrong account (usually root), leaving the installing user''s lock authentication misconfigured.'
 affected_requirements:
     - SW-REQ-260912-EKJP
@@ -27,6 +27,39 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: the PoC evals the live target_user resolution block (bin/omarchy-apply-lock lines 18-22) verbatim with a failing getent stub on PATH.
+        quantitative_impact: 2 of 2 unmapped-uid cases degrade target_user to root; the control case with an explicit OMARCHY_INSTALL_USER resolves to that user.
+        control_test: the explicit-install-user case in pocs/crs-260930-g166-c05-c06.sh shows the intended mapping path intact.
+        current_deployment_relevance: the resolution block is live on this branch; extracted at run time.
+        honest_severity: medium - lock PAM and the fingerprint probe get configured for the wrong account (usually root), leaving the installing user's lock auth misconfigured; no privilege gain is demonstrated.
+        reproducible: single command ./pocs/crs-260930-g166-c05-c06.sh, deterministic, sub-second.
+        no_inflation: claims limited to the demonstrated wrong-account configuration.
+        operational_path_verified: the explicit-user control exercises the intended mapping path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: input_validation
 do_not_refile_as: PATH pin failure (the PATH pin is a separate control; this is identity resolution)
 affected_file: bin/omarchy-apply-lock

@@ -23,6 +23,7 @@ cat > "$TMP/fprintd-list" <<'EOF'
 case "${FPRINTD_CASE:-empty}" in
   empty) echo "User $1 has no fingers enrolled for Synaptics Mets Sensors." ;;
   error) echo "Fingerprints"; echo "ListEnrolledFingers failed" ; exit 1 ;;
+  enrolled) printf 'Fingerprints\n  right-index-finger: LFT\n' ;;
 esac
 EOF
 chmod +x "$TMP/fprintd-list"
@@ -54,6 +55,16 @@ if evaluate; then
 else
   echo "case daemon-error:   gate FALSE (fix present?)"
   C2=1
+fi
+
+# Negative control (PoC rules 3/10): a genuinely enrolled user takes the
+# ENROLLED branch - the intended path the two fail-open cases abuse.
+FPRINTD_CASE=enrolled
+if evaluate; then
+  echo "control enrolled: gate TRUE for a genuinely enrolled user (intended path intact)"
+else
+  echo "CONTROL FAILED: gate refused a genuinely enrolled user; PoC cannot distinguish defect from overcorrection"
+  exit 2
 fi
 
 if (( C1 == 0 || C2 == 0 )); then

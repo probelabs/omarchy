@@ -1,5 +1,5 @@
 id: KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE
-title: foldedListHeight returns a height above the available cap; availableRowsHeight never clamps at zero - the fold can land off-card at a row boundary
+title: foldedListHeight returns a height above the available cap; availableRowsHeight never clamps at zero
 description: The full==1 path returns totals[0]+rowSpacing+peek with no clamp to available/maxHeight (anchor FOLD1; measured 82 against a cap of 50), and availableRowsHeight can return a negative budget (chrome larger than panel.height) that sends every branch past the cap (SX26/C36) - the card clamp then cuts the visible list exactly at a row boundary, removing the fold peek the function exists to provide.
 affected_requirements:
     - SW-REQ-260922-B757
@@ -14,7 +14,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: The off-card fold needs a near-zero available budget at a row boundary; normal screen sizes keep the fold inside the card
 remediation: clamp available at >= 1px, and min the return against available (accepting the lost peek on tiny budgets)
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -28,6 +28,23 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-fold-height-exceeds-available.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T19:02:05Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-fold-height-exceeds-available.yaml
+dedup_armor: 'Not a duplicate of KI-MENU-DETAIL-WHITESPACE-QUERY: different layout defect - this is foldedListHeight exceeding the available clamp at a row boundary, that one is untrimmed filterText flipping rows to detail height; different functions and fixes'
 kill_domain: layout
 affected_file:
     - shell/plugins/menu/MenuModel.js

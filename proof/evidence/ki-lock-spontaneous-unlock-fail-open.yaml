@@ -2,16 +2,16 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SYS-REQ-260912-T0XP
-      command: ./pocs/crs-260930-ttvk-qml-static.sh
+      command: ./pocs/lock-service-failopen-runtime.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:18:21Z"
+      executed_at: "2026-09-30T19:01:01Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/crs-260930-ttvk-qml-static.sh
+        - 'Captured by `proof evidence capture KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/lock-service-failopen-runtime.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/lock-service-failopen-runtime.sh
       freshness_hashes:
-        pocs/crs-260930-ttvk-qml-static.sh: sha256:b5f71de546ab2b3323ad797dbc0365bc8f06c7fb09779d99d483d6aa1c9fcdb8
-        proof/known-issues/KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN.yaml: ki-content-v1:sha256:c1122685efefebf1ef7af6b338fb7933e8c0129a821ca2d07b9e9bf0555b185d
+        pocs/lock-service-failopen-runtime.sh: sha256:adb7b8d42cc83fc932fc54c6b754f8cc411b873945a0cf356ec36bb26b8dd4ab
+        proof/known-issues/KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN.yaml: ki-content-v1:sha256:5b51808118746e193ac663f32ae3cf6ea03165a6135ec737550540e35d62177c
       known_issues:
         - KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
       config:

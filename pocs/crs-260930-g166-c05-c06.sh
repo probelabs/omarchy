@@ -36,6 +36,16 @@ echo "== case 2: no install user, no SUDO_USER, no PKEXEC_UID at all, USER=root 
 T2="$(USER=root run_block 2>/dev/null)"
 echo "resolved target_user=[$T2]"
 
+echo "== control: an explicit OMARCHY_INSTALL_USER resolves correctly =="
+T3="$( export PATH="$TMP/bin:/usr/bin:/bin"; unset SUDO_USER PKEXEC_UID; OMARCHY_INSTALL_USER=alice eval "$BLOCK" >/dev/null 2>&1; printf '%s' "$target_user" )"
+echo "resolved target_user=[$T3]"
+if [[ $T3 == alice ]]; then
+  echo "control ok: explicit install user wins (intended mapping path intact)"
+else
+  echo "CONTROL FAILED: explicit OMARCHY_INSTALL_USER did not resolve; PoC cannot distinguish defect from broken mapping"
+  exit 2
+fi
+
 if [[ $T1 == root || $T2 == root ]]; then
   echo "SYMPTOM: failed user mapping silently degrades to root; lock PAM + fingerprint probe configured for the wrong account (defect present)"
   exit 0

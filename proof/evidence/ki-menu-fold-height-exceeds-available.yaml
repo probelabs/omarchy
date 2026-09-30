@@ -5,13 +5,13 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:50:48Z"
+      executed_at: "2026-09-30T19:02:06Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
         pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE.yaml: ki-content-v1:sha256:2a3f962efaa22ea3629b0c78b51bb604eab7f6a0513f39368b6f15aa004acedd
+        proof/known-issues/KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE.yaml: ki-content-v1:sha256:b734acf00ad68473225639db3b10e16312ff7990a033f7c258375feb1f626e6c
       known_issues:
         - KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE
       config:

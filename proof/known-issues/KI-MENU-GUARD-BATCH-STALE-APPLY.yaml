@@ -1,5 +1,5 @@
 id: KI-MENU-GUARD-BATCH-STALE-APPLY
-title: 'Guard batches carry no generation token: a batch computed for the previous items publishes onto the new set, and the empty-script case never re-renders'
+title: 'Guard batches carry no generation token: a batch computed for the previous items publishes onto the new set'
 description: 'guardProc.onExited publishes collected output with no comparison against the items generation (providerProc has a revision check, guards do not): overlapping ids keep the previous when:false on screen; when the newer script is EMPTY the deferred path clears the maps and returns without rebuildDisplay, so the open menu stays stuck on stale visibility (SX26/C09).'
 affected_requirements:
     - SW-REQ-260922-MQ37
@@ -14,7 +14,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Stale commits need a batch crossing an items reload; guards re-run on the next batch, which self-heals the visibility maps
 remediation: tag each batch with an items serial and drop stale commits; rebuildDisplay after clearing the maps
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,18 @@ history:
     - at: "2026-09-30T12:50:48Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-menu-guard-batch-stale-apply.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T19:02:05Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-guard-batch-stale-apply.yaml
 kill_domain: stale_state
 affected_file:

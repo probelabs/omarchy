@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Root is every real row's ancestor, so the always-true answer only misleads for ids that are absent from the menu entirely
 remediation: return false when the walk cannot find the claimed ancestor through existing rows
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,14 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-isdescendant-root-always.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: tree_walk
 affected_file:
     - shell/plugins/menu/MenuModel.js

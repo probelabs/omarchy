@@ -1,5 +1,5 @@
 id: KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS
-title: 'normalize-before-merge wipes unspecified defaults: a user entry that only tweaks a label erases action/aliases/guards from the default row'
+title: 'normalize-before-merge wipes unspecified defaults: a label-only user entry erases action/aliases/guards'
 description: 'normalizeItem materializes every omitted field as an empty default BEFORE mergeMenuSources'' per-key overlay, so the user''s normalized row carries explicit empty action/aliases/when/checked/disabled/icon keys that overwrite the default row''s values (F10: merged action becomes ''''). The per-key override contract (''a later source overrides only the keys the author declared'') is defeated by the normalization step in the rebuild pipeline.'
 affected_requirements:
     - SW-REQ-260922-7NPE
@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Default installs ship no label-only overrides; users who override a row restate the fields they care about, masking the wipe
 remediation: merge the RAW user entry over the default before normalizing (or make the merge skip empty-string/empty-array values from the overlay source)
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,18 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-merge-override-wipes-defaults.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: merge_semantics
 affected_file:
     - shell/plugins/menu/MenuModel.js

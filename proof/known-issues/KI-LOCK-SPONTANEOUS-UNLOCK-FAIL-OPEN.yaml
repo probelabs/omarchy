@@ -1,15 +1,20 @@
 id: KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
-title: 'Compositor-side lock loss while a request is outstanding is treated as a finished unlock: request dropped, displays woken, no re-lock'
+title: Compositor-side lock loss with a request outstanding is treated as a finished unlock; no re-lock
 description: 'WlSessionLock.onLockStateChanged (shell/plugins/lock/Service.qml:339-345): when locked flips false while lockRequested is still set - an ext-session-lock finish/acquire failure delivered by the compositor rather than finishUnlock - the branch clears lockRequested and pendingSessionLock, resets auth state and calls runWake() with no queueSessionLock/beginLock. finishUnlock sets lockRequested=false BEFORE locked=false, so this branch only runs for an external drop: a spontaneous protocol-level unlock fails open (session visible, no re-lock attempted), unlike the no-real-screen path which keeps retrying.'
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
     - proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
 severity: medium
-reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+severity_basis: risk
+risk: correctness
+reproducer_command: ./pocs/lock-service-failopen-runtime.sh
+introduced_in: inception
+defect_class: latent
 mitigation: 'rare in practice: requires a compositor-side lock drop while the shell still holds the request'
 remediation: Re-queue the lock (queueSessionLock) when locked flips false while lockRequested is outstanding, instead of treating it as an unlock
-status: open
+review_date: "2026-09-30"
+status: reviewed
 history:
     - at: "2026-09-30T12:18:14Z"
       by: human:Leonid Bugaev
@@ -18,6 +23,56 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: introduced-in=inception,defect-class=latent
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-severity-basis=risk,set-risk
+    - at: "2026-09-30T18:57:45Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
+    - at: "2026-09-30T18:58:27Z"
+      by: agent:opencode-quattro
+      action: review
+      detail: reviewer=agent:opencode-quattro,new_review_date=2026-09-30
+    - at: "2026-09-30T18:59:04Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: false
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/lock-service-failopen-runtime.sh extracts the LIVE onLockStateChanged drop arm and finishUnlock body verbatim from shell/plugins/lock/Service.qml and executes them - the shipped code runs unmodified; only the compositor boundary (the lock-state transition) is staged as a property write, because a spontaneous ext-session-lock drop cannot be produced headlessly.
+        quantitative_impact: the impact is a boolean fail-open - lockRequested cleared, runWake fired, zero re-lock calls - not a measurable quantity.
+        control_test: the control run drives finishUnlock (the user-driven path) and asserts the safe ordering, so the drop arm provably never fires for a normal unlock; the static control asserts the same ordering in the live file (pocs/crs-260930-ttvk-qml-static.sh).
+        current_deployment_relevance: the !locked && root.lockRequested branch is live in Service.qml on this branch; the harness extracts it at run time.
+        honest_severity: medium - a spontaneous compositor-side lock loss exposes the session without re-lock; unusual trigger, no auth bypass claimed beyond the fail-open itself.
+        reproducible: single command ./pocs/lock-service-failopen-runtime.sh, deterministic, about 100ms, exit 0 while the defect is present.
+        no_inflation: claim limited to the demonstrated branch behavior.
+        operational_path_verified: the finishUnlock control exercises the intended unlock path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        quantitative_impact: 'impact is a boolean lock-state violation, not a measurable quantity: C01 pins sessionLock.locked=true while passwordPamConfigured=false, C08 pins the request dropped with runWake fired and no re-lock'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: fail_open
 do_not_refile_as: normal unlock double-handled (finishUnlock pre-clears lockRequested, so the user-driven path never reaches this branch)
 source_claim: CRS-260930-TTVK/C08

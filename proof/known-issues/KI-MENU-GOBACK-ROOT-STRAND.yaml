@@ -14,7 +14,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Back at root the menu keeps working; the stranded navStack entry only surfaces if the user drills down and retraces the same path
 remediation: pop navStack in goBack even when activeMenu is root, or clear navStack when rewriting the target to root
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,14 @@ history:
     - at: "2026-09-30T12:50:48Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-menu-goback-root-strand.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T19:02:05Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-goback-root-strand.yaml
 kill_domain: navigation
 affected_file:

@@ -14,7 +14,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Typed text is short; re-entering it after the stray Escape costs seconds and no pending request is lost
 remediation: route Escape straight to cancel()/finishRequest(null) in input mode
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -27,6 +27,14 @@ history:
     - at: "2026-09-30T12:50:48Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-menu-input-escape-clears-filter.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T19:02:05Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-input-escape-clears-filter.yaml
 kill_domain: key_handling
 affected_file:

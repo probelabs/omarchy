@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: The badge count is advisory only; navigation and activation are unaffected, so the wrong count misleads but blocks nothing
 remediation: count only children passing isVisible and dedupe ids (or trust itemOrder to be deduped by the merges)
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,14 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-caret-count-hidden-children.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: counting
 affected_file:
     - shell/plugins/menu/MenuModel.js

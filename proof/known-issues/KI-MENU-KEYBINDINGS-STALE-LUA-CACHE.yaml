@@ -27,6 +27,35 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-stale-lua-cache.yaml
+    - at: "2026-09-30T19:01:02Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-stale-lua-cache.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-jvx8-c03.sh drives the real keybindings_cache_key from bin/omarchy-menu-keybindings with a stubbed hyprctl.
+        quantitative_impact: the cache key is byte-identical across a Lua-command-only edit (0 change) while a control edit observable in hyprctl output moves it.
+        control_test: an observable hyprctl binds change changes the key - the key mechanism is live and only the Lua-only edit is invisible to it (control arm in the same script).
+        current_deployment_relevance: the version/keymap/binds-only key is live on this branch.
+        honest_severity: medium - a warm cache keeps dispatching the previous Lua command after the user edits it; a manual uncached refresh (--print) recovers.
+        reproducible: single command ./pocs/crs-260930-jvx8-c03.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated stale dispatch.
+        operational_path_verified: the control exercises the intended key-change path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: stale_state
 do_not_refile_as: cache never rebuilds at all (it rebuilds on keymap/binds changes; only Lua-command-only edits are missed)
 affected_file: bin/omarchy-menu-keybindings

@@ -1,5 +1,5 @@
 id: KI-MENU-ITEM-PROTOTYPE-LEAK
-title: 'Map reads walk Object.prototype: item(), results maps, providersLoaded and the QML item() treat constructor/toString/valueOf as real entries'
+title: 'Map reads walk Object.prototype: item(), results maps, providersLoaded treat constructor/toString as real entries'
 description: 'item() is a raw truthy read (items[id] ? ... : null), so inherited prototype properties look up as menu rows (probe F7): they beat aliases in resolveRoute, defeat the root fallback in openExistingMenu/setActiveMenu, and mark provider menus already-loaded (loadProviderForMenu''s providersLoaded truthiness, SX26/C21). The same class on results maps: isDisabled/labelFor read disabledResults[id] off a fresh {} and get the inherited function, dimming and check-marking a row whose id collides (HFY2/C16).'
 affected_requirements:
     - SW-REQ-260922-PRNV
@@ -13,7 +13,7 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
@@ -31,6 +31,14 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-item-prototype-leak.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: prototype_pollution
 affected_file:
     - shell/plugins/menu/MenuModel.js

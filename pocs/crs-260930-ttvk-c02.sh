@@ -35,6 +35,22 @@ PROBE="${PROBE//\/etc\/pam.d\/omarchy-lock-fingerprint/$TMP/omarchy-lock-fingerp
 OUT="$(PATH="$TMP/bin:$PATH" bash -c "$PROBE")"
 echo "probe said: [$OUT]"
 
+# Negative control (PoC rules 3/10): a genuinely enrolled store reads as
+# configured - the intended path the zero-enrollment case abuses.
+mkdir -p "$TMP/bin-enrolled"
+cat > "$TMP/bin-enrolled/fprintd-list" <<'EOF'
+#!/bin/bash
+printf 'Fingerprints\n  right-index-finger: LFT\n'
+EOF
+chmod +x "$TMP/bin-enrolled/fprintd-list"
+COUT="$(PATH="$TMP/bin-enrolled:$PATH" bash -c "$PROBE")"
+if [[ $COUT == yes ]]; then
+  echo "control enrolled: probe reads a genuinely enrolled store as configured (intended path intact)"
+else
+  echo "CONTROL FAILED: probe refused an enrolled store; PoC cannot distinguish defect from overcorrection"
+  exit 2
+fi
+
 if [[ $OUT == yes ]]; then
   echo "SYMPTOM: zero-enrollment user treated as fingerprintConfigured=true on the lock screen (defect present)"
   exit 0

@@ -1,5 +1,5 @@
 id: KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
-title: Exported bash functions execute as root inside apply-lock despite the trusted-PATH replacement (defeats trusted_path_only)
+title: Exported bash functions execute as root inside apply-lock despite the trusted-PATH replacement
 description: 'The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact: exported bash functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) are imported into the function table and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48) and an imported command_not_found_handle returning 0 makes ''if omarchy-shell lock status'' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.'
 affected_requirements:
     - SW-REQ-260912-EKJP
@@ -45,6 +45,44 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T19:01:00Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: true
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: true
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: the PoC extracts the LIVE decision expressions (bin/omarchy-apply-lock lines 48 and 62) verbatim and runs them under the hostile inherited environment - no reimplementation.
+        quantitative_impact: both vectors leave a filesystem marker proving caller-supplied code executed at the root helper's decision points (grep hijack in the fingerprint gate; command_not_found_handle returning 0 with the binary absent); the clean-environment control leaves no marker and reads the gate correctly.
+        control_test: same extracted condition under a clean environment with an enrolled fprintd-list stub evaluates TRUE via the pinned /usr/bin/grep (pocs/crs-260930-g166-c07-c09.sh control arm).
+        untrusted_attacker: the hijack input is caller-controlled exported functions - no privileged role is needed to plant them in the invoking session.
+        current_deployment_relevance: the pin at bin/omarchy-apply-lock:15 replaces PATH but not the environment on this branch today; the PoC extracts the live lines at run time.
+        honest_severity: high - demonstrated caller-controlled code execution at root privilege inside the lock installer; no higher impact claimed.
+        attacker_profitability: cost is control of the calling shell's environment (any session process); revenue is arbitrary code execution as root at every decision point - favorable asymmetry, stated without inflation.
+        reproducible: single command ./pocs/crs-260930-g166-c07-c09.sh, deterministic, runs in well under a minute.
+        no_inflation: the claim is limited to the demonstrated decision-point execution; no persistence or further escalation is asserted.
+        operational_path_verified: the control arm exercises the intended path (pinned lookup, correct gate decision) and shows it intact in a clean environment.
+    not_applicable:
+        reachability_verified: 'the modeled attacker is the invoking user''s own environment of a local root helper: the trusted-PATH pin IS the ingress layer and the defect itself is its bypass, so a separate end-to-end reachability run through pkexec adds nothing the extracted live decision expressions do not already demonstrate'
+dedup_armor: 'Not mergeable into KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN or KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT without raising severity: those siblings are wrong-gate and wrong-account configuration defects contained to misconfigured PAM, while this one executes caller-controlled exported functions as root at the decision points - the only code-execution-as-root finding in the apply-lock family, graded high on that basis'
 kill_domain: privileged_code_injection
 do_not_refile_as: PATH shadowing via user-writable directory (the PATH pin closes that; this is the function-table bypass of the same guarantee)
 affected_file: bin/omarchy-apply-lock

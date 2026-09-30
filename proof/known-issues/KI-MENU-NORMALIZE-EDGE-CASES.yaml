@@ -1,5 +1,5 @@
 id: KI-MENU-NORMALIZE-EDGE-CASES
-title: 'normalizeItem edge cases: parent:null kept as null, boolean guards preserved (later crashes guard generation), action:0 mis-kinded, numeric labels, object aliases become ''[object Object]'' search text'
+title: 'normalizeItem edge cases: null parent kept, boolean guards preserved, action:0 mis-kinded, numeric labels'
 description: normalizeItem infers the parent only when it is undefined, so an explicit null parent stays null (F17a) and the path helpers then coerce it; a boolean when/checked/disabled passes the ||-default and later throws inside guard generation (F17b); kind derives from truthiness so action:0 yields a menu row (F17c); a numeric label is stored as a number and a non-string alias stringifies to '[object Object]', which the search index then matches for the term 'object' (F23).
 affected_requirements:
     - SW-REQ-260922-46HY
@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Every trigger needs malformed user JSONC (null parent, boolean guards, numeric labels); the shipped menus are well-formed
 remediation: treat null like undefined for parent, coerce when/checked/disabled to strings or reject non-strings, String() the label, and filter aliases to strings
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,23 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-normalize-edge-cases.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-dedup-armor
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
+dedup_armor: 'Not a duplicate of KI-MENU-DMENU-NAN-GEOMETRY: that one is dmenu geometry Number() coercion collapsing the card; this one is normalizeItem preserving malformed JSONC field types (null parent, boolean guards, numeric labels) that later break guard generation'
 kill_domain: input_validation
 affected_file:
     - shell/plugins/menu/MenuModel.js

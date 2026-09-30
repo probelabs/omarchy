@@ -27,6 +27,10 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-lock-pam-error-double-count.yaml
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-pam-error-double-count.yaml
 kill_domain: double_count
 do_not_refile_as: wrong password counts twice (the wrong-password PamResult.Failure path does not take onError and counts once)
 affected_file: shell/plugins/lock/Service.qml

@@ -3,18 +3,65 @@ title: vipsthumbnail still-image lane has no timeout; a stalled conversion wedge
 description: generate_thumbnail dispatches still images to env VIPS_CONCURRENCY=1 vipsthumbnail with no timeout wrapper (bin/omarchy-menu-images:219), while the video lane is bounded by timeout -k 5 10 ffmpegthumbnailer. A still image that stalls vips - corrupt or pathological file, or a path on a stalled mount - holds its fan-out lane forever. In --preload mode drain_pending_thumbnails runs synchronously before the picker opens, so enough wedged stills block the image picker open entirely. Lazy opens spawn generate_thumbnail inside the menu process, where each wedged still leaks an orphaned vipsthumbnail child per open. The content-hash lock fd is closed for the converter, so a hung still does not pin the lock; the damage is lane loss and unbounded process accumulation, not lock deadlock. Batch C flagged the mechanism; batch D confirms it against THMB and files the tracked debt.
 affected_requirements:
     - SW-REQ-260929-THMB
+evidence_manifests:
+    - proof/evidence/ki-menu-images-vips-no-timeout.yaml
 severity: medium
+severity_basis: risk
+risk: availability
 cve_surface: none
 affected_api: bin/omarchy-menu-images still-image thumbnail lane
+reproducer_command: ./pocs/menu-images-vips-still-no-timeout.sh
 introduced_in: inception
 defect_class: latent
 mitigation: video lane bounded by timeout -k 5 10; lock fd closed for the converter so a hung still cannot pin the content-hash lock; manual recovery is killing stray vipsthumbnail processes
 remediation: wrap the vipsthumbnail invocation in timeout (matching the video lane) or add an async kill to the generator; then close this KI and flip the THMB deferral
 owner: agent:opencode-hazard-d
+review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: reviewed
 history:
     - at: "2026-09-30T08:01:48Z"
       by: agent:opencode-hazard-d
       action: created
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-severity-basis=risk,set-risk
+    - at: "2026-09-30T18:57:45Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
+    - at: "2026-09-30T18:58:27Z"
+      by: agent:opencode-quattro
+      action: review
+      detail: reviewer=agent:opencode-quattro,new_review_date=2026-09-30
+    - at: "2026-09-30T18:58:47Z"
+      by: agent:opencode-quattro
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-images-vips-no-timeout.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/menu-images-vips-still-no-timeout.sh extracts is_video_path and generate_thumbnail verbatim from bin/omarchy-menu-images and drives the real converter dispatch with a PATH-stubbed vipsthumbnail.
+        quantitative_impact: the still lane is still wedged inside vipsthumbnail at an external 5s kill (rc=124) while the video lane beside it is bounded by timeout -k 5 10; the control conversion completes and lands the thumbnail.
+        control_test: a healthy vipsthumbnail through the same extracted generator completes and moves the thumbnail into place (control arm in the same script).
+        current_deployment_relevance: the unbounded vipsthumbnail invocation is live in generate_thumbnail on this branch; extracted at run time.
+        honest_severity: medium - one stalled still wedges its fan-out lane indefinitely (availability of the thumbnail pipeline); no data loss.
+        reproducible: single command ./pocs/menu-images-vips-still-no-timeout.sh, deterministic, about 5 seconds.
+        no_inflation: claim limited to the demonstrated unbounded wait on the still lane.
+        operational_path_verified: the control arm exercises the intended bounded completion of the same generator.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: resource_exhaustion

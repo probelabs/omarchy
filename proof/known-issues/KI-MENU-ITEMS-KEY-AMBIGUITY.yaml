@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: No shipped menu uses an entry id of items; the ambiguity needs a hand-authored flat document with that exact id
 remediation: reserve the wrapper form to documents that carry ONLY an items key (or require an explicit marker), else treat 'items' as an entry id
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,14 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-items-key-ambiguity.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: parsing
 affected_file:
     - shell/plugins/menu/MenuModel.js

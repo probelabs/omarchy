@@ -5,13 +5,13 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:50:49Z"
+      executed_at: "2026-09-30T19:02:06Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-GOBACK-ROOT-STRAND` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
         pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-GOBACK-ROOT-STRAND.yaml: ki-content-v1:sha256:30f7d67be7fd0cb107d1aebd53a06a7436c84d2bfcf77d61c467a018746c5ace
+        proof/known-issues/KI-MENU-GOBACK-ROOT-STRAND.yaml: ki-content-v1:sha256:eaf635ccaf43345e92cad7c0d2adde1f146a701ba15afceb0dbc93fc5a7adacd
       known_issues:
         - KI-MENU-GOBACK-ROOT-STRAND
       config:

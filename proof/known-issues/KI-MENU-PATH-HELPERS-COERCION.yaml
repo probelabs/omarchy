@@ -1,5 +1,5 @@
 id: KI-MENU-PATH-HELPERS-COERCION
-title: pathFor coerces a null parent to the id 'null'/'0' row while parentPathFor returns empty - the two breadcrumb helpers disagree
+title: pathFor coerces a null parent to the id 'null'/'0' row while parentPathFor returns empty
 description: pathFor walks through item(items, null), whose key coercion can land on a row literally keyed 'null'/'0' and appends its label (F21), while parentPathFor returns [] for the same entry - one breadcrumb shows a phantom parent, the other shows none.
 affected_requirements:
     - SW-REQ-260922-SJ7P
@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Only a null parent renders a wrong breadcrumb; shipped menus always carry real parents so paths render correctly
 remediation: guard the walk on non-empty string parents and make both helpers share one walk
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,18 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-path-helpers-coercion.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: coercion
 affected_file:
     - shell/plugins/menu/MenuModel.js

@@ -27,6 +27,35 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
+    - at: "2026-09-30T19:01:02Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-jvx8-c01.sh drives the real build_lua_bind_cache from bin/omarchy-menu-keybindings over a copy of the shipped config with a throw-triggering module.
+        quantitative_impact: the appended SSH bind is absent from LUA_BIND_DISPATCHER_MAP after the aborted scan (0 of the new binds cached); the guarded control scan caches it.
+        control_test: with the console module's scale comparisons type-guarded against the scanner's mock, the same scan caches the SSH bind - the machinery is intact and the abort is attributable to the throwing comparison (control arm in the same script).
+        current_deployment_relevance: the single-pcall dofile scan is live on this branch.
+        honest_severity: medium - one throwing module silently drops every later Lua bind from the menu cache; the menu still works for non-Lua binds.
+        reproducible: single command ./pocs/crs-260930-jvx8-c01.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated cache loss.
+        operational_path_verified: the guarded control exercises the intended completing scan.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: error_propagation
 do_not_refile_as: menu shows wrong command for a Lua bind (that is the stale-cache or CSV-shift KI, not the scan abort); qconsole broken in the real compositor (the mock environment is scanner-specific; real Hyprland never runs this code)
 affected_file: bin/omarchy-menu-keybindings

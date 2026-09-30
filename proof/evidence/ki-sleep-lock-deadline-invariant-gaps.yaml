@@ -7,13 +7,13 @@ results:
       command: ./pocs/crs-260930-gzq0-c04.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:12:41Z"
+      executed_at: "2026-09-30T19:01:10Z"
       input_set:
         - 'Captured by `proof evidence capture KI-SLEEP-LOCK-DEADLINE-INVARIANT-GAPS` from the KnownIssue''s reproducer command: ./pocs/crs-260930-gzq0-c04.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-gzq0-c04.sh
       freshness_hashes:
         pocs/crs-260930-gzq0-c04.sh: sha256:19460d9b3d351e36c606e01fbe535014502eda24c182d4737b14681377ec7846
-        proof/known-issues/KI-SLEEP-LOCK-DEADLINE-INVARIANT-GAPS.yaml: ki-content-v1:sha256:7ee766bd869fab9a39a39769b25c4c02d8cde08f5d3832e01f9034e0ab456c75
+        proof/known-issues/KI-SLEEP-LOCK-DEADLINE-INVARIANT-GAPS.yaml: ki-content-v1:sha256:1a193cd491ec0712d0ac28160e4ca3e50519663e5689bf90b09655e6e90b2604
       known_issues:
         - KI-SLEEP-LOCK-DEADLINE-INVARIANT-GAPS
       config:

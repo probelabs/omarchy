@@ -29,6 +29,18 @@ fail=0
 echo "$OUT" | grep -q "Count 1 items" || { echo "description 'Count code:10 items' not corrupted (fix present?)"; fail=1; }
 echo "$OUT" | grep -q "echo MINUS" || { echo "command 'echo code:20' not corrupted (fix present?)"; fail=1; }
 echo "$OUT" | grep -q "notify-send LEFT MOUSE BUTTON" || { echo "command 'notify-send mouse:272' not corrupted (fix present?)"; fail=1; }
+# Negative control (PoC rules 3/10): records without code:/mouse: text in
+# the prose fields round-trip untouched.
+CLEAN='SUPER,Q,Plain description,exec,true
+SUPER,W,Move window,exec,notify-send hello'
+COUT="$(printf '%s\n' "$CLEAN" | parse_keycodes)"
+if printf '%s\n' "$COUT" | grep -q "Plain description" && printf '%s\n' "$COUT" | grep -q "notify-send hello"; then
+  echo "control ok: clean records round-trip untouched (the rewrite is the defect, not the norm)"
+else
+  echo "CONTROL FAILED: clean records were rewritten too; PoC inconclusive"
+  exit 2
+fi
+
 if (( ! fail )); then
   echo "SYMPTOM: description and command text rewritten by the keycode/mouse substitution (defect present)"
 fi

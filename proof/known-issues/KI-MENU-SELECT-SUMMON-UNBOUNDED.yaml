@@ -27,6 +27,35 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-select-summon-unbounded.yaml
+    - at: "2026-09-30T19:01:04Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-summon-unbounded.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-k02d-c02.sh runs the real bin/omarchy-menu-select with only the omarchy-shell IPC binary stubbed on PATH.
+        quantitative_impact: the script is still blocked inside the summon at an external 2s kill (rc=124) - the wait is unbounded; the control peer that writes the done file completes within the deadline.
+        control_test: a healthy summon peer that writes the done file lets the same script complete bounded (control arm in the same script).
+        current_deployment_relevance: the unbounded summon call in bin/omarchy-menu-select is live on this branch.
+        honest_severity: medium - a hung IPC wedges every synchronous caller of omarchy-menu-select; availability only.
+        reproducible: single command ./pocs/crs-260930-k02d-c02.sh, deterministic, about 2 seconds.
+        no_inflation: claim limited to the demonstrated unbounded wait.
+        operational_path_verified: the control exercises the intended completing summon path.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: unbounded_wait
 do_not_refile_as: done_file poll hangs (that is KI-MENU-SELECT-POLL-DEADLOCK; this is the summon call itself)
 affected_file: bin/omarchy-menu-select

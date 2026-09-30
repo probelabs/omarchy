@@ -6,10 +6,15 @@ affected_requirements:
 evidence_manifests:
     - proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
 severity: low
+severity_basis: risk
+risk: correctness
 reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+introduced_in: inception
+defect_class: latent
 mitigation: next refreshBackground with a good link restores it
 remediation: Keep the previous backgroundPath (and signature) when the readlink output is empty, and retry via a short timer instead of committing the empty result
-status: open
+review_date: "2026-09-30"
+status: reviewed
 history:
     - at: "2026-09-30T12:18:14Z"
       by: human:Leonid Bugaev
@@ -17,6 +22,22 @@ history:
     - at: "2026-09-30T12:18:20Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: introduced-in=inception,defect-class=latent
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-severity-basis=risk,set-risk
+    - at: "2026-09-30T18:58:27Z"
+      by: agent:opencode-quattro
+      action: review
+      detail: reviewer=agent:opencode-quattro,new_review_date=2026-09-30
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
 kill_domain: state_loss
 do_not_refile_as: wallpaper never refreshes (the success path works; the failure path destroys prior state instead of keeping it)

@@ -1,5 +1,5 @@
 id: KI-MENU-CLI-EXIT-CODE-WRITE-RACES
-title: 'Contracted exit codes lost when the usage/diagnostic write fails: unknown verb exits 1 (not 2), help exits 1 (not 0) on closed fds'
+title: 'Contracted exit codes lost when the usage/diagnostic write fails: unknown verb exits 1, help exits 1'
 description: 'Under set -e, the unknown-verb diagnostic (bin/omarchy-menu:50-52) and the help heredoc (34-35) abort the script when their write fails: with fd 2 closed an unknown verb exits 1 without reaching the canonical exit 2, and with fd 1 closed help exits 1 and never reaches exit 0. Callers that distinguish usage errors (2) from generic failure (1) misclassify, and help''s promised success is lost.'
 affected_requirements:
     - SW-REQ-260922-T257
@@ -26,6 +26,14 @@ history:
     - at: "2026-09-30T12:20:58Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-menu-cli-exit-code-write-races.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T19:01:00Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-cli-exit-code-write-races.yaml
 kill_domain: error_propagation
 do_not_refile_as: jq payload failure presenting as success (that is KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS)

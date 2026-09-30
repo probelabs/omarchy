@@ -4,16 +4,17 @@ results:
       requirements:
         - SW-REQ-260922-MQ37
         - SW-REQ-260922-Y58B
-      command: pocs/menu-probes.js
-      status: fail
-      observed_result: known_issue_not_reproduced
-      executed_at: "2026-09-30T12:50:40Z"
+      command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T19:01:01Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT` from the KnownIssue''s reproducer command: pocs/menu-probes.js. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/menu-probes.js
+        - 'Captured by `proof evidence capture KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT` from the KnownIssue''s reproducer command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - ../shell/plugins/menu/MenuModel.js
+        - pocs/menu-probes3.js
       freshness_hashes:
-        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT.yaml: ki-content-v1:sha256:aea52f788c0dde291748bad6aaa7b55652b1247592b7a2f787d24e54bcd2bf79
+        pocs/menu-probes3.js: sha256:567bae61cf43abb5e39e7673dce01c66df95b8a34d2e1fbed86e158b48bd1584
+        proof/known-issues/KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT.yaml: ki-content-v1:sha256:8388d51852ef25eb2958848dea7832f9df57a784057cad884857cdddaaf45d17
       known_issues:
         - KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT
       config:

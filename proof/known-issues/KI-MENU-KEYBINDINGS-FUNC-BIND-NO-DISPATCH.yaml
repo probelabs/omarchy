@@ -27,6 +27,35 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+    - at: "2026-09-30T19:01:01Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-jvx8-c02.sh stubs hyprctl with the exact binds text the shipped function binds produce and runs the real dynamic_bindings from bin/omarchy-menu-keybindings.
+        quantitative_impact: 1 of 1 __lua rows loses its dispatcher field (empty) while the exec row beside it keeps exec/alacritty; a registered map entry restores dispatch for the same row.
+        control_test: with a registered dispatchable action in LUA_BIND_DISPATCHER_MAP - what o.bind_commands registration provides for non-function binds - the same __lua row dispatches (control arm in the same script).
+        current_deployment_relevance: the __lua map overwrite in dynamic_bindings is live on this branch.
+        honest_severity: medium - shipped function binds (Select all, Universal copy/paste/cut, Zoom in, Reset zoom) render but dispatch nothing; no incorrect action fires.
+        reproducible: single command ./pocs/crs-260930-jvx8-c02.sh, deterministic, sub-second.
+        no_inflation: claim limited to the demonstrated no-op dispatch.
+        operational_path_verified: the control exercises the intended registered-dispatcher path of the same lookup.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
+        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: functional_gap
 do_not_refile_as: all Lua binds fail to dispatch (exec-arg binds via o.bind_commands dispatch fine; only raw-function binds are hit)
 affected_file: bin/omarchy-menu-keybindings

@@ -12,11 +12,11 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: none
+mitigation: Only an explicitly quoted empty payload diverges; omitting the group entirely behaves identically on both paths
 remediation: distinguish 'absent group' from 'empty string' via match[2] === undefined
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -30,6 +30,14 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-summon-action-empty-payload.yaml
+    - at: "2026-09-30T18:35:22Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-mitigation
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: payload_divergence
 affected_file:
     - shell/plugins/menu/MenuModel.js

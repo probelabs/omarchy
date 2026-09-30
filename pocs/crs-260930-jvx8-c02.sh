@@ -11,30 +11,67 @@
 # Both-ways: asserts the defect symptom against CURRENT code (exit 0 = defect
 # present). With a fix that keeps a dispatchable action for function binds,
 # the assertion fails and this exits 1.
-set -u
+# No `set -u` here on purpose: bin/omarchy-menu-keybindings itself runs without
+# it, and the empty-dispatcher overwrite this PoC pins depends on the missing
+# map lookup degrading to "" exactly as it does in production.
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$REPO/bin/omarchy-menu-keybindings"
 
 FUNCS="$(sed '/^if \[\[ $1 == "--print"/,$d' "$SCRIPT")"
 eval "$FUNCS"
 
-# Feed the exact hyprctl binds records the shipped function binds produce:
-# dispatcher __lua, empty arg, description set.
-RECORDS="64,0,Select all,SUPER,A,__lua,
-64,0,Universal copy,SUPER,C,__lua,
-64,0,Reset zoom,SUPER,0,__lua,"
+# Feed the exact `hyprctl binds` text the shipped function binds produce:
+# dispatcher __lua with an empty arg, plus a launch bind for contrast.
+hyprctl() {
+  case $1 in
+    binds)
+      cat <<'EOF'
+bind
+	modmask: 64
+	key: SUPER + A
+	keycode: 0
+	description: Select all
+	dispatcher: __lua
+	arg:
 
-OUT="$(printf '%s\n' "$RECORDS" | dynamic_bindings)"
+bind
+	modmask: 64
+	key: SUPER + RETURN
+	keycode: 0
+	description: Terminal
+	dispatcher: exec
+	arg: alacritty
+EOF
+      ;;
+    *) return 1 ;;
+  esac
+}
+
+OUT="$(dynamic_bindings)"
 
 echo "== dynamic_bindings rows =="
-echo "$OUT"
+printf '%s\n' "$OUT"
 
 fail=0
-# The row must not end with an empty dispatcher field
-if echo "$OUT" | grep -qE ',__lua?,?$|,,($|[^,])'; then :; fi
-EMPTY=$(echo "$OUT" | awk -F, '$4 == "" { c++ } END { print c+0 }')
-if (( EMPTY > 0 )); then
-  echo "SYMPTOM: $EMPTY shipped function bind row(s) have an empty dispatcher - menu shows them but dispatch is a no-op (defect present)"
+# The __lua row must not end up with an empty dispatcher (CSV field 4).
+EMPTY=$(printf '%s\n' "$OUT" | awk -F, 'NF >= 5 && $4 == "" { c++ } END { print c+0 }')
+KEEP=$(printf '%s\n' "$OUT" | awk -F, 'NF >= 5 && $4 == "exec" { c++ } END { print c+0 }')
+
+# Negative control (PoC rules 3/10): with a registered dispatchable action in
+# the map - what o.bind_commands registration provides for non-function binds
+# - the same __lua row keeps its dispatcher.
+LUA_BIND_DISPATCHER_MAP["64,Select all,A"]="lua:console.selectAll"
+COUT="$(dynamic_bindings)"
+CKEEP=$(printf '%s\n' "$COUT" | awk -F, 'NF >= 5 && $4 == "lua:console.selectAll" { c++ } END { print c+0 }')
+if (( CKEEP > 0 )); then
+  echo "control ok: with a registered dispatcher the __lua row dispatches (map lookup intact)"
+else
+  echo "CONTROL FAILED: registered dispatcher did not reach the row; PoC inconclusive"
+  exit 2
+fi
+
+if (( EMPTY > 0 && KEEP > 0 )); then
+  echo "SYMPTOM: $EMPTY shipped function bind row(s) have an empty dispatcher while launch rows keep theirs - menu shows them but dispatch is a no-op (defect present)"
 else
   echo "PASS-REFUTED: every __lua row kept a dispatchable action - defect fixed"
   fail=1

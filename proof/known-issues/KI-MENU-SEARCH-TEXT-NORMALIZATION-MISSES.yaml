@@ -1,5 +1,5 @@
 id: KI-MENU-SEARCH-TEXT-NORMALIZATION-MISSES
-title: 'Search text misses: whole-word description matching drops punctuation-glued words, and separator folding drops exact hyphenated alias/leaf forms'
+title: 'Search text misses: whole-word description matching drops punctuation-glued words and hyphenated alias forms'
 description: termInSearchWords requires whole-word equality, so a description word with trailing punctuation ('system.') never matches the term (F24a) and a mixed-case term never matches the lowercased haystack (F24b); matchesQuery's name path only sees the separator-folded rewrite of aliases and leaf ids, so querying the exact hyphenated form ('power-menu') misses even though the alias is declared that way.
 affected_requirements:
     - SW-REQ-260922-DQ9P
@@ -12,7 +12,7 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
@@ -34,6 +34,14 @@ history:
       by: human:Leonid Bugaev
       action: edit
       detail: add-source-claim=CRS-260930-2EMZ/C26
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: search_normalization
 affected_file:
     - shell/plugins/menu/MenuModel.js

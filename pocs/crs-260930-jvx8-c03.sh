@@ -22,7 +22,25 @@ eval "$FUNCS"
 hyprctl() {
   case $1 in
     devices) echo "error: no display" ; return 1 ;;
-    binds)   cat <<'EOF'
+    binds)
+      if [[ ${HYPRCTL_VARIANT:-0} == 1 ]]; then
+        cat <<'EOF'
+64
+0
+0
+0
+0
+0
+Terminal EDITED KEYMAP ROW
+SUPER
+RETURN
+__lua
+
+0
+0
+EOF
+      else
+        cat <<'EOF'
 64
 0
 0
@@ -37,6 +55,8 @@ __lua
 0
 0
 EOF
+      fi
+      ;;
   esac
   return 0
 }
@@ -50,10 +70,23 @@ AFTER="$(keybindings_cache_key)"
 echo "key before edit: $BEFORE"
 echo "key after edit:  $AFTER"
 
+rc=1
 if [[ $BEFORE == "$AFTER" ]]; then
   echo "SYMPTOM: real cache key unchanged across a Lua-command-only edit - warm cache keeps dispatching the previous command (defect present)"
-  exit 0
+  rc=0
 else
   echo "PASS-REFUTED: cache key changed across the edit - defect fixed"
-  exit 1
 fi
+
+# Negative control (PoC rules 3/10): a hyprctl-OBSERVABLE bind change moves
+# the key - the cache key is live; only the Lua-only edit is invisible to it.
+HYPRCTL_VARIANT=1
+AFTER2="$(keybindings_cache_key)"
+HYPRCTL_VARIANT=0
+if [[ $BEFORE != "$AFTER2" ]]; then
+  echo "control ok: an observable hyprctl change moves the cache key (key mechanism intact)"
+else
+  echo "CONTROL FAILED: cache key ignores even observable bind changes; PoC inconclusive"
+  rc=2
+fi
+exit $rc

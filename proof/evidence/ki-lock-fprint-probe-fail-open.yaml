@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-ttvk-c02.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T12:18:20Z"
+      executed_at: "2026-09-30T19:01:02Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-FPRINT-PROBE-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-c02.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-ttvk-c02.sh
       freshness_hashes:
-        pocs/crs-260930-ttvk-c02.sh: sha256:13123eaf92e1d1614be8ffa9f4cd69ee600cc87a443a1551e7f0346fd76c760b
-        proof/known-issues/KI-LOCK-FPRINT-PROBE-FAIL-OPEN.yaml: ki-content-v1:sha256:d5d07d385628bac3e814b3908aa686f217aa320bec9bd7ce51dee7c1a52f4d33
+        pocs/crs-260930-ttvk-c02.sh: sha256:85ddd2b8bd839f6b8a3e1946afc821c5e9ec3b354999f326ff3452a6ae22823a
+        proof/known-issues/KI-LOCK-FPRINT-PROBE-FAIL-OPEN.yaml: ki-content-v1:sha256:cf5b494e0780b0de47f83c012b3f1b9a3b651539feb2091d9a2dabd4f78c6308
       known_issues:
         - KI-LOCK-FPRINT-PROBE-FAIL-OPEN
       config:

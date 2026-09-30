@@ -1,5 +1,5 @@
 id: KI-MENU-RESOLVE-ROUTE-FOLDING
-title: resolveRoute folds the input before the exact-id lookup and returns the normalized string as fallthrough; exact app ids are routable and prototype aliases can never win
+title: resolveRoute folds the input before the exact-id lookup and returns the normalized string as fallthrough
 description: resolveRoute (MenuModel.js:220-234) lowercases and underscore-folds the input BEFORE the exact-id test, so a stored id 'Setup' is missed by route 'setup' (F8a); the misspelling fallthrough returns the NORMALIZED string instead of the literal input the contract states (F8b); an exact app id is returned despite the header comment 'app rows are never routable' (F8c); and an alias named like a prototype property can never win because item() already reports a hit.
 affected_requirements:
     - SW-REQ-260922-PRNV
@@ -14,7 +14,7 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-probes.js
+reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
@@ -32,6 +32,14 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-menu-resolve-route-folding.yaml
+    - at: "2026-09-30T18:35:23Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-title
+    - at: "2026-09-30T18:35:24Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-reproducer-command
 kill_domain: input_normalization
 affected_file:
     - shell/plugins/menu/MenuModel.js

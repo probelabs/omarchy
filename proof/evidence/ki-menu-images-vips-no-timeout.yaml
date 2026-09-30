@@ -1,0 +1,21 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260929-THMB
+      command: ./pocs/menu-images-vips-still-no-timeout.sh
+      status: fail
+      observed_result: known_issue_reproduced
+      executed_at: "2026-09-30T18:58:48Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-IMAGES-VIPS-NO-TIMEOUT` from the KnownIssue''s reproducer command: ./pocs/menu-images-vips-still-no-timeout.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - pocs/menu-images-vips-still-no-timeout.sh
+      freshness_hashes:
+        pocs/menu-images-vips-still-no-timeout.sh: sha256:d82bc051492c6e4ee01e5cb6905802d4ed53d87bbc69716832f051e4c1ad3f72
+        proof/known-issues/KI-MENU-IMAGES-VIPS-NO-TIMEOUT.yaml: ki-content-v1:sha256:05f13bb51d272849b4952d01198fe4e2208b39984f45f0121821eebb630d7884
+      known_issues:
+        - KI-MENU-IMAGES-VIPS-NO-TIMEOUT
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root
