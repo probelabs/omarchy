@@ -1,0 +1,65 @@
+id: KI-260930-2FBE
+title: omarchy-system-lock exits 0 when lock engagement fails, leaving the dismissed Lock row silent
+description: 'bin/omarchy-system-lock line 10 runs `omarchy-shell lock lock >/dev/null` and never checks the exit status. A refused engagement (omarchy-shell exits non-zero) or an absent binary (exit 127) therefore passes silently. The script runs its side-effect steps and exits 0 on every path. The menu Lock row (default/omarchy/omarchy-menu.jsonc:38) dismisses the menu on activation, and no surface reports the failure. The user walks away from a session they believe locked; the WC89 hazard_review (batch D) grades this medium on high impact times near-zero likelihood. pocs/wc89-silent-lock-exit0.sh reproduces it: the real script exits 0 on both failure arms while the control arm confirms the invocation wiring.'
+affected_requirements:
+    - SYS-REQ-260927-WC89
+evidence_manifests:
+    - proof/evidence/ki-260930-2fbe.yaml
+severity: medium
+severity_basis: reproducer
+cve_surface: none
+affected_api: bin/omarchy-system-lock (menu Lock row callee, WC89 interface)
+reproducer_command: ./pocs/wc89-silent-lock-exit0.sh
+tripwire_mutation: 'bin/omarchy-system-lock line 10 `omarchy-shell lock lock >/dev/null` becomes `omarchy-shell lock lock >/dev/null || exit 1` (with the user-visible failure surfacing owned by the lock component, SYS-REQ-260912-T0XP family): the tripwire''s two failure arms (engagement refused, binary absent) then exit non-zero, the assertions in pocs/wc89-silent-lock-exit0.sh fail, and the tripwire flips red. The control arm is unaffected.'
+introduced_in: inception
+defect_class: latent
+mitigation: 'Verify a suspicious lock before walking away: run omarchy-hyprland-session-locked (exit 0 locked, 1 unlocked) or look at the lock surface. Re-trigger the failure deliberately in a terminal, where omarchy-system-lock shows the callee stderr directly.'
+remediation: 'bin/omarchy-system-lock must propagate the omarchy-shell lock exit instead of exiting 0. The lock component (SYS-REQ-260912-T0XP family) owns engagement and failure surfacing per the WC89 obligation_delegations record. Raise a visible failure surface (desktop notification with a non-zero CLI exit); the menu side stays fire-and-forget by design. Close criterion: pocs/wc89-silent-lock-exit0.sh flips red, with both failure arms exiting non-zero.'
+review_date: "2026-12-30"
+status: reviewed
+history:
+    - at: "2026-09-30T21:15:38Z"
+      by: agent:opencode-quattro
+      action: created
+    - at: "2026-09-30T21:15:46Z"
+      by: agent:opencode-quattro
+      action: review
+      detail: reviewer=agent:opencode-quattro,new_review_date=2026-12-30
+    - at: "2026-09-30T21:16:39Z"
+      by: agent:opencode-quattro
+      action: capture-evidence
+      detail: proof/evidence/ki-260930-2fbe.yaml
+    - at: "2026-09-30T21:25:02Z"
+      by: agent:opencode-quattro
+      action: edit
+      detail: set-description,set-mitigation,set-remediation
+    - at: "2026-09-30T21:25:02Z"
+      by: agent:opencode-quattro
+      action: refresh-evidence
+      detail: proof/evidence/ki-260930-2fbe.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/wc89-silent-lock-exit0.sh runs the real bin/omarchy-system-lock; only the side-effect commands (omarchy-shell, hyprctl, pgrep, pkill, timeout, pidwait, flock) are stubbed on PATH, never the binary under test.
+        quantitative_impact: the metric is the callee exit status - both failure arms (engagement refused, binary absent) exit 0, byte-identical to the success arm, so the observable cannot distinguish a locked session from a failed one.
+        control_test: arm 3 is the negative control - a healthy engagement exits 0 AND the stub log proves the lock verb was invoked with exact args (argc=2 args=[lock lock]), so the harness demonstrably exercises the real invocation wiring; the identical exit across arms is the masked impact.
+        operational_path_verified: control + failure arms drive the real operational path (Lock row action string -> bin/omarchy-system-lock -> omarchy-shell lock lock) end to end.
+        current_deployment_relevance: bin/omarchy-system-lock line 10 carries the unchecked engagement call on this branch today.
+        honest_severity: medium - high impact (one-way visibility loss on a security control) times near-zero likelihood (default-set binary invariant), exactly the WC89 hazard_review grade; no escalation claimed.
+        reproducible: deterministic stub harness, three arms, ~40ms; exit code alone decides every assertion.
+        no_inflation: claims limited to the demonstrated silent exit-0 on engagement failure; no privilege, data, or network claims.
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
+        reachability_verified: 'no ingress access-control or trust boundary to traverse: the surface is the user own session lock CLI path inside their own session'
+        untrusted_attacker: 'local visibility/reliability defect: the trigger is a refused engagement or a missing binary, not an adversary; no actor model applies'
+affected_file: bin/omarchy-system-lock
