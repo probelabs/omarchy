@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-29T14:30:51Z"
+updated_at: "2026-09-29T23:56:48Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -7,12 +7,26 @@ steps:
         confirmed_by: agent:kimi-zero-warnings
         note: 'Package lock: AC sweep complete. Lock acceptance suite attempted on the box GUI session 2026-09-28 and is genuinely infeasible headless: omarchy-shell binary absent (omarchy-system-lock fails command-not-found), hyprctl monitors unavailable, compositor never reports locked. STK-REQ-260912-XJ5D AC-001 deferral retained with upgraded box-measured rationale (Hyprland aquamarine headless drmFD=-1 no-allocator, no seat for DRM, nested dmabuf no main device) -- the single tracked debt of this campaign. All other lock ACs witnessed.'
         scope_key: lock
+        check_results:
+            - id: acceptance_criteria_witnessed
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: acceptance_witness_quality
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     annotations-heavy:
         status: confirmed
         confirmed_at: "2026-09-27T22:58:29Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Package lock: MC/DC and obligation evidence annotations complete. Lock scripts (bin/omarchy-*lock*) carry Implements annotations bound to the P708 obligation set; code-level MC/DC measured for the lock package in the bash engine within the 80-req / 298-row green campaign; obligation witnesses grounded (obligation_witness_grounded pass).'
         scope_key: lock
+        check_results:
+            - id: annotation_validity
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: obligation_witness_grounded
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     coverage:
         status: confirmed
         confirmed_at: "2026-09-29T14:30:50Z"
@@ -21,7 +35,7 @@ steps:
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-09-29T14:30:51Z"
+            at: "2026-09-29T23:56:46Z"
             output: |
                 Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
 
@@ -31,7 +45,7 @@ steps:
                   ━━━ IMPLEMENTATION ━━━
                 Refreshing trace index + annotations (88 requirements)…
                     ▶ running orphan_tests_clean…
-                    ✓ orphan_tests_clean             45 test functions scanned, 0 orphans  (27ms)
+                    ✓ orphan_tests_clean             53 test functions scanned, 0 orphans  (28ms)
                     ▶ running orphan_code_clean…
                     ✓ orphan_code_clean              231/231 code functions traced  (0ms)
 
@@ -43,28 +57,50 @@ steps:
         check_results:
             - id: code_mcdc_measure
               status: pass
-              at: "2026-09-29T14:30:50Z"
+              at: "2026-09-29T23:56:46Z"
     debt-standing:
         status: confirmed
         confirmed_at: "2026-09-27T23:02:46Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Debt hygiene final: exactly one standing debt -- STK-REQ-260912-XJ5D AC-001 lock-screen acceptance deferral with box-measured infeasibility rationale (headless aquamarine no-allocator, no seat, nested dmabuf) and a concrete unblock condition. All other deferrals (XTNR AC-001/AC-002 witnesses, P708 obligations) closed by the box acceptance runs. Documented budget dispositions in proof.yaml (proof_complexity_clean, under_modeled_requirements) carry per-finding rationale. Checklist complete; project handed to continuous pipeline posture.'
+        check_results:
+            - id: known_issues_reviewed
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: waivers_reviewed
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     defect-review:
         status: confirmed
         confirmed_at: "2026-09-27T21:57:07Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Defect-claim sessions complete: CRS-0004..0020 (incl. CRS-0017/0019/0020 for the jsonc delta); 7 claims dismissed with refutations, 5 deferred as baseline debt with PoC (review/poc-parse-edges.mjs); defect_review_current scoped+green.'
+        check_results:
+            - id: defect_review_current
+              status: info
+              at: "2026-09-29T23:56:46Z"
     hazard:
         status: confirmed
         confirmed_at: "2026-09-27T22:57:42Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Package lock: hazard review complete. Lock hazard classes covered by the lock defect-claim sessions CRS-0004/0005/0006 and the P708 obligation set (wrap-around, all-disabled no-cursor) whose boundary behavior was re-verified green in the box acceptance run 2026-09-28. Lock screen bypass/fail-closed posture unchanged by this campaign; no code delta in bin/omarchy-*lock* beyond spec-level deferral rationale updates.'
         scope_key: lock
+        check_results:
+            - id: spec_lint_hazard_consequence
+              status: info
+              at: "2026-09-29T23:56:46Z"
     history-mine:
         status: confirmed
         confirmed_at: "2026-09-28T00:27:14Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'History mined on box (local re-confirm was blocked by the coverage rewind cascade): the array-guard commits f443c9e2/84b6f19b are mined into DEFECT-260928-4NG9 (closed, covered_by_requirement BMFE) with FMEA medium grading and four-class hazard review; deferred claims CRS-0019/C01 + CRS-0017/C03 dispositioned verified. No unmined DEFECT/CHG signal remains in the recent delta.'
+        check_results:
+            - id: problem_reports_reviewed
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: change_evidence_complete
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     init:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:13Z"
@@ -85,21 +121,29 @@ steps:
         confirmed_by: agent:kimi-zero-warnings
         note: 'Package lock: residual inventories dispositioned. The single standing residual is the XJ5D AC-001 lock-screen acceptance deferral, upgraded 2026-09-28 with box-measured infeasibility evidence (aquamarine headless drmFD=-1 no-allocator CRIT, no logind seat for DRM, nested wayland dmabuf without main device); tracked as deliberate debt with a concrete unblock condition (seat/session-capable host).'
         scope_key: lock
+        check_results:
+            - id: residual_kill_hygiene
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     skeleton:
         status: not_applicable
         confirmed_at: "2026-09-27T21:42:33Z"
         confirmed_by: agent:kimi-zero-warnings
         note: 'Breadth skeleton landed: 2 STK + SYS + 60 SW + INT SYS-REQ-260927-WC89 (menu->lock interface), all layers populated.'
     spec-review-1:
-        status: confirmed
-        confirmed_at: "2026-09-27T22:57:03Z"
-        confirmed_by: agent:kimi-zero-warnings
-        note: 'Structure and ambiguity pass complete: proof validate 82/82 requirements valid (0 errors); full-audit spec lint suite green (identifier/structure/FRETish checks); ambiguity and conformance debt worked through the 42 grounded spec_conformance reviews REVIEW-30..71 recorded under spec-review-2; remaining heuristic findings dispositioned 2026-09-28 (under_modeled budget disposition in proof.yaml).'
+        status: pending
     spec-review-2:
         status: confirmed
         confirmed_at: "2026-09-29T13:08:31Z"
         confirmed_by: buger
         note: 'Re-confirmed after the strict annotation pass: validate 85/85, 0 suspect links after 27 citation re-reviews (reviewed_targets refreshed), delta limited to // Implements comment lines plus reviewed_targets fingerprint refresh in spec yamls. No spec prose or lifecycle changes.'
+        check_results:
+            - id: spec_lint_spec_conformance_review_grounded
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: software_formalization_complete
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     surface-matrix:
         status: confirmed
         confirmed_at: "2026-09-27T21:56:48Z"
@@ -112,14 +156,35 @@ steps:
         confirmed_by: agent
         note: 'BUG-A delta: the array-root vector rides the existing menu-jsonc-config surface (V-MENU-JSONC-INPUT); no new surface or oracle family. The vector''s kill-domain exclusion for top-level arrays is retracted in L-MENU-JSONC-001 (fixed by SW-REQ-260928-BMFE / DEFECT-260928-4NG9); inline-comment-tail exclusion remains for the BUG-B branch.'
         scope_key: menu
+        check_results:
+            - id: spec_lint_threat_surface_present
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     traces-light:
         status: confirmed
         confirmed_at: "2026-09-29T13:08:25Z"
         confirmed_by: buger
         note: 'Rewound and re-confirmed after strict Implements annotation pass (Menu.qml +16, Service.qml +57, LockView.qml +15, BarWidget.qml prose split) and citation re-reviews of 27 requirements refreshing reviewed_targets to current fingerprints (reviewed_by human:Leonid Bugaev). proof trace suspect: 0; lint 33/33 functions traced (0 untraced).'
         scope_key: menu
+        check_results:
+            - id: annotation_validity
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: orphan_code_clean
+              status: pass
+              at: "2026-09-29T23:56:46Z"
     variables:
         status: confirmed
         confirmed_at: "2026-09-27T21:43:22Z"
         confirmed_by: agent:kimi-zero-warnings
         note: Vars files per layer (lock split 2026-09-28, menu per-layer); 0 orphans, 0 unconstrained outputs; verify gaps PASS.
+        check_results:
+            - id: variable_orphans_clean
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: variables_declared
+              status: pass
+              at: "2026-09-29T23:56:46Z"
+            - id: variable_drift
+              status: pass
+              at: "2026-09-29T23:56:46Z"
