@@ -1,0 +1,31 @@
+id: CRS-260930-3VZG
+spec_reqids:
+    - SW-REQ-260922-SNZG
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260922-SNZG
+      dir: .proof/defect-sessions/CRS-260930-3VZG/cells/SW-REQ-260922-SNZG
+      status: complete
+      attempts: 1
+      elapsed_secs: 1323.153234679
+      artifact_hashes:
+        deliverable.md: sha256:4676818b7bb10ae7ee8167d14c9f1ee6c7ade490e67a1ac2eee7d94b306b6dd7
+        ledger.jsonl: sha256:5b90f579f8448be9385edb3c7ffa3962fe6a47a4fbd3bfdbeb4d8a08329f4c05
+        reviewed-list.txt: sha256:112ad9c43abb4f2b736dcd2985f5015a75d5c2d65615c5802e62c29b28a42066
+input_fingerprint:
+    spec_yaml_sha: sha256:328e5ee9fd6c48305bd2bbb03205470a96e3cb040bb385c615fcc906f06a23cb
+    spec_projection: semantic-v2
+    code_fingerprints:
+        bin/omarchy-menu: sha256:a375f6bcd2bf348d6f2d724a0eb5186148751e5f83d7c50c4757e5c1cfd097a0
+    claims_sha: sha256:a22ff3c2b9838f05f14b4332b55a15338c4e370cf7cd82e1b2abbbb4614061ac
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 110153
+    output_tokens: 85504
+    cost_usd: 0.32803812
+    wall_secs: 1323.153234679
+    cells_metered: 1
+created_at: "2026-09-30T08:15:07Z"
+updated_at: "2026-09-30T10:27:23Z"

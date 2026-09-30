@@ -1,0 +1,32 @@
+id: CRS-260930-DMTP
+spec_reqids:
+    - SW-REQ-260922-E4J2
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260922-E4J2
+      dir: .proof/defect-sessions/CRS-260930-DMTP/cells/SW-REQ-260922-E4J2
+      status: complete
+      attempts: 1
+      elapsed_secs: 995.568775244
+      artifact_hashes:
+        deliverable.md: sha256:321b57f3c3b34ee02710e06891ba5859f5aa765c3d1bb3245b1784daa1cb14df
+        ledger.jsonl: sha256:2397c7f774d69867c5a92092d2d613db7b0257e02b187092831b384d91edcc1a
+        reviewed-list.txt: sha256:b9ff7512b809746c416e06a92759e660c0d6c9fecdac3cba87c6318626e01553
+input_fingerprint:
+    spec_yaml_sha: sha256:d7f4ebe53cec4c1c9a84a52599ba57d06ba2c4e925502669185e18ac258f6f08
+    spec_projection: semantic-v2
+    code_fingerprints:
+        shell/plugins/menu/Menu.qml: sha256:5c32afcdc6e8eafd82f1e7b68c1e9a0b66d2e65fa0f740b435fa9f412327efeb
+        shell/plugins/menu/MenuModel.js: sha256:803bcb9d88fb2b9c08a72713efc4d258c4b166d24e4430eec87e22a8fe1e77f1
+    claims_sha: sha256:70a38742d32db0e84085cc839ea20c899dd7cb63dcc47d48b76af4ef2e30270b
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 152513
+    output_tokens: 65968
+    cost_usd: 0.52181636
+    wall_secs: 995.568775244
+    cells_metered: 1
+created_at: "2026-09-30T08:15:06Z"
+updated_at: "2026-09-30T09:28:35Z"

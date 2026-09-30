@@ -1,0 +1,32 @@
+id: CRS-260930-WK59
+spec_reqids:
+    - SW-REQ-260928-8VJQ
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260928-8VJQ
+      dir: .proof/defect-sessions/CRS-260930-WK59/cells/SW-REQ-260928-8VJQ
+      status: complete
+      attempts: 1
+      elapsed_secs: 1782.809563269
+      artifact_hashes:
+        deliverable.md: sha256:8ab93138cc03a4422cb1d27cc000951fa19e0e742495c9538ce01222cb94c003
+        ledger.jsonl: sha256:e158357027762a9bd420188a7954c49bd0e6a9f7d50bfa597fb9cbde20aad891
+        reviewed-list.txt: sha256:cdcad993213c665faf9e2f5d1377e89a7ba3827eb4317e2b4ebf24b8f8c9a12a
+input_fingerprint:
+    spec_yaml_sha: sha256:a584e75c693c0f893e44a6f6acba12fa421063922d5fee516ec0100cf6cc015c
+    spec_projection: semantic-v2
+    code_fingerprints:
+        shell/plugins/menu/Menu.qml: sha256:5c32afcdc6e8eafd82f1e7b68c1e9a0b66d2e65fa0f740b435fa9f412327efeb
+        shell/plugins/menu/MenuModel.js: sha256:803bcb9d88fb2b9c08a72713efc4d258c4b166d24e4430eec87e22a8fe1e77f1
+    claims_sha: sha256:70a38742d32db0e84085cc839ea20c899dd7cb63dcc47d48b76af4ef2e30270b
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 252148
+    output_tokens: 106370
+    cost_usd: 0.77837288
+    wall_secs: 1782.809563269
+    cells_metered: 1
+created_at: "2026-09-30T08:15:08Z"
+updated_at: "2026-09-30T10:57:23Z"

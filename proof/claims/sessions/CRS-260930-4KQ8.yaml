@@ -1,0 +1,31 @@
+id: CRS-260930-4KQ8
+spec_reqids:
+    - SW-REQ-260922-PRNV
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260922-PRNV
+      dir: .proof/defect-sessions/CRS-260930-4KQ8/cells/SW-REQ-260922-PRNV
+      status: complete
+      attempts: 1
+      elapsed_secs: 1692.221371973
+      artifact_hashes:
+        deliverable.md: sha256:48581da66c81d7b5292a5f3f98e73db6100c21795d6f7213fb95bf503da67c5a
+        ledger.jsonl: sha256:50c1ac403c04b9f23ee94ec0f88215942b3e2643be78e18ed29ba1d892deea56
+        reviewed-list.txt: sha256:91d0172fdb180b484102894c7e2ccb2994daf46445a64bbc60b1018aab1b1bd8
+input_fingerprint:
+    spec_yaml_sha: sha256:f0f25905ec2630f2b87ee03d2bf0930276ecae62367f80674b7a9916035da50b
+    spec_projection: semantic-v2
+    code_fingerprints:
+        shell/plugins/menu/MenuModel.js: sha256:803bcb9d88fb2b9c08a72713efc4d258c4b166d24e4430eec87e22a8fe1e77f1
+    claims_sha: sha256:87853a631da8f7bdcc62089a436dedb895ce3ffade046ad5f7eb70c17461ea20
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 173075
+    output_tokens: 107943
+    cost_usd: 1.03332256
+    wall_secs: 1692.221371973
+    cells_metered: 1
+created_at: "2026-09-30T08:15:07Z"
+updated_at: "2026-09-30T10:05:12Z"

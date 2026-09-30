@@ -1,0 +1,31 @@
+id: CRS-260930-TTVK
+spec_reqids:
+    - SW-REQ-260912-J8SX
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260912-J8SX
+      dir: .proof/defect-sessions/CRS-260930-TTVK/cells/SW-REQ-260912-J8SX
+      status: complete
+      attempts: 1
+      elapsed_secs: 924.420142539
+      artifact_hashes:
+        deliverable.md: sha256:309c764c6774adf0056377610f26cbc619c6a75232b9fb39df1f0fddfb61cfba
+        ledger.jsonl: sha256:79f1aa9322c612cb59eb68dc9a5de2e496e2f26c6e35520e358acdddc5a8dcb5
+        reviewed-list.txt: sha256:9ebbe303620ad1c64c0dedbe5905bd11040117fdf1f2e2186988792ac7e04668
+input_fingerprint:
+    spec_yaml_sha: sha256:a44b6a948881a0c7a31757556d188b98984b097c751f25f6518acfc1fa207c27
+    spec_projection: semantic-v2
+    code_fingerprints:
+        shell/plugins/lock/Service.qml: sha256:eda838703e9a9199e6cc69af289e9ea26b02fa78806a24b12ba6ef440a52cbe9
+    claims_sha: sha256:59df3fd84a9bd4e80717d62ae4063a7bb13de22eeb01468e798562f12d42b96c
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 128422
+    output_tokens: 58382
+    cost_usd: 0.55761824
+    wall_secs: 924.420142539
+    cells_metered: 1
+created_at: "2026-09-30T08:15:06Z"
+updated_at: "2026-09-30T08:43:10Z"

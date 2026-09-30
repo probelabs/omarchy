@@ -1,0 +1,31 @@
+id: CRS-260930-GZQ0
+spec_reqids:
+    - SW-REQ-260912-FAWV
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260912-FAWV
+      dir: .proof/defect-sessions/CRS-260930-GZQ0/cells/SW-REQ-260912-FAWV
+      status: complete
+      attempts: 1
+      elapsed_secs: 1115.977635349
+      artifact_hashes:
+        deliverable.md: sha256:e497c71c76ad382d08f6dab138dc6914042b91d404eb0a374e8535fb1d2fae03
+        ledger.jsonl: sha256:543f2e1ef07aa8edf3528f700b7ecad380bdab773a48feeded51358324956f6e
+        reviewed-list.txt: sha256:261636acb9d6ff1d1dc9b977e7e7870f9d16c808c0091ab7a106d49d88c7f2e1
+input_fingerprint:
+    spec_yaml_sha: sha256:1c3bec929961bd768766dcbb73a86f2d6d2b967f955b6722356d9b9b0fc07e3d
+    spec_projection: semantic-v2
+    code_fingerprints:
+        bin/omarchy-system-sleep-lock: sha256:fd171c65ef93e5bb1040274f0d6486055a1c4b5690be048a15b107065f4e6bb9
+    claims_sha: sha256:a19d51d04d113c1a23455f76ea9740cf3943c768dfb040b88b5ff163818e5dd4
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 228065
+    output_tokens: 67004
+    cost_usd: 0.63622356
+    wall_secs: 1115.977635349
+    cells_metered: 1
+created_at: "2026-09-30T08:15:06Z"
+updated_at: "2026-09-30T08:46:21Z"

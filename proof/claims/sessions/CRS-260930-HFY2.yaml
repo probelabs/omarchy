@@ -1,0 +1,32 @@
+id: CRS-260930-HFY2
+spec_reqids:
+    - SW-REQ-260922-3T3F
+state: complete
+backend: grok
+model: grok-4.7
+cells:
+    - req_id: SW-REQ-260922-3T3F
+      dir: .proof/defect-sessions/CRS-260930-HFY2/cells/SW-REQ-260922-3T3F
+      status: complete
+      attempts: 1
+      elapsed_secs: 1886.716018979
+      artifact_hashes:
+        deliverable.md: sha256:a48a05d5d828487fbc7dc6447540447aace6469f9cd1e662e6691a6e9ccbaea0
+        ledger.jsonl: sha256:903a50d2950cc67f1348bb264a4807d6a2266fc797114a7a977459fb6dec0aad
+        reviewed-list.txt: sha256:4006d0bb896cf9177aa52845424a176477d15d38b3683b025107ba045be4963e
+input_fingerprint:
+    spec_yaml_sha: sha256:3b90ababd48305c06e033da022d188e8cbb9cec95431596dc6889b8befede20b
+    spec_projection: semantic-v2
+    code_fingerprints:
+        shell/plugins/menu/Menu.qml: sha256:5c32afcdc6e8eafd82f1e7b68c1e9a0b66d2e65fa0f740b435fa9f412327efeb
+        shell/plugins/menu/MenuModel.js: sha256:803bcb9d88fb2b9c08a72713efc4d258c4b166d24e4430eec87e22a8fe1e77f1
+    claims_sha: sha256:70a38742d32db0e84085cc839ea20c899dd7cb63dcc47d48b76af4ef2e30270b
+    prompt_sha: 615a808bdaf817ea584d2ec0d63075a4a2cb89830d87461c99da7493ea247131
+usage:
+    input_tokens: 185270
+    output_tokens: 121715
+    cost_usd: 0.66275452
+    wall_secs: 1886.716018979
+    cells_metered: 1
+created_at: "2026-09-30T08:15:06Z"
+updated_at: "2026-09-30T09:17:57Z"
