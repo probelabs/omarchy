@@ -413,6 +413,7 @@ assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'power_menu'), 'sy
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, ''), 'root', 'menu routes empty input to root')
 // MCDC SW-REQ-260922-74BZ: alias_match=F, exact_id_match=F, route_input=T, route_is_literal_input=T => TRUE
 // MCDC SW-REQ-260922-CYB9: alias_match=F, exact_id_match=F, route_input=T, route_is_alias_target=F => TRUE [no-action: no alias matches -- the alias loop finds nothing and the input falls through]
+// SW-REQ-260922-74BZ:boundary:nominal
 assertEqual(menu.resolveRoute(routed.items, routed.itemOrder, 'no-such-route'), 'no-such-route', 'menu falls through to the literal input')
 assert(menu.matchesQuery(routed.items['apps.htop'], 'system', true), 'menu still finds an app by its keywords in search')
 assert(
@@ -814,6 +815,7 @@ const providerRowsFor = values => values.map(value => ({ id: `style.font.${value
 const firstProviderMerge = menu.swapProviderRows(nonAppItems, nonAppOrder, 'style.font', providerRowsFor(['mono', 'serif']))
 // MCDC SW-REQ-260922-EFNR: previous_batch_replaced=F, provider_reran=F => TRUE [no-action: the first provider merge starts from a map with no style.font rows -- no previous batch exists to replace]
 // MCDC SYS-REQ-260922-0M8A: dynamic_rows_swapped=T, provider_rows_arrive=T => TRUE
+// SW-REQ-260922-Z680:atomicity:nominal
 assert(
   firstProviderMerge.itemOrder.join(',') === 'root,apps,style.font.mono,style.font.serif',
   'provider merge appends its rows'
@@ -823,6 +825,7 @@ assert(
     .itemOrder.join(',') === 'root,apps,style.font.mono,style.font.serif',
   'repeating a provider merge does not duplicate rows'
 )
+// SW-REQ-260922-Z680:atomicity:negative
 // A plugin drops out of the Enable list the moment it is enabled, so a
 // provider that runs again has to lose the rows it contributed last time.
 const rerunProviderMerge = menu.swapProviderRows(firstProviderMerge.items, firstProviderMerge.itemOrder, 'style.font', providerRowsFor(['serif']))

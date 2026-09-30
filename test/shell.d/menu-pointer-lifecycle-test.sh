@@ -43,8 +43,10 @@ function extractQmlFunction(name) {
 // resolves to the id's item or null, never a dangling entry.
 const itemFn = new Function('root', extractQmlFunction('item') + '\nreturn item')
 const model = itemFn({ items: { root: { id: 'root', label: 'Go' }, 'apps.term': { id: 'apps.term', label: 'Term' } } })
+// SW-REQ-260929-B8N9:malformed_input:nominal
 assertEqual(model('root').label, 'Go', 'a present id yields its item')
 assertEqual(model('apps.term').label, 'Term', 'a nested present id yields its item')
+// SW-REQ-260929-B8N9:malformed_input:negative
 assertEqual(model('missing'), null, 'an absent id yields null, never a dangling entry')
 // MCDC SW-REQ-260929-B8N9: item_by_id_resolved=T, item_requested=T => TRUE
 
@@ -67,6 +69,7 @@ const freeze = new Function('shown', 'cardTop', 'maxRowsHeight', 'effectiveCardT
   extractQmlFunction('freezeCardTop') + '\nfreezeCardTop()\nreturn { cardTop: cardTop, maxRowsHeight: maxRowsHeight }')
 const panelRoot = { visibleRowsHeight: 300 }
 let card = freeze(true, -1, -1, 412, panelRoot)
+// SW-REQ-260929-DXFJ:edge_case:nominal
 assertEqual(card.cardTop, 412, 'the first interaction pins cardTop at the effective top')
 assertEqual(card.maxRowsHeight, 300, 'the first interaction pins maxRowsHeight at the current rows height')
 card = freeze(true, card.cardTop, card.maxRowsHeight, 999, panelRoot)
@@ -103,6 +106,7 @@ const makeRowRoot = (selectable) => ({ rowSelectable: () => selectable, cursorAc
 const hitGate = makeGate(true)
 const hitRoot = makeRowRoot(true)
 runSelectFromPointer(hitGate, hitRoot)(5, {}, {})
+// SW-REQ-260929-T378:edge_case:nominal
 assertEqual(hitRoot.selectedIndex, 5, 'a passed gate moves the selection onto the hovered selectable row')
 assertEqual(hitRoot.cursorActive, true, 'a passed gate activates the cursor')
 
