@@ -1,5 +1,5 @@
 checklist: onboard_v1
-updated_at: "2026-09-30T20:10:26Z"
+updated_at: "2026-09-30T20:51:58Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -29,13 +29,13 @@ steps:
               at: "2026-09-30T00:38:57Z"
     coverage:
         status: confirmed
-        confirmed_at: "2026-09-30T20:10:23Z"
-        confirmed_by: human:Leonid Bugaev
-        note: 'Re-confirmed after the STE100 prose sweep: governance prose only (KI yaml description/mitigation/remediation sentences split at clause boundaries, V-MENU-ACTION-SILENT-REFUSAL description split, vector bound to KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS via vector link). No code, test, or spec-requirement deltas, so traced functions, witness rows, and MC/DC measurements are unchanged; code_mcdc_measure re-ran green (bash/js/qml, 322 witness rows, 0 uncovered) and the cascade checks stayed green (suspect_clean 0, trace_review_evidence_current, conformance grounded, ki_prose_shape).'
+        confirmed_at: "2026-09-30T20:51:57Z"
+        confirmed_by: agent:opencode-quattro
+        note: 'Re-confirmed after the warnings-campaign lane 3 spec/test delta: obligation evidence triples added to menu-test.sh and menu-pointer-lifecycle-test.sh (B8N9/DXFJ/T378/Z680/74BZ), atomicity/boundary classes added to Z680/74BZ checklists, WC89 error_handling delegated to T0XP, 41 verification_state syncs via derived proposal, 3 DEFECT known-issue dispositions, pocs/** excluded from production_include. No product code changed, so traced functions and MC/DC witness rows are unchanged; obligation witnesses improved (enforcement_backed all 45 cataloged items backed).'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-09-30T20:10:26Z"
+            at: "2026-09-30T20:51:58Z"
             output: |
                 Verification scope: include=bin/omarchy-*lock*, bin/omarchy-menu*, default/omarchy/omarchy-menu.jsonc, ... +6 more (9 total) (run 'proof scope' for the full list)
 
@@ -43,20 +43,18 @@ steps:
                 Requirements: 90 total
 
                   ━━━ IMPLEMENTATION ━━━
+                    ✓ orphan_code_clean              231/231 code functions traced  (0ms)
                     ✓ orphan_tests_clean             53 test functions scanned, 0 orphans  (0ms)
-                Refreshing trace index + annotations (90 requirements)…
-                    ▶ running orphan_code_clean…
-                    ✓ orphan_code_clean              231/231 code functions traced  (70ms)
 
                   Errors: 0  Warnings: 0
 
                 Help: proof help audit
-                  Cache: 1 hits / 1 fresh / 1 stored (computed in 2s)
+                  Cache: 2 hits / 0 fresh (computed in 856ms)
         scope_key: menu
         check_results:
             - id: code_mcdc_measure
               status: pass
-              at: "2026-09-30T20:10:23Z"
+              at: "2026-09-30T20:51:57Z"
     debt-standing:
         status: confirmed
         confirmed_at: "2026-09-27T23:02:46Z"
