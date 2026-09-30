@@ -57,8 +57,38 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:07Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:39Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:13:57Z"
+obligation_checklist:
+    - external_call_timeout_bounded
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: hyprctl binds (line 285) and xkbcli compile-keymap run with no timeout wrapper; a stalled Hyprland IPC - documented as real during lid transitions - or a wedged xkbcli keymap compile hangs the keybindings menu build with no backstop, the same exposure batch A deferred on EH0K for hyprctl -j monitors
+      tracking: hazard-batch-B/9DMS-hyprctl-xkbcli-no-timeout
+      owner: agent:opencode-hazard-b
+hazard_review:
+    reviewed_at: "2026-09-30T07:13:11Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+            - edge_case
+          rationale: 'Worst case: the menu mislabels a binding - a resolved symbol from the wrong keymap section shadows a correct fallback, or an unknown code renders raw as code:N - misleading a user hunting for a keybinding, cosmetic and graded low because dispatch uses the binding''s own expression, never the displayed symbol. error_handling is the subject: xkbcli failure or an empty keymap degrades to the built-in fallback table, and </dev/null on the xkbcli pipe keeps a keymap read from consuming binding records on stdin - the composition trap this design closes. boundary: fallback-table codes are the fixed enumerated set (10..21, 59..61) plus mouse 272-274; a code outside both the keymap and the table is the uncovered edge that falls back to raw display. edge_case: GRAVE rewriting to ~ is a display convention over the layout-dependent keysym, so the symbol tracks whichever key the active layout puts left of 1 - witnessed by the source-derived keymap parse.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'Given one compiled keymap, every binding resolves to the same symbol on every menu build: the awk pass folds code_by_name and sym_by_name once, the fallback table is a fixed literal, and later keymap entries overwrite earlier ones deterministically rather than by iteration order - the menu shows a stable label for a stable configuration.'
+        - category: structural
+          disposition: not_applicable
+          rationale: awk associative arrays over regex-matched string fields; no memory, pointer, or encoding surface, and the toupper normalization is a display convention on an internal symbol vocabulary, not a round-trip.
+        - category: domain
+          disposition: reviewed
+          rationale: Two cross-process reads (hyprctl binds, xkbcli compile-keymap) feed this resolution, both without deadline wrappers; the class that names this hazard is accepted as tracked debt rather than suppressed, because a stalled Hyprland IPC is documented as real during lid transitions and xkbcli inherits the same exposure - the deferral entry records the consequence and the tracking ref.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

@@ -66,6 +66,29 @@ history:
     created_at: "2026-09-22T13:34:05Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:40Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:20:02Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - concurrent
+            - edge_case
+          rationale: 'Worst case: the caller''s read races the write - the done marker landing before the selection bytes are durable converts a real pick into a spurious cancel (the CLI exits 1 on an empty selection), or a late answer for an already-finished request writes into the next invocation''s files; the single bash -c ordering (selection flushed, then done truncated) is the commit protocol and the up-front field clearing plus the activeSelection/activeDone locals pin the write to this request''s mktemp-unique paths. boundary: the null-selection dismissal arm versus the answered arm is the exact partition this requirement sits on the answered side of (done-only is C8HX). concurrent: the single-threaded QML loop plus the requestActive re-check make a second finish a silent no-op rather than a duplicate write. edge_case: a selection with newlines or shell metacharacters passes verbatim through Util.shellQuote into printf - the caller receives exactly what was picked, multi-line included, and the quoting helper''s own requirements own its correctness; the polling CLI side and its unbounded wait are the Q6ZS/9ABD siblings'' tracked debt.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - atomicity
+          rationale: 'Answer delivery is all-or-nothing against the polling caller: the done file exists only after the selection file is fully written inside the same bash -c, so observing done implies a complete selection or a deliberate dismissal - no interleaving leaves the caller reading a truncated answer.'
+        - category: structural
+          disposition: not_applicable
+          rationale: One shell-quoted printf through a spawned bash -c; no parsing, arithmetic, memory, or encoding transform - selection bytes are quoted and passed verbatim.
+        - category: domain
+          disposition: not_applicable
+          rationale: Same-user mktemp'd files written by the menu's own result process; summon-payload path provenance is Q6ZS's, the CLI wait and its no-deadline poll are the tracked Q6ZS/9ABD debt, and no network, crypto, or privilege boundary is crossed in the write arm.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

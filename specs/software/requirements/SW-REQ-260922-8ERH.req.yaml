@@ -57,6 +57,30 @@ obligation_suppressions:
       reason: 'bin/omarchy-menu-share deliberately captures the chooser exit status through command substitution (picked=$(omarchy-file-select ...) || status=$?). The chooser status must survive to distinguish cancel (exit 0, silent) from chooser-failure (exit >1, critical notification + exit 1 per SW-REQ-260922-JREH). set -e/pipefail would abort the script on the very nonzero statuses this contract exists to inspect. Remaining pipeline steps (wl-paste, systemd-run) fail soft by design: a failed share leaves no partial state.'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:09:13Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+          suppressed:
+            - error_handling
+          rationale: 'Worst case: the clipboard - which routinely holds passwords and tokens - lands in a /tmp file that outlives the script by design, or a failed clipboard read ships an empty file to the LAN picker. mktemp creates the file 0600, so the retention window is same-user-readable only and system cleanup owns reaping - a documented, graded-low tradeoff. boundary: wl-paste failure produces an empty temp file that still flows into the send (the script does not gate the send on a non-empty clipboard) - the empty-share edge; a chooser status above 1 is distinguished from a user cancel through command substitution so a chooser that never opened cannot pass as an empty selection. error_handling is suppressed as a pointer to the standing obligation_suppressions entry: the chooser-status-capturing command substitution is exactly why set -e/pipefail is wrong here, and the remaining pipeline steps fail soft with no partial state; the critical-notification path for chooser failure is witnessed under JREH.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every argv shape resolves to a defined ending - usage error, clipboard share, chooser-cancelled no-op, chooser-failure notification with exit 1, or a detached send of the picked files; no mode string or file-list shape leaves the script mid-state with the temp file half-written or the send half-configured.
+        - category: structural
+          disposition: not_applicable
+          rationale: Quoted redirections and an argv array passed through to systemd-run; no parsing of file contents, no arithmetic, no encoding transform - the clipboard bytes are written verbatim, which is the contract (binary_data_preserved would only bind if a transform existed).
+        - category: domain
+          disposition: reviewed
+          rationale: 'The LAN send is the feature itself, delegated wholesale to localsend''s own protocol and GUI session: the launcher''s contract ends at a successful systemd-run handoff, so send-outcome errors belong to the detached session that owns the transfer, and transport security (localsend''s encrypted device-to-device protocol) is that tool''s posture, not this script''s. The deliberate detachment means the launcher cannot propagate a failed unit - accepted and documented here as the cost of send_detached rather than carried as an errors_propagated obligation.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

@@ -50,6 +50,28 @@ history:
     created_at: "2026-09-22T13:34:06Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:38Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:04:06Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+          rationale: 'Worst case: a cancelled or failed pick still reaches sudo timedatectl set-timezone - either silently changing the zone from a stale answer or invoking it with an empty zone string. The || exit 1 after the picker pipeline is the whole guard: any picker failure (cancel exit 1, empty selection exit 1, IPC dead) aborts before the set call, and set -e plus the pipeline''s last-command semantics make the picker''s own status the branch. boundary: picker exit 0 with an empty zone string - list-timezones broken while the picker answers - is the residual edge where set-timezone runs with an argument; it fails loudly in timedatectl rather than setting a wrong zone, and the non-cancel contract (set+refresh) is SWFT''s subject. error_handling is the subject: every failure of the picker lands in exit 1 before the privileged call.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every picker outcome maps to exactly one of two defined endings - exit 1 with no timedatectl set call, or set-timezone with the picked zone - so no cancellation shape leaves the script in a half-run state with a pending privileged invocation.
+        - category: structural
+          disposition: not_applicable
+          rationale: Three-line bash pipeline; the zone string is passed as a single quoted argv element, no parsing, arithmetic, or encoding transform, and the unset/empty variable case is the boundary recorded under scenario.
+        - category: domain
+          disposition: not_applicable
+          rationale: The cross-process calls here are an interactive picker whose wait is bounded by the user closing it - that is the declared deadline for an interactive surface - and timedatectl bus calls that ride systemd-timedated's own documented D-Bus timeouts; no socket, network, or privilege-boundary cross is made by this script itself (sudo is the shipped mechanism, invoked non-interactively via the desktop's credential broker), so no timeout-bounded or other domain class adds a distinct obligation.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

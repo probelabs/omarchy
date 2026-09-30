@@ -50,6 +50,28 @@ history:
     created_at: "2026-09-22T13:34:00Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:38Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:06:23Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: a misspelled or hostile route string is carried through as a literal id into menu state - openExistingMenu re-checks item() and falls back to root, so the worst reachable outcome is a wrong-but-benign menu open, and a string like __proto__ or constructor is truthy through the plain map read in item(), which can select a phantom activeMenu and render an empty menu. boundary: exact-id beat, alias beat, and literal fallthrough are the three-way partition; the reserved go/menu inputs hard-routed to root are the reserved-word edge of it. edge_case: case/underscore normalization happens before the exact-id compare, so an uppercase-configured id can miss its own exact match and open as a literal - the normalization-vs-identity edge, graded low (same-user route strings from a local CLI; no privilege, no write, self-healing fallback to root).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'The same input resolves identically on every call: normalization is a pure string transform, the alias scan walks the fixed itemOrder and returns the first matching entry, and the miss arm returns the normalized literal unchanged - no ambient state, clock, or randomness participates, so a misspelling can never resolve one way twice and another way later.'
+        - category: structural
+          disposition: not_applicable
+          rationale: toLowerCase/replace string normalization and plain map reads; no memory, encoding round-trip, or numeric surface. The map-protocol-string truthiness quirk of JS objects is recorded under scenario as the concrete edge it produces.
+        - category: domain
+          disposition: not_applicable
+          rationale: In-process route string resolution over already-loaded menu items; no file, IPC transport, network, crypto, or privilege surface - the IPC receipt of the route string is owned by the lifecycle requirement (50RE).
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

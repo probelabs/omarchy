@@ -50,8 +50,40 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:04Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:38Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T07:13:57Z"
+obligation_checklist:
+    - external_call_timeout_bounded
+obligation_deferrals:
+    - obligation_class: external_call_timeout_bounded
+      reason: 'Second site of the tracked poll deadlock: bin/omarchy-menu-input polls the same done_file with no deadline and no peer-liveness probe (while [[ ! -e $done_file ]]; sleep 0.05), so a menu that dies after a successful summon hangs every synchronous caller, exactly the reproduced defect class on omarchy-menu-select; the empty-selection arm under review sits downstream of that wait'
+      tracking: KI-MENU-SELECT-POLL-DEADLOCK
+      owner: agent:opencode-hazard-b
+      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
+      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
+hazard_review:
+    reviewed_at: "2026-09-30T07:13:10Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: a cancel masquerades as success - exit 0 with empty output would make callers such as confirmation prompts proceed on an answer nobody gave; the -s partition is the whole guard, sending an empty selection file to the unconditional exit 1 arm with nothing on stdout. boundary: selection-file empty versus non-empty is the exact partition this contract names, and done-file-present-but-selection-absent is the cancel encoding it must resolve. edge_case: the selection file vanishing between the -s test and cat fails under set -e to the same observable (nonzero, silent), and a whitespace-only answer counts as non-empty by -s and is passed through verbatim - the caller-side trim is out of this contract. The done-file wait feeding this arm carries the same unbounded poll already tracked on Q6ZS; the identical loop in bin/omarchy-menu-input is that KI''s second site and is deferred, not suppressed.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every (done-file, selection-file) combination the protocol can produce resolves to exactly one defined ending - content printed with exit 0, or silence with exit 1 - with no combination leaving the script printing a partial answer or exiting zero on a cancel.
+        - category: structural
+          disposition: not_applicable
+          rationale: A -s file test, cat, and two mktemp'd fixed paths with an EXIT trap; no parsing of file contents, no arithmetic, no encoding transform - the selection bytes pass through verbatim.
+        - category: domain
+          disposition: not_applicable
+          rationale: Same-user local files at mktemp paths plus the omarchy-shell IPC summon owned by the protocol sibling (Q6ZS/C8HX); no network egress, crypto, or privilege surface in the answer-reading arm this requirement governs.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

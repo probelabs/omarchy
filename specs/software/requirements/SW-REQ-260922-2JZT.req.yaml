@@ -50,6 +50,28 @@ history:
     created_at: "2026-09-22T13:34:02Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:36Z"
+hazard_review:
+    reviewed_at: "2026-09-30T06:56:51Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          rationale: 'Worst case: a guard expression embedding the plain form inside a larger word, e.g. x$(omarchy-default-browser)y, is substring-matched and rewritten to a broken token, so the guard script emits a malformed command that fails silently under >/dev/null 2>&1 and the row answers 0 - a row can misreport visible state. boundary: the plain-form/non-plain split is an exact-string match; forms touching it on either side are the tested partition (untouched test leaves command -v, env-prefixed, and piped forms intact). edge_case: containment occurrences and repeated occurrences of the same reader inside one expression are the unusual-but-valid inputs; global split/join handles repetition and the containment risk is graded, not ignored.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'split/join over a JS string is defined for every expression value, so substitution is total: any guard expression yields a defined rewritten string; no input partition crashes or hangs the transform. malformed_input needs no separate class here - the transform never parses the expression, it only rewrites an exact literal, so unparsable shell is out of scope for this requirement and lands in the guard-execution requirements downstream.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Pure in-process JS string splitting and joining; no manual memory, pointers, format-string sinks, numeric casts, or encoding round-trips - the substitution is byte-level on an already-parsed string.
+        - category: domain
+          disposition: not_applicable
+          rationale: In-process string transform over menu config text; no network, IPC, crypto, SQL, browser, or filesystem surface, and no domain tag on the requirement fires an applies_when.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:06Z"

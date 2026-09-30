@@ -65,6 +65,29 @@ history:
     created_at: "2026-09-22T13:34:02Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:37Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:00:57Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - concurrent
+            - error_handling
+            - edge_case
+          rationale: 'Worst case: a killed batch has answered only the rows it reached, and a row whose when: went unanswered shows by default - so applying the half-read buffer flips rows to visible against real state, or a stranded guardsPending freezes the whole menu on stale results forever (liveness loss). The early return on nonzero exit/signal plus the callLater reevaluation close both arms. concurrent: evaluateGuards re-entered while the batch runs must not kill the in-flight run - guardsPending is the serialization protocol, and Process ignoring command changes while running means a naive restart would throw away read lines and let the surviving tail pass as the whole answer. edge_case: a signal leaves exit code 0, so exitStatus is the discriminator - the exitCode-only check is the trap this requirement forbids. error_handling is the subject itself: discard-and-keep is the declared failure behavior.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - atomicity
+          rationale: 'Result maps swap as a whole set only after a full parse of a successfully exited batch; on any failure path no map is touched, so the menu observes either the last complete set or the next complete set, never a half-applied one. Residual composition note: the three map assignments are sequential, so a binding on an individual map can observe a two-of-three-updated instant before rebuildDisplay runs - display consistency is carried by the explicit rebuild, which is the only consumer that publishes rows.'
+        - category: structural
+          disposition: not_applicable
+          rationale: String buffer accumulation and lastIndexOf-based line parsing over self-produced batch output; no memory management, pointer math, format-string, or encoding round-trip surface. Malformed lines (no colon) are skipped by construction, keeping the parse total.
+        - category: domain
+          disposition: not_applicable
+          rationale: The bash child is spawned and reaped entirely in-process by Quickshell with the batch script composed by the guard-pipeline siblings; no network, IPC-channel, crypto, or privilege boundary is crossed by this requirement's own contract, and no domain tag fires.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:06Z"

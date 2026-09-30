@@ -77,6 +77,30 @@ history:
     created_at: "2026-09-22T13:34:01Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:40Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:19:34Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - concurrent
+          rationale: 'Worst case: a provider rerun leaves its previous batch behind - a just-disabled plugin still listed - or the swap erases another provider''s rows or the menu''s static children; the providerMenu===menuId filter drops exactly the re-run provider''s rows and the fresh-map rebuild copies everything else verbatim, so static children and other providers'' rows cannot be touched by construction. boundary: an empty incoming batch (provider now yields nothing) drops the previous batch and appends nothing - the subject''s core edge; a row colliding with a static child''s id is silently dropped in favor of the static row, the deliberate trust precedence. edge_case: duplicate ids within one batch keep the first occurrence, rows without an id are dropped by the guard, and stamping providerMenu/order onto incoming rows aliases the caller''s objects - model-owned mutation, safe because the caller does not reuse the batch. concurrent: the caller serializes provider applications through the requestSerial/applySerial discipline (a stale batch cannot displace a newer one at this layer), which this function relies on rather than re-implements - recorded as the composition boundary.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+            - atomicity
+          rationale: 'Swapping the same batch twice yields the same model (the second run drops the first''s rows and re-appends identical ones), and the swap is wholesale: the function builds a complete fresh items/order pair and returns it, so the caller installs either the old model or the new one - never a half-swapped menu with some old provider rows and some new.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Array filters and a fresh plain-object map; no memory, pointer, encoding, or numeric surface. The plain-object-as-map exposure to protocol-string ids is the same same-user config hazard dispositioned under 7NPE's malformed_input row and is not re-graded here.
+        - category: domain
+          disposition: not_applicable
+          rationale: In-process model rebuild; providers deliver rows through the shell's own plugin channel owned by the provider-loading requirements, and nothing here touches files, network, crypto, or privilege.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

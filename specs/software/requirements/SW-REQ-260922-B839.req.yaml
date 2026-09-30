@@ -52,6 +52,28 @@ history:
     last_modified_at: "2026-09-27T21:25:39Z"
 obligation_checklist:
     - error_handling
+hazard_review:
+    reviewed_at: "2026-09-30T07:15:33Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+          rationale: 'Worst case: a script invoked with missing arguments proceeds silently and summons a menu nobody can answer, or worse exits 0 so the caller interprets no-answer as a legitimate empty input; the two unconditional usage+exit 1 gates (argv below the prompt floor, options map empty after parsing both argv and stdin paths) are the guard, and the diagnostic on stderr keeps stdout clean for pipelines. boundary: exactly-zero options versus one option is the tested floor; prompt-only invocation (options empty through the stdin mapfile path) is the second gate''s edge. error_handling is the requirement''s own declared class - usage failure is loud, exits 1, and never reaches the summon.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: Every argv/stdin shape resolves to one of two defined endings - usage diagnostic with exit 1 before any IPC, or a proceeded invocation with a prompt and at least one option - no shape reaches the summon half-configured.
+        - category: structural
+          disposition: not_applicable
+          rationale: Arg counting and an echo to stderr; no parsing of user content, no arithmetic beyond count checks, no encoding surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: Pre-IPC argument validation only; the usage path performs no summon, no file, and no network operation, so no domain class applies_when fires.
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

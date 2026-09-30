@@ -97,6 +97,30 @@ history:
     created_at: "2026-09-22T15:09:54Z"
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T20:47:45Z"
+hazard_review:
+    reviewed_at: "2026-09-30T07:04:08Z"
+    reviewed_by: agent:opencode-hazard-b
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - error_handling
+            - boundary
+            - concurrent
+          rationale: 'Worst case: a malformed or hostile IPC payload - unparsable JSON, unknown mode, absent menu id - crashes or wedges the IpcHandler and takes down the whole Quickshell desktop shell, or a second summon arrives while the menu is open and clobbers the live request''s doneFile/selection state. malformed_input: JSON.parse sits in a try/catch degrading to {} so an unparsable payload answers as a root-menu open instead of killing the handler - the declared parse policy. error_handling: every dispatch arm answers (dmenu flow, route fallback to root, close, refresh, ping); no payload shape leaves the call unanswered. boundary: the exact mode strings select/input split dmenu from route, and initialMenu/menu/root is a three-step fallback chain whose arms are the tested partition. concurrent: open-while-open and open-while-dmenu-active interleave through the opened/requestActive/requestSerial discipline; the compositor suite drives real interleaved summons against it. Note: payload.fontFamily is an accepted same-user cosmetic override, graded low - the IPC endpoint is same-user local and carries no privilege.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+          rationale: refresh() and ping() are pure read-side verbs returning ok with identical observable effect when repeated; open() with the same payload twice re-reaches the same route through the fallback chain. Repeated lifecycle calls converge instead of accumulating state - the witness suite re-summons menus across scenarios and asserts the same rendered state.
+        - category: structural
+          disposition: not_applicable
+          rationale: The only parse is JSON.parse wrapped in try/catch with a defined fallback; no memory, pointer, format-string, or encoding surface - payload strings are consumed as opaque JSON or dropped wholesale.
+        - category: domain
+          disposition: not_applicable
+          rationale: 'The IPC endpoint is Quickshell''s same-user local IpcHandler with no authentication surface to declare (auth posture: none, same-user by construction, no network listener), and refresh() reads only the two fixed menu JSONC paths - no egress sink, no tamper/replay surface beyond what the same-user threat model already grants, so no domain class applies_when fires.'
 lifecycle:
     change_history:
         - date: "2026-09-27T20:41:27Z"
