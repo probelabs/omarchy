@@ -19,7 +19,7 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-29T23:51:35.286164006Z"
+    reviewed_at: "2026-09-30T13:58:19.507211355Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:acfb8573e2a8aed78be868c02bdd4cd45d17441df3b6c22c283615ab65053bda
     reviewed_targets:
@@ -28,7 +28,7 @@ traces:
             shell/plugins/lock/LockView.qml:submitted: file1:be671342a01f19c36817051cd641d615
             shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
-            SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
+            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
         - reviewed_at: "2026-09-27T21:17:59.652605Z"
           reviewed_by: agent:kimi-zero-warnings

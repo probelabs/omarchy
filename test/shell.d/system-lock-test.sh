@@ -41,6 +41,7 @@ mapfile -t shutdown < <(grep -E '^(pkill|timeout) ' "$call_log")
 [[ ${shutdown[2]} == "pkill -f [o]rg.omarchy.screensaver" ]] ||
   fail "system lock closes the screensaver terminal after ttfx exits" "calls: ${shutdown[*]}"
 # SW-REQ-260912-MXQG:error_handling:nominal
+# SYS-REQ-260912-T0XP:nominal:nominal
 grep -q '^omarchy-shell lock lock$' "$call_log" ||
   fail "system lock engages the session lock through the shell IPC" "calls: $(cat "$call_log")"
 grep -q '^hyprctl switchxkblayout all 0$' "$call_log" ||

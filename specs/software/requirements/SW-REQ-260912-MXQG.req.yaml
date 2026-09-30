@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-29T10:09:05.659274197Z"
+    reviewed_at: "2026-09-30T13:58:19.496627402Z"
     reviewed_by: human:Leonid Bugaev
     reviewed_fingerprint: sha256:3558f943eda013a9fcc5f9851131e7c00f449a7d0242a0554481e3b8c17a71f0
     reviewed_targets:
         implemented_by:
             bin/omarchy-system-lock: file1:c73a5cfa8c9660a364538063c5adbda8
         satisfies:
-            SYS-REQ-260912-T0XP: req1:ece824031d51c332be249e96173cfd80
+            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
         - reviewed_at: "2026-09-27T21:17:58.798079Z"
           reviewed_by: agent:kimi-zero-warnings
