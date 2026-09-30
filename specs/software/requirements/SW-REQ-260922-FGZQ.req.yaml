@@ -89,6 +89,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Same-user mktemp'd files written by the menu's own result process; summon-payload path provenance is Q6ZS's, the CLI wait and its no-deadline poll are the tracked Q6ZS/9ABD debt, and no network, crypto, or privilege boundary is crossed in the write arm.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -96,3 +97,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=5; review_record:REVIEW-50=present | review_record:REVIEW-78=present | known_issue:KI-MENU-DMENU-NAN-GEOMETRY=failing | known_issue:KI-MENU-INPUT-ESCAPE-CLEARS-FILTER=failing | known_issue:KI-MENU-REQUEST-LIFECYCLE=failing
+          changed_by: agent:auto-derive

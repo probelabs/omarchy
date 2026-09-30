@@ -92,13 +92,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: The parser consumes the two fixed local menu JSONC paths (same-user, no egress sink in the traced files), and the parse-failure recovery policy (empty list, defaults preserved) is owned by the failure-arm siblings (3T3F/66FW), so no domain class binds to the strip contract reviewed here.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:07Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-DMTP
@@ -108,3 +101,16 @@ defect_review:
         emitted: 15
         verified: 8
         dismissed: 7
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:07Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-48=present | known_issue:KI-MENU-ITEMS-KEY-AMBIGUITY=failing | known_issue:KI-MENU-JSONC-STRIP-GAPS=failing
+          changed_by: agent:auto-derive

@@ -70,13 +70,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'control_not_silently_disabled evaluated: the control has no silently-skippable precondition path. The guard keys on EUID, not on configuration that can be absent, and the non-root arm never executes privileged commands, so there is no fail-open shape for the class to close.'
-lifecycle:
-    change_history:
-        - date: "2026-09-12T23:26:25Z"
-          from: draft
-          to: review
-          reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
-          changed_by: agent:kimi-dogfood
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-G166
@@ -86,3 +79,16 @@ defect_review:
         emitted: 15
         verified: 6
         dismissed: 9
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-12T23:26:25Z"
+          from: draft
+          to: review
+          reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
+          changed_by: agent:kimi-dogfood
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-9=present | known_issue:KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT=failing | known_issue:KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT=failing
+          changed_by: agent:auto-derive

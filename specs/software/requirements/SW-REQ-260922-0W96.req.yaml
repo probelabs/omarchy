@@ -87,13 +87,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: 'Bash + GC''d Lua; table.concat over strings only. Lua nil-key read returns nil (no error), keeping the fall-through safe; no manual memory, pointers, or format strings.'
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:06Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-JVX8
@@ -103,3 +96,16 @@ defect_review:
         emitted: 11
         verified: 7
         dismissed: 4
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:06Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=9; review_record:REVIEW-30=present | review_record:REVIEW-75=present | known_issue:KI-MENU-KEYBINDINGS-CODE-REWRITE-OVERREACH=failing | known_issue:KI-MENU-KEYBINDINGS-CSV-DESC-COMMA=failing | known_issue:KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH=failing | known_issue:KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT=failing | known_issue:KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK=failing | known_issue:KI-MENU-KEYBINDINGS-STALE-LUA-CACHE=failing | known_issue:KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH=failing
+          changed_by: agent:auto-derive

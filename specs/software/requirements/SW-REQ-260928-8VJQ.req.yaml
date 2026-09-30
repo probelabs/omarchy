@@ -99,13 +99,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: GC'd JavaScript (QML JS engine); no manual memory, pointers, binary framing, or format strings.
-lifecycle:
-    change_history:
-        - date: "2026-09-28T08:20:36Z"
-          from: draft
-          to: review
-          reason: '[upstream-sync-324f0ba5] [upstream-324f0ba5 refresh] new guarantee for the summonAction fast path absorbed from c231097d; equivalence to bash path verified by construction (omarchy-shell:51 ''{}'' default) and 10/10 edge battery; witnesses in menu-test.sh node block'
-          changed_by: agent:kimi-upstream-watch
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-WK59
@@ -115,3 +108,16 @@ defect_review:
         emitted: 30
         verified: 11
         dismissed: 19
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-28T08:20:36Z"
+          from: draft
+          to: review
+          reason: '[upstream-sync-324f0ba5] [upstream-324f0ba5 refresh] new guarantee for the summonAction fast path absorbed from c231097d; equivalence to bash path verified by construction (omarchy-shell:51 ''{}'' default) and 10/10 edge battery; witnesses in menu-test.sh node block'
+          changed_by: agent:kimi-upstream-watch
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-74=present | known_issue:KI-MENU-SUMMON-ACTION-EMPTY-PAYLOAD=failing
+          changed_by: agent:auto-derive

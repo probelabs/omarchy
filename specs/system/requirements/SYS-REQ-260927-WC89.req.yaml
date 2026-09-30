@@ -45,9 +45,15 @@ history:
     created_by: agent:kimi-zero-warnings
     created_at: "2026-09-27T20:58:23Z"
     last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T08:09:48Z"
+    last_modified_at: "2026-09-30T20:37:24Z"
 obligation_checklist:
     - error_handling
+obligation_delegations:
+    - class: error_handling
+      delegated_to: SYS-REQ-260912-T0XP
+      reason: 'Failure surfacing for the lock call is owned by the callee per the WC89 hazard review: the contract deliberately scopes this interface req to invocation wiring and leaves engagement/failure surfacing to the lock component (SYS-REQ-260912-T0XP family), which carries error_handling on its checklist; the menu-side runner only forwards the callee exit to stderr and the menu is already dismissed at that point'
+      delegated_by: human:Leonid Bugaev
+      delegated_at: "2026-09-30T20:37:24Z"
 obligation_hazards:
     - class: error_handling
       worst_case: 'the Lock row activation closes the menu and forks omarchy-system-lock, which then fails silently (binary absent after a partial sync, or the lock component refuses without a notification surface): the menu is already dismissed so no error reaches the user, and the user walks away from a session they believe locked - impact high, likelihood near zero (the lock binary is a default-set runtime invariant), graded medium on impact times the one-way visibility loss; the callees own lock engagement and its failure surfacing (SYS-REQ-260912-T0XP family, reviewed in batch A)'

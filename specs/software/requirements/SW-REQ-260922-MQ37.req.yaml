@@ -84,13 +84,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Guard predicates are user-authored shell from user-owned menu config executing with the user own authority on every open - the same authority row actions already exercise on click, so open-time evaluation adds no new trust boundary; third-party plugin menus gain only earlier timing of authority they already hold, and no network or privilege surface exists in the generator itself.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:07Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:18Z"
     session: CRS-260930-09QC
@@ -100,3 +93,16 @@ defect_review:
         emitted: 41
         verified: 21
         dismissed: 20
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:07Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-56=present | known_issue:KI-MENU-GUARD-BATCH-STALE-APPLY=failing | known_issue:KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT=failing
+          changed_by: agent:auto-derive

@@ -90,13 +90,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Ranking chooses display order among rows the user already owns and could reach by scrolling; it grants no authority, and the traced scorer has no network, crypto, privilege, or cross-process wait surface.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:07Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-KV89
@@ -106,3 +99,16 @@ defect_review:
         emitted: 40
         verified: 16
         dismissed: 24
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:07Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=5; review_record:REVIEW-62=present | known_issue:KI-MENU-CARET-COUNT-HIDDEN-CHILDREN=failing | known_issue:KI-MENU-PATH-HELPERS-COERCION=failing | known_issue:KI-MENU-SEARCH-SCORE-CRASH-NAN=failing | known_issue:KI-MENU-SEARCH-SCORE-RANKING=failing
+          changed_by: agent:auto-derive

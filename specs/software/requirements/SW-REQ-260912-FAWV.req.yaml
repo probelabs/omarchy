@@ -83,13 +83,6 @@ hazard_review:
           applied:
             - external_call_timeout_bounded
           rationale: 'Every cross-process call declares a deadline: busctl is wrapped in timeout 1s with kill-after, both omarchy-shell calls are clamped to the remaining budget, and the clamshell reconciliation is bounded at 0.4s; nothing defaults to unbounded.'
-lifecycle:
-    change_history:
-        - date: "2026-09-12T23:26:25Z"
-          from: draft
-          to: review
-          reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
-          changed_by: agent:kimi-dogfood
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-GZQ0
@@ -99,3 +92,16 @@ defect_review:
         emitted: 12
         verified: 7
         dismissed: 5
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-12T23:26:25Z"
+          from: draft
+          to: review
+          reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
+          changed_by: agent:kimi-dogfood
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=4; review_record:REVIEW-7=present | known_issue:KI-SLEEP-LOCK-BUDGET-ARG-OCTAL=failing | known_issue:KI-SLEEP-LOCK-BUDGET-NONPOSITIVE=failing | known_issue:KI-SLEEP-LOCK-DEADLINE-INVARIANT-GAPS=failing
+          changed_by: agent:auto-derive

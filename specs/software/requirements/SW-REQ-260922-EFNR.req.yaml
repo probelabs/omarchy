@@ -101,6 +101,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: In-process model rebuild; providers deliver rows through the shell's own plugin channel owned by the provider-loading requirements, and nothing here touches files, network, crypto, or privilege.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -108,3 +109,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-49=present | known_issue:KI-MENU-PROVIDER-PARTIAL-COMMIT=failing | known_issue:KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED=failing
+          changed_by: agent:auto-derive

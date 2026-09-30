@@ -90,6 +90,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: In-process config merge over two already-parsed arrays; the file watching and JSONC parsing are owned by the source-loading siblings, and nothing here touches network, IPC transport, crypto, or privilege.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -97,3 +98,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-40=present | known_issue:KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS=failing | known_issue:KI-MENU-MERGE-PROTOTYPE-IDS=failing
+          changed_by: agent:auto-derive

@@ -97,13 +97,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: GC'd JavaScript; no C-family structural hazard surface.
-lifecycle:
-    change_history:
-        - date: "2026-09-28T00:00:20Z"
-          from: draft
-          to: review
-          reason: '[fix/jsonc-trailing-comma-in-strings] defect_review stamp gained verified:2 (CRS-0017/C03 array-root claim closed by SW-REQ-260928-BMFE; CRS-0017/C01 inline-comment claim closed by SW-REQ-260928-C8W1); promoted out of draft so the changed requirement clears changed_requirements_reviewed'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-HFY2
@@ -113,3 +106,16 @@ defect_review:
         emitted: 40
         verified: 21
         dismissed: 19
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-28T00:00:20Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-trailing-comma-in-strings] defect_review stamp gained verified:2 (CRS-0017/C03 array-root claim closed by SW-REQ-260928-BMFE; CRS-0017/C01 inline-comment claim closed by SW-REQ-260928-C8W1); promoted out of draft so the changed requirement clears changed_requirements_reviewed'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-22=present | known_issue:KI-MENU-JSONC-STRIP-GAPS=failing
+          changed_by: agent:auto-derive

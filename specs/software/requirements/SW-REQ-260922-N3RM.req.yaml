@@ -105,6 +105,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Actions are user-authored commands from user-owned config executing with the user own privileges; the fast path only changes spawn plumbing (in-process summon vs bash), not authority, and the traced files carry no network, crypto, or privilege surface.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:05:21Z"
@@ -112,3 +113,8 @@ lifecycle:
           to: review
           reason: '[zero-warnings-campaign] grounded spec_conformance REVIEW-29: openRoute/runAction branches verified against formula; witnesses already in menu-test.sh + replay'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=4; review_record:REVIEW-29=present | known_issue:KI-MENU-GOBACK-ROOT-STRAND=failing | known_issue:KI-MENU-LINK-SINGLE-HOP=failing | known_issue:KI-MENU-PENDING-INITIAL-MENU-DEAD=failing
+          changed_by: agent:auto-derive

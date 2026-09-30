@@ -75,13 +75,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: stderr text to the user own terminal from the user own argv; no trust boundary is crossed, and no network, crypto, privilege, or wait surface exists in the dispatcher arm.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:07Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:18Z"
     session: CRS-260930-3VZG
@@ -91,3 +84,16 @@ defect_review:
         emitted: 20
         verified: 4
         dismissed: 16
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:07Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-63=present | known_issue:KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS=failing
+          changed_by: agent:auto-derive

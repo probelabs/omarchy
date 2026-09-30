@@ -71,6 +71,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'Local exec of a packaged binary under a restricted PATH; name_resolution_pre_chroot evaluated and not applicable: there is no chroot or sandbox entry, and the absolute path leaves nothing to resolution.'
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"
@@ -78,3 +79,8 @@ lifecycle:
           to: review
           reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
           changed_by: agent:kimi-dogfood
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-10=present | known_issue:KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN=failing
+          changed_by: agent:auto-derive

@@ -72,13 +72,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: In-process lookup over already-normalized config data; the IPC receipt of the route string lives with the lifecycle requirement (50RE) and nothing here touches files, network, crypto, or privilege.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:07Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:18Z"
     session: CRS-260930-BW4T
@@ -88,3 +81,16 @@ defect_review:
         emitted: 28
         verified: 12
         dismissed: 16
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:07Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-45=present | known_issue:KI-MENU-RESOLVE-ROUTE-FOLDING=failing
+          changed_by: agent:auto-derive

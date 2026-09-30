@@ -98,6 +98,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): the still lane vipsthumbnail call has no deadline and a stalled conversion wedges its lane - in preload mode the synchronous drain then blocks the picker open, in lazy mode each open leaks an orphaned vipsthumbnail child. Filed as KI-MENU-IMAGES-VIPS-NO-TIMEOUT; this is the batch D headline hazard. The remaining external surfaces are bounded: ffmpegthumbnailer under timeout -k 5 10, both flock waits bounded at 30s, and the done_file poll in the open flow is a poll-loop mechanism already deferred on SW-REQ-260922-MH9B under KI-MENU-SELECT-POLL-DEADLOCK (generation does not own that wait). cache_coherent: thumbnails key on path+size+mtime, so an edited image regenerates on next open and a repaired video starts clean - stale-cache serving needs an identical signature. The append-only index.tsv grows one ~100-byte row per new-or-changed file with no cap; accumulation_bounded is gated out of this project profile and the growth is desktop-churn bounded, recorded here as an explicitly evaluated residual rather than a new obligation.'
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-30T00:19:43Z"
@@ -105,3 +106,8 @@ lifecycle:
           to: review
           reason: 'Authored to resolve the family_under_modeled finding on bin/omarchy-menu-images: enumerates the thumbnail pipeline (video detection, format dispatch, lazy and queued lanes, lock reaping, cache write, rejection markers) that the two cache-discipline siblings did not cover.'
           changed_by: agent:opencode
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-260930-WJQK=present | known_issue:KI-MENU-IMAGES-VIPS-NO-TIMEOUT=failing
+          changed_by: agent:auto-derive

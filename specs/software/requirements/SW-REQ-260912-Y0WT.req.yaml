@@ -78,6 +78,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'atomic_write evaluated and DEFERRED (see obligation_deferrals): the fingerprint stack is written by as_root tee in place, so an interrupted run can leave a torn /etc/pam.d/omarchy-lock-fingerprint; the same write-temp-rename gap is tracked on JW2J for the password stack. Tracked debt, not an accepted gap.'
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"
@@ -85,3 +86,8 @@ lifecycle:
           to: review
           reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
           changed_by: agent:kimi-dogfood
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-11=present | known_issue:KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN=failing
+          changed_by: agent:auto-derive

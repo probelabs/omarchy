@@ -119,6 +119,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: In-process lock component plus local IPC; no domain class applies_when fires at this level.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:24Z"
@@ -126,3 +127,8 @@ lifecycle:
           to: review
           reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
           changed_by: agent:kimi-dogfood
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=8; review_record:REVIEW-16=present | known_issue:KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER=failing | known_issue:KI-LOCK-FPRINT-PROBE-FAIL-OPEN=failing | known_issue:KI-LOCK-FPRINT-START-FAIL-NO-RETRY=failing | known_issue:KI-LOCK-PAM-ERROR-DOUBLE-COUNT=failing | known_issue:KI-LOCK-PAM-FLIP-ENGAGES-LOCK=failing | known_issue:KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN=failing | known_issue:KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE=failing
+          changed_by: agent:auto-derive

@@ -73,8 +73,10 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:01Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:45Z"
+    last_modified_by: human:Leonid Bugaev
+    last_modified_at: "2026-09-30T20:37:23Z"
+obligation_checklist:
+    - atomicity
 hazard_review:
     reviewed_at: "2026-09-30T07:44:45Z"
     reviewed_by: agent:opencode-hazard-c
@@ -98,6 +100,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: In-memory map merges over user-owned menu data; no trust boundary is crossed and the traced functions carry no network, crypto, privilege, or wait surface.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -105,3 +108,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:52Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=6; review_record:REVIEW-71=present | known_issue:KI-MENU-APP-ACTIVATE-NULL-LIBRARY=failing | known_issue:KI-MENU-APPS-SORT-LOCALE=failing | known_issue:KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS=failing | known_issue:KI-MENU-PROVIDER-PARTIAL-COMMIT=failing | known_issue:KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED=failing
+          changed_by: agent:auto-derive

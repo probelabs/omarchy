@@ -84,6 +84,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Same-user local files at mktemp paths plus the omarchy-shell IPC summon owned by the protocol sibling (Q6ZS/C8HX); no network egress, crypto, or privilege surface in the answer-reading arm this requirement governs.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -91,3 +92,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:51Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-42=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=failing
+          changed_by: agent:auto-derive

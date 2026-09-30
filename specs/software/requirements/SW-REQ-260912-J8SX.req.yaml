@@ -110,13 +110,6 @@ hazard_review:
           applied:
             - control_not_silently_disabled
           rationale: 'The lock control fails closed on its unmet precondition: a missing PAM stack is a reject path with a distinct missing-pam answer and a lock-denied journal event, never a skip path, and no alternate admission bypasses the check. lock-missing-pam-test.sh witnesses the denial.'
-lifecycle:
-    change_history:
-        - date: "2026-09-12T23:26:25Z"
-          from: draft
-          to: review
-          reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
-          changed_by: agent:kimi-dogfood
 defect_review:
     reviewed_at: "2026-09-30T12:57:19Z"
     session: CRS-260930-TTVK
@@ -126,3 +119,16 @@ defect_review:
         emitted: 18
         verified: 8
         dismissed: 10
+verification_state: failing
+lifecycle:
+    change_history:
+        - date: "2026-09-12T23:26:25Z"
+          from: draft
+          to: review
+          reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
+          changed_by: agent:kimi-dogfood
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-2=present | review_record:REVIEW-260929-5VB9=present | known_issue:KI-LOCK-PAM-FLIP-ENGAGES-LOCK=failing
+          changed_by: agent:auto-derive

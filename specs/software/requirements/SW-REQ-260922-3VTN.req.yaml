@@ -89,6 +89,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'This contract is the absence of filesystem effects: no file is created, truncated, or read on the no-request arm. The done/answer file write path, its permissions, and payload-derived path provenance are owned by FGZQ/C8HX and the summon-payload requirements; Menu.qml carries no network egress sink, so no domain class applies_when fires here.'
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:06Z"
@@ -96,3 +97,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-09-30T20:31:50Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; review_record:REVIEW-33=present | review_record:REVIEW-77=present | known_issue:KI-MENU-REQUEST-LIFECYCLE=failing
+          changed_by: agent:auto-derive
