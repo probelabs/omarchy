@@ -1,6 +1,6 @@
 id: KI-LOCK-PAM-FLIP-ENGAGES-LOCK
 title: Lock engages when password PAM disappears during the stabilize window; the stranded watchdog stands down
-description: The missing-pam gate (lockIpc.lock, shell/plugins/lock/Service.qml:741-746) checks passwordPamConfigured once; beginLock then schedules requestSessionLock through the 500ms stabilize delay, and requestSessionLock (87-99) re-checks only lockRequested/sessionLock state - never PAM. A FileView reload whose onLoadFailed lands inside that window (config removed / TTY-cleared failsafe) flips the flag after the gate but before line 99 sets sessionLock.locked = true; onPasswordPamConfiguredChanged early-returns on the false transition and checkStrandedLock explicitly stands down once lockRequested is set ('a lock this shell took is nobody's orphan'), so the session locks with no password PAM behind it and nothing releases it.
+description: The missing-pam gate (lockIpc.lock, shell/plugins/lock/Service.qml:741-746) checks passwordPamConfigured once. BeginLock then schedules requestSessionLock through the 500ms stabilize delay, and requestSessionLock (87-99) re-checks only lockRequested/sessionLock state - never PAM. A FileView reload whose onLoadFailed lands inside that window (config removed / TTY-cleared failsafe) flips the flag after the gate. That happens before line 99 sets sessionLock.locked = true. onPasswordPamConfiguredChanged early-returns on the false transition, and checkStrandedLock explicitly stands down once the code sets lockRequested ('a lock this shell took is nobody's orphan'). So the session locks with no password PAM behind it and nothing releases it.
 affected_requirements:
     - SW-REQ-260912-J8SX
     - SYS-REQ-260912-T0XP
@@ -17,7 +17,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: fingerprint PAM (if configured) can still unlock; TTY remains
-remediation: Re-check passwordPamConfigured in requestSessionLock before sessionLock.locked = true and stand the lock back down (with the missing-pam notification) when it went false; treat a PAM flip while lockRequested as a teardown trigger
+remediation: Re-check passwordPamConfigured in requestSessionLock before sessionLock.locked = true and stand the lock back down (with the missing-pam notification) when it went false. Treat a PAM flip while lockRequested as a teardown trigger
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

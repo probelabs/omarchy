@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT
 title: Lua bind scan aborts on the first throwing require; every later Lua bind silently vanishes from the menu cache
-description: build_lua_bind_cache dofiles the user hyprland.lua under a single pcall (bin/omarchy-menu-keybindings:241). config/hypr/hyprland.lua:14 requires default.hypr.omarchy BEFORE hypr.bindings (line 21); omarchy loads qconsole whose console_monitor() evaluates mon.scale > 0 against the scanner's noop mock - a table-vs-number comparison that throws and kills the whole scan. hypr.bindings is then never processed, so every user Lua bind (rebinds and new binds alike) is missing from the keybindings menu; only a DEBUG=1 stderr line records why.
+description: build_lua_bind_cache dofiles the user hyprland.lua under a single pcall (bin/omarchy-menu-keybindings:241). config/hypr/hyprland.lua:14 requires default.hypr.omarchy BEFORE hypr.bindings (line 21). Omarchy loads qconsole whose console_monitor() evaluates mon.scale > 0 against the scanner's noop mock - a table-vs-number comparison that throws and kills the whole scan. The scan then never processes hypr.bindings, so every user Lua bind (rebinds and new binds alike) goes missing from the keybindings menu. Only a DEBUG=1 stderr line records why.
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:
@@ -14,7 +14,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: DEBUG=1 on omarchy-menu-keybindings prints the failing require
-remediation: 'Isolate each bind registration from unrelated config code: run the dofile with a fully permissive mock (never-throwing comparisons) or scan binds via a per-require pcall boundary so one throwing module cannot drop unrelated binds'
+remediation: 'Isolate each bind registration from unrelated config code: run the dofile with a permissive mock (never-throwing comparisons), or scan binds via a per-require pcall boundary. Then one throwing module cannot drop unrelated binds'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

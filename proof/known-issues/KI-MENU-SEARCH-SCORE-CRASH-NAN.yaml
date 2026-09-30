@@ -1,6 +1,6 @@
 id: KI-MENU-SEARCH-SCORE-CRASH-NAN
 title: searchScore throws on a label-less merged row and returns a NaN rank that displayRow coerces to the best tier
-description: searchScore calls entry.label.toLowerCase() and throws for a row without a label - mergeAppRows accepts rows carrying only an id (F15a); a missing entry.order makes the rank NaN (F15b), and displayRow's NaN handling sorts the row into the top band. Both row shapes are producible through the real merge pipeline.
+description: searchScore calls entry.label.toLowerCase() and throws for a row without a label - mergeAppRows accepts rows carrying only an id (F15a). A missing entry.order makes the rank NaN (F15b), and displayRow's NaN handling sorts the row into the top band. Both row shapes are producible through the real merge pipeline.
 affected_requirements:
     - SW-REQ-260922-SJ7P
 evidence_manifests:

@@ -1,6 +1,6 @@
 id: KI-MENU-LINK-SINGLE-HOP
 title: 'openRoute follows a link one hop and never re-inspects the target kind: link-to-action opens as a menu'
-description: 'After id = entry.target there is no second kind test and no loop (SX26/C18): a link whose target is an action falls into openExistingMenu instead of runAction, and a chained link stops at the intermediate id.'
+description: 'After id = entry.target there is no second kind test and no loop (SX26/C18). A link whose target is an action falls into openExistingMenu instead of runAction, and a chained link stops at the intermediate id.'
 affected_requirements:
     - SW-REQ-260922-N3RM
     - SW-REQ-260922-XW52

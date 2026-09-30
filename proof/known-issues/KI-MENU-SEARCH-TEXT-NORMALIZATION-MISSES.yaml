@@ -1,6 +1,6 @@
 id: KI-MENU-SEARCH-TEXT-NORMALIZATION-MISSES
 title: 'Search text misses: whole-word description matching drops punctuation-glued words and hyphenated alias forms'
-description: termInSearchWords requires whole-word equality, so a description word with trailing punctuation ('system.') never matches the term (F24a) and a mixed-case term never matches the lowercased haystack (F24b); matchesQuery's name path only sees the separator-folded rewrite of aliases and leaf ids, so querying the exact hyphenated form ('power-menu') misses even though the alias is declared that way.
+description: termInSearchWords requires whole-word equality, so a description word with trailing punctuation ('system.') never matches the term (F24a). A mixed-case term likewise never matches the lowercased haystack (F24b). matchesQuery's name path only sees the separator-folded rewrite of aliases and leaf ids. Querying the exact hyphenated form ('power-menu') therefore misses even though the author declared the alias that way.
 affected_requirements:
     - SW-REQ-260922-DQ9P
 evidence_manifests:

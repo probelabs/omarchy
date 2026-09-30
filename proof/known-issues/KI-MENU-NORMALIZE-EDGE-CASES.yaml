@@ -1,6 +1,6 @@
 id: KI-MENU-NORMALIZE-EDGE-CASES
 title: 'normalizeItem edge cases: null parent kept, boolean guards preserved, action:0 mis-kinded, numeric labels'
-description: normalizeItem infers the parent only when it is undefined, so an explicit null parent stays null (F17a) and the path helpers then coerce it; a boolean when/checked/disabled passes the ||-default and later throws inside guard generation (F17b); kind derives from truthiness so action:0 yields a menu row (F17c); a numeric label is stored as a number and a non-string alias stringifies to '[object Object]', which the search index then matches for the term 'object' (F23).
+description: normalizeItem infers the parent only when the parent field equals undefined (F17a). An explicit null parent therefore stays null, and the path helpers then coerce it. A boolean when/checked/disabled passes the ||-default and later throws inside guard generation (F17b). Kind derives from truthiness so action:0 yields a menu row (F17c). The code stores a numeric label as a number. A non-string alias stringifies to '[object Object]', which the search index then matches for the term 'object' (F23).
 affected_requirements:
     - SW-REQ-260922-46HY
 evidence_manifests:
@@ -16,7 +16,7 @@ reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Every trigger needs malformed user JSONC (null parent, boolean guards, numeric labels); the shipped menus are well-formed
+mitigation: Every trigger needs malformed user JSONC (null parent, boolean guards, numeric labels); the shipped menus stay well-formed
 remediation: treat null like undefined for parent, coerce when/checked/disabled to strings or reject non-strings, String() the label, and filter aliases to strings
 owner: agent:opencode-quattro
 review_date: "2026-09-30"

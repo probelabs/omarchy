@@ -1,6 +1,6 @@
 id: KI-MENU-PROVIDER-PARTIAL-COMMIT
 title: Failed/killed providers commit their partial stdout and stay marked loaded; apps provider loads with no AppLibrary
-description: providerProc.onExited merges collected stdout whenever the revision matches, with no exitCode/exitStatus check - the guardProc beside it does check (asymmetry in the same file, anchors PRV1) - so a failed script replaces a good row set with a partial read; providersLoaded is committed BEFORE the process proves itself (PRV2), and never cleared on failure, so the submenu is stuck until a full source rebuild; the apps branch marks providersLoaded unconditionally even when appLibrary is null and mergeAppRows returns empty (PRV3), leaving an empty Apps menu with no retry.
+description: providerProc.onExited merges collected stdout whenever the revision matches, with no exitCode/exitStatus check. The guardProc beside it does check (asymmetry in the same file, anchors PRV1). A failed script therefore replaces a good row set with a partial read. The code commits providersLoaded BEFORE the process proves itself (PRV2) and never clears it on failure. The submenu therefore stays stuck until a full source rebuild. The apps branch marks providersLoaded unconditionally even when appLibrary is null and mergeAppRows returns empty (PRV3), leaving an empty Apps menu with no retry.
 affected_requirements:
     - SW-REQ-260922-EFNR
     - SW-REQ-260922-Z680

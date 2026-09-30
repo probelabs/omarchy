@@ -1,6 +1,6 @@
 id: KI-MENU-RESOLVE-ROUTE-FOLDING
 title: resolveRoute folds the input before the exact-id lookup and returns the normalized string as fallthrough
-description: resolveRoute (MenuModel.js:220-234) lowercases and underscore-folds the input BEFORE the exact-id test, so a stored id 'Setup' is missed by route 'setup' (F8a); the misspelling fallthrough returns the NORMALIZED string instead of the literal input the contract states (F8b); an exact app id is returned despite the header comment 'app rows are never routable' (F8c); and an alias named like a prototype property can never win because item() already reports a hit.
+description: resolveRoute (MenuModel.js:220-234) lowercases and underscore-folds the input BEFORE the exact-id test, so a 'setup' route misses the stored id 'Setup' (F8a). The misspelling fallthrough returns the NORMALIZED string instead of the literal input the contract states (F8b). The code returns an exact app id despite the header comment 'app rows are never routable' (F8c). And an alias named like a prototype property can never win because item() already reports a hit.
 affected_requirements:
     - SW-REQ-260922-PRNV
     - SW-REQ-260922-CYB9

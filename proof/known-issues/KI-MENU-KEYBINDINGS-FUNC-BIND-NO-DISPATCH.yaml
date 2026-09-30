@@ -14,7 +14,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: none - the rows are visible, selecting them silently does nothing
-remediation: Cache a dispatchable expression for function binds (emit the Lua body or register bind_commands entries for the shipped function binds) and refuse to render rows whose recovered dispatcher is empty
+remediation: Cache a dispatchable expression for function binds (emit the Lua body or register bind_commands entries for the shipped function binds). Then refuse to render rows whose recovered dispatcher is empty
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

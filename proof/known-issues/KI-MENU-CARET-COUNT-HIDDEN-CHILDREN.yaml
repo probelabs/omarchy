@@ -1,6 +1,6 @@
 id: KI-MENU-CARET-COUNT-HIDDEN-CHILDREN
 title: childCount counts when-hidden children and duplicate itemOrder entries, so the submenu badge disagrees with what renders
-description: 'childCount has no visibility check and no id dedup: hidden (when:false) children and duplicated order entries are counted once each (F20 measured 3 where 1 row renders) - the caret badge shows counts the menu will not display.'
+description: 'childCount has no visibility check and no id dedup. Hidden (when:false) children and duplicated order entries each count once (F20 measured 3 where 1 row renders). The caret badge therefore shows counts the menu will not display.'
 affected_requirements:
     - SW-REQ-260922-SJ7P
 evidence_manifests:
@@ -16,8 +16,8 @@ reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: The badge count is advisory only; navigation and activation are unaffected, so the wrong count misleads but blocks nothing
-remediation: count only children passing isVisible and dedupe ids (or trust itemOrder to be deduped by the merges)
+mitigation: The badge count is advisory only; navigation and activation stay unaffected, so the wrong count misleads but blocks nothing
+remediation: count only children passing isVisible and dedupe ids (or trust the merges to dedupe itemOrder)
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

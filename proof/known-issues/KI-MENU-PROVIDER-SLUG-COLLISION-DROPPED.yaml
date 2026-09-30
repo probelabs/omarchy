@@ -1,6 +1,6 @@
 id: KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED
 title: 'Provider rows colliding with a static id are silently dropped: takenIds only records batch-minted ids'
-description: 'mergeProviderRows nudges slug collisions only within the current batch (takenIds is batch-local, QML anchor PRV4); a generated id that matches a STATIC item already in the menu is handed unchanged to swapProviderRows, whose nextItems guard drops it (F13: the provider version of a colliding id vanishes without a trace).'
+description: 'mergeProviderRows nudges slug collisions only within the current batch (takenIds is batch-local, QML anchor PRV4). A generated id that matches a STATIC item already in the menu reaches swapProviderRows unchanged. Its nextItems guard drops it (F13: the provider version of a colliding id vanishes without a trace).'
 affected_requirements:
     - SW-REQ-260922-Z680
     - SW-REQ-260922-EFNR

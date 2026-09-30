@@ -1,6 +1,6 @@
 id: KI-MENU-ISDESCENDANT-ROOT-ALWAYS
 title: isDescendantOf reports every non-root id as a descendant of root, including ids absent from the menu
-description: 'isDescendantOf walks parents and treats an unknown/missing parent chain as reaching root (F19: item ''missing-id'' with parent ''not-in-tree'' reports true) - the search current-vs-drilldown partition groups unknown routes under the root menu and reveal logic inherits the wrong grouping.'
+description: 'isDescendantOf walks parents and treats an unknown/missing parent chain as reaching root (F19: item ''missing-id'' with parent ''not-in-tree'' reports true). The search current-vs-drilldown partition therefore groups unknown routes under the root menu, and reveal logic inherits the wrong grouping.'
 affected_requirements:
     - SW-REQ-260922-DQ9P
 evidence_manifests:

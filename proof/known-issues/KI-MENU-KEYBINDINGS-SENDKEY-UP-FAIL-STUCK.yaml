@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK
 title: Refused key-up after an accepted key-down leaves a synthetic key stuck down and skips the sendshortcut fallback
-description: dispatch_sendshortcut_binding commits on the down call (bin/omarchy-menu-keybindings:635), ignores the up call's failure (line 637) and returns unconditionally (line 638). When the compositor accepts the down but refuses the up, the synthetic key is left in the down state - the exact stuck-state the clipboard helper's comment warns about - and the sendshortcut fallback at line 641 is never tried.
+description: dispatch_sendshortcut_binding commits on the down call (bin/omarchy-menu-keybindings:635), ignores the up call's failure (line 637) and returns unconditionally (line 638). When the compositor accepts the down but refuses the up, the synthetic key stays in the down state. That is the exact stuck-state the clipboard helper's comment warns about. The code then never tries the sendshortcut fallback at line 641.
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:

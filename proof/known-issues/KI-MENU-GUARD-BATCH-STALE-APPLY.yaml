@@ -1,6 +1,6 @@
 id: KI-MENU-GUARD-BATCH-STALE-APPLY
 title: 'Guard batches carry no generation token: a batch computed for the previous items publishes onto the new set'
-description: 'guardProc.onExited publishes collected output with no comparison against the items generation (providerProc has a revision check, guards do not): overlapping ids keep the previous when:false on screen; when the newer script is EMPTY the deferred path clears the maps and returns without rebuildDisplay, so the open menu stays stuck on stale visibility (SX26/C09).'
+description: 'guardProc.onExited publishes collected output with no comparison against the items generation (providerProc has a revision check, guards do not). Overlapping ids keep the previous when:false on screen. When the newer script is EMPTY the deferred path clears the maps and returns without rebuildDisplay. The open menu then stays stuck on stale visibility (SX26/C09).'
 affected_requirements:
     - SW-REQ-260922-MQ37
 evidence_manifests:

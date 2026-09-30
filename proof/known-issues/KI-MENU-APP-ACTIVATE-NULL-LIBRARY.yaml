@@ -1,6 +1,6 @@
 id: KI-MENU-APP-ACTIVATE-NULL-LIBRARY
 title: Activating an app row while appLibrary is null closes the menu and skips the launch
-description: 'activateIndex sets opened=false before the launch guard: with appLibrary null at activation time (rows were built while it existed) the click only dismisses the menu - no launch, no reopen (SX26/C29).'
+description: 'activateIndex sets opened=false before the launch guard. With appLibrary null at activation time (the code built the rows while it existed), the click only dismisses the menu. No launch, no reopen (SX26/C29).'
 affected_requirements:
     - SW-REQ-260922-Z680
 evidence_manifests:

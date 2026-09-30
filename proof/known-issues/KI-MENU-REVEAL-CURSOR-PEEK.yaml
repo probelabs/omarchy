@@ -1,6 +1,6 @@
 id: KI-MENU-REVEAL-CURSOR-PEEK
 title: 'revealCursor loses the directional peek: an uninstantiated delegate skips it and the underhang write undoes it'
-description: itemAtIndex returning null (delegate not built) aborts before any adjustment (anchor REV1); with a delegate, the overhang (down) and underhang (up) writes both run unconditionally, so on a short viewport the second undoes the first and the cursor row parks flush with the viewport edge - the exact state the Contain comment forbids; positionViewAtIndex can also apply deferred contentY over the manual tweak.
+description: itemAtIndex returning null (delegate not built) aborts before any adjustment (anchor REV1). With a delegate, the overhang (down) and underhang (up) writes both run unconditionally. On a short viewport the second therefore undoes the first, and the cursor row parks flush with the viewport edge. That is the exact state the Contain comment forbids. positionViewAtIndex can also apply deferred contentY over the manual tweak.
 affected_requirements:
     - SW-REQ-260922-Z48F
 evidence_manifests:

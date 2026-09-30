@@ -1,6 +1,6 @@
 id: KI-LOCK-PAM-ERROR-DOUBLE-COUNT
 title: Abnormal PAM error increments failedAttempts twice (onError and onCompleted both run handlePasswordFailure)
-description: Quickshell's PamContext documents error as followed by completed(PamResult.Error). Service.qml wires onError -> handlePasswordFailure (436-437) AND onCompleted's else branch -> handlePasswordFailure (432); the failedAttempts += 1 at 283 has no per-transaction latch, so one abnormal PAM failure counts as two and the failure message rewrites itself (Authentication failed (n) then (n+1)). Normal wrong passwords take only the completed path and count once.
+description: Quickshell's PamContext documents error as followed by completed(PamResult.Error). Service.qml wires onError -> handlePasswordFailure (436-437) AND onCompleted's else branch -> handlePasswordFailure (432). The failedAttempts += 1 at 283 has no per-transaction latch, so one abnormal PAM failure counts as two. The failure message then rewrites itself (Authentication failed (n) then (n+1)). Normal wrong passwords take only the completed path and count once.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

@@ -1,6 +1,6 @@
 id: KI-MENU-DETAIL-WHITESPACE-QUERY
 title: A whitespace-only filter is not a search for rebuildDisplay but is truthy for the detail gates
-description: 'rebuildDisplay branches on filterText.trim() while rowHeightForDetail, the detail Text and the header test the raw truthy filterText (anchor DET1): setFilter(''   '') keeps the unfiltered rows yet renders detail-height rows and a whitespace title.'
+description: 'rebuildDisplay branches on filterText.trim() while rowHeightForDetail, the detail Text and the header test the raw truthy filterText (anchor DET1). setFilter(''   '') keeps the unfiltered rows yet renders detail-height rows and a whitespace title.'
 affected_requirements:
     - SW-REQ-260922-B757
 evidence_manifests:

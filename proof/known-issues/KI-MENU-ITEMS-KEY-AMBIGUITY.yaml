@@ -1,6 +1,6 @@
 id: KI-MENU-ITEMS-KEY-AMBIGUITY
 title: A flat menu containing an entry id 'items' is parsed as a wrapper and every sibling entry is silently discarded
-description: 'parseMenuJsonc (MenuModel.js:96-98) treats an object-valued top-level ''items'' key as the wrapper form: {''items'': {...}, ''b'': {...}} parses to only the inner rows (F14) - a user menu that legitimately names an entry ''items'' loses all siblings with no diagnostic.'
+description: 'parseMenuJsonc (MenuModel.js:96-98) treats an object-valued top-level ''items'' key as the wrapper form: {''items'': {...}, ''b'': {...}} parses to only the inner rows (F14). A user menu that legitimately names an entry ''items'' loses all siblings with no diagnostic.'
 affected_requirements:
     - SW-REQ-260922-E4J2
 evidence_manifests:

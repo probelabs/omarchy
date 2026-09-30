@@ -1,6 +1,6 @@
 id: KI-SLEEP-LOCK-BUDGET-ARG-OCTAL
 title: argv budget with a leading zero (08/09) bypasses the validation guard via an octal arithmetic error
-description: 'The argv budget guard (bin/omarchy-system-sleep-lock:45) matches ^[0-9]+$ then evaluates (( budget_ms < 1 )) in bash arithmetic, which reads a leading zero as octal: ''08''/''09'' raise ''value too great for base'', the guard compound goes false, and the script keeps the literal token as its budget. The deadline assignment at line 52 errors the same way, every lock_ipc fails its remaining guard, and the run ends in report_unsecured claiming ''within 08ms'' with no lock request issued. ''010'' is silently accepted as octal 8.'
+description: 'The argv budget guard (bin/omarchy-system-sleep-lock:45) matches ^[0-9]+$ then evaluates (( budget_ms < 1 )) in bash arithmetic, which reads a leading zero as octal. ''08''/''09'' raise ''value too great for base'', the guard compound goes false, and the script keeps the literal token as its budget. The deadline assignment at line 52 errors the same way, and every lock_ipc fails its remaining guard. The run ends in report_unsecured claiming ''within 08ms'' with no lock request issued. ''010'' is silently accepted as octal 8.'
 affected_requirements:
     - SW-REQ-260912-FAWV
 evidence_manifests:

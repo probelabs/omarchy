@@ -1,6 +1,6 @@
 id: KI-MENU-OPEN-LEAVES-CONFIRM
 title: A new menu summon re-opens with the stale uninstall confirmation still up
-description: openExistingMenu resets mode/paths/filters but never clears deleteConfirmOpen/deleteTarget (anchor CNF1) and cancel() does not either - the confirm dialog renders over the fresh item set targeting an app row that may no longer exist.
+description: openExistingMenu resets mode/paths/filters but never clears deleteConfirmOpen/deleteTarget (anchor CNF1), and cancel() does not either. The confirm dialog then renders over the fresh item set, targeting an app row that the uninstall can already have removed.
 affected_requirements:
     - SW-REQ-260922-8CQ4
 evidence_manifests:

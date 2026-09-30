@@ -1,6 +1,6 @@
 id: KI-MENU-SELECT-HANDSHAKE-TMP-LEAK
 title: 'Failed second mktemp leaks the selection handshake temp file: cleanup trap installed only after both files exist'
-description: prepare_handshake_files creates selection_file (line 72) then done_file (line 73) but installs the EXIT cleanup trap only at line 75. If the second mktemp fails, set -e exits before the trap exists and the first temp file - the private selection file - stays behind in TMPDIR.
+description: prepare_handshake_files creates selection_file (line 72) then done_file (line 73) but installs the EXIT cleanup trap only at line 75. If the second mktemp fails, set -e exits before the trap exists. The first temp file - the private selection file - stays behind in TMPDIR.
 affected_requirements:
     - SW-REQ-260922-Q6ZS
 evidence_manifests:
@@ -14,7 +14,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: The leak is one temp file per failed second mktemp (disk full or /tmp mode change); a reboot clears /tmp
-remediation: Install the EXIT trap before the first mktemp, wiring the variables as they are assigned (trap 'rm -f "${selection_file:-}" "${done_file:-}"' EXIT)
+remediation: Install the EXIT trap before the first mktemp, wiring the variables as the code assigns them (trap 'rm -f "${selection_file:-}" "${done_file:-}"' EXIT)
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

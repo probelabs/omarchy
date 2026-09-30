@@ -1,6 +1,6 @@
 id: KI-MENU-CLI-EXIT-CODE-WRITE-RACES
 title: 'Contracted exit codes lost when the usage/diagnostic write fails: unknown verb exits 1, help exits 1'
-description: 'Under set -e, the unknown-verb diagnostic (bin/omarchy-menu:50-52) and the help heredoc (34-35) abort the script when their write fails: with fd 2 closed an unknown verb exits 1 without reaching the canonical exit 2, and with fd 1 closed help exits 1 and never reaches exit 0. Callers that distinguish usage errors (2) from generic failure (1) misclassify, and help''s promised success is lost.'
+description: 'Under set -e, the unknown-verb diagnostic (bin/omarchy-menu:50-52) and the help heredoc (34-35) abort the script when their write fails. With fd 2 closed an unknown verb exits 1 without reaching the canonical exit 2. With fd 1 closed help exits 1 and never reaches exit 0. Callers that distinguish usage errors (2) from generic failure (1) misclassify, and help loses its promised success.'
 affected_requirements:
     - SW-REQ-260922-T257
 evidence_manifests:
@@ -13,7 +13,7 @@ reproducer_command: ./pocs/crs-260930-3vzg-menu.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: only manifests when stdout/stderr is closed or full
+mitigation: only manifests on a closed or full stdout/stderr
 remediation: Guard the writes (echo ... >&2 || true; exit 2; and cat >&1 || true; exit 0) so the contracted exit status survives a failed write
 owner: agent:opencode-quattro
 review_date: "2026-09-30"

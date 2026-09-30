@@ -1,6 +1,6 @@
 id: KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS
 title: mergeAppRows/swapProviderRows keep stale .order values and mutate caller-owned rows in place
-description: Both merges copy kept rows by reference without restamping .order, so after any row is dropped the survivors' order values no longer match their itemOrder indexes (F11a/F12b) - searchScore's declaration-order tiebreak then compares stale numbers; both merges also write row.order/providerMenu into the CALLER's row objects (F11b), exactly the in-place write the module header says must never happen ('an in-place write into such an object is occasionally dropped by the engine').
+description: Both merges copy kept rows by reference without restamping .order. After any row leaves the set, the survivors' order values no longer match their itemOrder indexes (F11a/F12b) - searchScore's declaration-order tiebreak then compares stale numbers. Both merges also write row.order/providerMenu into the CALLER's row objects (F11b). That is exactly the in-place write the module header forbids ('an in-place write into such an object is occasionally dropped by the engine').
 affected_requirements:
     - SW-REQ-260922-Z680
 evidence_manifests:

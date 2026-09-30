@@ -1,6 +1,6 @@
 id: KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
 title: Failed PKEXEC_UID/user mapping silently degrades target_user to root, configuring PAM for the wrong account
-description: 'target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent: with OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd probe and both PAM files are then configured for the wrong account (usually root), leaving the installing user''s lock authentication misconfigured.'
+description: 'target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The script then configures the fprintd probe and both PAM files for the wrong account (root unless $USER maps elsewhere). The installing user''s lock authentication then stays misconfigured.'
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
@@ -13,7 +13,7 @@ reproducer_command: ./pocs/crs-260930-g166-c05-c06.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: callers set OMARCHY_INSTALL_USER explicitly (install scripts do; ad-hoc pkexec callers may not)
+mitigation: callers set OMARCHY_INSTALL_USER explicitly (install scripts do; ad-hoc pkexec callers do not always set it)
 remediation: Abort with a diagnostic when the mapping yields an empty target_user instead of falling back to $USER; never configure PAM for uid 0
 owner: agent:opencode-quattro
 review_date: "2026-09-30"

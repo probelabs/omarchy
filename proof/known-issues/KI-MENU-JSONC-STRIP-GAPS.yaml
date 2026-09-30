@@ -1,6 +1,6 @@
 id: KI-MENU-JSONC-STRIP-GAPS
 title: 'stripJsonc parser gaps: comma behind a // comment survives, // eats the newline, block comments and CR pass through'
-description: stripJsonc (shell/plugins/menu/MenuModel.js:2-37) drops a comma only when the next non-whitespace char is }/], so a // comment between them keeps the comma and JSON.parse rejects the file; the // eater consumes through end-of-line WITHOUT keeping the newline, gluing adjacent tokens ([1//c\n2] parses as [12]); block comments /* */ have no branch and are copied through; a // comment under CR-only line endings eats to the next LF or EOF. Each corruption makes parseMenuJsonc return an empty item set for a valid JSONC menu.
+description: stripJsonc (shell/plugins/menu/MenuModel.js:2-37) drops a comma only when the next non-whitespace char is }/]. So a // comment between them keeps the comma and JSON.parse rejects the file. The // eater consumes through end-of-line WITHOUT keeping the newline, gluing adjacent tokens ([1//c\n2] parses as [12]). Block comments /* */ have no branch and the stripper copies them through. A // comment under CR-only line endings eats to the next LF or EOF. Each corruption makes parseMenuJsonc return an empty item set for a valid JSONC menu.
 affected_requirements:
     - SW-REQ-260922-E4J2
     - SW-REQ-260922-3T3F

@@ -1,6 +1,6 @@
 id: KI-LOCK-FPRINT-START-FAIL-NO-RETRY
 title: fingerprintPam.start() returning false disables fingerprint auth for the rest of the lock with no retry
-description: startFingerprint (shell/plugins/lock/Service.qml:294-295) clears fingerprintAuthenticating when fingerprintPam.start() returns false but arms no timer. fingerprintRetryTimer is restarted only from handleFingerprintFinished and the PAM onError path, neither of which runs when a conversation never began, and the per-event callers (onSecureStateChanged, fingerprintCheckProc.onExited) fire once - so a transient start failure leaves fingerprint dead until some unrelated event re-runs startFingerprint.
+description: startFingerprint (shell/plugins/lock/Service.qml:294-295) clears fingerprintAuthenticating when fingerprintPam.start() returns false but arms no timer. Only handleFingerprintFinished and the PAM onError path restart fingerprintRetryTimer; neither runs when a conversation never began. The per-event callers (onSecureStateChanged, fingerprintCheckProc.onExited) fire once - so a transient start failure leaves fingerprint dead until some unrelated event re-runs startFingerprint.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

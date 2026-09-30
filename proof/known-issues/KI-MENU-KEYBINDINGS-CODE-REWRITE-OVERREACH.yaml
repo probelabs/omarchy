@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-CODE-REWRITE-OVERREACH
 title: parse_keycodes rewrites code:N/mouse:N tokens anywhere in a record, corrupting descriptions and commands
-description: 'parse_keycodes'' awk matches /code:([0-9]+)/ and /mouse:([0-9]+)/ against the whole comma-joined record and sub() rewrites the first occurrence (bin/omarchy-menu-keybindings:54-63) - not just the key field. A description like ''Count code:10 items'' renders as ''Count 1 items''; a command like ''echo code:20'' becomes ''echo MINUS''; ''notify-send mouse:272'' becomes ''notify-send LEFT MOUSE BUTTON''. Real code: keys only survive because they happen to be the first match.'
+description: 'parse_keycodes'' awk matches /code:([0-9]+)/ and /mouse:([0-9]+)/ against the whole comma-joined record and sub() rewrites the first occurrence (bin/omarchy-menu-keybindings:54-63) - not just the key field. A description like ''Count code:10 items'' renders as ''Count 1 items''; a command like ''echo code:20'' becomes ''echo MINUS''. ''notify-send mouse:272'' becomes ''notify-send LEFT MOUSE BUTTON''. Real code: keys only survive because they happen to be the first match.'
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:

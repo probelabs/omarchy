@@ -1,6 +1,6 @@
 id: KI-MENU-PATH-HELPERS-COERCION
 title: pathFor coerces a null parent to the id 'null'/'0' row while parentPathFor returns empty
-description: pathFor walks through item(items, null), whose key coercion can land on a row literally keyed 'null'/'0' and appends its label (F21), while parentPathFor returns [] for the same entry - one breadcrumb shows a phantom parent, the other shows none.
+description: pathFor walks through item(items, null), whose key coercion can land on a row literally keyed 'null'/'0' and appends its label (F21). parentPathFor returns [] for the same entry - one breadcrumb shows a phantom parent, the other shows none.
 affected_requirements:
     - SW-REQ-260922-SJ7P
 evidence_manifests:

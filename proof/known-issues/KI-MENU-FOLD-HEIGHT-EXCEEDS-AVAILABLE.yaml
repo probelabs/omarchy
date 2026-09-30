@@ -1,6 +1,6 @@
 id: KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE
 title: foldedListHeight returns a height above the available cap; availableRowsHeight never clamps at zero
-description: The full==1 path returns totals[0]+rowSpacing+peek with no clamp to available/maxHeight (anchor FOLD1; measured 82 against a cap of 50), and availableRowsHeight can return a negative budget (chrome larger than panel.height) that sends every branch past the cap (SX26/C36) - the card clamp then cuts the visible list exactly at a row boundary, removing the fold peek the function exists to provide.
+description: The full==1 path returns totals[0]+rowSpacing+peek with no clamp to available/maxHeight (anchor FOLD1; measured 82 against a cap of 50). availableRowsHeight can also return a negative budget (chrome larger than panel.height) that sends every branch past the cap (SX26/C36). The card clamp then cuts the visible list exactly at a row boundary, removing the fold peek the function exists to provide.
 affected_requirements:
     - SW-REQ-260922-B757
 evidence_manifests:

@@ -1,6 +1,6 @@
 id: KI-MENU-SELECT-GEOMETRY-INT-COERCION
 title: 'Geometry flags silently coerce non-numeric and flag-like values: --width abc summons width 0'
-description: parse_arguments accepts any following word as a geometry value (arity check only, bin/omarchy-menu-select:42) and encode_payload's Perl int() silently coerces non-integers (int(abc)=0, int(10.9)=10, line 86). A value that is itself a known flag (--width --height 400) is consumed as the width, the 400 is dropped as an unknown token, and the summon proceeds with corrupted geometry and no error.
+description: parse_arguments accepts any following word as a geometry value (arity check only, bin/omarchy-menu-select:42) and encode_payload's Perl int() silently coerces non-integers (int(abc)=0, int(10.9)=10, line 86). parse_arguments consumes a value that names a known flag (--width --height 400) as the width and drops the 400 as an unknown token. The summon proceeds with corrupted geometry and no error.
 affected_requirements:
     - SW-REQ-260922-Q6ZS
 evidence_manifests:

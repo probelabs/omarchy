@@ -1,6 +1,6 @@
 id: KI-MENU-PENDING-INITIAL-MENU-DEAD
 title: 'pendingInitialMenu is stored and never read: a route summoned before the JSONC loads opens root and stays there'
-description: 'openRoute stores the resolved id in pendingInitialMenu (Menu.qml:974) and nothing reads it (anchor PIM1: exactly two occurrences) - with items still empty at summon time, resolveRoute returns the literal, item() misses, openExistingMenu rewrites to root, and after onLoaded nothing applies the stored route. A misspelled route also silently becomes root, undoing resolveRoute''s documented literal fallthrough in the same turn.'
+description: 'openRoute stores the resolved id in pendingInitialMenu (Menu.qml:974) and nothing reads it (anchor PIM1: exactly two occurrences). With items still empty at summon time, resolveRoute returns the literal, item() misses, openExistingMenu rewrites to root, and after onLoaded nothing applies the stored route. A misspelled route also silently becomes root, undoing resolveRoute''s documented literal fallthrough in the same turn.'
 affected_requirements:
     - SW-REQ-260922-N3RM
     - SW-REQ-260922-50RE

@@ -1,6 +1,6 @@
 id: KI-MENU-MERGE-PROTOTYPE-IDS
 title: mergeMenuSources stores prototype-named ids but drops them from itemOrder - the row is written and never rendered
-description: mergeMenuSources' presence test !nextItems[entry.id] is truthy for inherited properties, so an id like 'constructor' skips the nextOrder push while the assignment still stores the row (F9); __proto__ additionally invokes the prototype setter. Later order-walks iterate itemOrder and never see the entry.
+description: mergeMenuSources' presence test !nextItems[entry.id] is truthy for inherited properties. An id like 'constructor' therefore skips the nextOrder push while the assignment still stores the row (F9). __proto__ additionally invokes the prototype setter. Later order-walks iterate itemOrder and never see the entry.
 affected_requirements:
     - SW-REQ-260922-7NPE
 evidence_manifests:

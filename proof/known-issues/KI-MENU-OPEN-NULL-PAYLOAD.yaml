@@ -1,6 +1,6 @@
 id: KI-MENU-OPEN-NULL-PAYLOAD
 title: 'open() throws on a JSON null payload: parse succeeds, the catch does not run, the property read throws'
-description: 'JSON.parse(''null'') returns null without throwing, so the try/catch in open() does not cover the dereference: payload.fontFamily throws TypeError, no mode dispatch runs, the summon lifecycle is never answered (anchors; SX26/C05 reproduced the null hole).'
+description: 'JSON.parse(''null'') returns null without throwing, so the try/catch in open() does not cover the dereference. payload.fontFamily throws TypeError and no mode dispatch runs, so nothing answers the summon lifecycle (anchors; SX26/C05 reproduced the null hole).'
 affected_requirements:
     - SW-REQ-260922-50RE
 evidence_manifests:

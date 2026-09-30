@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH
 title: Successful hyprctl dispatch with a stderr warning is treated as a refusal and the exec command runs twice
-description: dispatch_lua_expression captures 'hyprctl dispatch ... 2>&1' and accepts only status 0 with an empty or exactly-'ok' body (bin/omarchy-menu-keybindings:605-608). A compositor that succeeds but warns on stderr fails the body test, the function returns 1, and dispatch_exec_binding's '|| hyprctl dispatch exec' (line 620) runs the command a second time - double execution for any warned-but-accepted dispatch.
+description: dispatch_lua_expression captures 'hyprctl dispatch ... 2>&1' and accepts only status 0 with an empty or exactly-'ok' body (bin/omarchy-menu-keybindings:605-608). A compositor that succeeds but warns on stderr fails the body test and the function returns 1. dispatch_exec_binding's '|| hyprctl dispatch exec' (line 620) then runs the command a second time - double execution for any warned-but-accepted dispatch.
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:
@@ -14,7 +14,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: Requires a compositor that warns on stderr while accepting the dispatch; current Hyprland accepts cleanly with empty stderr
-remediation: Decide success on the exit status alone (or capture stderr separately and ignore it), so a warning can never flip an accepted dispatch into a fallback re-execution
+remediation: Decide success on the exit status alone (or capture stderr separately and ignore it). Then a warning can never flip an accepted dispatch into a fallback re-execution
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

@@ -1,6 +1,6 @@
 id: KI-MENU-ITEM-PROTOTYPE-LEAK
 title: 'Map reads walk Object.prototype: item(), results maps, providersLoaded treat constructor/toString as real entries'
-description: 'item() is a raw truthy read (items[id] ? ... : null), so inherited prototype properties look up as menu rows (probe F7): they beat aliases in resolveRoute, defeat the root fallback in openExistingMenu/setActiveMenu, and mark provider menus already-loaded (loadProviderForMenu''s providersLoaded truthiness, SX26/C21). The same class on results maps: isDisabled/labelFor read disabledResults[id] off a fresh {} and get the inherited function, dimming and check-marking a row whose id collides (HFY2/C16).'
+description: 'item() is a raw truthy read (items[id] ? ... : null), so inherited prototype properties look up as menu rows (probe F7). They beat aliases in resolveRoute, defeat the root fallback in openExistingMenu/setActiveMenu, and mark provider menus already-loaded (loadProviderForMenu''s providersLoaded truthiness, SX26/C21). The same class hits results maps: isDisabled/labelFor read disabledResults[id] off a fresh {} and get the inherited function. They dim and check-mark a row whose id collides (HFY2/C16).'
 affected_requirements:
     - SW-REQ-260922-PRNV
     - SW-REQ-260922-50RE

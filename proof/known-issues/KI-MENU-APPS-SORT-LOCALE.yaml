@@ -1,6 +1,6 @@
 id: KI-MENU-APPS-SORT-LOCALE
 title: Apps submenu sorts with code-unit < on lowercased labels while search sorts with localeCompare
-description: The apps comparator uses aLabel < bLabel (UTF-16 code units), so labels above U+007A sort after 'z' - accented app names land at the end - while the search path uses localeCompare on the same rows (anchor SRT1).
+description: The apps comparator uses aLabel < bLabel (UTF-16 code units), so labels above U+007A sort after 'z' - accented app names land at the end. The search path instead uses localeCompare on the same rows (anchor SRT1).
 affected_requirements:
     - SW-REQ-260922-Z680
 evidence_manifests:

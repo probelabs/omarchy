@@ -1,6 +1,6 @@
 id: KI-MENU-IMAGES-VIPS-NO-TIMEOUT
 title: vipsthumbnail still-image lane has no timeout; a stalled conversion wedges its fan-out lane indefinitely
-description: generate_thumbnail dispatches still images to env VIPS_CONCURRENCY=1 vipsthumbnail with no timeout wrapper (bin/omarchy-menu-images:219), while the video lane is bounded by timeout -k 5 10 ffmpegthumbnailer. A still image that stalls vips - corrupt or pathological file, or a path on a stalled mount - holds its fan-out lane forever. In --preload mode drain_pending_thumbnails runs synchronously before the picker opens, so enough wedged stills block the image picker open entirely. Lazy opens spawn generate_thumbnail inside the menu process, where each wedged still leaks an orphaned vipsthumbnail child per open. The content-hash lock fd is closed for the converter, so a hung still does not pin the lock; the damage is lane loss and unbounded process accumulation, not lock deadlock. Batch C flagged the mechanism; batch D confirms it against THMB and files the tracked debt.
+description: generate_thumbnail dispatches still images to env VIPS_CONCURRENCY=1 vipsthumbnail with no timeout wrapper (bin/omarchy-menu-images:219), while the video lane wraps ffmpegthumbnailer in timeout -k 5 10. A still image that stalls vips - corrupt or pathological file, or a path on a stalled mount - holds its fan-out lane forever. In --preload mode drain_pending_thumbnails runs synchronously before the picker opens, so enough wedged stills block the image picker open entirely. Lazy opens spawn generate_thumbnail inside the menu process, where each wedged still leaks an orphaned vipsthumbnail child per open. The converter's content-hash lock fd stays closed, so a hung still pins no lock; damage is lane loss and unbounded process accumulation, not lock deadlock. Batch C flagged the mechanism; batch D confirms it against THMB and files the tracked debt.
 affected_requirements:
     - SW-REQ-260929-THMB
 evidence_manifests:
@@ -13,8 +13,8 @@ affected_api: bin/omarchy-menu-images still-image thumbnail lane
 reproducer_command: ./pocs/menu-images-vips-still-no-timeout.sh
 introduced_in: inception
 defect_class: latent
-mitigation: video lane bounded by timeout -k 5 10; lock fd closed for the converter so a hung still cannot pin the content-hash lock; manual recovery is killing stray vipsthumbnail processes
-remediation: wrap the vipsthumbnail invocation in timeout (matching the video lane) or add an async kill to the generator; then close this KI and flip the THMB deferral
+mitigation: video lane bounded by timeout -k 5 10; lock fd closed for the converter so a hung still cannot pin the content-hash lock. Manual recovery is killing stray vipsthumbnail processes
+remediation: Wrap the vipsthumbnail invocation in timeout (matching the video lane) or add an async kill to the generator. Then close this KI and flip the THMB deferral
 owner: agent:opencode-hazard-d
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

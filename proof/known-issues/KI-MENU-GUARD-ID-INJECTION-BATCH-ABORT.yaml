@@ -1,6 +1,6 @@
 id: KI-MENU-GUARD-ID-INJECTION-BATCH-ABORT
 title: 'Guard ids interpolated unquoted into the shared bash batch: metacharacter ids break the protocol or execute commands'
-description: 'guardLine splices the id unquoted: guardScript({''my;id'': {when:''true''}}) emits ''echo my;id:w:1'' - a second command and a broken record format (F16a2), with the result parser then attributing answers to the wrong ids. Because all guards share ONE script, a single unbalanced expression makes the entire batch fail bash -n and every row silently keeps its last answers (F16b2); a boolean when/checked/disabled (normalizeItem preserves it) throws inside generation and aborts the script build entirely (F16c2).'
+description: 'guardLine splices the id unquoted: guardScript({''my;id'': {when:''true''}}) emits ''echo my;id:w:1'' - a second command and a broken record format (F16a2). The result parser then attributes answers to the wrong ids. Because all guards share ONE script, a single unbalanced expression makes the entire batch fail bash -n. Every row then silently keeps its last answers (F16b2). A boolean when/checked/disabled (normalizeItem preserves it) throws inside generation and aborts the script build entirely (F16c2).'
 affected_requirements:
     - SW-REQ-260922-MQ37
     - SW-REQ-260922-Y58B
@@ -17,7 +17,7 @@ reproducer_command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Ids come from the user's own menu JSONC, so the injection is self-inflicted; a broken batch leaves guards stale until the next rebuild
+mitigation: Ids come from the user's own menu JSONC, so the injection harms only the user's own config. A broken batch leaves guards stale until the next rebuild
 remediation: single-quote the id into the echo (or base64 it) and sanitize/validate expressions at parse time; fail one guard without failing the batch
 owner: agent:opencode-quattro
 review_date: "2026-09-30"

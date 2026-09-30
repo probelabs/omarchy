@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-CSV-DESC-COMMA
 title: 'Comma in a binding description shifts every later CSV field: truncated label, wrong dispatcher, failed dispatch'
-description: 'dynamic_bindings prints cache rows as raw comma-joined CSV with no quoting (printf ''%s,%s,%s,%s,%s'', bin/omarchy-menu-keybindings:333). parse_binding_records sets FS='','' and takes action=$3/dispatcher=$4, so a description containing a comma (''Save, quit'') shifts every later field: the menu shows the truncated label, and dispatch receives the literal string '' quit'' as dispatcher and ''exec,alacritty'' as arg - which dispatch_binding treats as an unknown dispatcher.'
+description: 'dynamic_bindings prints cache rows as raw comma-joined CSV with no quoting (printf ''%s,%s,%s,%s,%s'', bin/omarchy-menu-keybindings:333). parse_binding_records sets FS='','' and takes action=$3/dispatcher=$4, so a description containing a comma (''Save, quit'') shifts every later field. The menu shows the truncated label, and dispatch receives the literal string '' quit'' as dispatcher and ''exec,alacritty'' as arg. dispatch_binding treats that pair as an unknown dispatcher.'
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:
@@ -14,7 +14,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: Shipped binding descriptions contain no commas; only user-authored descriptions with commas shift the CSV fields
-remediation: Quote or escape the description field, or switch the internal record format to a separator descriptions cannot contain (TAB), parsing with that separator end to end
+remediation: Quote or escape the description field, or switch the internal record format to a separator descriptions cannot contain (TAB). Then parse with that separator end to end
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

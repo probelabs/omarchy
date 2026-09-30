@@ -1,6 +1,6 @@
 id: KI-LOCK-FPRINT-PROBE-FAIL-OPEN
 title: 'Lock-service fingerprint probe fail-open: substring grep treats zero-enrollment fprintd-list output as configured'
-description: fingerprintCheckProc's embedded probe (shell/plugins/lock/Service.qml:534) is 'fprintd-list "$USER" 2>/dev/null | grep -qi finger'. fprintd-list's stdout for an empty store is 'User NAME has no fingers enrolled for ... Fingerprint Sensor'; grep -qi finger matches the substring, the probe echoes yes, and fingerprintConfigured = true (line 538) - a zero-enrollment user is offered fingerprint auth on the lock screen where every attempt fails. Same substring-oracle class as KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN but a disjoint file and code site (executed per lock via refreshFingerprintStatus).
+description: fingerprintCheckProc's embedded probe (shell/plugins/lock/Service.qml:534) is 'fprintd-list "$USER" 2>/dev/null | grep -qi finger'. fprintd-list's stdout for an empty store is 'User NAME has no fingers enrolled for ... Fingerprint Sensor'; grep -qi finger matches the substring, the probe echoes yes, and fingerprintConfigured = true (line 538). The lock screen then offers fingerprint auth to a zero-enrollment user where every attempt fails. Same substring-oracle class as KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN but a disjoint file and code site (executed per lock via refreshFingerprintStatus).
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

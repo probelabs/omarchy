@@ -1,6 +1,6 @@
 id: KI-MENU-KEYBINDINGS-STALE-LUA-CACHE
 title: Warm keybindings cache serves a stale Lua command after the user edits only the command a __lua bind runs
-description: keybindings_cache_key hashes a version literal, keymap lines and hyprctl binds only (bin/omarchy-menu-keybindings:541-546) - never the Lua source the __lua rows were recovered from. A __lua row's arg is empty in hyprctl output, so a command-only edit leaves the hash unchanged; output_binding_records cats the warm cache (line 575) and the menu keeps dispatching the previous command until some other hash input changes.
+description: keybindings_cache_key hashes a version literal, keymap lines and hyprctl binds only (bin/omarchy-menu-keybindings:541-546) - never the Lua source the scanner recovered the __lua rows from. A __lua row's arg is empty in hyprctl output, so a command-only edit leaves the hash unchanged. output_binding_records cats the warm cache (line 575), and the menu keeps dispatching the previous command until some other hash input changes.
 affected_requirements:
     - SW-REQ-260922-0W96
 evidence_manifests:

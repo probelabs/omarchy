@@ -1,6 +1,6 @@
 id: KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
 title: Compositor-side lock loss with a request outstanding is treated as a finished unlock; no re-lock
-description: 'WlSessionLock.onLockStateChanged (shell/plugins/lock/Service.qml:339-345): when locked flips false while lockRequested is still set - an ext-session-lock finish/acquire failure delivered by the compositor rather than finishUnlock - the branch clears lockRequested and pendingSessionLock, resets auth state and calls runWake() with no queueSessionLock/beginLock. finishUnlock sets lockRequested=false BEFORE locked=false, so this branch only runs for an external drop: a spontaneous protocol-level unlock fails open (session visible, no re-lock attempted), unlike the no-real-screen path which keeps retrying.'
+description: 'WlSessionLock.onLockStateChanged (shell/plugins/lock/Service.qml:339-345): when locked flips false while lockRequested still holds, the branch clears lockRequested and pendingSessionLock, resets auth state and calls runWake() with no queueSessionLock/beginLock. That locked flip is an ext-session-lock finish/acquire failure delivered by the compositor rather than finishUnlock. finishUnlock sets lockRequested=false BEFORE locked=false, so this branch only runs for an external drop. A spontaneous protocol-level unlock then fails open (session visible, no re-lock attempted), unlike the no-real-screen path which keeps retrying.'
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

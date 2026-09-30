@@ -1,6 +1,6 @@
 id: KI-MENU-STICKY-FONTFAMILY
 title: 'Payload fontFamily is sticky: a later open that omits it keeps the previous caller''s font'
-description: fontFamily is written only when the payload field is truthy and no path restores the style default (SX26/C44) - two different summons inherit the first caller's face.
+description: The code writes fontFamily only when the payload field is truthy, and no path restores the style default (SX26/C44). Two different summons therefore inherit the first caller's face.
 affected_requirements:
     - SW-REQ-260922-50RE
 evidence_manifests:

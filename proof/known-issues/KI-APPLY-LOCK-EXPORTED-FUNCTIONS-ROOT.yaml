@@ -1,6 +1,6 @@
 id: KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
 title: Exported bash functions execute as root inside apply-lock despite the trusted-PATH replacement
-description: 'The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact: exported bash functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) are imported into the function table and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48) and an imported command_not_found_handle returning 0 makes ''if omarchy-shell lock status'' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.'
+description: 'The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact. Bash imports the exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into the function table, and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48). An imported command_not_found_handle returning 0 makes ''if omarchy-shell lock status'' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.'
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
@@ -15,8 +15,8 @@ tripwire_mutation: 'Unset imported bash functions under EUID 0 in bin/omarchy-ap
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: sudo env_reset strips exported functions for the non-root arm; the already-root arm (install/upgrade, no sudo) is exposed
-remediation: Unset imported functions before any decision point (eval 'unset -f $(compgen -A function)' under EUID 0, or run the body via env -i bash --noprofile --norc), and use 'command' for the pinned lookups
+mitigation: sudo env_reset strips exported functions for the non-root arm; the already-root arm (install/upgrade, no sudo) stays exposed
+remediation: 'Unset imported functions before any decision point: eval ''unset -f $(compgen -A function)'' under EUID 0. Alternatively run the body via env -i bash --noprofile --norc. Use ''command'' for the pinned lookups'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue

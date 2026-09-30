@@ -1,6 +1,6 @@
 id: KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS
 title: 'normalize-before-merge wipes unspecified defaults: a label-only user entry erases action/aliases/guards'
-description: 'normalizeItem materializes every omitted field as an empty default BEFORE mergeMenuSources'' per-key overlay, so the user''s normalized row carries explicit empty action/aliases/when/checked/disabled/icon keys that overwrite the default row''s values (F10: merged action becomes ''''). The per-key override contract (''a later source overrides only the keys the author declared'') is defeated by the normalization step in the rebuild pipeline.'
+description: 'normalizeItem materializes every omitted field as an empty default BEFORE mergeMenuSources'' per-key overlay. The user''s normalized row therefore carries explicit empty action/aliases/when/checked/disabled/icon keys that overwrite the default row''s values (F10: merged action becomes ''''). The normalization step in the rebuild pipeline defeats the per-key override contract (''a later source overrides only the keys the author declared'').'
 affected_requirements:
     - SW-REQ-260922-7NPE
 evidence_manifests:

@@ -1,6 +1,6 @@
 id: KI-MENU-SUMMON-ACTION-EMPTY-PAYLOAD
 title: summonAction rewrites an explicitly empty quoted payload to {} - the in-process summon diverges from the bash bytes
-description: summonAction's regex captures '' for an explicit empty payload and the 'match[2] || "{}"' fallback rewrites it (F22), while the bash path would pass the empty argument - the mcdc note itself names argv divergence as the forbidden defect.
+description: summonAction's regex captures '' for an explicit empty payload and the 'match[2] || "{}"' fallback rewrites it (F22). The bash path would instead pass the empty argument. The mcdc note itself names argv divergence as the forbidden defect.
 affected_requirements:
     - SW-REQ-260928-8VJQ
 evidence_manifests:

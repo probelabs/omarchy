@@ -1,6 +1,6 @@
 id: KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN
 title: 'Fingerprint gate fail-open: substring grep treats not-enrolled or failed fprintd-list probes as enrolled'
-description: The fingerprint gate (bin/omarchy-apply-lock:47-48) greps fprintd-list output for the substring 'finger' with stderr discarded and no pipefail. Real fprintd empty-enrollment text ('User alice has no fingers enrolled ...') contains 'fingers', so the gate takes the ENROLLED branch and installs pam_fprintd for a user with zero prints; a daemon error banner ('Fingerprints' then non-zero exit) also passes because the pipeline status is grep's. Fingerprint PAM is then configured for an account that can never match a print.
+description: The fingerprint gate (bin/omarchy-apply-lock:47-48) greps fprintd-list output for the substring 'finger' with stderr discarded and no pipefail. Real fprintd empty-enrollment text ('User alice has no fingers enrolled ...') contains 'fingers'. The gate therefore takes the ENROLLED branch and installs pam_fprintd for a user with zero prints. A daemon error banner ('Fingerprints' then non-zero exit) also passes because the pipeline status is grep's. The script then configures fingerprint PAM for an account that can never match a print.
 affected_requirements:
     - SW-REQ-260912-S154
     - SW-REQ-260912-Y0WT
@@ -14,7 +14,7 @@ reproducer_command: ./pocs/crs-260930-g166-c01-c13.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Impact is limited to installs where fprintd-list reports no enrollment or fails; password PAM stays primary and fingerprint is additive, so auth keeps working while misconfigured
+mitigation: Impact covers only installs where fprintd-list reports no enrollment or fails. Password PAM stays primary and fingerprint is additive, so auth keeps working while misconfigured
 remediation: Match the enrollment table (line-anchored 'Fingerprints' header plus per-finger rows) and require fprintd-list exit 0 with pipefail; treat any probe failure as not-enrolled
 owner: agent:opencode-quattro
 review_date: "2026-09-30"

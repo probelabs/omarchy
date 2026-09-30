@@ -1,6 +1,6 @@
 id: KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS
 title: Failed jq payload build still execs the menu IPC with an empty payload and exits 0
-description: 'toggle and summon (bin/omarchy-menu:23,26) embed $(menu_payload ...) inside the exec with no status check: when jq fails, the substitution is empty, the script still execs omarchy-shell shell toggle/summon omarchy.menu '''' and exits 0. A broken payload builder presents as a successful menu open that silently does nothing (the plugin receives an empty payload).'
+description: 'toggle and summon (bin/omarchy-menu:23,26) embed $(menu_payload ...) inside the exec with no status check. When jq fails, the substitution is empty, the script still execs omarchy-shell shell toggle/summon omarchy.menu '''' and exits 0. A broken payload builder presents as a successful menu open that silently does nothing (the plugin receives an empty payload).'
 affected_requirements:
     - SW-REQ-260922-T257
     - SW-REQ-260922-SNZG

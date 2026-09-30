@@ -1,6 +1,6 @@
 id: KI-MENU-DMENU-NAN-GEOMETRY
 title: Non-numeric dmenu width/maxHeight become NaN and collapse the card layout
-description: Math.max(1, Number(payload.width || 300)) is NaN for a truthy non-numeric width and QML int properties coerce NaN to 0 - the card lays out at zero width; the same conversion drops the maxHeight cap silently (anchor DME1).
+description: Math.max(1, Number(payload.width || 300)) is NaN for a truthy non-numeric width, and QML int properties coerce NaN to 0. The card lays out at zero width. The same conversion drops the maxHeight cap silently (anchor DME1).
 affected_requirements:
     - SW-REQ-260922-FGZQ
 evidence_manifests:
@@ -14,7 +14,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Trigger requires a caller passing non-numeric geometry; dmenu callers in-tree pass literals, so normal summons are unaffected
+mitigation: Trigger requires a caller passing non-numeric geometry; dmenu callers in-tree pass literals, so normal summons stay unaffected
 remediation: Number.isFinite guard with the default fallback
 owner: agent:opencode-quattro
 review_date: "2026-09-30"

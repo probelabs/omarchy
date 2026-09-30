@@ -1,6 +1,6 @@
 id: KI-MENU-SEARCH-SCORE-RANKING
 title: 'searchScore ranking anomalies: apps promoted in-tier, root exact-labels swamped, multi-term matches collapse'
-description: 'Executed probes: an app and a menu row with equal scores rank app-FIRST (the -5 within-tier nudge) although the code comment contracts ''App rows sort after all menu items'' (F15d); an exact label at root scores base 2 while the identical exact label nested deeper scores base 0, so the root row ranks below its nested twin and the depth tie-break is swamped (F15f); a multi-term query that matchesQuery accepts across fields (one term on the label, one on the description) scores in the unmatched baseline band, below a single-field pure match (F15e2 - measured 78000 for an accepted query).'
+description: 'Executed probes: an app and a menu row with equal scores rank app-FIRST (the -5 within-tier nudge). That violates the contract in the code comment ''App rows sort after all menu items'' (F15d). An exact label at root scores base 2 while the identical exact label nested deeper scores base 0 (F15f). The root row therefore ranks below its nested twin, and the depth tie-break loses effect. A multi-term query that matchesQuery accepts across fields (one term on the label, one on the description) scores in the unmatched baseline band. That ranks it below a single-field pure match (F15e2 - measured 78000 for the accepted query).'
 affected_requirements:
     - SW-REQ-260922-SJ7P
 evidence_manifests:

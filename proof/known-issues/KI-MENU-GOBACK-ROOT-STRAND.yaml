@@ -1,6 +1,6 @@
 id: KI-MENU-GOBACK-ROOT-STRAND
 title: goBack refuses to retrace while activeMenu is root, stranding navStack after a drill that landed on root
-description: A missing link target is rewritten to root before its source is pushed (Menu.qml:786-787), an explicit root link or a reload-forced root does the same - then goBack's root early-return (801) never pops the stack and Back is a permanent no-op (SX26/C04).
+description: The route code rewrites a missing link target to root before pushing its source (Menu.qml:786-787). An explicit root link or a reload-forced root does the same. Then goBack's root early-return (801) never pops the stack and Back is a permanent no-op (SX26/C04).
 affected_requirements:
     - SW-REQ-260922-N3RM
 evidence_manifests:
