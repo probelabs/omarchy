@@ -6,4 +6,4 @@ subject: SW-REQ-260922-PRNV
 decision: approved
 comment: Read resolveRoute. The exact-id check runs before the alias scan, so an exact id always wins; the alias loop skips kind==='app' entries outright, so an installed app's keywords can never shadow a menu route (the htop Keywords=system case in the description). route_input & exact_id_match models the first arm. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:210
+    - shell/plugins/menu/MenuModel.js:255

@@ -6,4 +6,4 @@ subject: SW-REQ-260922-EFNR
 decision: approved
 comment: Read swapProviderRows. The first pass drops exactly the rows whose providerMenu equals the re-run menu id, keeping static children and other providers' rows in order; the second pass appends the new batch, stamping providerMenu and order, skipping ids already present. The provider_reran condition models the swap invocation; previous_batch_replaced is the drop-then-append pair. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:172
+    - shell/plugins/menu/MenuModel.js:217
