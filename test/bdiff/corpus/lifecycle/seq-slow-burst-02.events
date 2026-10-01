@@ -1,0 +1,3 @@
+# Slow-user timing: every answer write finishes before the next event.
+@slow
+S S P

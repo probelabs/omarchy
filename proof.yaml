@@ -519,3 +519,61 @@ project:
         threshold: 80
     trace_policy:
         mode: source_native
+    review:
+        authority: advisory
+        # Behaviour-diff harness (`proof change behavior-diff`): runs at base and
+        # head in throwaway worktrees over the same inputs; every output
+        # difference is recorded. See test/bdiff/README.md. The command runs in
+        # each revision's worktree, so the harness file comes from THAT
+        # revision; a revision without test/bdiff/harness.mjs exits 127 (the
+        # engine then records the run as unavailable, never as compatible).
+        # OMARCHY_BDIFF_HARNESS=<absolute path> runs one fixed harness copy
+        # against older revisions instead.
+        behavior_diff:
+            harness: 'h="${OMARCHY_BDIFF_HARNESS:-test/bdiff/harness.mjs}"; [ -f "$h" ] || { echo "behaviour-diff harness missing at this revision: $h" >&2; exit 127; }; exec node "$h" {rev} {input}'
+            version: "v1"
+            paths:
+                - shell/plugins/menu/MenuModel.js
+                - shell/plugins/menu/Menu.qml
+            corpus:
+                - default/omarchy/omarchy-menu.jsonc
+                - config/omarchy/extensions/omarchy-menu.jsonc
+                - pocs/reproducers/**/*.jsonc
+                - test/bdiff/corpus/jsonc/*.jsonc
+            input_extension: ".jsonc"
+            timeout_seconds: 20
+            partitions:
+                # DATA: every JS \s char at start / per line, BOM, CRLF, CR,
+                # empty, huge, invalid UTF-8 — of these three seeds (engine cap: 3).
+                - name: data
+                  kind: data
+                  generator: builtin_data
+                  corpus:
+                      - default/omarchy/omarchy-menu.jsonc
+                      - config/omarchy/extensions/omarchy-menu.jsonc
+                      - test/bdiff/corpus/jsonc/u-issue-11211-1.jsonc
+                # CORPUS: shipped menu, shipped sample extension, reproducer
+                # fixtures, real user snippets from public issues / PRs.
+                - name: corpus
+                  kind: corpus
+                # Every menu request-lifecycle sequence, run once.
+                - name: lifecycle
+                  kind: corpus
+                  corpus:
+                      - test/bdiff/corpus/lifecycle/*.events
+                # SCALE: 8 concurrent harness runs per seed; the summon burst
+                # itself (1, 2, 20 summons before an answer) is in the file.
+                - name: scale
+                  kind: scale
+                  generator: scale
+                  n: 8
+                  corpus:
+                      - test/bdiff/corpus/lifecycle/burst-*.events
+                # TIMING: 8 harness runs staggered 2 ms apart per seed; the
+                # interleavings (summons while an answer write runs) are in the file.
+                - name: timing
+                  kind: timing
+                  n: 8
+                  interval_ms: 2
+                  corpus:
+                      - test/bdiff/corpus/lifecycle/interleave-*.events

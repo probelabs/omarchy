@@ -1,0 +1,3 @@
+# TIMING seed: 22 select summons interleaved with menu summons and answer
+# process exits (pattern S M, S X, S X, ...), then the user picks row 0.
+S M S X S X S M S X S X S M S X S X S M S X S X S M S X S X S M S X S X S M S X S X S P

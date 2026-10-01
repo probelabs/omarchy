@@ -1,0 +1,3 @@
+# SCALE seed: a burst of 20 select summons (the live #9057 reproducer:
+# 20 concurrent omarchy-menu-select), then the user picks row 0.
+S*20 P

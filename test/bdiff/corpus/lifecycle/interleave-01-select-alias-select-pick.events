@@ -1,0 +1,3 @@
+# TIMING seed: select; an action-alias summon cancels it (answer write still
+# running); a new select; the user picks it before the first write exits.
+S A S P
