@@ -9,6 +9,7 @@ matching guide before starting:
 - [`agents/skills/icon-font.md`](agents/skills/icon-font.md) - adding branded glyphs to `default/fonts/omarchy/omarchy.ttf`
 - [`agents/skills/acceptance-tests.md`](agents/skills/acceptance-tests.md) - writing or running graphical acceptance tests under `test/acceptance.d/`
 - [`agents/skills/visual-verification.md`](agents/skills/visual-verification.md) - verifying any change with a visual effect in the running UI
+- [`agents/skills/headless-gui-testing.md`](agents/skills/headless-gui-testing.md) - driving the production shell and capturing GUI evidence on a headless Linux box
 - [`agents/skills/migrations.md`](agents/skills/migrations.md) - creating or changing migrations under `migrations/`
 
 # Documentation Layout
