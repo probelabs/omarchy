@@ -99,8 +99,8 @@ assertEqual(menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // note\n}').length, 
 assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "aliases": ["x", // note\n]}}')[0].aliases.join(','), 'x', 'menu drops a trailing comma before ] behind a comment')
 assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "n": 1//c\n2}}').length, 0, 'menu keeps the line break after a comment so tokens on either side are not joined')
 
-// Unicode whitespace outside strings, which JSON.parse rejects
-for (const [name, space] of [['a byte order mark', '\uFEFF'], ['a no-break space', '\u00A0'], ['a line separator', '\u2028'], ['an ideographic space', '\u3000']]) {
+// Whitespace outside strings that JSON.parse rejects: Unicode spaces, vertical tab, form feed
+for (const [name, space] of [['a byte order mark', '\uFEFF'], ['a no-break space', '\u00A0'], ['a line separator', '\u2028'], ['an ideographic space', '\u3000'], ['a vertical tab', '\u000B'], ['a form feed', '\u000C']]) {
   assertEqual(menu.parseMenuJsonc(space + '// note\n{"a": {"label": "A"}}').length, 1, `menu reads ${name} before a leading comment as whitespace`)
   assertEqual(menu.parseMenuJsonc('{\n' + space + '// note\n"a": {"label": "A"}}').length, 1, `menu reads ${name} indenting a comment line as whitespace`)
   assertEqual(menu.parseMenuJsonc(space + '{"a": {"label": "A"}}').length, 1, `menu reads ${name} before the opening brace as whitespace`)
@@ -431,6 +431,13 @@ assertEqual(
   '{ "a" :   1 \n}',
   'BNZG: Unicode spaces, a tab and a carriage return become one space each, the line feed stays'
 )
+// MCDC SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=T => TRUE
+// SW-REQ-261001-BNZG:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('\u000C// c\n{\u000B"a": {"label": "A"}}').length + menu.parseMenuJsonc('\u000B{"a": {"label": "A"}}').length,
+  2,
+  'BNZG: a form feed before a leading comment and a vertical tab before a key or the opening brace read as whitespace'
+)
 // MCDC SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=F => TRUE [no-action: the characters sit inside a string, so the scanner's string branch copies them and the whitespace rule never runs -- the label asserted below still carries U+00A0, U+FEFF and U+2029 unchanged, which proves zero rewrites]
 // SW-REQ-261001-BNZG:malformed_input:negative
 assertEqual(
@@ -450,7 +457,8 @@ assertEqual(
 // generator covers the documented grammar plus the shapes the PR fixes (a
 // comma and closer inside a string, inline comments, comments between a
 // trailing comma and its closer, array roots) and inserts every non-ASCII
-// character that JS \s matches (19 classes, incl. the byte order mark) at the
+// character that JS \s matches (19 classes, incl. the byte order mark) plus
+// the vertical tab and form feed (ASCII, also rejected by JSON.parse) at the
 // start of the file, between tokens and in front of comments, and inside
 // strings. The reference tokenizes with one sticky regex (string literal |
 // comment, or any character), drops comments, reads each \s character
@@ -460,9 +468,9 @@ assertEqual(
 // SW-REQ-261001-BNZG:totality:nominal
 // SW-REQ-261001-BNZG:totality:differential
 {
-  const SPACES = []
+  const SPACES = ['\u000B', '\u000C']
   for (let c = 128; c < 0x10000; c++) if (/\s/.test(String.fromCharCode(c))) SPACES.push(String.fromCharCode(c))
-  assertEqual(SPACES.length, 19, 'JS \\s matches 19 non-ASCII characters')
+  assertEqual(SPACES.length, 21, 'JS \\s matches vertical tab, form feed and 19 non-ASCII characters')
   let seed = 4242
   const rnd = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return ((seed >>> 0) % 1e6) / 1e6 }
   const pick = a => a[Math.floor(rnd() * a.length)]
