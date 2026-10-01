@@ -64,9 +64,9 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): the stripper changes a label such as "x, ]y" to "x ]y" while the parse still succeeds, so the user sees a wrong row name. FMEA mode (b): an action such as mv f{.bak,} loses its in-string comma, and the changed command runs with the user''s privileges on row activation. FMEA mode (c): a look-ahead that does not skip // comments keeps a real trailing comma before a commented-out entry, JSON.parse rejects the file, and the whole file contributes no rows. JSON.parse accepts the text in modes (a) and (b), so no error shows. The PR #13968 scanner forbids all three modes.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T17:45:00Z"
+    reviewed_at: "2026-10-01T23:10:00Z"
     reviewed_by: agent:claude-pr-13968
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -74,7 +74,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'malformed_input: JSONC trailing commas are legal JSONC but not JSON, and the stripper must remove them without a change to string bytes. Witnessed rows cover a comma and closer inside a label and inside an action, plus a real trailing comma before } and before ]. boundary: a comma at end of input with no closer stays, and a comma followed only by a comment and then the closer is dropped. edge_case: an escaped backslash before the closing quote ends the string, and a trailing comma, then a whole-line or inline comment, then } or ] is dropped (the #13512 shape).'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'malformed_input: JSONC trailing commas are legal JSONC but not JSON, and the stripper must remove them without a change to string bytes. Witnessed rows cover a comma and closer inside a label and inside an action, plus a real trailing comma before } and before ]. boundary: a comma at end of input with no closer stays, and a comma followed only by a comment and then the closer is dropped. edge_case: an escaped backslash before the closing quote ends the string, and a trailing comma, then a whole-line or inline comment, then } or ] is dropped (the #13512 shape). Catalog 1.11.0 re-review: input_domain applied, the comma rule holds over the domain stated on SW-REQ-260922-E4J2 and SW-REQ-261001-BNZG: the look-ahead skips LF, CRLF and every other JS whitespace character, so a trailing comma followed by U+00A0, VT or CRLF and a closer is dropped, and a comma inside a string is data whatever characters surround it. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:
