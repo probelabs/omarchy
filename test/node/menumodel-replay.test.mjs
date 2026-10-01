@@ -234,16 +234,19 @@ assertEqual(
   0,
   'menu skips an array nested under the items key as a non-object entry'
 )
+// KI-MENU-JSONC-INLINE-COMMENT is fixed by PR omacom/omarchy#6525 on this
+// mirror: its baseline tripwires now assert the fixed row counts and stay as
+// regression guards.
 // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
 assertEqual(
   menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment tail empties the whole file (omacom/omarchy#13493)'
+  1,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment tail no longer empties the file (omacom/omarchy#13493)'
 )
 assertEqual(
   menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // first\n  "b": {"label": "B"}\n}').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment on an entry line empties the whole file'
+  2,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment on an entry line keeps every row'
 )
 // Reproduces: KI-MENU-JSONC-STRIP-GAPS
 assertEqual(
@@ -1012,23 +1015,51 @@ test('jsonc preservation: seeded differential property over the documented gramm
 // plain data arguments — no getters, no private reflection.
 // ---------------------------------------------------------------------------
 
-test('mcdc stripJsonc: the two regex passes and the empty-input fallback', () => {
+test('mcdc stripJsonc: the PR #6525 string-aware comment scanner, the comma pass and the empty-input fallback', () => {
+  // PR omacom/omarchy#6525 replaces the line-anchored comment regex with a
+  // scanner that tracks string literals; the comma regex pass is unchanged.
   // raw || "": a missing input strips to the empty string (both arms).
   assertEqual(menuModel.stripJsonc(undefined), '', 'stripJsonc treats a missing input as empty')
   assertEqual(menuModel.stripJsonc('{}'), '{}', 'stripJsonc passes comment-free, comma-free input through')
-  // Pass 1: a whole-line comment goes with its line break, indented or not.
-  assertEqual(menuModel.stripJsonc('// a\n  // b\n{}'), '{}', 'stripJsonc drops whole-line comments with their line breaks')
-  // Pass 2: a comma before } or ] across whitespace is dropped; before anything else it stays.
+  // In a string: an escaped quote does not end it, so a // after it is data;
+  // a closing quote ends it.
+  assertEqual(menuModel.stripJsonc('{"a": "x\\"// y"}'), '{"a": "x\\"// y"}', 'stripJsonc copies a // after an escaped quote inside a string')
+  // In a string: a backslash as the last character of the input is copied.
+  assertEqual(menuModel.stripJsonc('"a\\'), '"a\\', 'stripJsonc copies a backslash at end of input inside a string')
+  // Outside a string: // opens a comment wherever it sits; it ends before a
+  // line feed, or at end of input. A lone slash is data.
+  assertEqual(menuModel.stripJsonc('// a\n{}'), '\n{}', 'stripJsonc drops a whole-line comment and keeps its line feed')
+  assertEqual(menuModel.stripJsonc('{"a": 1} // tail'), '{"a": 1} ', 'stripJsonc drops an inline comment tail at end of input')
+  assertEqual(menuModel.stripJsonc('{"a": 1 / 2}'), '{"a": 1 / 2}', 'stripJsonc keeps a lone slash outside a string')
+  // Comma pass: a comma before } or ] across whitespace is dropped; before anything else it stays.
   assertEqual(menuModel.stripJsonc('{"a": 1 , }'), '{"a": 1  }', 'stripJsonc drops a comma whose next non-whitespace is a brace')
   assertEqual(menuModel.stripJsonc('["a", ]'), '["a" ]', 'stripJsonc drops a comma whose next non-whitespace is a bracket')
   assertEqual(menuModel.stripJsonc('{"a": 1 ,"b": 2}'), '{"a": 1 ,"b": 2}', 'stripJsonc keeps a comma before another entry')
   assertEqual(menuModel.stripJsonc('{"a": 1,'), '{"a": 1,', 'stripJsonc keeps a comma at end of input')
   // Order: comments go first, so a comma separated from its closer only by comment lines is dropped.
-  assertEqual(menuModel.stripJsonc('[1,\n// c\n]'), '[1\n]', 'stripJsonc drops a trailing comma separated from its closer by a whole-line comment')
-  // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
-  assertEqual(menuModel.stripJsonc('{"a": 1} // tail'), '{"a": 1} // tail', 'KI-MENU-JSONC-INLINE-COMMENT tripwire: stripJsonc leaves an inline comment tail in place')
+  assertEqual(menuModel.stripJsonc('[1,\n// c\n]'), '[1\n\n]', 'stripJsonc drops a trailing comma separated from its closer by a whole-line comment')
   // Reproduces: KI-MENU-JSONC-COMMA-IN-STRING
   assertEqual(menuModel.stripJsonc('{"a": "x, ]y"}'), '{"a": "x ]y"}', 'KI-MENU-JSONC-COMMA-IN-STRING tripwire: stripJsonc drops a comma inside a string literal')
+  // Reproduces: KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE
+  assertEqual(menuModel.stripJsonc('{\n // c\n}'), '{\n \n}', 'KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwire: stripJsonc keeps a no-break space that indents a comment line')
+})
+
+test('mcdc parseMenuJsonc: the PR #6525 parse-failure warning, with and without a console', () => {
+  // typeof console !== "undefined" && console.warn: both conditions, both arms.
+  const saved = globalThis.console
+  const warned = []
+  try {
+    globalThis.console = { warn: message => warned.push(String(message)) }
+    assertEqual(menuModel.parseMenuJsonc('{').length, 0, 'parseMenuJsonc returns no rows for unparseable text')
+    assertEqual(warned.length, 1, 'parseMenuJsonc logs one warning when the parse fails and console.warn exists')
+    globalThis.console = { warn: undefined }
+    assertEqual(menuModel.parseMenuJsonc('{').length, 0, 'parseMenuJsonc returns no rows without a console.warn')
+    globalThis.console = undefined
+    assertEqual(menuModel.parseMenuJsonc('{').length, 0, 'parseMenuJsonc returns no rows when no console exists')
+  } finally {
+    globalThis.console = saved
+  }
+  assertEqual(warned.length, 1, 'parseMenuJsonc logs nothing without a console.warn')
 })
 
 test('mcdc normalizeAliases: array, string, empty, non-string', () => {
