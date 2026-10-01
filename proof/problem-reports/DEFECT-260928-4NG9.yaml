@@ -29,11 +29,12 @@ disposition:
     known_issues:
     - KI-MENU-JSONC-STRIP-GAPS
     - KI-MENU-ITEMS-KEY-AMBIGUITY
+    - KI-MENU-JSONC-CR-LINE-ENDINGS
     status: covered_by_requirement
     requirements:
     - SW-REQ-260928-BMFE
     rationale: |-
-        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements. This closure covers only its own class.
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements. This closure covers only its own class. KI-MENU-JSONC-CR-LINE-ENDINGS (a whole-line // comment in a CR-only file runs to the end of the file) is a third live gap on SW-REQ-260922-E4J2: the scanner ends a comment only at a line feed, and PR omacom/omarchy#13968 does not change that.
 
         SW-REQ-260928-BMFE models the decision as a guard over array_root_present. On the pr/13968 mirror the PR omacom/omarchy#13968 adds Array.isArray(parsed) to the parseMenuJsonc root check. Witnesses in test/shell.d/menu-test.sh cover the rows, and the node replay runs them again.
 
