@@ -780,7 +780,7 @@ Item {
     root.rebuildDisplay()
   }
 
-  // Implements: SW-REQ-260922-DE93
+  // Implements: SW-REQ-260922-DE93, SW-REQ-261001-B4CK
   function setActiveMenu(id, pushHistory, fromPointer, restoreSelection) {
     panel.freezeCardTop()
     if (!root.item(id)) id = "root"
@@ -812,7 +812,7 @@ Item {
   }
 
   function goBack() {
-    // Implements: SW-REQ-260922-DE93
+    // Implements: SW-REQ-260922-DE93, SW-REQ-261001-B4CK
     if (root.activeMenu === "root") return false
 
     if (root.navStack.length > 0) {
