@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:18.536807824Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T11:29:55.216806713Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:c55c0e087c499aafc84417cf7f5eef78
             shell/plugins/menu/MenuModel.js:isDisabled: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:isVisible: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:labelFor: file1:4f7f286f5fa1815a2a370c084b85fb34
@@ -61,6 +61,19 @@ traces:
           reviewed_by: agent:claude-quattro-clean
           method: inspection
           rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:498
+            - shell/plugins/menu/Menu.qml:506
+            - shell/plugins/menu/MenuModel.js:262
+            - shell/plugins/menu/MenuModel.js:285
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-test.sh:29
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T11:29:55.216806713Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #13012 review on quattro-proof: the Menu.qml delta is confined to setActiveMenu/goBack (remembered row index and id on the nav stack, restored on Back) plus annotation moves; each link re-checked against the cited annotation lines; the new Back behaviour is authored as SW-REQ-261001-B4CK, other requirement intents are unaffected'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:498
