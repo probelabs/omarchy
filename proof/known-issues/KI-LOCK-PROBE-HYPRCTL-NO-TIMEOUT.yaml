@@ -1,5 +1,5 @@
 id: KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT
-title: omarchy-hyprland-session-locked has no deadline on hyprctl -j monitors; a stalled compositor IPC hangs the lock-state probe
+title: omarchy-hyprland-session-locked has no deadline on hyprctl -j monitors; a stalled compositor IPC hangs the probe
 description: |-
     bin/omarchy-hyprland-session-locked asks the compositor for the lock state with `monitors=$(hyprctl -j monitors 2>/dev/null) || exit 2`. Nothing puts a deadline on that call. Sometimes the Hyprland IPC socket accepts the request but never answers. This happens in practice around lid and monitor transitions. The probe then blocks for as long as hyprctl blocks, instead of returning exit 2 (undetermined).
 
@@ -48,6 +48,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-lock-probe-hyprctl-no-timeout.yaml
+    - at: "2026-10-01T21:59:15Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-title
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

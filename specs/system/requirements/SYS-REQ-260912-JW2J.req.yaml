@@ -84,6 +84,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'atomic_write evaluated and DEFERRED (see obligation_deferrals): both PAM stacks are written by as_root tee in place rather than write-temp-rename, so an interrupted run can leave a torn /etc/pam.d/omarchy-lock-password that breaks password unlock until the helper reruns. The child Y0WT carries the same deferral for the fingerprint stack, so the class decomposes. Tracked debt, not an accepted gap.'
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:24Z"
@@ -91,3 +92,8 @@ lifecycle:
           to: review
           reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
           changed_by: agent:kimi-dogfood
+        - date: "2026-10-01T21:59:27Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-18=present | known_issue:KI-APPLY-LOCK-PAM-NONATOMIC-WRITE=failing
+          changed_by: agent:auto-derive

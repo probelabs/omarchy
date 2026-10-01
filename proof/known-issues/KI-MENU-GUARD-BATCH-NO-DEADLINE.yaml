@@ -1,5 +1,5 @@
 id: KI-MENU-GUARD-BATCH-NO-DEADLINE
-title: Menu guard batch runs as one bash child with no deadline; a blocking guard expression freezes guard answers for the session
+title: Menu guard batch runs as one bash child with no deadline; a blocking guard freezes guard answers for the session
 description: |-
     Menu.qml evaluateGuards() runs every when:, checked: and disabled: guard of the menu in one child process, `guardProc.command = ["bash", "-lc", script]`. Nothing puts a deadline on that process. While guardProc.running is true, each later evaluateGuards() call only sets guardsPending and returns. The batch exit then starts the deferred evaluation.
 
@@ -60,6 +60,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-guard-batch-no-deadline.yaml
+    - at: "2026-10-01T21:59:15Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-title
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

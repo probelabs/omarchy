@@ -94,6 +94,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: Two cross-process reads (hyprctl binds, xkbcli compile-keymap) feed this resolution, both without deadline wrappers; the class that names this hazard is accepted as tracked debt rather than suppressed, because a stalled Hyprland IPC is documented as real during lid transitions and xkbcli inherits the same exposure - the deferral entry records the consequence and the tracking ref.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -101,3 +102,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T21:59:26Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-43=present | known_issue:KI-MENU-KEYBINDINGS-NO-TIMEOUT=failing
+          changed_by: agent:auto-derive

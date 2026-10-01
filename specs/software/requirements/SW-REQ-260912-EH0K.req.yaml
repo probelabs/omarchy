@@ -89,6 +89,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): hyprctl -j monitors on line 17 has no timeout wrapper, and a stalled Hyprland IPC is documented as real during lid transitions; the probe then hangs, stranded-lock recovery exhausts its retry budget unresolved, and the Hyprland failsafe lock remains the backstop. Tracked debt, not an accepted gap.'
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"
@@ -96,3 +97,8 @@ lifecycle:
           to: review
           reason: '[dogfood-phase7] dogfood audit: cohort authored and self-reviewed by agent:kimi-dogfood; ready for branch review'
           changed_by: agent:kimi-dogfood
+        - date: "2026-10-01T21:59:26Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-12=present | known_issue:KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT=failing
+          changed_by: agent:auto-derive

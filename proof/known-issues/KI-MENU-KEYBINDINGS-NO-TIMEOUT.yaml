@@ -1,5 +1,5 @@
 id: KI-MENU-KEYBINDINGS-NO-TIMEOUT
-title: Keybindings menu build has no deadline on hyprctl binds or xkbcli compile-keymap; a stalled callee blocks the menu indefinitely
+title: Keybindings menu build has no deadline on hyprctl binds or xkbcli compile-keymap; a stalled callee blocks the menu
 description: |-
     bin/omarchy-menu-keybindings builds the keybindings menu from two external calls without a deadline. The first is `hyprctl binds`, which the script reads for the cache key and again in dynamic_bindings. The second is `xkbcli compile-keymap </dev/null`, the keymap_cmd that parse_keycodes reads through gawk getline. A stalled Hyprland IPC or a wedged keymap compile blocks the menu build for as long as the callee blocks. The keybindings menu then never opens, and the script never exits.
 
@@ -54,6 +54,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-no-timeout.yaml
+    - at: "2026-10-01T21:59:16Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-title
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
