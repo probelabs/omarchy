@@ -33,9 +33,11 @@ disposition:
     requirements:
     - SW-REQ-260927-66FW
     rationale: |-
-        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements, so this closure covers only its own class.
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements. This closure covers only its own class.
 
-        SW-REQ-260927-66FW models the decision as an equivalence over comma_in_string and next_char_closes_json, where the look-ahead skips whitespace and // comments. On the pr/13968 mirror of omacom/omarchy#13968 all four non-violation rows carry witnesses in test/shell.d/menu-test.sh, replayed by test/node/menumodel-replay.test.mjs. Code MC/DC of stripJsonc is 100% decisions and conditions. Two seeded differential tests against independent reference models pass (2000 inputs of the documented grammar, 3000 inputs with inline comments, comma-and-closer strings and Unicode whitespace). Report #13250 exits 0 on this tree, and KI-MENU-JSONC-COMMA-IN-STRING is fixed.
+        SW-REQ-260927-66FW models the decision as an equivalence over comma_in_string and next_char_closes_json. The look-ahead skips whitespace and // comments. The pr/13968 mirror carries the PR omacom/omarchy#13968 scanner. Witnesses in test/shell.d/menu-test.sh cover all four non-violation rows, and test/node/menumodel-replay.test.mjs replays them.
+
+        Code MC/DC of stripJsonc is 100% for decisions and conditions. Two seeded differential tests against independent reference models pass. Report #13250 exits 0 on this tree. The PR fixes KI-MENU-JSONC-COMMA-IN-STRING.
     evidence:
         verified_by:
         - test/shell.d/menu-test.sh
