@@ -1,0 +1,62 @@
+id: KI-MENU-KEYBINDINGS-NO-TIMEOUT
+title: Keybindings menu build has no deadline on hyprctl binds or xkbcli compile-keymap; a stalled callee blocks the menu indefinitely
+description: 'bin/omarchy-menu-keybindings builds the keybindings menu from two external calls that carry no deadline: `hyprctl binds` (read for the cache key and again by dynamic_bindings) and `xkbcli compile-keymap </dev/null` (the keymap_cmd that parse_keycodes reads through gawk getline). A stalled Hyprland IPC or a wedged keymap compile therefore blocks the menu build for as long as the callee does: the keybindings menu never opens and the script never exits. On the stalled-hyprctl path the script reaches `hyprctl binds` three times in sequence (cache key, cache refresh, then the uncached fallback after the refresh fails), so even a per-call bound costs about three times its value. pocs/9dms-keybindings-no-timeout.sh reproduces both arms on the real script in --print mode: with hyprctl stalled the build is still blocked at a 10s watchdog, with xkbcli stalled it is still blocked at a 5s watchdog (rc=124 both), while the control arm builds the stubbed bind row, with its keycode resolved through the stubbed keymap, in about a second.'
+affected_requirements:
+    - SW-REQ-260922-9DMS
+evidence_manifests:
+    - proof/evidence/ki-menu-keybindings-no-timeout.yaml
+severity: low
+severity_basis: reproducer
+risk: availability
+cve_surface: none
+affected_api: 'bin/omarchy-menu-keybindings (keybindings menu build: hyprctl binds, xkbcli compile-keymap)'
+reproducer_command: ./pocs/9dms-keybindings-no-timeout.sh
+tripwire_mutation: 'In bin/omarchy-menu-keybindings, `hyprctl binds` becomes `timeout 2 hyprctl binds` at both call sites (keybindings_cache_key and dynamic_bindings) and `keymap_cmd = "xkbcli compile-keymap </dev/null"` becomes `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"`: the hyprctl stall arm then finishes in about 6-7s (three bounded calls) inside its 10s watchdog and the xkbcli stall arm in about 2s inside its 5s watchdog, the rc=124 assertions in pocs/9dms-keybindings-no-timeout.sh fail, and the tripwire flips red. Bounding only one of the two calls flips the matching arm, so a partial fix also turns it red. The control arm is unaffected.'
+introduced_in: inception
+defect_class: latent
+minimization_status: minimized
+mitigation: Only the keybindings menu is affected; no binding is changed or dispatched while the build is blocked. Closing the menu launcher, or killing the stuck hyprctl or xkbcli process, recovers. Once the compositor IPC answers again the next open works, and a previously cached record set is served without calling xkbcli.
+remediation: 'Wrap both external calls in bin/omarchy-menu-keybindings with a timeout, e.g. `timeout 2 hyprctl binds` at both call sites and `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"` (the existing fallback keycode table already covers a missing keymap). Consider reading `hyprctl binds` once per run so a stall is paid once rather than three times. Then remove the SW-REQ-260922-9DMS external_call_timeout_bounded deferral and add a witness for the bounded paths. Close criterion: both stall arms of pocs/9dms-keybindings-no-timeout.sh finish inside their watchdogs and the tripwire flips red.'
+owner: agent:claude-quattro
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: reviewed
+history:
+    - at: "2026-10-01T21:27:49Z"
+      by: agent:claude-quattro
+      action: created
+    - at: "2026-10-01T21:29:20Z"
+      by: agent:claude-quattro
+      action: review
+      detail: reviewer=agent:claude-quattro,new_review_date=2026-12-31
+    - at: "2026-10-01T21:30:13Z"
+      by: agent:claude-quattro
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-keybindings-no-timeout.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/9dms-keybindings-no-timeout.sh runs the real bin/omarchy-menu-keybindings (--print) with real gawk and jq; only hyprctl and xkbcli are PATH stubs, and HOME / XDG_CACHE_HOME are per-arm temp dirs.
+        quantitative_impact: the metric is the build's exit under an external watchdog - with hyprctl stalled it is still blocked at 10s, with xkbcli stalled at 5s (rc=124 both), while the control builds in about a second.
+        control_test: the control arm builds the stubbed bind row with keycode 38 resolved to A through the stubbed compiled keymap (not the script's fallback table) and logs both external calls, proving the harness reaches both call sites.
+        operational_path_verified: --print drives the same output_binding_records path the interactive menu uses before it hands rows to the selector.
+        current_deployment_relevance: both unbounded calls (lines 27, 285, 545) are live on this branch today.
+        honest_severity: low - the keybindings menu fails to open during a callee stall; no binding is changed or dispatched.
+        reproducible: deterministic stub harness, three arms, about 16s; exit codes and output decide every assertion; stub processes are killed on exit.
+        no_inflation: claims limited to the demonstrated unbounded waits on the two external calls.
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
+        reachability_verified: 'no ingress access-control or trust boundary to traverse: the trigger is the user own session, compositor or system state, not an adversary input path'
+        untrusted_attacker: 'local availability/reliability defect: the trigger is a stalled or interrupted local process, not an adversary; no actor model applies'
+kill_domain: unbounded_wait
+affected_file: bin/omarchy-menu-keybindings

@@ -48,8 +48,8 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:43:26Z"
-    last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T06:51:06Z"
+    last_modified_by: agent:claude-quattro
+    last_modified_at: "2026-10-01T21:28:56Z"
 obligation_checklist:
     - external_call_timeout_bounded
 obligation_suppressions:
@@ -59,9 +59,11 @@ obligation_suppressions:
       suppressed_at: "2026-09-12T21:39:07Z"
 obligation_deferrals:
     - obligation_class: external_call_timeout_bounded
-      reason: hyprctl -j monitors has no timeout wrapper; a stalled Hyprland IPC, documented as real during lid transitions, hangs the probe, so stranded-lock recovery liveness is lost until the retry budget exhausts; the Hyprland failsafe lock remains the backstop
-      tracking: hazard-batch-A/EH0K-hyprctl-no-timeout
-      owner: agent:opencode-hazard-a
+      reason: hyprctl -j monitors has no timeout wrapper; a stalled Hyprland IPC, documented as real during lid transitions, hangs the probe, so stranded-lock recovery liveness is lost until the retry budget exhausts; the Hyprland failsafe lock remains the backstop. Reproduced and tracked on KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT with a green tripwire (the real probe is still blocked at an external watchdog while hyprctl stalls).
+      tracking: KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT
+      owner: agent:claude-quattro
+      ki_ref: KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT
+      reproducer: ./pocs/eh0k-hyprctl-monitors-no-timeout.sh
 hazard_review:
     reviewed_at: "2026-09-30T06:50:39Z"
     reviewed_by: agent:opencode-hazard-a
