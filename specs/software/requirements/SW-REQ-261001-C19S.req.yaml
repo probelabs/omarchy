@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when finish_requested & prior_answer_write_running the dmenu_protocol shall eventually satisfy answer_write_started_concurrently
-description: The menu can issue an answer (a cancel or a selection) while the write for an earlier answer is still running, for example when several summons arrive together and each one cancels the request before it. The menu then starts a new write process for that answer at once, beside the running one. No answer waits for, or is dropped behind, an earlier answer write, so every caller gets its done file.
+description: 'The menu can issue an answer while the write for an earlier answer still runs. Several summons that arrive together cause this, because each summon cancels the request before it. The menu then starts a new write process for that answer at once, beside the running one. The menu never makes an answer wait for an earlier write, and it never drops an answer. Every caller thus gets its done file.'
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,10 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-X6Z5
 component: menu
-rationale: 'Upstream PR omacom/omarchy#9056 head b7bd59c4 (pushed by @omarchybot) replaces the shared resultProc Process in finishRequest with Quickshell.execDetached, one fresh process per answer. On the earlier head 0b4fe292 a burst of summons stranded callers: each cancel set resultProc.command and running = true while the previous write was still running, which Quickshell ignores, so that answer was never written (live burst of 20 concurrent omarchy-menu-select: 7-12 of 20 callers stuck on 0b4fe292, 19 of 20 on quattro, 0 on b7bd59c4). This closes the busy-resultProc leg (SX26/C14) of KI-MENU-REQUEST-LIFECYCLE.'
+rationale: '@omarchybot pushed head b7bd59c4 of upstream PR omacom/omarchy#9056. That head replaces the shared resultProc Process in finishRequest with Quickshell.execDetached, one fresh process per answer. On the earlier head 0b4fe292 a burst of summons stranded callers. Each cancel set resultProc.command and running = true while the previous write still ran. Quickshell ignores that, so the answer never reached its done file.
+
+
+    In a live burst of 20 concurrent omarchy-menu-select calls, 7-12 callers stayed stuck on 0b4fe292, 19 on quattro and 0 on b7bd59c4. This closes the busy-resultProc leg (SX26/C14) of KI-MENU-REQUEST-LIFECYCLE.'
 tags: []
 variables:
     - finish_requested
@@ -63,7 +66,7 @@ hazard_review:
           disposition: reviewed
           applied:
             - concurrent
-          rationale: 'This is the mitigation for the concurrent-answer hazard: several summons arriving together each answer the request before them while the first answer write is still running. Worst case without it: a caller polls its done file forever because its answer was set on a busy shared Process and ignored. With one detached process per answer the writes run side by side; each targets its own caller-unique done file (omarchy-menu-select and omarchy-menu-input use mktemp paths), so concurrent writes cannot cross. Residual: a write process that fails to start (fork failure) is not observed or retried; the peer-death trigger (the shell dies after a summon) is outside this requirement and stays tracked on KI-MENU-REQUEST-LIFECYCLE.'
+          rationale: 'This is the mitigation for the concurrent-answer hazard. Several summons that arrive together each answer the request before them while the first answer write still runs. Worst case without it: a caller polls its done file forever because its answer was set on a busy shared Process and ignored. With one detached process per answer the writes run side by side; each targets its own caller-unique done file (omarchy-menu-select and omarchy-menu-input use mktemp paths), so concurrent writes cannot cross. Residual: a write process that fails to start (fork failure) is not observed or retried; the peer-death trigger (the shell dies after a summon) is outside this requirement and stays tracked on KI-MENU-REQUEST-LIFECYCLE.'
         - category: property
           disposition: reviewed
           applied:
