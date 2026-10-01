@@ -88,9 +88,12 @@ function navHarness(disabledResults) {
 { // entering a menu without Back keeps the cursor at the first row
   const { r, model } = navHarness()
   // Verifies: SW-REQ-261001-B4CK
-  // MCDC SW-REQ-261001-B4CK: back_navigated=F, remembered_row_present=F, remembered_row_selected=F => TRUE [no-action: a forward drill-in carries no restore record, so setActiveMenu starts at row 0]
-  r.selectedIndex = 3
+  // MCDC SW-REQ-261001-B4CK: back_navigated=F, remembered_row_present=T, remembered_row_selected=F => TRUE [no-action: the parent row is present and recorded on the stack, but a forward drill-in passes no restore record, so setActiveMenu starts the new menu at row 0 and selects no remembered row]
+  const styleAt = model.findIndex(row => row.itemId === 'style')
+  r.selectedIndex = styleAt
   r.setActiveMenu('style', true)
+  assertEqual(r.navStack[0].itemId, 'style', 'the present parent row is recorded on the stack')
   assertEqual(r.selectedIndex, 0, 'a forward drill-in starts on the first row')
+  assert(model[r.selectedIndex].itemId !== 'style', 'a forward drill-in selects no remembered row')
 }
 JS
