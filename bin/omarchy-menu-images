@@ -298,7 +298,7 @@ elif [[ $rows_cache_hit != true ]]; then
   for image in "${image_files[@]}"; do
     thumbnail=$(thumbnail_for "$image")
     # mcdc:ignore:tooling-limit thumbnail_for only answers empty when its own stat guard bails, which is the vanishing-file race staged above and unreachable here, and the skip arm is a bare continue whose decision record lands after that control transfer
-  [[ -n $thumbnail ]] || continue
+    [[ -n $thumbnail ]] || continue
     # Cached rows are trusted on the directory's mtime alone, which a file
     # repaired in place never changes. Leave them uncached instead.
     if [[ $thumbnail == *.failed ]]; then
