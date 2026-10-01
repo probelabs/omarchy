@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T23:52:19.643709544Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T08:13:39.593811267Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:item: file1:c55c0e087c499aafc84417cf7f5eef78
             shell/plugins/menu/MenuModel.js:normalizeItem: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
@@ -54,6 +54,30 @@ traces:
             - test/shell.d/menu-test.sh:66
             - test/shell.d/menu-test.sh:9
             - test/shell.d/menu-test.sh:97
+        - reviewed_at: "2026-10-01T08:12:53.811958976Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop); every link re-checked against the current annotation lines cited; new behaviour authored as SW-REQ-261001-B4CK; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:249
+            - shell/plugins/menu/Menu.qml:254
+            - shell/plugins/menu/MenuModel.js:47
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:9
+        - reviewed_at: "2026-10-01T08:13:39.593811267Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop) plus the SW-REQ-261001-B4CK annotations on those two existing Implements lines; every link re-checked against the current annotation lines cited; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:249
+            - shell/plugins/menu/Menu.qml:254
+            - shell/plugins/menu/MenuModel.js:47
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:9
 verification:
     assurance_level: C
     formalization_status: valid

@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-09-29T14:26:57.172326962Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T08:13:27.688448512Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml: file1:c55c0e087c499aafc84417cf7f5eef78
         satisfies:
             STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
@@ -57,6 +57,32 @@ traces:
             - test/shell.d/menu-compositor-test.sh:347
             - test/shell.d/menu-compositor-test.sh:348
             - test/shell.d/menu-compositor-test.sh:349
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-01T08:13:03.922594593Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop); every link re-checked against the current annotation lines cited; new behaviour authored as SW-REQ-261001-B4CK; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1491
+            - shell/plugins/menu/Menu.qml:1496
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:14
+            - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:28
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-01T08:13:27.688448512Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop); every link re-checked against the current annotation lines cited; new behaviour authored as SW-REQ-261001-B4CK; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1491
+            - shell/plugins/menu/Menu.qml:1496
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:14
+            - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:28
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C

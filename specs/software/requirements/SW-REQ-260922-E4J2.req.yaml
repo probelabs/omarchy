@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T23:52:19.700962959Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T08:13:42.756101616Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:420fd55c985b9e93456f8ce0c8d32c97623ec554d8bb3f717b03e5debca81336
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:item: file1:c55c0e087c499aafc84417cf7f5eef78
             shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:083952493ac11b0d139e04ee8d9ec0f9
             shell/plugins/menu/MenuModel.js:stripJsonc: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
@@ -56,6 +56,32 @@ traces:
             - test/shell.d/menu-test.sh:62
             - test/shell.d/menu-test.sh:94
             - test/shell.d/menu-test.sh:96
+        - reviewed_at: "2026-10-01T08:12:57.231733263Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop); every link re-checked against the current annotation lines cited; new behaviour authored as SW-REQ-261001-B4CK; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:244
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:77
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T08:13:42.756101616Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop) plus the SW-REQ-261001-B4CK annotations on those two existing Implements lines; every link re-checked against the current annotation lines cited; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:244
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:77
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
