@@ -480,6 +480,42 @@ variables:
       type: bool
       direction: output
       description: 'The rejection stands recorded and honored: the .failed marker keyed by the video hash exists, the video offers no row, and the rows stay uncached.'
+    - name: comma_in_string
+      type: bool
+      direction: input
+      description: The comma sits inside a JSON string literal.
+    - name: next_char_closes_json
+      type: bool
+      direction: input
+      description: The next character after the comma that is neither whitespace nor part of a // comment is } or ].
+    - name: trailing_comma_dropped
+      type: bool
+      direction: output
+      description: The comma is dropped from the stripped JSON before parsing.
+    - name: array_root_present
+      type: bool
+      direction: input
+      description: The parsed JSONC root is a JSON array rather than an object map.
+    - name: array_root_rejected
+      type: bool
+      direction: output
+      description: The parser returned an empty item set for a top-level array root.
+    - name: comment_in_string
+      type: bool
+      direction: input
+      description: The comment opener sits inside a string literal.
+    - name: comment_tail_dropped
+      type: bool
+      direction: output
+      description: The bytes from the comment opener up to the line break are dropped; the line break stays.
+    - name: space_outside_string
+      type: bool
+      direction: input
+      description: 'A character outside every string literal matches JS \s: ASCII whitespace, the byte order mark U+FEFF, or a Unicode space such as U+00A0, U+2028 or U+3000.'
+    - name: space_passed_as_ascii
+      type: bool
+      direction: output
+      description: 'The stripper applies its whitespace rule to the character: a line feed stays a line feed, and any other character becomes one ASCII space.'
     - name: app_listed
       type: bool
       direction: output
@@ -494,4 +530,4 @@ variables:
       description: Every term of the query matches the entry's name, id, generic name, comment or keywords, or a term of five characters or fewer matches its acronym. An empty query matches every entry.
 independence:
     declared: true
-    reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'
+    reason: 'All 59 formalized guarantees constrain pairwise-disjoint output variables (re-verified 2026-10-01 on pr/13968 with 66FW, BMFE, C8W1 and BNZG: 0 of 1711 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'
