@@ -72,6 +72,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: append-note
+    - at: "2026-10-01T22:48:50Z"
+      by: agent:claude-pr-12223
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-search-score-ranking.yaml
 kill_domain: scoring
 affected_file:
     - shell/plugins/menu/MenuModel.js
