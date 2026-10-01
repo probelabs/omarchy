@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-01T09:52:21.063533346Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T11:20:09.042061658Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:slugify: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:59b4437c6bd5e88c5c40a028f1a04877
+            shell/plugins/menu/Menu.qml:slugify: file1:59b4437c6bd5e88c5c40a028f1a04877
             shell/plugins/menu/MenuModel.js:mergeAppRows: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
@@ -70,6 +70,19 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:305
             - shell/plugins/menu/Menu.qml:313
+            - shell/plugins/menu/MenuModel.js:112
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:14
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T11:20:09.042061658Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #9056 review on quattro-proof: the only Menu.qml delta is the cancel-prior guard at the top of open() plus its Implements line; each link re-checked against the cited annotation lines; requirement intents outside open() are unaffected and the new open() behaviour is authored as SW-REQ-260925-XTGG'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:314
+            - shell/plugins/menu/Menu.qml:322
             - shell/plugins/menu/MenuModel.js:112
             - shell/plugins/menu/MenuModel.js:145
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml

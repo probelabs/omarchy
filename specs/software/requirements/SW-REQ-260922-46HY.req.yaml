@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-01T09:52:15.743350841Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T11:20:03.011776423Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:item: file1:59b4437c6bd5e88c5c40a028f1a04877
             shell/plugins/menu/MenuModel.js:normalizeItem: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
@@ -62,6 +62,18 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:249
             - shell/plugins/menu/Menu.qml:254
+            - shell/plugins/menu/MenuModel.js:14
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:9
+        - reviewed_at: "2026-10-01T11:20:03.011776423Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #9056 review on quattro-proof: the only Menu.qml delta is the cancel-prior guard at the top of open() plus its Implements line; each link re-checked against the cited annotation lines; requirement intents outside open() are unaffected and the new open() behaviour is authored as SW-REQ-260925-XTGG'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:258
+            - shell/plugins/menu/Menu.qml:263
             - shell/plugins/menu/MenuModel.js:14
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5

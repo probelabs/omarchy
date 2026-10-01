@@ -22,6 +22,25 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
+    reviewed_at: "2026-10-01T11:20:09.436697879Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_fingerprint: sha256:35594d5802ad368e94a0b6fcacaab0a64d83008c7d51ba5dd08503f659b64fdd
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:open: file1:59b4437c6bd5e88c5c40a028f1a04877
+        satisfies:
+            SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
+    review_history:
+        - reviewed_at: "2026-10-01T11:20:09.436697879Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #9056 review on quattro-proof: the only Menu.qml delta is the cancel-prior guard at the top of open() plus its Implements line; each link re-checked against the cited annotation lines; requirement intents outside open() are unaffected and the new open() behaviour is authored as SW-REQ-260925-XTGG'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:32
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-summon-cancel-test.sh:12
+            - test/shell.d/menu-summon-cancel-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

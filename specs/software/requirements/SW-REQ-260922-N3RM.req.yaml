@@ -20,14 +20,14 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-09-29T14:26:57.080154014Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T11:20:07.035028047Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:runAction: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:59b4437c6bd5e88c5c40a028f1a04877
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:59b4437c6bd5e88c5c40a028f1a04877
+            shell/plugins/menu/Menu.qml:runAction: file1:59b4437c6bd5e88c5c40a028f1a04877
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
             SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
@@ -59,6 +59,18 @@ traces:
             - test/shell.d/menu-test.sh:307
             - test/shell.d/menu-test.sh:342
             - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T11:20:07.035028047Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #9056 review on quattro-proof: the only Menu.qml delta is the cancel-prior guard at the top of open() plus its Implements line; each link re-checked against the cited annotation lines; requirement intents outside open() are unaffected and the new open() behaviour is authored as SW-REQ-260925-XTGG'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:152
+            - shell/plugins/menu/Menu.qml:892
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/shell.d/menu-test.sh:26
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
