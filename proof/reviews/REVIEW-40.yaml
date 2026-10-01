@@ -6,4 +6,4 @@ subject: SW-REQ-260922-7NPE
 decision: approved
 comment: Read mergeMenuSources. User entries merge per key over the default entry (later source keys win) while nextOrder keeps the first-seen slot, so an override does not reorder the row; when no source declares root the function injects one with label Go. Both response conjuncts (per_key_override_applied, root_injected) map to these two code blocks. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:96
+    - shell/plugins/menu/MenuModel.js:141
