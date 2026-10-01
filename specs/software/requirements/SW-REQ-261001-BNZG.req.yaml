@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when space_outside_string the menu_model shall always satisfy space_passed_as_ascii
-description: The JSONC stripper takes any text as input. Outside string literals, each character that JS \s matches is whitespace. This includes ASCII whitespace, a byte order mark U+FEFF at the start or anywhere else, and the Unicode spaces U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F and U+3000. The stripper keeps each line feed and emits each other such character as one ASCII space. Inside string literals it copies every character unchanged.
+description: The JSONC stripper takes any text as input. Outside string literals, each character that JS \s matches is whitespace. This includes ASCII whitespace and a byte order mark U+FEFF at the start or anywhere else. It also includes the Unicode spaces U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F and U+3000. The stripper keeps each line feed and emits each other such character as one ASCII space. Inside string literals it copies every character unchanged.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: 'This requirement states the input domain of stripJsonc and parseMenuJsonc. JSON.parse accepts only the four ASCII whitespace characters, but a user file can carry a byte order mark or a Unicode space from an editor or a paste. Upstream reads such a character as whitespace only before a whole-line comment, because the comment regex ^\s*// is Unicode-aware. The first PR #13968 commit (ff77cd02) lost that, so a file with a byte order mark and a leading comment had no rows. The follow-up commit efa5170b adds the \s branch to the scanner.'
+rationale: 'This requirement states the input domain of stripJsonc and parseMenuJsonc. JSON.parse accepts only four ASCII whitespace characters. A user file can still carry a byte order mark or a Unicode space from an editor or a paste. Upstream reads such a character as whitespace only before a whole-line comment, because the comment regex ^\s*// is Unicode-aware. The first PR #13968 commit (ff77cd02) lost that, so a file with a byte order mark and a leading comment had no rows. The follow-up commit efa5170b adds the \s branch to the scanner.'
 tags: []
 variables:
     - space_outside_string
@@ -33,12 +33,16 @@ history:
     created_by: agent:claude-pr-13968
     created_at: "2026-10-01T17:41:54Z"
     last_modified_by: agent:claude-pr-13968
-    last_modified_at: "2026-10-01T17:44:24Z"
+    last_modified_at: "2026-10-01T18:04:59Z"
 obligation_checklist:
     - malformed_input
+    - totality
 obligation_hazards:
     - class: malformed_input
       worst_case: 'FMEA mode (a): a byte order mark or Unicode space outside a string reaches JSON.parse, which rejects the file, so every row of the user extension goes away with no error. This is the ff77cd02 regression for a file saved with a byte order mark and a leading comment. FMEA mode (b): the stripper also changes a Unicode space inside a string, so a label or action changes while the parse still succeeds. FMEA mode (c): the stripper replaces a line feed with a space, so a later // comment swallows the next line.'
+      severity: medium
+    - class: totality
+      worst_case: 'FMEA mode: a character class outside the stated domain has no specified result, so a later refactor changes it silently. The ff77cd02 commit did exactly that for a byte order mark before a comment, and no requirement or test noticed. This requirement names every JS \s character, and the differential test inserts all 19 non-ASCII ones.'
       severity: medium
 hazard_review:
     reviewed_at: "2026-10-01T17:45:00Z"
@@ -51,7 +55,8 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'malformed_input: the input domain is any text, and each of the 19 non-ASCII characters that JS \s matches is whitespace outside strings. Witnessed rows cover a byte order mark, U+00A0, U+2028 and U+3000 before a leading comment, before an indented comment line and before the opening brace. boundary: a byte order mark as the first character and a line feed right before a comment. edge_case: Unicode spaces inside a string stay unchanged, and a carriage return becomes a space while its line feed stays.'
+            - totality
+          rationale: 'totality: the description names every character class outside strings (each JS \s character, the comma, the comment opener, the quote, anything else via 66FW, C8W1 and E4J2) and inside strings (copied unchanged), so no input has unspecified handling. malformed_input: the input domain is any text, and each of the 19 non-ASCII characters that JS \s matches is whitespace outside strings. Witnessed rows cover a byte order mark, U+00A0, U+2028 and U+3000 before a leading comment, before an indented comment line and before the opening brace. boundary: a byte order mark as the first character and a line feed right before a comment. edge_case: Unicode spaces inside a string stay unchanged, and a carriage return becomes a space while its line feed stays.'
         - category: property
           disposition: reviewed
           applied:
