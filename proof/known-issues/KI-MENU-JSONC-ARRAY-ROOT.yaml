@@ -18,11 +18,13 @@ tripwire_mutation: 'Add Array.isArray(parsed) to the parseMenuJsonc root guard (
 introduced_in: inception
 defect_class: latent
 mitigation: The trigger is a menu file with an array root, and the documented format never uses one. The phantom rows show in the root menu, so the user sees that the file is wrong
-remediation: Reject an array root like the scalar roots (omacom/omarchy PR 13511, fork line pr/13511 with SW-REQ-260928-BMFE)
+remediation: Fixed by omacom/omarchy#13968 (Array.isArray in the root guard; SW-REQ-260928-BMFE).
+notes:
+    - 'Fixed on pr/13968 by omacom/omarchy#13968: parseMenuJsonc returns no rows when Array.isArray(parsed), like the scalar and null roots. Spec: SW-REQ-260928-BMFE (DEFECT-260928-4NG9). Report test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh exits 0; the in-suite tests tagged Reproduces now assert no rows and guard against a return.'
 owner: agent:claude-quattro-clean
 review_date: "2026-10-01"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-10-01T09:30:00Z"
       by: agent:claude-quattro-clean
@@ -36,6 +38,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-array-root.yaml
+    - at: "2026-10-01T17:50:34Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-INLINE-COMMENT or KI-MENU-JSONC-STRIP-GAPS: this one is an array root walked by index into phantom rows; those are the items wrapper key, string rewriting, inline comment tails and block comments'
 kill_domain: parsing
 affected_file:

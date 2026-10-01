@@ -18,11 +18,13 @@ tripwire_mutation: 'Make the stripJsonc comma pass string-aware (copy string-lit
 introduced_in: inception
 defect_class: latent
 mitigation: The defect needs a user or extension string with a comma directly before } or ]. The shipped default menu has no such string. An author can drop the comma or put a character between the comma and the closer
-remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim (omacom/omarchy PR 13255, fork line pr/13255 with SW-REQ-260927-66FW). Keep the whole-line comment pass first, so a trailing comma followed by comment lines and the closer is still dropped (pinned by the preservation tests)
+remediation: Fixed by omacom/omarchy#13968 (string-aware scanner; SW-REQ-260927-66FW). The comma look-ahead skips whitespace and // comments, so the trailing-comma-then-comment shape still parses (preservation tests stay green).
+notes:
+    - 'Fixed on pr/13968 by omacom/omarchy#13968 (ff77cd02 + efa5170b): stripJsonc is one string-aware scanner that copies string contents verbatim, so a comma before } or ] inside a label or action survives. Spec: SW-REQ-260927-66FW (DEFECT-260927-CMMA). Report test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh exits 0; the in-suite tests tagged Reproduces now assert the fixed output and guard against a return.'
 owner: agent:claude-quattro-clean
 review_date: "2026-10-01"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-10-01T09:30:00Z"
       by: agent:claude-quattro-clean
@@ -40,6 +42,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-01T17:50:34Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
