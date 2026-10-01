@@ -75,7 +75,7 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): an inline comment tail stays in the text and JSON.parse rejects the whole menu file. Every row of that file goes away until the user edits the file. FMEA mode (b): a scanner that drops the line break with the comment joins the tokens on each side, so 1//c and then 2 on the next line becomes 12 and changes a value. FMEA mode (c): a comment opener inside a string is taken as a comment and cuts a label or action. The PR #13968 scanner forbids all three modes.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T23:10:00Z"
+    reviewed_at: "2026-10-01T22:58:00Z"
     reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:
