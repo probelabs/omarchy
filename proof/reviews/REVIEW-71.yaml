@@ -6,4 +6,4 @@ subject: SW-REQ-260922-Z680
 decision: approved
 comment: 'Read mergeAppRows and swapProviderRows. Both build fresh nextItems/nextOrder maps: orphan ids (no item) and the replaced provider batch are dropped, a duplicated incoming id is listed once via the nextItems guard, and the input maps are never written. The disjunctive condition orphan_id_present | provider_reran covers both entry points; the three conjuncts map to the drop/dedup/fresh-map construction. Formula conforms to the code.'
 citations:
-    - shell/plugins/menu/MenuModel.js:139
+    - shell/plugins/menu/MenuModel.js:184

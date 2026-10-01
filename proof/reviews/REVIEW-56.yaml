@@ -6,4 +6,4 @@ subject: SW-REQ-260922-MQ37
 decision: approved
 comment: Read guardLine. Each declared when/checked/disabled expression produces exactly one if-line echoing <id>:<w|c|d>:<0|1> through substituteGuardReaders; items with no guard contribute no line because guardLine is only appended per declared guard. The guards_declared condition and one_line_per_guard response map directly onto this construction. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:511
+    - shell/plugins/menu/MenuModel.js:556
