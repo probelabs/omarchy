@@ -16,6 +16,11 @@
 # through tee. The gate is the LOCK-QML-HARNESS-DONE marker from both phases.
 set -u
 
+# Optional helper toolchain (headless sway, wtype) for GUI acceptance runs.
+# Override with PROOF_ENV_DIR; defaults to $HOME/proof-env so an existing
+# per-host layout keeps working with nothing set.
+PROOF_ENV_DIR="${PROOF_ENV_DIR:-$HOME/proof-env}"
+
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
 HARNESS=$ROOT/test/qml/lock
 STUBS=$HARNESS/stubs
@@ -57,8 +62,8 @@ mkdir -p "$MCDC_STUB_STATE"
 printf 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==\n' | base64 -d > "$RT/fake-image.png" 2>/dev/null
 
 WTYPE=$(command -v wtype || true)
-if [[ -z $WTYPE && -x /home/buger/proof-env/bin/wtype ]]; then
-  WTYPE=/home/buger/proof-env/bin/wtype
+if [[ -z $WTYPE && -x ${PROOF_ENV_DIR}/bin/wtype ]]; then
+  WTYPE=${PROOF_ENV_DIR}/bin/wtype
 fi
 if [[ -z $WTYPE ]]; then
   echo "harness: wtype not found for the keystroke path" >&2
@@ -70,8 +75,8 @@ PATH="$STUBS:$PATH"
 export PATH
 
 # Private headless sway: headless wlroots needs no GPU or running session.
-SWAY_BIN=/home/buger/proof-env/sysroot/usr/bin/sway
-SWAYMSG_BIN=/home/buger/proof-env/sysroot/usr/bin/swaymsg
+SWAY_BIN=${PROOF_ENV_DIR}/sysroot/usr/bin/sway
+SWAYMSG_BIN=${PROOF_ENV_DIR}/sysroot/usr/bin/swaymsg
 if [[ ! -x $SWAY_BIN ]]; then
   SWAY_BIN=$(command -v sway || true)
   SWAYMSG_BIN=$(command -v swaymsg || true)
@@ -82,7 +87,7 @@ if [[ -z $SWAY_BIN ]]; then
 fi
 
 env -i \
-  LD_LIBRARY_PATH=/home/buger/proof-env/sysroot/usr/lib \
+  LD_LIBRARY_PATH=${PROOF_ENV_DIR}/sysroot/usr/lib \
   XDG_RUNTIME_DIR="$RT" \
   HOME="$HOME" \
   WLR_BACKENDS=headless \
@@ -125,7 +130,7 @@ kill "$SWAY_PID" 2>/dev/null || true
 SWAY_PID=""
 sleep 1
 env -i \
-  LD_LIBRARY_PATH=/home/buger/proof-env/sysroot/usr/lib \
+  LD_LIBRARY_PATH=${PROOF_ENV_DIR}/sysroot/usr/lib \
   XDG_RUNTIME_DIR="$RT" \
   HOME="$HOME" \
   WLR_BACKENDS=headless \

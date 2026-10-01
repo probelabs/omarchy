@@ -16,7 +16,7 @@ set -euo pipefail
 # Harness gating: on a host without a Wayland compositor or quickshell (the
 # macOS dogfood host) every block below skips cleanly. The run that clears
 # the witness_deferred staging must happen on the integrated Linux session
-# (proof box: ~/proof-env/gui/start-session.sh).
+# (proof box: $PROOF_ENV_DIR/gui/start-session.sh).
 # mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"

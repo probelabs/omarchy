@@ -15,8 +15,8 @@ set -euo pipefail
 # Harness gating: on a host without a Wayland compositor or quickshell (the
 # macOS dogfood host) this test skips cleanly. The run that clears the
 # witness_deferred staging must happen inside the integrated proof session
-# (proof box: ~/proof-env/gui/start-session.sh; source
-# ~/proof-env/gui/session.env first so hyprctl and omarchy-shell reach the
+# (proof box: $PROOF_ENV_DIR/gui/start-session.sh; source
+# $PROOF_ENV_DIR/gui/session.env first so hyprctl and omarchy-shell reach the
 # proof instance).
 #
 # Cleanup note for the operator: the proof Hyprland instance is disposable.
