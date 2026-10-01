@@ -55,8 +55,8 @@ obligation_hazards:
       worst_case: 'one syntax slip in the user menu JSONC (unbalanced brace a hundred rows in) silently drops the ENTIRE user extension for that session: parseMenuJsonc catches and returns [], the menu renders defaults only, and no diagnostic anywhere tells the user their customization was discarded - fail-visible only by absence, recovery documented but undiscoverable'
       severity: low
 hazard_review:
-    reviewed_at: "2026-10-01T21:26:26Z"
-    reviewed_by: agent:claude-baseline-pass
+    reviewed_at: "2026-10-01T22:40:00Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
@@ -66,7 +66,7 @@ hazard_review:
             - boundary
             - input_domain
             - concurrency_scale
-          rationale: 'Worst case graded above (whole-user-extension silent drop on one malformed key - low: documented recovery, menu stays usable on defaults, and the fix is one lint pass; graded low because the failure is total but benign). malformed_input: the parser declares its policy - whole-line comments and trailing commas are stripped before JSON.parse, unparsable text catches to [], scalar and null roots are treated as no rows (an array root is walked with for..in and renders phantom rows keyed 0,1,... - KI-MENU-JSONC-ARRAY-ROOT, #13492), and non-object entries are skipped during normalization, so malformed shape can never enter the tree. boundary: an empty file yields [] with the injected root, and a user override for an unknown key still merges (per-key override semantics do not require the key to exist upstream). Catalog 1.11.0 re-review: input_domain applied, it merges the default and user menu files, whose byte-level domain is stated and witnessed on SW-REQ-260922-E4J2 and SW-REQ-260922-3T3F. concurrency_scale applied, the two FileView loads finish in either order and each rebuilds the tree, so the merged tree must not depend on their order.'
+          rationale: 'Worst case graded above (whole-user-extension silent drop on one malformed key - low: documented recovery, menu stays usable on defaults, and the fix is one lint pass; graded low because the failure is total but benign). malformed_input: the parser declares its policy - // comments and trailing commas outside strings are stripped before JSON.parse by one string-aware scanner, Unicode whitespace outside strings is read as a space, unparsable text catches to [], scalar, null and array roots are treated as no rows (PR omacom/omarchy#13968 adds the array check, so for..in never renders phantom rows keyed 0,1,...), and non-object entries are skipped during normalization, so malformed shape can never enter the tree. boundary: an empty file yields [] with the injected root, and a user override for an unknown key still merges (per-key override semantics do not require the key to exist upstream). Catalog 1.11.0 re-review: input_domain applied, it merges the default and user menu files, whose byte-level domain is stated and witnessed on SW-REQ-260922-E4J2, SW-REQ-260922-3T3F and SW-REQ-261001-BNZG. concurrency_scale applied, the two FileView loads finish in either order and each rebuilds the tree, so the merged tree must not depend on their order.'
         - category: property
           disposition: reviewed
           applied:
@@ -74,7 +74,7 @@ hazard_review:
           rationale: 'invariant_preservation: the merge rebuilds fresh items/itemOrder objects on every pass and never writes into the QML var properties it is handed (the documented engine dropped-write defect behind the historical duplicate-row bug), so merge is idempotent and rerun-safe, kind/parent inference is a pure function of the entry shape, and the root is injected exactly once. determinism: default-then-user source order fixes override precedence; equal-priority conflicts resolve last-writer-wins deterministically.'
         - category: structural
           disposition: not_applicable
-          rationale: 'JS objects under a GCd engine: no manual memory, pointer arithmetic, or format-string surface; the JSONC stripper is two string-blind regex passes (string-literal gaps tracked as KI-MENU-JSONC-COMMA-IN-STRING), and malformed text is dispositioned under scenario.malformed_input (catch to []). No nil deref: every entry passes the object-shape guard before normalization.'
+          rationale: 'JS objects under a GCd engine: no manual memory, pointer arithmetic, or format-string surface; the JSONC stripper is a string-aware scanner (PR omacom/omarchy#13968) whose string and escape states are exercised by the parser tests, and malformed text is dispositioned under scenario.malformed_input (catch to []). No nil deref: every entry passes the object-shape guard before normalization.'
         - category: domain
           disposition: not_applicable
           rationale: 'the user menu config is the trust root for its own session (same disposition as the keybinding Lua review): merging it cannot cross a privilege boundary, and app/provider rows land through their own children with their own hazard decisions. No external call, timeout, or concurrency surface in the merge itself (single synchronous function per merge). cross_structure_key_identity is met by construction - the map is keyed by the same id string that normalizeItem stamps into entry.id, so key and identity cannot drift.'

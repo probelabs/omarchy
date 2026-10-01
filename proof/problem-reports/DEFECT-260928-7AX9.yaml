@@ -1,0 +1,89 @@
+schema_version: 1
+id: DEFECT-260928-7AX9
+title: Inline JSONC comment tail survived stripping and emptied the whole menu
+introduced_in: inception
+source:
+    type: manual_review
+classification:
+    surface: config_behavior
+    severity: medium
+    defect_class: missing_validation
+    security_relevant: false
+description: |
+    MenuModel.js stripJsonc stripped only whole-line comments with a line-anchored regex. An inline comment tail after content survived stripping. JSON.parse then rejected the whole file and the catch returned an empty item set. One trailing comment emptied the entire menu. No error surfaced because the catch swallows the parse failure by design. Reproduced on the pristine quattro baseline ce925cb1 with review/upstream-repro-jsonc-inline-comment.js (rc=1).
+root_cause:
+    missing_requirement: true
+    missing_test_partition: true
+    missing_mcdc_variable: true
+    notes: |
+        No requirement modeled the comment-strip decision. Its condition (comment_in_string) had no exercising test. The comment partition held whole-line comments but no inline tail. 3T3F could not catch this class because the parse failure returns an empty set by design.
+impact_analysis:
+    affected_requirements:
+    - SW-REQ-260922-3T3F
+    - SW-REQ-260922-E4J2
+    - SYS-REQ-260922-PPDW
+    affected_interfaces: []
+    affected_code:
+    - shell/plugins/menu/MenuModel.js
+disposition:
+    known_issues:
+    - KI-MENU-JSONC-STRIP-GAPS
+    - KI-MENU-ITEMS-KEY-AMBIGUITY
+    status: covered_by_requirement
+    requirements:
+    - SW-REQ-260928-C8W1
+    rationale: |-
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements, so this closure covers only its own class.
+
+        SW-REQ-260928-C8W1 models the decision as an equivalence over comment_in_string. On the pr/13968 mirror of omacom/omarchy#13968 the witness rows in test/shell.d/menu-test.sh are replayed by test/node/menumodel-replay.test.mjs, code MC/DC of stripJsonc is 100%, the line break after a comment stays (1//c, a line break and 2 is still rejected), report #13493 exits 0, and KI-MENU-JSONC-INLINE-COMMENT is fixed. stripJsonc is the single JSONC comment stripper in the menu plugin.
+    evidence:
+        verified_by:
+        - test/shell.d/menu-test.sh
+        - test/node/menumodel-replay.test.mjs
+        requirement_mcdc_witnesses:
+        -   requirement: SW-REQ-260928-C8W1
+            witness: comment_in_string=T, comment_tail_dropped=F => TRUE
+        obligation_evidence:
+        -   requirement: SW-REQ-260928-C8W1
+            obligation_class: malformed_input
+            evidence_type: negative
+        reviews:
+        - REVIEW-73
+    reviewer: agent:claude-pr-13968
+    reviewed_at: '2026-10-01T18:25:00Z'
+hardening:
+    new_requirements:
+    - SW-REQ-260928-C8W1
+    strengthened_requirements:
+    - SW-REQ-260922-3T3F
+    added_obligations:
+    -   requirement: SW-REQ-260928-C8W1
+        obligation_class: malformed_input
+    regression_tests:
+    - test/shell.d/menu-test.sh
+    - test/node/menumodel-replay.test.mjs
+    mcdc_witnesses:
+    -   requirement: SW-REQ-260928-C8W1
+        witness: comment_in_string=T, comment_tail_dropped=F => TRUE
+    sibling_sweep:
+        scope:
+        - shell/plugins/menu/
+        - bin/
+        checked_at: '2026-10-01'
+        reviewer: agent:claude-pr-13968
+        result: 'no isomorphic site: stripJsonc is the single JSONC comment stripper in the menu plugin.
+            Menu.qml consumes only the stripped text. No bin/ script parses menu JSONC.'
+        found: []
+affects:
+- SW-REQ-260928-C8W1
+history:
+-   at: '2026-09-28T00:02:00Z'
+    by: agent:kimi-zero-warnings
+    action: created
+-   at: '2026-09-28T00:05:00Z'
+    by: agent:kimi-zero-warnings
+    action: closed covered_by_requirement after hardening landed (C8W1 + witnesses + obligation)
+-   at: '2026-10-01T18:25:00Z'
+    by: agent:claude-pr-13968
+    action: 're-applied on pr/13968 (omacom/omarchy#13968 fixes #13493); evidence re-pointed to the PR
+        scanner, KI-MENU-JSONC-INLINE-COMMENT closed as fixed'
