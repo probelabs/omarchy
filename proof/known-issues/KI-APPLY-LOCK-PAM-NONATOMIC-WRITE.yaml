@@ -55,6 +55,10 @@ history:
       by: agent:claude-baseline-pass
       action: edit
       detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
+    - at: "2026-10-01T21:46:18Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-pam-nonatomic-write.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

@@ -5,13 +5,13 @@ results:
       command: sh pocs/menu-jsonc-cr-line-endings.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T21:33:56Z"
+      executed_at: "2026-10-01T21:46:18Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-CR-LINE-ENDINGS` from the KnownIssue''s reproducer command: sh pocs/menu-jsonc-cr-line-endings.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - pocs/menu-jsonc-cr-line-endings.sh
       freshness_hashes:
         pocs/menu-jsonc-cr-line-endings.sh: sha256:b42b7a78248d16789259856a063c307d3594ddc39f1090064d35163d836ba682
-        proof/known-issues/KI-MENU-JSONC-CR-LINE-ENDINGS.yaml: ki-content-v1:sha256:1227457ec24c762b5d75684b8da71424322dc5b89bdf253ac4e832318317de2f
+        proof/known-issues/KI-MENU-JSONC-CR-LINE-ENDINGS.yaml: ki-content-v1:sha256:1dc634ec877b17b783ad24d83062d6e71345f83e826fb87318e4afbba5995687
       known_issues:
         - KI-MENU-JSONC-CR-LINE-ENDINGS
       config:

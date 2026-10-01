@@ -50,6 +50,10 @@ history:
       by: agent:claude-baseline-pass
       action: edit
       detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
+    - at: "2026-10-01T21:46:39Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-no-timeout.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
