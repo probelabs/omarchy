@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when jsonc_has_comments_or_commas the menu_model shall eventually satisfy items_parsed
-description: The parser strips full-line // comments and trailing commas before JSON parsing, so the authored JSONC parses to its declared entries.
+description: The parser strips // comments and trailing commas outside string literals before JSON parsing, so the authored JSONC parses to its declared entries.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js stripJsonc lines 1-5 and parseMenuJsonc lines 42-64.
+rationale: MenuModel.js stripJsonc (a single string-aware scanner under PR omacom/omarchy#13968) and parseMenuJsonc. The scanner rules are decomposed into SW-REQ-260927-66FW (commas), SW-REQ-260928-C8W1 (comments) and SW-REQ-261001-BNZG (input domain and whitespace).
 tags: []
 variables: []
 traces:
@@ -125,13 +125,13 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:00Z"
-    last_modified_by: agent:claude-baseline-pass
-    last_modified_at: "2026-10-01T21:23:25Z"
+    last_modified_by: agent:claude-pr-13968
+    last_modified_at: "2026-10-01T22:40:00Z"
 obligation_checklist:
     - input_domain
 hazard_review:
-    reviewed_at: "2026-10-01T21:26:18Z"
-    reviewed_by: agent:claude-baseline-pass
+    reviewed_at: "2026-10-01T22:40:00Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
@@ -143,12 +143,12 @@ hazard_review:
             - input_domain
           not_applicable:
             - concurrency_scale
-          rationale: 'Clean-baseline review against upstream e332dc97 (2026-10-01). Upstream stripJsonc is two string-blind regex passes: a line-anchored pass drops each whole-line // comment with its line break, then a pass drops each comma whose next non-whitespace character is } or ]. Worst case: the comma pass also matches inside string literals, so a label or action carrying comma+closer ("x, ]y", mv f{.bak,}) is silently rewritten while the parse still succeeds (KI-MENU-JSONC-COMMA-IN-STRING, #13250); an inline // tail is not stripped, so JSON.parse rejects the file and the whole file contributes no rows (KI-MENU-JSONC-INLINE-COMMENT, #13493; docs/menu.md documents the limitation); block comments are not stripped (KI-MENU-JSONC-STRIP-GAPS). Within the documented grammar the order of the two passes is the control: a trailing comma followed by whole-line comments and then } or ] is dropped, so a commented-out entry after the last real one keeps every row (preservation tests in menu-test.sh and test/node/menumodel-replay.test.mjs, incl. the shipped extension template with its examples uncommented, and a 2000-case seeded differential property test). boundary: EOF without a trailing newline after a comment line is matched by (\n|$); a file that strips to whitespace yields []. edge_case: // inside a string survives because only line-leading comments are matched; CRLF comment lines are removed whole. Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: LF, CRLF, comment indentation with any JS whitespace, any character inside strings and huge files are accepted; non-ASCII whitespace between tokens and CR-only files with a comment empty the menu (KI-MENU-JSONC-UNICODE-WHITESPACE, KI-MENU-JSONC-CR-LINE-ENDINGS). concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
+          rationale: 'PR omacom/omarchy#13968 review (2026-10-01). stripJsonc is one string-aware scanner: string contents are copied verbatim, a // comment outside a string is dropped up to but not including its line break, a comma is dropped only when the next character that is neither whitespace nor part of a // comment is } or ], and any other JS \s character outside a string is passed on as a space (a line feed stays a line feed). Worst case: the stripper mangles authored content into different JSON, so the file parses to silently wrong entries (a comma or // inside a string eaten, as the upstream regexes did - #13250), or a correct file is rejected (an inline tail - #13493; a trailing comma before a commented-out entry - the #13512 regression; a byte order mark or Unicode space - the regression in the PR''s first commit ff77cd02, fixed by its second commit b2dae8db). The controls are the decomposed rules SW-REQ-260927-66FW, SW-REQ-260928-C8W1 and SW-REQ-261001-BNZG with their witnesses, the preservation tests (incl. the shipped extension template with its examples uncommented) and the seeded differential test against an independent reference model in test/node/menumodel-replay.test.mjs. Block comments stay unsupported (KI-MENU-JSONC-STRIP-GAPS). boundary: end of input inside a comment or a string ends the pass without error; a file that strips to whitespace yields []; a comma at end of input is kept. edge_case: an escaped quote or an escaped backslash inside a string, a whole-line comment with an unbalanced quote, CRLF line endings, and a comment between two tokens (the line break keeps them apart). Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: LF, CRLF, comment indentation with any JS whitespace, any character inside strings and huge files are accepted. With this PR any JS whitespace character between tokens is read as a space (SW-REQ-261001-BNZG), which fixes KI-MENU-JSONC-UNICODE-WHITESPACE. A CR-only file with a whole-line comment still empties the menu (KI-MENU-JSONC-CR-LINE-ENDINGS); this PR does not change it. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:
             - determinism
-          rationale: The strip is a single left-to-right state-machine pass with two states (in-string, outside), so one input yields one output every time - the same authored file parses to the same entries on every load, including across the file watcher's reloads.
+          rationale: 'The strip is a single left-to-right pass with two states (in a string, outside), so one input yields one output every time. The same authored file parses to the same entries on every load, including the file watcher''s reloads.'
         - category: structural
           disposition: not_applicable
           rationale: Character-classified string concatenation in a bounded single pass; no memory management, pointer math, or numeric surface, and no encoding transform - bytes pass through verbatim outside the two strip rules.
