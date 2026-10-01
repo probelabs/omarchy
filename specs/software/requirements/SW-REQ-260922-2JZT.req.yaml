@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:14.807644478Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T22:40:32.920851Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_fingerprint: sha256:a6db6c93dd4de43b8844bc0838374f66b8fea8928b43fdecebcbcc1b2b017a8f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:substituteGuardReaders: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:substituteGuardReaders: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -44,6 +44,16 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/MenuModel.js:477
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
+            - test/shell.d/menu-guards-test.sh:9
+        - reviewed_at: "2026-10-01T22:40:32.920851Z"
+          reviewed_by: agent:claude-pr-13968
+          method: inspection
+          rationale: 'pr/13968: the PR #13968 changes only stripJsonc and parseMenuJsonc in MenuModel.js (product diff vs the upstream PR is annotation-only, review/check-clean-product-diff.py); the function this requirement links to is byte-identical to the baseline 9f3abc10, so the link turned suspect only through the shared file fingerprint. Re-read the linked function and its witnesses; menu-test.sh and the node replay are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:522
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
             - test/shell.d/menu-guards-test.sh:9
