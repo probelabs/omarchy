@@ -42,10 +42,14 @@ test('report #13492 (array root renders phantom rows): expected failure while KI
   expectReport(t, 'cmulr8j7z0hy31gw4pne8v6u4', 1, /DEFECT: top-level array root yields no rows/)
 })
 
+// PR omacom/omarchy#6525 (this mirror) strips a // comment wherever its opener
+// sits outside a string, so report #13493 no longer reproduces: the script
+// exits 0 and the test is flipped to the fixed behaviour. The Reproduces
+// marker stays as a guard against the defect returning.
 // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
-test('report #13493 (inline comment tail empties the menu): expected failure while KI-MENU-JSONC-INLINE-COMMENT is open', t => {
-  expectReport(t, 'cmulr8j7w0hy01gw4menggvbx', 1, /DEFECT: inline comment tail after the root object/)
-  // The control the original validation lacked must hold on this baseline.
+test('report #13493 (inline comment tail empties the menu): fixed by #6525, inline comment tails are stripped', t => {
+  expectReport(t, 'cmulr8j7w0hy01gw4menggvbx', 0, /^ok: inline comment tail after the root object/m)
+  // The control the original validation lacked must still hold.
   const { out } = runReport('cmulr8j7w0hy01gw4menggvbx')
   assert.match(out, /ok: control: trailing comma, whole-line comment, closer keeps the row/)
 })

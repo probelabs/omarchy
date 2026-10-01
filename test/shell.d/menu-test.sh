@@ -235,16 +235,19 @@ assertEqual(
   0,
   'menu skips an array nested under the items key as a non-object entry'
 )
+// KI-MENU-JSONC-INLINE-COMMENT is fixed by PR omacom/omarchy#6525 on this
+// mirror: its baseline tripwires now assert the fixed row counts and stay as
+// regression guards.
 // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
 assertEqual(
   menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment tail empties the whole file (omacom/omarchy#13493)'
+  1,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment tail no longer empties the file (omacom/omarchy#13493)'
 )
 assertEqual(
   menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // first\n  "b": {"label": "B"}\n}').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment on an entry line empties the whole file'
+  2,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment on an entry line keeps every row'
 )
 // Reproduces: KI-MENU-JSONC-STRIP-GAPS
 assertEqual(
@@ -267,14 +270,17 @@ const domainDoc = '{\n  // comment\n  "a": {"label": "A"},\n  "b": {"label": "B"
 assertEqual(domainRows(domainDoc), 'a=A|b=B', 'menu JSONC with LF line endings parses to its entries')
 assertEqual(domainRows(domainDoc.replace(/\n/g, '\r\n')), 'a=A|b=B', 'menu JSONC with CRLF line endings parses like LF')
 assertEqual(domainRows('{\r  "a": {"label": "A"},\r}\r'), 'a=A', 'menu JSONC with CR-only line endings and no comment parses')
-// SW-REQ-260922-E4J2:input_domain:nominal -- any JS whitespace character
-// (no-break space, ideographic space, VT, FF, a byte-order mark) indenting a
-// full-line comment is dropped together with the comment.
+// On this mirror PR omacom/omarchy#6525 regresses this partition: its scanner
+// drops the comment but keeps a JS whitespace character JSON does not accept
+// (no-break space, ideographic space, VT, FF, a byte-order mark) that indents
+// a full-line comment, so the whole file parses to no rows. The baseline's
+// nominal witness is a green tripwire of that regression here.
+// Reproduces: KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE
 for (const ch of [' ', '　', '\u000b', '\u000c', '﻿', ' ']) {
   assertEqual(
     domainRows(domainDoc.replace('  // comment', ch + ch + '// comment')),
-    'a=A|b=B',
-    'menu JSONC drops a full-line comment indented with U+' + ch.charCodeAt(0).toString(16).padStart(4, '0')
+    '',
+    'KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwire: a full-line comment indented with U+' + ch.charCodeAt(0).toString(16).padStart(4, '0') + ' empties the whole file'
   )
 }
 // SW-REQ-260922-E4J2:input_domain:nominal -- inside a string literal every
