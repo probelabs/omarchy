@@ -58,15 +58,18 @@ history:
     last_modified_by: agent:claude-quattro-proof
     last_modified_at: "2026-10-01T20:46:46Z"
 hazard_review:
-    reviewed_at: "2026-10-01T21:05:00Z"
+    reviewed_at: "2026-10-01T22:55:00Z"
     reviewed_by: agent:claude-quattro-proof
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - concurrent
-          rationale: 'This is the mitigation for the concurrent-answer hazard. Several summons that arrive together each answer the request before them while the first answer write still runs. Worst case without it: a caller polls its done file forever because its answer was set on a busy shared Process and ignored. With one detached process per answer the writes run side by side; each targets its own caller-unique done file (omarchy-menu-select and omarchy-menu-input use mktemp paths), so concurrent writes cannot cross. Residual: a write process that fails to start (fork failure) is not observed or retried; the peer-death trigger (the shell dies after a summon) is outside this requirement and stays tracked on KI-MENU-REQUEST-LIFECYCLE.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'This is the mitigation for the concurrent-answer hazard. Several summons that arrive together each answer the request before them while the first answer write still runs. Worst case without it: a caller polls its done file forever because its answer was set on a busy shared Process and ignored. With one detached process per answer the writes run side by side; each targets its own caller-unique done file (omarchy-menu-select and omarchy-menu-input use mktemp paths), so concurrent writes cannot cross. Residual: a write process that fails to start (fork failure) is not observed or retried; the peer-death trigger (the shell dies after a summon) is outside this requirement and stays tracked on KI-MENU-REQUEST-LIFECYCLE. Catalog 1.11.0 re-review: concurrency_scale applied. It is this requirement: answers issued while earlier writes run each start their own write (witnessed with three back-to-back pickers; a live burst of 20 left 0 callers stuck). input_domain not applicable: Util.shellQuote quotes the answer strings unchanged, and nothing is parsed here.'
         - category: property
           disposition: reviewed
           applied:

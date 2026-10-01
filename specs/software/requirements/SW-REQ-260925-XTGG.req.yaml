@@ -55,15 +55,18 @@ history:
     last_modified_by: agent:v2-third-party-review
     last_modified_at: "2026-10-01T07:43:12Z"
 hazard_review:
-    reviewed_at: "2026-10-01T08:00:00Z"
-    reviewed_by: agent:v2-third-party-review
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T22:55:00Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - concurrent
-          rationale: 'The guard is the mitigation for the concurrent-summon hazard: a summon interleaved with an in-flight select/input request now answers the prior request as cancelled before opening, closing the abandoned-request trigger of omacom/omarchy#9057 (KI-MENU-REQUEST-LIFECYCLE re-summon leg). Worst case without the guard: the caller polls its done file forever. Residual: on 0b4fe292 the cancel write went through the shared resultProc and a burst could still drop it (busy-resultProc leg, SX26/C14); head b7bd59c4 writes each answer in a process of its own, which SW-REQ-261001-C19S covers. The peer-death trigger (the shell dies after a summon) stays tracked on KI-MENU-REQUEST-LIFECYCLE.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'The guard is the mitigation for the concurrent-summon hazard: a summon interleaved with an in-flight select/input request now answers the prior request as cancelled before opening, closing the abandoned-request trigger of omacom/omarchy#9057 (KI-MENU-REQUEST-LIFECYCLE re-summon leg). Worst case without the guard: the caller polls its done file forever. Residual: on 0b4fe292 the cancel write went through the shared resultProc and a burst could still drop it (busy-resultProc leg, SX26/C14); head b7bd59c4 writes each answer in a process of its own, which SW-REQ-261001-C19S covers. The peer-death trigger (the shell dies after a summon) stays tracked on KI-MENU-REQUEST-LIFECYCLE. Catalog 1.11.0 re-review: concurrency_scale applied. A burst of summons is the case the guard handles, one summon at a time; the witnesses in menu-test.sh drive back-to-back summons, and the live 20-summon burst left 0 callers stuck on b7bd59c4. input_domain not applicable: the guard reads only requestActive, and payload parsing belongs to SW-REQ-260922-50RE.'
         - category: property
           disposition: reviewed
           applied:
