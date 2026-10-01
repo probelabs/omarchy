@@ -1326,3 +1326,19 @@ test('mcdc summonAction: in-process summon shape and every rejection', () => {
   assertDeepEqual(menuModel.summonAction('omarchy-shell shell summon style'), { id: 'style', payload: '{}' }, 'summonAction parses a bare summon to an empty payload')
   assertDeepEqual(menuModel.summonAction("omarchy-shell shell summon style 'k=v'"), { id: 'style', payload: 'k=v' }, 'summonAction parses a quoted payload')
 })
+
+// PR omacom/omarchy#13197 ships its own test,
+// test/shell.d/menu-file-symlink-root-test.sh. The menu-shell suite in
+// proof.yaml names its scripts one by one, and the mirror leaves proof.yaml
+// untouched, so the PR's script runs here, unmodified, and must exit 0. It
+// drives the real bin/omarchy-menu-file against a scratch tree (a symlinked
+// root, an interior symlink loop, a broken symlink argument, overlapping and
+// literally duplicated roots) with a stub selector. It skips itself without
+// GNU find -printf, the same dependency menu-file-test.sh has.
+test('PR #13197 own test: test/shell.d/menu-file-symlink-root-test.sh exits 0', async () => {
+  const { spawnSync } = await import('node:child_process')
+  const r = spawnSync('bash', [path.join(root, 'test/shell.d/menu-file-symlink-root-test.sh')], { cwd: root, encoding: 'utf8', timeout: 120000 })
+  const out = (r.stdout || '') + (r.stderr || '')
+  assert(r.status === 0, 'menu-file-symlink-root-test.sh exits 0', out)
+  assert(/^ok - /m.test(out) && !/^not ok/m.test(out), 'menu-file-symlink-root-test.sh reports ok lines and no failure', out)
+})
