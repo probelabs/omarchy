@@ -1,0 +1,11 @@
+id: REVIEW-261001-BFW5
+kind: spec_conformance
+reviewer: agent:v2-third-party-review
+reviewed_at: "2026-10-01T08:12:30Z"
+subject: SW-REQ-261001-B4CK
+decision: approved
+comment: 'Read setActiveMenu and goBack on the PR #13012 tree. A history push records {menu, index: selectedIndex, itemId of displayModel row at selectedIndex}. goBack pops the record and calls setActiveMenu(previous.menu, false, false, previous): selectedIndex starts at the saved index, rebuildDisplay settles it off disabled rows, then a scan selects the first row whose itemId matches the record and rowSelectable(i) holds. back_navigated & remembered_row_present -> remembered_row_selected is exactly that scan; the violation row (present and selectable but not selected) needs the scan removed, so it is dispositioned defensive. The not-present arm falls back to the settled saved index. Limit recorded separately (KI-MENU-BACK-FILTERED-INDEX): the saved index of a drill-in made from a filtered search indexes the filtered list, while Back rebuilds the unfiltered parent list, so the fallback can land on an unrelated row.'
+citations:
+    - shell/plugins/menu/Menu.qml:784@setActiveMenu
+    - shell/plugins/menu/Menu.qml:804
+    - shell/plugins/menu/Menu.qml:814@goBack
