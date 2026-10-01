@@ -90,8 +90,8 @@ assertEqual(menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // note\n}').length, 
 assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "aliases": ["x", // note\n]}}')[0].aliases.join(','), 'x', 'menu drops a trailing comma before ] behind a comment')
 assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "n": 1//c\n2}}').length, 0, 'menu keeps the line break after a comment so tokens on either side are not joined')
 
-// Unicode whitespace outside strings, which JSON.parse rejects
-for (const [name, space] of [['a byte order mark', '\uFEFF'], ['a no-break space', '\u00A0'], ['a line separator', '\u2028'], ['an ideographic space', '\u3000']]) {
+// Whitespace outside strings that JSON.parse rejects: Unicode spaces, vertical tab, form feed
+for (const [name, space] of [['a byte order mark', '\uFEFF'], ['a no-break space', '\u00A0'], ['a line separator', '\u2028'], ['an ideographic space', '\u3000'], ['a vertical tab', '\u000B'], ['a form feed', '\u000C']]) {
   assertEqual(menu.parseMenuJsonc(space + '// note\n{"a": {"label": "A"}}').length, 1, `menu reads ${name} before a leading comment as whitespace`)
   assertEqual(menu.parseMenuJsonc('{\n' + space + '// note\n"a": {"label": "A"}}').length, 1, `menu reads ${name} indenting a comment line as whitespace`)
   assertEqual(menu.parseMenuJsonc(space + '{"a": {"label": "A"}}').length, 1, `menu reads ${name} before the opening brace as whitespace`)
