@@ -4,8 +4,9 @@
 // Every script follows one contract: exit 0 = the reported behaviour is
 // correct, 1 = DEFECT reproduced, 2 = SETUP (a required runtime is missing).
 //
-// On this baseline (upstream e332dc97 product code) five reports reproduce an
-// upstream defect. Each is pinned as an EXPECTED FAILURE: the test asserts
+// On the baseline (upstream e332dc97 product code) five reports reproduce an
+// upstream defect; on this pr/13968 mirror the three JSONC reports are fixed
+// and only #10601 and #9057 still reproduce. Each is pinned as an EXPECTED FAILURE: the test asserts
 // exit 1 and the DEFECT line, and is bound to its known issue with a
 // Reproduces marker. When the upstream fix lands the script exits 0 and the
 // test goes red, which is the signal to close the known issue and flip the
@@ -32,20 +33,27 @@ function expectReport(t, id, wantExit, wantLine) {
   assert.match(out, wantLine, `report ${id}: output does not carry the expected verdict line\n${out}`)
 }
 
+// PR omacom/omarchy#13968 (this mirror) replaces the two regex passes in
+// stripJsonc with one string-aware scanner and rejects an array root
+// (SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1). The three
+// JSONC reports below no longer reproduce: each script exits 0, and each
+// test is flipped from the expected failure to the fixed behaviour. The
+// Reproduces markers stay, so each test now guards against the defect
+// returning (the known issues are closed as fixed by #13968).
 // Reproduces: KI-MENU-JSONC-COMMA-IN-STRING
-test('report #13250 (comma and closer inside a label): expected failure while KI-MENU-JSONC-COMMA-IN-STRING is open', t => {
-  expectReport(t, 'cmulr8l6h0i461gw40vqqv64c', 1, /DEFECT: label containing ', \]' survives/)
+test('report #13250 (comma and closer inside a label): fixed by #13968, string contents survive', t => {
+  expectReport(t, 'cmulr8l6h0i461gw40vqqv64c', 0, /^ok: label containing ', \]' survives/m)
 })
 
 // Reproduces: KI-MENU-JSONC-ARRAY-ROOT
-test('report #13492 (array root renders phantom rows): expected failure while KI-MENU-JSONC-ARRAY-ROOT is open', t => {
-  expectReport(t, 'cmulr8j7z0hy31gw4pne8v6u4', 1, /DEFECT: top-level array root yields no rows/)
+test('report #13492 (array root renders phantom rows): fixed by #13968, an array root yields no rows', t => {
+  expectReport(t, 'cmulr8j7z0hy31gw4pne8v6u4', 0, /^ok: top-level array root yields no rows/m)
 })
 
 // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
-test('report #13493 (inline comment tail empties the menu): expected failure while KI-MENU-JSONC-INLINE-COMMENT is open', t => {
-  expectReport(t, 'cmulr8j7w0hy01gw4menggvbx', 1, /DEFECT: inline comment tail after the root object/)
-  // The control the original validation lacked must hold on this baseline.
+test('report #13493 (inline comment tail empties the menu): fixed by #13968, inline comment tails are stripped', t => {
+  expectReport(t, 'cmulr8j7w0hy01gw4menggvbx', 0, /^ok: inline comment tail after the root object/m)
+  // The control the original validation lacked must still hold.
   const { out } = runReport('cmulr8j7w0hy01gw4menggvbx')
   assert.match(out, /ok: control: trailing comma, whole-line comment, closer keeps the row/)
 })
