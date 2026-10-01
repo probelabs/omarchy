@@ -74,6 +74,9 @@ project:
                 # Omitted production roots, intentionally out of the dogfood
                 # universe (lock + menu components only):
                 - pocs/**
+                # review/ holds our audit research artifacts (PoCs, fuzz and
+                # product-diff scripts), not product code.
+                - review/**
                 - test/**
                 - migrations/**
                 - install/**

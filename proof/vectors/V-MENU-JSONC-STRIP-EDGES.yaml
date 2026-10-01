@@ -16,7 +16,7 @@ campaign_log:
       status: closed-null
       note: 'Phase-2 PoC (review/poc-jsonc-strip-edges.mjs) executed on Linux at quattro f0893298: C01 comma-in-string label preserved verbatim (''x, ]y''), C02 inline-trailing-comment parse returns 1 item (no empty-menu). Both hunted defects do not reproduce; regression assertions added to test/node/menumodel-replay.test.mjs.'
       actor: agent
-    - at: "2026-10-01T12:00:00Z"
+    - at: "2026-10-01T09:30:00Z"
       status: closed-ki
       note: 'Clean-baseline re-disposition on quattro-clean (upstream e332dc97 product code). The previous closed-null was recorded on the fork scanner, which is not on this baseline. On upstream both hunted defects reproduce: a comma+closer inside a string label is rewritten (x, ]y -> x ]y, omacom/omarchy#13250) and an inline // tail empties the whole file (#13493). Exit closed-ki: KI-MENU-JSONC-COMMA-IN-STRING and KI-MENU-JSONC-INLINE-COMMENT, each with an in-suite green tripwire and the report reproducer as an expected failure in test/node/report-reproducers.test.mjs.'
       actor: agent

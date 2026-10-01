@@ -60,7 +60,7 @@ surfaces:
         20k seeded fuzz divergences); vectors V-MENU-JSONC-INPUT and
         V-MENU-JSONC-STRIP-EDGES exited closed-ki.
       reviewed_by: agent:claude-quattro-clean
-      reviewed_at: "2026-10-01T12:00:00Z"
+      reviewed_at: "2026-10-01T09:30:00Z"
     summary: >
       User-authored JSONC menu definitions (~/.config/omarchy/extensions/
       omarchy-menu.jsonc + shipped default) parsed by MenuModel.stripJsonc +
