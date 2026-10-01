@@ -6,7 +6,8 @@ of upstream's code it adds a **proof layer**: written requirements for the menu 
 tests that check the code against those requirements, and an audit record of the result. We use it to check
 upstream issues and pull requests against what the code is supposed to do.
 
-The proof layer lives in `proof/`, `specs/`, `test/`, `pocs/`, `review/`, `proof.yaml` and this file. Outside
+The proof layer lives in `proof/`, `specs/`, `test/`, `pocs/`, `review/`, `proof.yaml`, this file and one added
+guide, `agents/skills/headless-gui-testing.md`. Outside
 those paths, the only differences from upstream are comments (such as `// Implements: <requirement>` markers), blank
 lines, QML `id:` attributes and one `.gitignore` line. `review/check-clean-product-diff.py e332dc97 HEAD` checks this.
 
@@ -85,6 +86,17 @@ sh test/reports/report-cmulr908f0k131gw4hy0pcx08.sh   # #10340 (exit 0: not a de
 The full suite list, including the other menu and lock-screen tests, is under `tests:` in `proof.yaml`.
 The full audit uses the ReqProof `proof` tool (`proof audit`). It runs every suite
 and measures coverage, so it takes several minutes.
+
+## Evidence clips
+
+Five short screen recordings show upstream bugs before and after a fix: #13493, #13250 and #13492 (menu
+JSONC parsing) and PR #13012 (the cursor position after going back from a search, as model output and as
+the live menu UI). They are in [`review/media/`](../review/media/); [`review/media/MANIFEST.md`](../review/media/MANIFEST.md)
+lists each clip's exact BEFORE and AFTER commits and how it was recorded. The scripts and input files behind
+them are in [`pocs/reproducers/`](../pocs/reproducers/). `pocs/reproducers/run-at-rev.sh <sha>` runs them
+against any commit, and that directory's README records their output on each commit.
+[`agents/skills/headless-gui-testing.md`](../agents/skills/headless-gui-testing.md) explains how to run
+and record the real shell on a Linux machine with no display.
 
 ## How syncing with upstream works
 

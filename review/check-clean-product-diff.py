@@ -5,8 +5,9 @@ Usage: review/check-clean-product-diff.py [UPSTREAM_REF] [CLEAN_REF]
        (defaults: e332dc97 HEAD)
 
 Product = every path the two refs differ on, except the proof layer
-(proof/, specs/, pocs/, review/, test/, proof.yaml, and the fork front page
-.github/README.md). For each product file the
+(proof/, specs/, pocs/, review/, test/, proof.yaml, the fork front page
+.github/README.md, and our added guide agents/skills/headless-gui-testing.md,
+a new file upstream does not have). For each product file the
 line diff is classified; every changed line must be one of:
   blank            an added/removed empty line
   comment          a full-line comment in the file's language
@@ -52,7 +53,7 @@ def heredoc_ranges(lines):
     return out
 
 files = [f for f in git("diff", "--name-only", up, cl).split("\n") if f]
-NONPRODUCT_FILES = ("proof.yaml", ".github/README.md")
+NONPRODUCT_FILES = ("proof.yaml", ".github/README.md", "agents/skills/headless-gui-testing.md")
 product = [f for f in files if not f.startswith(NONPRODUCT) and f not in NONPRODUCT_FILES]
 bad, tally = [], {}
 for f in product:
