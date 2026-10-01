@@ -356,7 +356,7 @@ wait_state "root listed for navigation" '(.rows | length) == 7 and (.navStack | 
 move_cursor_to nav || fail "cursor reaches the nav row"
 wait_state "cursor on the nav row" '.rows[.selectedIndex].itemId == "nav"'
 key_burst Return
-wait_state "drill-in pushes the path" '.activeMenu == "nav" and (.navStack | length == 1) and .navStack[0] == "root"'
+wait_state "drill-in pushes the path" '.activeMenu == "nav" and (.navStack | length == 1) and .navStack[0].menu == "root"'
 key_burst BackSpace
 wait_state "back retraces the pushed path" '.activeMenu == "root" and (.navStack | length == 0)'
 # Verifies: SW-REQ-260922-DE93
