@@ -76,7 +76,7 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): a menu file whose root is a JSON array parses cleanly. for..in then walks the array indices and renders phantom rows id "0","1",... parented to root. Rows the config never defined appear in the menu. FMEA mode (b), the realistic payload: a phantom row carries a label and an action out of the array element. Activating it runs a command the user never placed in the menu, with the user''s full privileges. No error surfaces in either mode because JSON.parse accepts the array. The corruption is visible only as extra rows. PR #13968 adds Array.isArray to the root-type guard. The grade records the upstream worst case that this requirement forbids.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T23:10:00Z"
+    reviewed_at: "2026-10-01T22:58:00Z"
     reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:
