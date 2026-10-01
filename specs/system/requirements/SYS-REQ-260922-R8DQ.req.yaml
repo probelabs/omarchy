@@ -75,6 +75,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'routing is in-process string resolution: no external call, no timeout surface, no IPC, no trust boundary (routes come from the user own keybinds/scripts on their own machine). Identity classes are met by construction: route keys, item ids, and alias tokens flow through one normalization before every comparison.'
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -82,3 +83,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T18:23:07Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=1; tests_pass:test_status=passing
+          changed_by: agent:claude-test-results

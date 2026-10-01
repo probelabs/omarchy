@@ -110,6 +110,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'No trust boundary in the view slice: menu rows already execute with full user privileges by design, guard results come from the local guard pipeline over the user own config, and the traced files (MenuModel.js, Menu.qml) contain no network, crypto, or privilege-escalation surface.'
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T20:41:27Z"
@@ -117,3 +118,8 @@ lifecycle:
           to: review
           reason: '[zero-warnings-campaign] genuine re-review 2026-09-27: FRETish verified against implementation (JRW1 isVisible/isDisabled/labelFor MenuModel.js:284+, 50RE open/close/refresh/ping Menu.qml:21-44, C8HX finishRequest Menu.qml:122, B757 foldedListHeight/availableRowsHeight Menu.qml:164-216, 8CQ4 requestDeleteSelected/cancelDelete/confirmDelete Menu.qml:841-875); all MC/DC witness rows already covered by shell suites; activates the 9 declared variables these reqs own'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T18:23:05Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-23=present | tests_pass:test_status=passing
+          changed_by: agent:claude-test-results

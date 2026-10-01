@@ -111,7 +111,7 @@ assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}')
 // ]. The assertions below pin what that order gets RIGHT (preservation) and,
 // tagged Reproduces, what it gets wrong (known issues, pinned as green
 // tripwires: each flips red when the named upstream fix lands).
-// SW-REQ-260922-E4J2:boundary:nominal -- a real trailing comma before a closing brace is dropped.
+// SW-REQ-260922-E4J2: a real trailing comma before a closing brace is dropped.
 assertEqual(
   menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
   1,
@@ -1012,7 +1012,6 @@ test('jsonc preservation: seeded differential property over the documented gramm
 // plain data arguments — no getters, no private reflection.
 // ---------------------------------------------------------------------------
 
-// SW-REQ-260922-E4J2:boundary:nominal -- comma before } / ] across whitespace or a comment line, comma at end of input, missing input
 test('mcdc stripJsonc: the two regex passes and the empty-input fallback', () => {
   // raw || "": a missing input strips to the empty string (both arms).
   assertEqual(menuModel.stripJsonc(undefined), '', 'stripJsonc treats a missing input as empty')
@@ -1039,7 +1038,6 @@ test('mcdc normalizeAliases: array, string, empty, non-string', () => {
   assertDeepEqual(menuModel.normalizeAliases(5), [], 'normalizeAliases rejects a non-string non-array')
 })
 
-// SW-REQ-260922-46HY:boundary:nominal -- dotless id parents to root, root's own parent is empty, declared parent wins
 test('mcdc normalizeItem: parent inference edges', () => {
   assertEqual(menuModel.normalizeItem('a.b', { parent: 'custom', label: 'X' }).parent, 'custom', 'normalizeItem keeps a declared parent')
   assertEqual(menuModel.normalizeItem('a.b', { label: 'X' }).parent, 'a', 'normalizeItem derives a dotted parent')
@@ -1060,7 +1058,8 @@ test('mcdc parseMenuJsonc: scalar, null, and malformed item shapes', () => {
   assertEqual(menuModel.parseMenuJsonc('{"a": {"label": "A"}, "b": {"label": "B"}}').length, 2, 'parseMenuJsonc keeps object entries')
 })
 
-// SW-REQ-260922-7NPE:error_handling:negative -- null and id-less entries are skipped, null sources merge as empty lists (root still injected)
+// SYS-REQ-260922-PPDW:error_handling:negative -- null and id-less source entries are skipped; the tree still merges
+// SYS-REQ-260922-PPDW:boundary:nominal -- null (absent) sources merge as empty lists to a tree holding only the injected root
 test('mcdc mergeMenuSources: null entries, id-less entries, null sources', () => {
   const merged = menuModel.mergeMenuSources(
     [null, { label: 'no id' }, { id: 'a', label: 'A' }],
@@ -1072,7 +1071,6 @@ test('mcdc mergeMenuSources: null entries, id-less entries, null sources', () =>
   assertDeepEqual(nullSources.itemOrder, ['root'], 'mergeMenuSources treats null sources as empty lists')
 })
 
-// SW-REQ-260922-Z680:error_handling:negative -- non-array / null inputs fall back to empty; null, id-less and duplicate rows are skipped
 test('mcdc mergeAppRows: non-array inputs, orphan and app carryover, row guards', () => {
   assertDeepEqual(menuModel.mergeAppRows({}, 'not-an-array', 'nope').itemOrder, [], 'mergeAppRows falls back to empty on non-array order and rows')
   assertDeepEqual(menuModel.mergeAppRows(null, ['ghost'], []).itemOrder, [], 'mergeAppRows treats a null item map as empty')
@@ -1084,7 +1082,6 @@ test('mcdc mergeAppRows: non-array inputs, orphan and app carryover, row guards'
   assertDeepEqual(guarded.itemOrder, ['x'], 'mergeAppRows skips null, id-less, and duplicate rows')
 })
 
-// SW-REQ-260922-EFNR:error_handling:negative -- non-array / null inputs fall back to empty; null, id-less and duplicate rows are skipped
 test('mcdc swapProviderRows: non-array inputs, orphans, provider matches, row guards', () => {
   assertDeepEqual(menuModel.swapProviderRows({}, 'nope', 'm', 'nope').itemOrder, [], 'swapProviderRows falls back to empty on non-array order and rows')
   assertDeepEqual(menuModel.swapProviderRows(null, ['ghost'], 'm', []).itemOrder, [], 'swapProviderRows treats a null item map as empty')

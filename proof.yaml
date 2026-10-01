@@ -260,6 +260,14 @@ project:
             format: junit
         slow_tests:
             enabled: true
+            # A <testcase> in the combined report is a WHOLE test script or
+            # harness (test/junit/junit.sh), not one assertion: lock-qml drives
+            # a headless sway + quickshell session (~100s on the loaded audit
+            # box), sleep-lock-test.sh ~30s. The engine does not mark the
+            # bash/qml shared code-level MC/DC run's timings as instrumented
+            # (only go's), so the default 5s per-test budget would fail on
+            # whole-suite durations. 300s flags a hung or runaway script.
+            threshold_seconds: 300
         defect_review_current:
             # Scoped by the upstream_refresh_v1 campaign on
             # fix/jsonc-trailing-comma-in-strings (2026-09-27, agent

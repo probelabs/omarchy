@@ -76,6 +76,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'the user menu config is the trust root for its own session (same disposition as the keybinding Lua review): merging it cannot cross a privilege boundary, and app/provider rows land through their own children with their own hazard decisions. No external call, timeout, or concurrency surface in the merge itself (single synchronous function per merge). cross_structure_key_identity is met by construction - the map is keyed by the same id string that normalizeItem stamps into entry.id, so key and identity cannot drift.'
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -83,3 +84,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T18:23:07Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=1; tests_pass:test_status=passing
+          changed_by: agent:claude-test-results

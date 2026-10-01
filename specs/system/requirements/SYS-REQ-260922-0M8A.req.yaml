@@ -75,6 +75,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'the swap contract is in-process QML/JS state; provider enumeration runs are external calls but their deadlines belong to the provider requirements (children Z680/EFNR reviewed in batch B), not to the swap semantics this req carries. No trust boundary: provider rows and desktop ids originate on the same machine under the user account; concurrency classes do not fire (single-threaded event loop, swap is one synchronous function).'
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -82,3 +83,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T18:23:06Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=1; tests_pass:test_status=passing
+          changed_by: agent:claude-test-results
