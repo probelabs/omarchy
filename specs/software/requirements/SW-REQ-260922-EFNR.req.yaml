@@ -19,8 +19,8 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-01T09:52:18.136009684Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T23:03:43.899534Z"
+    reviewed_by: agent:claude-pr-6525
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
@@ -29,7 +29,7 @@ traces:
             shell/plugins/menu/Menu.qml:mergeProviderRows: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:startNextProvider: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:startProviderForMenu: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:06091db47f0d13643941a057a31d5482
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
@@ -74,6 +74,20 @@ traces:
             - shell/plugins/menu/Menu.qml:376
             - shell/plugins/menu/MenuModel.js:145
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:19
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T23:03:43.899534Z"
+          reviewed_by: agent:claude-pr-6525
+          method: inspection
+          rationale: 'PR #6525 review on quattro-proof 9f3abc10 (upstream head 913e112d): the MenuModel.js delta is stripJsonc (a string-aware scanner drops // comments wherever the opener sits outside a string; the comma regex pass is unchanged) and a console.warn in the parseMenuJsonc catch; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; E4J2 is violated on one input-domain partition (comment lines indented with non-JSON JS whitespace), recorded as KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE; other requirement intents are unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:355
+            - shell/plugins/menu/Menu.qml:376
+            - shell/plugins/menu/MenuModel.js:176
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:851
             - test/shell.d/menu-test.sh:19
             - test/shell.d/menu-test.sh:5
 verification:
