@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when matches_span_menus the menu_search shall eventually satisfy sections_divided
-description: Search lists current-menu matches before deeper (drilldown) matches, with a divider section exactly when both groups are non-empty.
+description: Search lists matching installed apps first, then current-menu matches, then deeper (drilldown) matches. When apps match, one divider separates the apps from all menu entries. With no app matches, a divider separates current-menu matches from deeper matches exactly when both groups are non-empty.
 formalization_strategy: fretish
 informal_verification:
     method: ""
