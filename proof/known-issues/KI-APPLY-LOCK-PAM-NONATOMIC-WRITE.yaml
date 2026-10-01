@@ -1,6 +1,13 @@
 id: KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
 title: omarchy-apply-lock rewrites the lock PAM stacks in place; an interrupted run leaves a torn stack on the live path
-description: 'bin/omarchy-apply-lock writes both lock-screen PAM stacks with `as_root tee /etc/pam.d/omarchy-lock-password` and, when a finger is enrolled, `as_root tee /etc/pam.d/omarchy-lock-fingerprint`, each fed from a heredoc. tee opens the live file with O_TRUNC and rewrites it in place; there is no write to a temp file followed by a rename. From the moment tee opens the file until it finishes, the live path holds a truncated prefix of the new stack, and the previous complete stack is already gone. If the helper is interrupted in that window (installer or update killed, session lost, power cut before the data is flushed), the lock screen is left authenticating against a torn stack. For the password stack that can mean no pam_unix line at all, so password unlock fails until the helper is re-run. For the fingerprint stack the pam_fprintd line can be cut short. The window is short (a few hundred bytes written by one process), so the likelihood is low, but the impact on a lock screen is high. pocs/apply-lock-pam-torn-write.sh reproduces it on the real helper: it freezes each write after 60 bytes and SIGKILLs the run. The live file is then the torn 60-byte prefix (of 549 and 122 bytes), the seeded previous stack is gone, and the inode is unchanged (in-place rewrite). The control arm shows an uninterrupted run writes both stacks byte-identical to the heredocs.'
+description: |-
+    bin/omarchy-apply-lock writes the password PAM stack with `as_root tee /etc/pam.d/omarchy-lock-password`. With an enrolled finger, it also writes `/etc/pam.d/omarchy-lock-fingerprint` the same way. A heredoc feeds each write. tee opens the live file with O_TRUNC and rewrites it in place. The helper writes no temp file and does no rename.
+
+    While tee writes, the live path holds only a prefix of the new stack, and the previous stack is already gone. An interrupted run can stop in that window: a killed installer or update, a lost session, or a power cut. The lock screen then authenticates against a torn stack. A torn password stack can lack the pam_unix line, so password unlock fails until the helper runs again. A torn fingerprint stack can cut the pam_fprintd line short.
+
+    The window is short, because one process writes a few hundred bytes. The likelihood is low, but the impact on a lock screen is high. pocs/apply-lock-pam-torn-write.sh reproduces the defect on the real helper. It pauses each write after 60 bytes and kills the run. The live file then holds the torn 60-byte prefix of 549 and 122 bytes.
+
+    The seeded previous stack is gone, and the inode does not change. The control arm shows that an uninterrupted run writes both stacks byte-identical to the heredocs.
 affected_requirements:
     - SYS-REQ-260912-JW2J
     - SW-REQ-260912-Y0WT
@@ -12,12 +19,18 @@ risk: availability
 cve_surface: none
 affected_api: bin/omarchy-apply-lock (writes /etc/pam.d/omarchy-lock-password and omarchy-lock-fingerprint)
 reproducer_command: ./pocs/apply-lock-pam-torn-write.sh
-tripwire_mutation: In bin/omarchy-apply-lock, each `as_root tee /etc/pam.d/<stack> >/dev/null <<'EOF'` becomes `as_root tee /etc/pam.d/<stack>.tmp >/dev/null <<'EOF'`, followed after the heredoc by `as_root mv -f /etc/pam.d/<stack>.tmp /etc/pam.d/<stack>`, for both omarchy-lock-password and omarchy-lock-fingerprint. The interrupted write then tears only the temp file, the live path keeps the previous complete stack, the "torn prefix" and "previous stack gone" assertions in pocs/apply-lock-pam-torn-write.sh fail on both arms, and the tripwire flips red. The control arm is unaffected.
+tripwire_mutation: |-
+    In bin/omarchy-apply-lock, each `as_root tee /etc/pam.d/<stack>` writes `/etc/pam.d/<stack>.tmp` instead. After the heredoc, `as_root mv -f /etc/pam.d/<stack>.tmp /etc/pam.d/<stack>` replaces the live file. Apply this to omarchy-lock-password and omarchy-lock-fingerprint. The interrupted write then tears only the temp file, and the live path keeps the previous complete stack.
+
+    The "torn prefix" and "previous stack gone" assertions in pocs/apply-lock-pam-torn-write.sh fail on both arms, and the tripwire flips red. The control arm does not change.
 introduced_in: inception
 defect_class: latent
 minimization_status: minimized
-mitigation: The helper runs only at install, upgrade or an explicit reconfigure, and each write is a few hundred bytes, so the vulnerable window is short. Re-running bin/omarchy-apply-lock rewrites both stacks completely. If the lock screen rejects a correct password after an interrupted install or update, switch to a TTY, log in, and re-run the helper.
-remediation: 'Write each stack to a sibling temp file in /etc/pam.d and rename it over the live path (same filesystem, so the rename is atomic), e.g. `as_root tee /etc/pam.d/omarchy-lock-password.tmp >/dev/null <<''EOF'' ... EOF` then `as_root mv -f /etc/pam.d/omarchy-lock-password.tmp /etc/pam.d/omarchy-lock-password`, and the same for omarchy-lock-fingerprint. Optionally fsync before the rename. Then remove the atomic_write deferrals on SYS-REQ-260912-JW2J and SW-REQ-260912-Y0WT and add witnesses. Close criterion: pocs/apply-lock-pam-torn-write.sh flips red because the interrupted write leaves the previous complete stack on the live path.'
+mitigation: The helper runs only at install, at upgrade or at an explicit reconfigure. Each write is a few hundred bytes, so the window is short. A new run of bin/omarchy-apply-lock rewrites both stacks completely. If the lock screen rejects a correct password after an interrupted install or update, switch to a TTY, log in, and run the helper again.
+remediation: |-
+    Write each stack to a sibling temp file in /etc/pam.d. Then rename the temp file over the live path. The rename stays on one filesystem, so it is atomic. For example, `as_root tee /etc/pam.d/omarchy-lock-password.tmp` followed by `as_root mv -f /etc/pam.d/omarchy-lock-password.tmp /etc/pam.d/omarchy-lock-password`.
+
+    Do the same for omarchy-lock-fingerprint, and optionally fsync before the rename. Then remove the atomic_write deferrals on SYS-REQ-260912-JW2J and SW-REQ-260912-Y0WT and add witnesses. Close criterion: pocs/apply-lock-pam-torn-write.sh flips red, because the interrupted write leaves the previous complete stack on the live path.
 owner: agent:claude-quattro
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -34,6 +47,14 @@ history:
       by: agent:claude-quattro
       action: capture-evidence
       detail: proof/evidence/ki-apply-lock-pam-nonatomic-write.yaml
+    - at: "2026-10-01T21:40:58Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
+    - at: "2026-10-01T21:41:24Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

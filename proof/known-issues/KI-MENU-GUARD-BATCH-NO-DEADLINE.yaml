@@ -1,6 +1,15 @@
 id: KI-MENU-GUARD-BATCH-NO-DEADLINE
 title: Menu guard batch runs as one bash child with no deadline; a blocking guard expression freezes guard answers for the session
-description: 'Menu.qml evaluateGuards() runs every when:, checked: and disabled: guard of the menu as one child process, `guardProc.command = ["bash", "-lc", script]`, and nothing puts a deadline on it. While guardProc.running is true, every later evaluateGuards() call only sets guardsPending and returns, so it is deferred until the batch exits. A single guard expression that blocks (waiting on a lock, a slow probe or a hung device query) therefore keeps the batch alive indefinitely. No later evaluation ever starts, and the menu keeps showing the last complete answer set for the rest of the session: rows checked, visible or dimmed for a state that no longer holds. A killed batch keeps the last complete set rather than adopting a half-read one, and a when: only hides on an explicit false, so the failure is stale-but-visible rather than hidden rows. pocs/47t8-guard-batch-no-deadline.sh reproduces it with the real evaluateGuards() and guardProc handlers extracted from Menu.qml and the real MenuModel.guardScript(). After a guard that waits on a held lock is added, the batch is still running at 4s with zero exits, a re-evaluation spawns nothing (guardsPending=true), and a row''s checked answer stays false after the state it describes has turned true. The control arm shows a healthy batch landing its answers and refreshing after a state flip.'
+description: |-
+    Menu.qml evaluateGuards() runs every when:, checked: and disabled: guard of the menu in one child process, `guardProc.command = ["bash", "-lc", script]`. Nothing puts a deadline on that process. While guardProc.running is true, each later evaluateGuards() call only sets guardsPending and returns. The batch exit then starts the deferred evaluation.
+
+    One blocking guard expression keeps the whole batch alive indefinitely. Examples are a wait on a lock, a slow probe or a hung device query.
+
+    No later evaluation then starts. For the rest of the session the menu shows the last complete answer set. Rows stay checked, visible or dimmed for a state that no longer holds. A killed batch keeps the last complete set and does not adopt a half-read one. A when: hides a row only on an explicit false, so the failure shows stale rows, not hidden ones.
+
+    pocs/47t8-guard-batch-no-deadline.sh reproduces the defect. It runs the real evaluateGuards() and guardProc handlers from Menu.qml with the real MenuModel.guardScript(). The test adds a guard that waits on a held lock. At 4s the batch still runs with zero exits, and a re-evaluation spawns nothing (guardsPending=true).
+
+    A row's checked answer stays false after its state turns true. The control arm shows a healthy batch that lands its answers and refreshes after a state flip.
 affected_requirements:
     - SYS-REQ-260922-47T8
 evidence_manifests:
@@ -11,12 +20,18 @@ risk: availability
 cve_surface: none
 affected_api: 'shell/plugins/menu/Menu.qml evaluateGuards / guardProc (when:, checked:, disabled: guard batch)'
 reproducer_command: ./pocs/47t8-guard-batch-no-deadline.sh
-tripwire_mutation: 'In shell/plugins/menu/Menu.qml evaluateGuards(), `guardProc.command = ["bash", "-lc", script]` becomes `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`: the blocked batch then exits (code 124) after about 2s, so the "still running with zero exits" assertion in pocs/47t8-guard-batch-no-deadline.sh fails, the pending evaluation starts a new batch (spawns become 3), guardsPending clears, and the tripwire flips red. A per-guard timeout in MenuModel.guardLine flips it the same way, since the harness runs the real MenuModel.js. A QML Timer-based watchdog is NOT observed by this node harness, which instantiates no QML Timer; such a fix needs the harness extended alongside it. The control arm is unaffected.'
+tripwire_mutation: |-
+    In shell/plugins/menu/Menu.qml evaluateGuards(), `guardProc.command = ["bash", "-lc", script]` becomes `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`. The blocked batch then exits with code 124 after about 2s. The "still running with zero exits" assertion in pocs/47t8-guard-batch-no-deadline.sh fails, and the tripwire flips red. The pending evaluation starts a new batch (3 spawns), and guardsPending clears.
+
+    A per-guard timeout in MenuModel.guardLine flips it the same way, because the harness runs the real MenuModel.js. The node harness creates no QML Timer, so it does not see a Timer-based watchdog. Such a fix needs a harness extension. The control arm does not change.
 introduced_in: inception
 defect_class: latent
 minimization_status: minimized
-mitigation: 'Only guard freshness is affected: rows keep their last complete answers and actions still run what the row says. Removing or fixing the blocking guard expression in the user menu file and restarting the shell (or killing the stuck guard bash process) restores evaluation; the default menu ships no blocking guards.'
-remediation: 'Give the guard batch a deadline: either wrap the child (e.g. `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`) or a Process-side watchdog Timer that stops guardProc after a bound and re-arms the pending evaluation, or a per-guard timeout in MenuModel.guardLine so one slow guard cannot take the rest of the batch with it. Pair it with an explicit staleness policy for the answers of a killed batch. Then remove the SYS-REQ-260922-47T8 external_call_timeout_bounded deferral and add a witness. Close criterion: pocs/47t8-guard-batch-no-deadline.sh flips red because the blocked batch exits inside the observation window.'
+mitigation: The defect affects only guard freshness. Rows keep their last complete answers, and actions still run what the row shows. To restore evaluation, remove or fix the blocking guard expression in the user menu file, then restart the shell. Killing the stuck guard bash process also works. The default menu ships no blocking guards.
+remediation: |-
+    Give the guard batch a deadline. One option wraps the child, for example `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`. Another option is a watchdog Timer that stops guardProc after a bound and re-arms the pending evaluation. A third option is a per-guard timeout in MenuModel.guardLine, so that one slow guard cannot stall the rest of the batch.
+
+    Pair the fix with an explicit staleness policy for the answers of a killed batch. Then remove the SYS-REQ-260922-47T8 external_call_timeout_bounded deferral and add a witness. Close criterion: pocs/47t8-guard-batch-no-deadline.sh flips red, because the blocked batch exits inside the observation window.
 owner: agent:claude-quattro
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -33,6 +48,14 @@ history:
       by: agent:claude-quattro
       action: capture-evidence
       detail: proof/evidence/ki-menu-guard-batch-no-deadline.yaml
+    - at: "2026-10-01T21:40:58Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
+    - at: "2026-10-01T21:41:24Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

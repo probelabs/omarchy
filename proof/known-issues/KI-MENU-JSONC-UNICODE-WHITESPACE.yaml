@@ -1,6 +1,13 @@
 id: KI-MENU-JSONC-UNICODE-WHITESPACE
 title: Unicode or control whitespace between JSONC tokens empties the whole menu file
-description: 'parseMenuJsonc (shell/plugins/menu/MenuModel.js) hands the stripped text to JSON.parse, which accepts only space, tab, LF and CR as whitespace. JavaScript''s \s, which the comment pass uses, is wider: VT, FF, U+00A0 no-break space, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F, U+3000 and U+FEFF. Such a character indenting a whole-line // comment is removed with the comment, but anywhere else between tokens JSON.parse throws, and the catch returns an empty item set for the whole file. A user extension pasted from a web page or a word processor (where no-break spaces are common) therefore silently loses every entry, with no diagnostic. Checked live under Quickshell 0.3.1: FileView keeps these characters as read (it drops only a leading byte-order mark), and the real MenuModel.js parses a file with one U+00A0 or U+000B between tokens to 0 rows. pocs/menu-jsonc-unicode-whitespace.sh reproduces it for all 21 characters against an ASCII-space control; test/shell.d/menu-test.sh pins it as a green tripwire.'
+description: |-
+    parseMenuJsonc (shell/plugins/menu/MenuModel.js) hands the stripped text to JSON.parse. JSON.parse accepts only space, tab, LF and CR as whitespace. The JavaScript \s class in the comment pass is wider: VT, FF, U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F, U+3000 and U+FEFF. The comment pass removes such a character together with a whole-line // comment that it indents.
+
+    Anywhere else between tokens, JSON.parse throws. The catch then returns an empty item set for the whole file. A user extension pasted from a web page or a word processor often carries no-break spaces. That file silently loses every entry, with no diagnostic.
+
+    We checked this live under Quickshell 0.3.1. FileView keeps these characters as read and drops only a leading byte-order mark. The real MenuModel.js parses a file with one U+00A0 or U+000B between tokens to 0 rows. pocs/menu-jsonc-unicode-whitespace.sh reproduces it for all 21 characters against an ASCII-space control.
+
+    test/shell.d/menu-test.sh pins it as a green tripwire.
 affected_requirements:
     - SW-REQ-260922-E4J2
     - SW-REQ-260922-3T3F
@@ -15,7 +22,7 @@ reproducer_command: sh pocs/menu-jsonc-unicode-whitespace.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: minimized
-mitigation: 'Replace no-break spaces and other non-ASCII spaces in the menu file with ASCII spaces (for example: sed -i ''s/\xc2\xa0/ /g'' <file>); the shipped default menu carries none.'
+mitigation: Replace no-break spaces and other non-ASCII spaces in the menu file with ASCII spaces. The shipped default menu carries none.
 remediation: 'Read every JS whitespace character outside a string literal as plain whitespace before JSON.parse, as omacom/omarchy#13968 does (characters inside strings stay data). Close criterion: pocs/menu-jsonc-unicode-whitespace.sh exits 0 and the KI-MENU-JSONC-UNICODE-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
 owner: agent:claude-baseline-pass
 review_date: "2026-12-31"
@@ -41,6 +48,39 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
-dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS: this one is non-ASCII and control whitespace between tokens that JSON.parse rejects; those are block comments, inline comment tails, string rewriting, array roots and CR-only line endings'
+    - at: "2026-10-01T21:39:37Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-mitigation,set-dedup-armor
+    - at: "2026-10-01T21:41:24Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description
+dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY, KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS: this one is non-ASCII and control whitespace between tokens that JSON.parse rejects; those are the items wrapper key, block comments, inline comment tails, string rewriting, array roots and CR-only line endings'
 kill_domain: parsing
 affected_file: shell/plugins/menu/MenuModel.js
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/menu-jsonc-unicode-whitespace.sh loads the real shell/plugins/menu/MenuModel.js and calls parseMenuJsonc; nothing is stubbed.
+        quantitative_impact: the metric is the parsed row count - 2 rows with an ASCII space, 0 rows with each of the 21 other JS whitespace characters between tokens.
+        control_test: the same document with an ASCII space parses to both rows, so the harness and the document are sound and only the character differs.
+        operational_path_verified: checked live under Quickshell 0.3.1 - FileView text() keeps U+00A0 and U+000B as read, and the real MenuModel.js under the QML engine parses such a file to 0 rows.
+        current_deployment_relevance: upstream quattro c05d901 ships this stripJsonc and parseMenuJsonc unchanged.
+        honest_severity: medium - the whole user extension file silently loses every entry, but the trigger needs a non-ASCII space in the file and the shipped default menu carries none.
+        reproducible: deterministic, about 50 ms, exit code decides.
+        no_inflation: claims limited to the empty item set; no security, data-loss or crash claim.
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party
+        reachability_verified: 'no trust boundary to traverse: the input is the user own menu file in their own session'
+        untrusted_attacker: 'correctness defect triggered by ordinary editing (pasted text), not by an adversary'

@@ -1,6 +1,9 @@
 id: KI-MENU-KEYBINDINGS-NO-TIMEOUT
 title: Keybindings menu build has no deadline on hyprctl binds or xkbcli compile-keymap; a stalled callee blocks the menu indefinitely
-description: 'bin/omarchy-menu-keybindings builds the keybindings menu from two external calls that carry no deadline: `hyprctl binds` (read for the cache key and again by dynamic_bindings) and `xkbcli compile-keymap </dev/null` (the keymap_cmd that parse_keycodes reads through gawk getline). A stalled Hyprland IPC or a wedged keymap compile therefore blocks the menu build for as long as the callee does: the keybindings menu never opens and the script never exits. On the stalled-hyprctl path the script reaches `hyprctl binds` three times in sequence (cache key, cache refresh, then the uncached fallback after the refresh fails), so even a per-call bound costs about three times its value. pocs/9dms-keybindings-no-timeout.sh reproduces both arms on the real script in --print mode: with hyprctl stalled the build is still blocked at a 10s watchdog, with xkbcli stalled it is still blocked at a 5s watchdog (rc=124 both), while the control arm builds the stubbed bind row, with its keycode resolved through the stubbed keymap, in about a second.'
+description: |-
+    bin/omarchy-menu-keybindings builds the keybindings menu from two external calls without a deadline. The first is `hyprctl binds`, which the script reads for the cache key and again in dynamic_bindings. The second is `xkbcli compile-keymap </dev/null`, the keymap_cmd that parse_keycodes reads through gawk getline. A stalled Hyprland IPC or a wedged keymap compile blocks the menu build for as long as the callee blocks. The keybindings menu then never opens, and the script never exits.
+
+    On the stalled-hyprctl path the script calls `hyprctl binds` three times in sequence: cache key, cache refresh, and the uncached fallback after the refresh fails. A per-call bound therefore costs about three times its value. pocs/9dms-keybindings-no-timeout.sh reproduces both arms on the real script in --print mode. With hyprctl stalled, the build is still blocked at a 10s watchdog (rc=124). With xkbcli stalled, the build is still blocked at a 5s watchdog (rc=124). The control arm builds the stubbed bind row in about a second, with its keycode resolved through the stubbed keymap.
 affected_requirements:
     - SW-REQ-260922-9DMS
 evidence_manifests:
@@ -11,12 +14,18 @@ risk: availability
 cve_surface: none
 affected_api: 'bin/omarchy-menu-keybindings (keybindings menu build: hyprctl binds, xkbcli compile-keymap)'
 reproducer_command: ./pocs/9dms-keybindings-no-timeout.sh
-tripwire_mutation: 'In bin/omarchy-menu-keybindings, `hyprctl binds` becomes `timeout 2 hyprctl binds` at both call sites (keybindings_cache_key and dynamic_bindings) and `keymap_cmd = "xkbcli compile-keymap </dev/null"` becomes `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"`: the hyprctl stall arm then finishes in about 6-7s (three bounded calls) inside its 10s watchdog and the xkbcli stall arm in about 2s inside its 5s watchdog, the rc=124 assertions in pocs/9dms-keybindings-no-timeout.sh fail, and the tripwire flips red. Bounding only one of the two calls flips the matching arm, so a partial fix also turns it red. The control arm is unaffected.'
+tripwire_mutation: |-
+    In bin/omarchy-menu-keybindings, `hyprctl binds` becomes `timeout 2 hyprctl binds` at both call sites (keybindings_cache_key and dynamic_bindings). `keymap_cmd = "xkbcli compile-keymap </dev/null"` becomes `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"`. The hyprctl stall arm then finishes in about 6-7s (three bounded calls), inside its 10s watchdog. The xkbcli stall arm finishes in about 2s, inside its 5s watchdog.
+
+    The rc=124 assertions in pocs/9dms-keybindings-no-timeout.sh fail, and the tripwire flips red. A bound on only one of the two calls flips the matching arm, so a partial fix also turns it red. The control arm does not change.
 introduced_in: inception
 defect_class: latent
 minimization_status: minimized
-mitigation: Only the keybindings menu is affected; no binding is changed or dispatched while the build is blocked. Closing the menu launcher, or killing the stuck hyprctl or xkbcli process, recovers. Once the compositor IPC answers again the next open works, and a previously cached record set is served without calling xkbcli.
-remediation: 'Wrap both external calls in bin/omarchy-menu-keybindings with a timeout, e.g. `timeout 2 hyprctl binds` at both call sites and `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"` (the existing fallback keycode table already covers a missing keymap). Consider reading `hyprctl binds` once per run so a stall is paid once rather than three times. Then remove the SW-REQ-260922-9DMS external_call_timeout_bounded deferral and add a witness for the bounded paths. Close criterion: both stall arms of pocs/9dms-keybindings-no-timeout.sh finish inside their watchdogs and the tripwire flips red.'
+mitigation: The defect affects only the keybindings menu. The blocked build changes and dispatches no binding. To recover, close the menu launcher, or kill the stuck hyprctl or xkbcli process. When the compositor IPC answers again, the next open works. A cached record set then loads without a call to xkbcli.
+remediation: |-
+    Wrap both external calls in bin/omarchy-menu-keybindings with a timeout. For example, use `timeout 2 hyprctl binds` at both call sites and `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"`. The existing fallback keycode table already covers a missing keymap. Consider one `hyprctl binds` read per run, so that a stall costs one timeout and not three.
+
+    Then remove the SW-REQ-260922-9DMS external_call_timeout_bounded deferral and add a witness for the bounded paths. Close criterion: both stall arms of pocs/9dms-keybindings-no-timeout.sh finish inside their watchdogs, and the tripwire flips red.
 owner: agent:claude-quattro
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -33,6 +42,14 @@ history:
       by: agent:claude-quattro
       action: capture-evidence
       detail: proof/evidence/ki-menu-keybindings-no-timeout.yaml
+    - at: "2026-10-01T21:40:58Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
+    - at: "2026-10-01T21:41:24Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-mitigation,set-remediation
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

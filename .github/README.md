@@ -1,15 +1,15 @@
 # omarchy: a proof layer for Omarchy's menu and lock screen
 
-This is a private fork of [omacom/omarchy](https://github.com/omacom/omarchy), maintained by
-[ProbeLabs](https://github.com/probelabs). It does not change how Omarchy works. On top of an unchanged copy
+This is [probelabs/omarchy](https://github.com/probelabs/omarchy), a public fork of
+[omacom/omarchy](https://github.com/omacom/omarchy) maintained by [ProbeLabs](https://github.com/probelabs). It does not change how Omarchy works. On top of an unchanged copy
 of upstream's code it adds a **proof layer**: written requirements for the menu and lock-screen components,
 tests that check the code against those requirements, and an audit record of the result. We use it to check
 upstream issues and pull requests against what the code is supposed to do.
 
-The proof layer lives in `proof/`, `specs/`, `test/`, `pocs/`, `review/`, `proof.yaml`, this file and one added
-guide, `docs/proof/headless-gui-testing.md`. Outside
-those paths, the only differences from upstream are comments (such as `// Implements: <requirement>` markers), blank
-lines, QML `id:` attributes and one `.gitignore` line. `review/check-clean-product-diff.py e332dc97 HEAD` checks this.
+The proof layer lives in `proof/`, `specs/`, `test/`, `pocs/`, `review/`, `docs/proof/`, `proof.yaml` and this file.
+Outside those paths, the only differences from upstream are comments (such as `// Implements: <requirement>`
+markers), blank lines, QML `id:` attributes and one `.gitignore` line.
+`python3 review/check-clean-product-diff.py c05d901 HEAD` checks this.
 
 Upstream's own `README.md` is unchanged. GitHub shows this file instead because it is in `.github/`.
 
@@ -30,33 +30,55 @@ Audit results are stored as git notes next to the commits they describe (`refs/n
 
 ## Current state
 
-- **Upstream code covered:** `e332dc97` (upstream `quattro`, 28 Sep 2026).
-- **Upstream is ahead by 3 commits** (`quattro` at `8b4eae66`). None of them touch the menu or the lock screen.
-- **Latest audit of this branch:** 0 errors, 2 warnings, 1 note.
-  - Both warnings are known, tracked debt, not new failures. Some required checks (obligations) are
-    deferred: for example, missing timeouts around external commands and non-atomic PAM file writes.
-    Others are accepted as known issues, each guarded by a test that turns red when the behaviour changes.
-  - The note: 18 functions are still waiting for property-based tests.
-  - The run record is the `refs/notes/proof/runs` note on this branch's tip commit.
-- **Portal:** [portal.reqproof.com/projects/omarchy](https://portal.reqproof.com/projects/omarchy)
-  (access is currently private).
+- **Upstream code covered:** `c05d901` (upstream `quattro` tip, merged into `quattro-proof`).
+- **Latest audit of this branch:** @@E@@ errors, @@W@@ warnings, @@I@@ notes (run `@@RUN@@`, ReqProof engine
+  `@@ENGINE@@`, full run without cache).
+  - @@NOTES@@
+  - Test results are part of the run: @@TESTS@@
+  - Deferred obligations are no longer open debt: each one (missing timeouts around `hyprctl`, `xkbcli` and the
+    menu guard batch; the non-atomic PAM stack write) is a known issue with a test that pins the current
+    behaviour and turns red when it is fixed.
+  - The run record is the `refs/notes/proof/runs` note on this branch's tip commit, on this repository.
+- **Review mode:** advisory. We audit upstream pull requests; only omacom maintainers decide on them.
+- **Portal:** [portal.reqproof.com/projects/omarchy](https://portal.reqproof.com/projects/omarchy) (public, no
+  login needed).
 
 ### Upstream issues found or checked
 
-Each issue reproduces on upstream `e332dc97` unless stated otherwise, and has a known-issue record in
-`proof/` and a reproducer in `test/reports/`.
+Each issue reproduces on upstream `c05d901` unless stated otherwise, and has a known-issue record in
+`proof/known-issues/` and a reproducer in `test/reports/` or `pocs/`.
 
 | Upstream | Problem | Status |
 |---|---|---|
-| [#13250](https://github.com/omacom/omarchy/issues/13250) | A menu label that contains `, ]` or `, }` is silently changed. | Reproduces. Fix proposed in [#13255](https://github.com/omacom/omarchy/pull/13255). |
-| [#13492](https://github.com/omacom/omarchy/issues/13492) | A menu file whose top level is an array shows extra rows named `0`, `1`, … | Reproduces. Fix proposed in [#13511](https://github.com/omacom/omarchy/pull/13511). |
-| [#13493](https://github.com/omacom/omarchy/issues/13493) | A `//` comment after a value on the same line empties the whole menu. | Reproduces. [#13512](https://github.com/omacom/omarchy/pull/13512) fixes it, but a trailing comma followed by a comment line then empties the menu. The three fixes above are being combined into one PR that avoids this. |
+| [#13250](https://github.com/omacom/omarchy/issues/13250) | A menu label that contains `, ]` or `, }` is silently changed. | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968) (open). |
+| [#13492](https://github.com/omacom/omarchy/issues/13492) | A menu file whose top level is an array shows extra rows named `0`, `1`, … | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
+| [#13493](https://github.com/omacom/omarchy/issues/13493) | A `//` comment after a value on the same line empties the whole menu. | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
+| — | A no-break space or another non-ASCII space between tokens empties the whole menu file (`KI-MENU-JSONC-UNICODE-WHITESPACE`). | Reproduces, found by stating the parser's input domain. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
+| — | In a file with CR-only line endings, a whole-line comment swallows the rest of the file (`KI-MENU-JSONC-CR-LINE-ENDINGS`). | Reproduces. Not changed by #13968. |
 | [#10601](https://github.com/omacom/omarchy/issues/10601) | Opening the menu takes time quadratic in its row count (232 layout passes and 27,027 row visits for 231 rows). | Reproduces. [#10631](https://github.com/omacom/omarchy/pull/10631) does not change the counts. |
-| [#9057](https://github.com/omacom/omarchy/issues/9057) | Opening a picker menu again before the first one is answered leaves the first caller waiting forever. | Reproduces. [#9056](https://github.com/omacom/omarchy/pull/9056) fixes it; the `pr/9056` mirror checks this. |
-| [#13012](https://github.com/omacom/omarchy/pull/13012) (PR) | Restores the selected row when you go back from a submenu. | The PR has one regression. Search, open a deeper submenu from the results, then go back: the cursor lands on an unrelated row (`Learn`). Reproducer: `pocs/pr13012-back-from-search.js` on `pr/13012`. |
+| [#9057](https://github.com/omacom/omarchy/issues/9057) | Opening a picker menu again before the first one is answered leaves the first caller waiting forever. | Reproduces. [#9056](https://github.com/omacom/omarchy/pull/9056) fixes it. |
+| [#13012](https://github.com/omacom/omarchy/pull/13012) (PR) | Restores the selected row when you go back from a submenu. | The PR has one regression. Search, open a deeper submenu from the results, then go back: the cursor lands on an unrelated row (`Learn`). |
 
+[#13255](https://github.com/omacom/omarchy/pull/13255), [#13511](https://github.com/omacom/omarchy/pull/13511) and
+[#13512](https://github.com/omacom/omarchy/pull/13512) were closed in favour of #13968.
 [#10340](https://github.com/omacom/omarchy/issues/10340) (search ranks a menu action above an installed app) was
 checked too. The ranking follows the documented rule, so it is a feature request rather than a defect.
+
+## How to verify
+
+```sh
+git clone https://github.com/probelabs/omarchy && cd omarchy        # default branch: quattro-proof
+git fetch origin 'refs/notes/proof/*:refs/notes/proof/*'
+
+# 1. The product code is upstream's: every non-proof difference is an annotation.
+python3 review/check-clean-product-diff.py c05d901 HEAD
+
+# 2. The audit record of this commit (verdict, every check, test results).
+git notes --ref=proof/runs show HEAD | python3 -m json.tool | less
+
+# 3. Re-run the tests yourself (see "How to reproduce"), or the whole audit with the ReqProof
+#    `proof` tool: `proof audit --no-cache`. It runs every suite and measures coverage.
+```
 
 ## How to reproduce
 
@@ -64,11 +86,12 @@ You need `bash`, Node.js 18 or later and `perl`. The #10601 reproducer also need
 (`qt6-declarative`). Some menu tests need Linux (`flock`, `/proc`, GNU `find`); they print `SKIP` elsewhere.
 
 ```sh
-git clone https://github.com/probelabs/omarchy && cd omarchy   # default branch: quattro-proof
-
-# Menu test suites
+# Menu test suites (from a clone, see "How to verify")
 bash test/shell.d/menu-test.sh
 node --test test/node/menumodel-replay.test.mjs
+
+# Behaviour-diff harness used for pull-request compatibility checks (see test/bdiff/README.md)
+node test/bdiff/harness.mjs . default/omarchy/omarchy-menu.jsonc
 
 # Issue reproducers (menu-reports). This suite passes while the defects exist:
 # each reproducer is expected to fail, and the test goes red once upstream fixes it.
