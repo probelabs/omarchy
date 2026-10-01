@@ -19,13 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:39.437542Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T23:03:41.430616Z"
+    reviewed_by: agent:claude-pr-6525
     reviewed_fingerprint: sha256:3951141167e965f81efdf4d8c2b94ccc40cd74ef7cbc22fa66a6fce7603ecf1a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:resolveRoute: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:resolveRoute: file1:06091db47f0d13643941a057a31d5482
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:
@@ -48,19 +47,18 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:23
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:39.437542Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T23:03:41.430616Z"
+          reviewed_by: agent:claude-pr-6525
           method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          rationale: 'PR #6525 review on quattro-proof 9f3abc10 (upstream head 913e112d): the MenuModel.js delta is stripJsonc (a string-aware scanner drops // comments wherever the opener sits outside a string; the comma regex pass is unchanged) and a console.warn in the parseMenuJsonc catch; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; E4J2 is violated on one input-domain partition (comment lines indented with non-JSON JS whitespace), recorded as KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE; other requirement intents are unaffected.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:956
-            - shell/plugins/menu/MenuModel.js:183
+            - shell/plugins/menu/MenuModel.js:214
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
+            - test/node/menumodel-replay.test.mjs:436
+            - test/shell.d/menu-test.sh:23
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:509
 verification:
     assurance_level: C
     formalization_status: valid

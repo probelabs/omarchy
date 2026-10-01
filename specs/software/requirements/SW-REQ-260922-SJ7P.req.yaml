@@ -19,14 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:44.885136Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T23:03:46.107681Z"
+    reviewed_by: agent:claude-pr-6525
     reviewed_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:depthFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:searchScore: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:searchScore: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/MenuModel.js:searchScore: file1:06091db47f0d13643941a057a31d5482
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -67,33 +66,20 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:31
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:38.002305Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T23:03:46.107681Z"
+          reviewed_by: agent:claude-pr-6525
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #6525 review on quattro-proof 9f3abc10 (upstream head 913e112d): the MenuModel.js delta is stripJsonc (a string-aware scanner drops // comments wherever the opener sits outside a string; the comma regex pass is unchanged) and a console.warn in the parseMenuJsonc catch; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; E4J2 is violated on one input-domain partition (comment lines indented with non-JSON JS whitespace), recorded as KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE; other requirement intents are unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:478
             - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
+            - shell/plugins/menu/MenuModel.js:384
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:340
             - test/node/report-reproducers.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:44.885136Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:478
-            - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
-            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/node/report-reproducers.test.mjs:1
-            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:31
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
