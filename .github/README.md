@@ -1,4 +1,4 @@
-# omarchy-dogfood: a proof layer for Omarchy's menu and lock screen
+# omarchy: a proof layer for Omarchy's menu and lock screen
 
 This is a private fork of [omacom/omarchy](https://github.com/omacom/omarchy), maintained by
 [ProbeLabs](https://github.com/probelabs). It does not change how Omarchy works. On top of an unchanged copy
@@ -63,7 +63,7 @@ You need `bash`, Node.js 18 or later and `perl`. The #10601 reproducer also need
 (`qt6-declarative`). Some menu tests need Linux (`flock`, `/proc`, GNU `find`); they print `SKIP` elsewhere.
 
 ```sh
-git clone https://github.com/probelabs/omarchy-dogfood && cd omarchy-dogfood   # default branch: quattro-proof
+git clone https://github.com/probelabs/omarchy && cd omarchy   # default branch: quattro-proof
 
 # Menu test suites
 bash test/shell.d/menu-test.sh
