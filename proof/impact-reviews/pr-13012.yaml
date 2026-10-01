@@ -1,0 +1,294 @@
+schema_version: 1
+branch: pr-13012
+generated_at: "2026-10-01T08:13:28Z"
+reviews:
+    - requirement: SW-REQ-260922-3JG5
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:5062bd7cb7c5163fe264e63ebb7db55d538c8264a921a82cec7e0860047d5b3c
+      approval_fingerprint: sha256:a64d00588dc23d9679fa990f358cb8a49a95d41dda5aede788bc2f9e34171dd2
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-3T3F
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
+      approval_fingerprint: sha256:449d874c8b35b8798869e5062a69fc0385ebaf6cf8bfe1e9e233e0aac95a8d7c
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-3VTN
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
+      approval_fingerprint: sha256:fc9f427183e267623063be699b027eca6e2dee81ae330099b1b8318cc6db0401
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-4079
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:4814738158a95da982e78ab3f4d297048bb9913f4c966238f96477828341c213
+      approval_fingerprint: sha256:8d2c60a33a0b947458d733ce0fa039a926f3ecc06c2c2f89c4115bf100a6ef70
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-46HY
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
+      approval_fingerprint: sha256:30354bb5228e1fc2c33da8c8c2a1826938baae63bc6e5635b86fb18c6772d3bb
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-50RE
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
+      approval_fingerprint: sha256:9b3760ea0f61daf59f617ee723d431118f12c185fd771ff8540cf02bcd1b8e66
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-7NPE
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:cce8af4897e3cc83790af34c836aa263cede8e10c78ec45686d6592f58267ea5
+      approval_fingerprint: sha256:082b448ad7a4046496b3e74f414df77dd141093bb92078b0acd9eb20bd5f0bc3
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-8CQ4
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
+      approval_fingerprint: sha256:3e2dd931a01dfbad6dec41878ec7b2fc704223409bd52517037bf8bc62d64bdb
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-B757
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:fc27f2279de1e5cd4ee33a70334305734f2c20198f543b39a6f9ffc758a8390f
+      approval_fingerprint: sha256:50f169864c91d287eaf51e42601e9aae60dfee03e1c826d6e27d4269a1602975
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-C8HX
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
+      approval_fingerprint: sha256:d84def3b630a968d071a6c2f42ef564899732ad066843aba9df90befd84881a4
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-DE93
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
+      approval_fingerprint: sha256:e9eaac850eaf43e3a74208f52f0f1c2b300f3dda5da745e3fc8856bf7896daf3
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-DQ9P
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
+      approval_fingerprint: sha256:2f4e13ad4f650d0ce783c0b3d4da9e9911253a4222493711f29bed0ca18e711b
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-E4J2
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:420fd55c985b9e93456f8ce0c8d32c97623ec554d8bb3f717b03e5debca81336
+      approval_fingerprint: sha256:6b87ba555d80d594bfe964de732110f5491cbfca8bfee215a064b1c6d62b11e7
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-EFNR
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
+      approval_fingerprint: sha256:824ba1412eb162599e5923ad4d9bc347659eeae2adb08ddc8811d3d84226d939
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-FGZQ
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:e5cd1637075404ff13de781446af96ad3b83f7190faabcf8df6367a23954f089
+      approval_fingerprint: sha256:3d598919051655d1af6dd29a24911f16e4026c556336b49ce1ab25f99d86d531
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-JRW1
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
+      approval_fingerprint: sha256:25a9e5224412c76b575c18a68acf695b0f21c8a94996ca2ad4a19546b3f9d51c
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-N3RM
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
+      approval_fingerprint: sha256:47790aadc5deaf57587853d09a64a3f8316107610721f8c85623eabf26dfbff3
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-NM45
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
+      approval_fingerprint: sha256:c059ef3c650c5846fbabe90231e81760da0c3af1a43a60d00839208fc8ac8411
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-SJ7P
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
+      approval_fingerprint: sha256:093166fd39f195709168ce547082bcfc92fa8126bd5f2977281ca5342f163b8a
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-TKDP
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
+      approval_fingerprint: sha256:9f425ec8db098964ff0541c91b43117e3ec70ee24b3a65b0edfadf426fbf5186
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-XW52
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:7dd1a4b8502776dfec2ad63fa9f83394117091a6e8ca8314af5cea25d1f92225
+      approval_fingerprint: sha256:d675698726d9fe0f55efab686620863c3e53f5ed4a9f3888d9b1cbbc0932f0ea
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-Z48F
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
+      approval_fingerprint: sha256:9d40a025a18084200d9eaef984ea54f0bfaee5fec654040096a7e9d8687e4b6a
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260922-Z680
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
+      approval_fingerprint: sha256:ac33dc2eb4f36197a50211506bc971b48761a2436dd7d008d45c2187d7863ca6
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260928-8VJQ
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
+      approval_fingerprint: sha256:589b3302f00a6cd60ddf43e27ea5db85e014bafa63ed0324ef63372605e8922d
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260929-B8N9
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:0faebab064ec5dad24c320b57dcfc96c16ca0857948daaa09a46ed81d3778693
+      approval_fingerprint: sha256:aed5e40e696c1f18a3c19ea7df9603a83e7ab8c626beeb3ed9dcec4e9241dec7
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260929-DXFJ
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:47e688c32dde592847708eb624fd5d8fbd0e6a76ab3a8335db42c6a8642f9e03
+      approval_fingerprint: sha256:43bfc66bd646e942a6520cc7a1e75ba019da8dc45ad826ea3fdd8af60f70868a
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-260929-T378
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:413029f242abcbaa1b9c23f34ba4d0e5dc696bc1b3453bde32c0f0cc39a66742
+      approval_fingerprint: sha256:1b9752ec15ec4e0f098b8f9217c0fb46e24bdade8aba74680cee508bec440537
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SW-REQ-261001-B4CK
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:e7c38a84942c83e8ee4e67c78ad0a08fed2e771e76257479edd21493417823f2
+      approval_fingerprint: sha256:d6634c42f67d877bd1e385510bda6372cf687a5296b4c3cf6c2a0cbd84c71a93
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
+    - requirement: SYS-REQ-260922-P708
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:v2-third-party-review
+      reason: 'PR #13012 review: Menu.qml delta is confined to setActiveMenu/goBack (navigation record + selection restore) plus the B4CK annotation; the new behaviour is authored as SW-REQ-261001-B4CK; the shared-ownership requirements on this file keep their intent - verified against the diff'
+      base: origin/quattro
+      requirement_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
+      approval_fingerprint: sha256:02b9a962df3d25cc0c660ce4f657b4d99e20b35774ad4ed84b088fab62f44276
+      artifact_fingerprint: sha256:8a72b5569f063392ed74e49e8418a1937fdc893e6d6776d40ccdff848daf07c8
+      reviewed_at: "2026-10-01T08:13:28Z"
