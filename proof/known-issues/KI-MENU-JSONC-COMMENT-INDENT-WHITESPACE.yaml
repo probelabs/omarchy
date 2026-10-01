@@ -5,7 +5,7 @@ description: |-
 
     JSON.parse accepts only space, tab, LF and CR as whitespace. So a full-line comment indented with one of those characters now makes the whole file fail to parse. The catch returns an empty item set, and the PR's new console.warn logs the parse error. On the baseline the same file parses to all of its entries.
 
-    We checked this with the real MenuModel.js at the PR head merged onto the baseline. pocs/pr6525-comment-indent-whitespace.sh shows it for all 21 characters against an ASCII-indented control. Quickshell's FileView drops a byte-order mark at the very start of the file, so a leading BOM before a header comment does not trigger it under the shell; the same character on any later line does.
+    We checked this with the real MenuModel.js at the PR head merged onto the baseline. pocs/pr6525-comment-indent-whitespace.sh shows it for all 21 characters against an ASCII-indented control. Quickshell's FileView drops a byte-order mark at the very start of the file. So under the shell a leading BOM before a header comment does not trigger it. The same character on any later line does.
 affected_requirements:
     - SW-REQ-260922-E4J2
 evidence_manifests:
@@ -16,12 +16,12 @@ risk: correctness
 cve_surface: none
 affected_api: MenuModel.parseMenuJsonc (default and user menu JSONC)
 reproducer_command: sh pocs/pr6525-comment-indent-whitespace.sh
-tripwire_mutation: 'Copy every JS whitespace character outside a string literal as a plain space in the scanner (keep line feeds), as omacom/omarchy#13968 does: the green tripwire pocs/pr6525-comment-indent-whitespace.sh starts exiting 1 and the KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
+tripwire_mutation: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire pocs/pr6525-comment-indent-whitespace.sh starts exiting 1. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.
 introduced_in: dff129dc
 defect_class: new_defect
 minimization_status: minimized
 mitigation: Indent comment lines in the menu file with ASCII spaces or tabs only. The shipped default menu indents with ASCII spaces.
-remediation: In the scanner, copy any JS whitespace character outside a string as one ASCII space (keep line feeds), so the indentation the old regex removed is still accepted. omacom/omarchy#13968 does this in its second commit b2dae8db.
+remediation: In the scanner, copy any JS whitespace character outside a string as one ASCII space, and keep line feeds. Then the indentation the old regex removed is still accepted. omacom/omarchy#13968 does this in its second commit b2dae8db.
 owner: agent:claude-pr-6525
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -34,6 +34,10 @@ history:
       by: agent:claude-pr-6525
       action: capture-evidence
       detail: proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
-dedup_armor: 'Not a duplicate of KI-MENU-JSONC-UNICODE-WHITESPACE: that one is non-JSON whitespace BETWEEN tokens, present on the baseline and unchanged by #6525; this one is the same characters INDENTING a whole-line comment, which the baseline accepts and #6525 newly rejects. Also not KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS (inline comment tails, block comments, string rewriting, array roots, CR-only line endings).'
+    - at: "2026-10-01T23:52:23Z"
+      by: agent:claude-pr-6525
+      action: edit
+      detail: set-description,set-tripwire-mutation,set-remediation,set-dedup-armor
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-UNICODE-WHITESPACE. That one is non-JSON whitespace between tokens, on the baseline and unchanged by #6525. This one is the same characters indenting a whole-line comment, which the baseline accepts and #6525 newly rejects. Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY either: that one is the items wrapper key in parseMenuJsonc, not comment stripping. Also not KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS.'
 kill_domain: parsing
 affected_file: shell/plugins/menu/MenuModel.js
