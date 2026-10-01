@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:20.660054322Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T23:03:46.899617Z"
+    reviewed_by: agent:claude-pr-6525
     reviewed_fingerprint: sha256:ba0def97671b0819fd2c0220ae42864be60807c1de55ebfe4a1b1213973ad1da
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardScript: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:guardScript: file1:06091db47f0d13643941a057a31d5482
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -44,6 +44,16 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/MenuModel.js:495
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
+            - test/shell.d/menu-guards-test.sh:7
+        - reviewed_at: "2026-10-01T23:03:46.899617Z"
+          reviewed_by: agent:claude-pr-6525
+          method: inspection
+          rationale: 'PR #6525 review on quattro-proof 9f3abc10 (upstream head 913e112d): the MenuModel.js delta is stripJsonc (a string-aware scanner drops // comments wherever the opener sits outside a string; the comma regex pass is unchanged) and a console.warn in the parseMenuJsonc catch; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; E4J2 is violated on one input-domain partition (comment lines indented with non-JSON JS whitespace), recorded as KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE; other requirement intents are unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:526
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
             - test/shell.d/menu-guards-test.sh:7
