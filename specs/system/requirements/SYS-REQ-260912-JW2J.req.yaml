@@ -60,9 +60,9 @@ obligation_deferrals:
       ki_ref: KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
       reproducer: ./pocs/apply-lock-pam-torn-write.sh
 hazard_review:
-    reviewed_at: "2026-09-30T06:51:01Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:32:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -71,7 +71,10 @@ hazard_review:
             - boundary
             - error_handling
             - edge_case
-          rationale: 'Parent-level partitions carried by satisfying children: access_denied via EKJP (root PATH restriction) and S154 (absolute-path fprintd), boundary via EKJP (EUID threshold), S154 (executable-bit edge) and Y0WT (enrollment threshold), error_handling via S154 and Y0WT (probe failure routes to removal), edge_case via Y0WT (multi-user enrollment). No obligation is held at this level alone.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Parent-level partitions carried by satisfying children: access_denied via EKJP (root PATH restriction) and S154 (absolute-path fprintd), boundary via EKJP (EUID threshold), S154 (executable-bit edge) and Y0WT (enrollment threshold), error_handling via S154 and Y0WT (probe failure routes to removal), edge_case via Y0WT (multi-user enrollment). No obligation is held at this level alone. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, concurrent apply-lock runs write the same PAM files; the torn-write exposure is the deferred atomic_write obligation.'
         - category: property
           disposition: not_applicable
           rationale: Decomposition-level statement; the branch idempotence of rerunning the helper is observed but not specified here, and no other algebraic surface exists at this level.

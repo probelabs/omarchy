@@ -58,16 +58,19 @@ obligation_deferrals:
       ki_ref: KI-MENU-GUARD-BATCH-NO-DEADLINE
       reproducer: ./pocs/47t8-guard-batch-no-deadline.sh
 hazard_review:
-    reviewed_at: "2026-09-30T08:06:26Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:32:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - error_handling
             - edge_case
-          rationale: 'Worst case graded in the deferral above: a blocking guard expression freezes the answer set for the session (tracked debt). error_handling: a batch killed by signal (exitStatus set) or a non-zero exit keeps the previous complete answer set - a half-read batch never adopts; a reader exiting non-zero cannot kill the batch (|| : guard); unparsable output lines are skipped by the id:tag:value shape guard. edge_case: a run arriving while one is in flight is coalesced via guardsPending and re-run once the flight lands, so concurrent evaluation requests cannot interleave collected output. nominal: one batched run drives visibility, checkmarks, and dimming from per-item answers, exactly the contract.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case graded in the deferral above: a blocking guard expression freezes the answer set for the session (tracked debt). error_handling: a batch killed by signal (exitStatus set) or a non-zero exit keeps the previous complete answer set - a half-read batch never adopts; a reader exiting non-zero cannot kill the batch (|| : guard); unparsable output lines are skipped by the id:tag:value shape guard. edge_case: a run arriving while one is in flight is coalesced via guardsPending and re-run once the flight lands, so concurrent evaluation requests cannot interleave collected output. nominal: one batched run drives visibility, checkmarks, and dimming from per-item answers, exactly the contract. Catalog 1.11.0 re-review: input_domain not applicable, guard expressions reach it already parsed by SW-REQ-260922-E4J2; batch output parsing is stated on SW-REQ-260922-4079. concurrency_scale applied, evaluations are requested repeatedly while a batch runs and are coalesced; the batch without a deadline is the deferred external_call_timeout_bounded obligation.'
         - category: property
           disposition: reviewed
           applied:
@@ -78,7 +81,7 @@ hazard_review:
           rationale: expressions are config-authored (user is the trust root for their own menu config, same disposition as the keybindings script review) and are interpolated into bash -lc after reader-slot substitution; no memory/pointer/encoding surface in the QML parser, which is a shape-guarded line splitter dispositioned under scenario.error_handling.
         - category: domain
           disposition: reviewed
-          rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): the bash -lc guard child has no deadline and a blocking expression freezes guard freshness for the session, tracked as hazard-batch-D/47T8-guard-batch-no-deadline - a child-process site, deliberately NOT attached to the KI-MENU-SELECT-POLL-DEADLOCK poll-loop KI. No other domain class fires: no network, no identity crossing, single consumer of the answers.'
+          rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): the bash -lc guard child has no deadline and a blocking expression freezes guard freshness for the session, tracked as KI-MENU-GUARD-BATCH-NO-DEADLINE with a green tripwire - a child-process site, deliberately NOT attached to the KI-MENU-SELECT-POLL-DEADLOCK poll-loop KI. No other domain class fires: no network, no identity crossing, single consumer of the answers.'
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"

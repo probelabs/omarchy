@@ -65,9 +65,9 @@ obligation_deferrals:
       ki_ref: KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT
       reproducer: ./pocs/eh0k-hyprctl-monitors-no-timeout.sh
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:39Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:32:13Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -75,9 +75,11 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
+            - input_domain
+            - concurrency_scale
           suppressed:
             - error_handling
-          rationale: 'Worst case: a caller that cannot distinguish undetermined from unlocked acts on unknown state. malformed_input: unparsable or empty monitor JSON yields an empty state that exits 2. boundary: the answerable partition is the elif on WORKSPACE readability separating exit 1 from exit 2. edge_case: a monitor with no workspace stops at the first solitary blocker before LOCK is consulted, the documented Hyprland behavior that forces the re-ask semantics. error_handling is suppressed, pointer to the existing obligation_suppressions entry: the 3-state contract makes set -e/pipefail wrong; hyprctl and jq failures are handled explicitly as exit 2.'
+          rationale: 'Worst case: a caller that cannot distinguish undetermined from unlocked acts on unknown state. malformed_input: unparsable or empty monitor JSON yields an empty state that exits 2. boundary: the answerable partition is the elif on WORKSPACE readability separating exit 1 from exit 2. edge_case: a monitor with no workspace stops at the first solitary blocker before LOCK is consulted, the documented Hyprland behavior that forces the re-ask semantics. error_handling is suppressed, pointer to the existing obligation_suppressions entry: the 3-state contract makes set -e/pipefail wrong; hyprctl and jq failures are handled explicitly as exit 2. Catalog 1.11.0 re-review: input_domain applied, it parses hyprctl -j monitors output; that producer emits machine-generated ASCII JSON, so BOM, Unicode whitespace and CR partitions cannot arise, and unparsable or empty output is the malformed_input partition already applied here (exit 2). concurrency_scale applied, the stranded-lock recovery calls this probe repeatedly on a timer and it spawns hyprctl each time; the call-without-deadline exposure is the deferred external_call_timeout_bounded obligation.'
         - category: property
           disposition: not_applicable
           rationale: Stateless single-shot probe over one hyprctl snapshot; no algebraic, ordering, or repeated-application surface beyond the three-exit partition recorded under scenario.

@@ -60,9 +60,9 @@ obligation_deferrals:
       ki_ref: KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
       reproducer: ./pocs/apply-lock-pam-torn-write.sh
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:55Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:32:13Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -70,7 +70,10 @@ hazard_review:
             - error_handling
             - boundary
             - edge_case
-          rationale: 'Worst case: a stale fingerprint PAM stack without an enrolled finger offers an authentication path that can never succeed and shadows the password path. error_handling: a missing or non-executable fprintd-list, or a failed probe, routes to the removal branch, the fail-safe direction. boundary: the enrolled/not-enrolled threshold is the grep on probe output feeding the if/else. edge_case: on a multi-user host the system-wide stack is keyed to one target user enrollment, so another user without enrolled fingers meets a failing fingerprint option; the password path stays intact and the lock service retries then falls back, so the residual is confusion and delay, not a lockout.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a stale fingerprint PAM stack without an enrolled finger offers an authentication path that can never succeed and shadows the password path. error_handling: a missing or non-executable fprintd-list, or a failed probe, routes to the removal branch, the fail-safe direction. boundary: the enrolled/not-enrolled threshold is the grep on probe output feeding the if/else. edge_case: on a multi-user host the system-wide stack is keyed to one target user enrollment, so another user without enrolled fingers meets a failing fingerprint option; the password path stays intact and the lock service retries then falls back, so the residual is confusion and delay, not a lockout. Catalog 1.11.0 re-review: input_domain not applicable, it writes a fixed PAM stack and reads only the enrollment exit status. concurrency_scale applied, concurrent apply-lock runs can write the same PAM file; the torn-write exposure is the deferred atomic_write obligation.'
         - category: property
           disposition: not_applicable
           rationale: Single-branch installer derived from probe state; rerunning the helper reproduces the same branch, and there is no other algebraic surface.

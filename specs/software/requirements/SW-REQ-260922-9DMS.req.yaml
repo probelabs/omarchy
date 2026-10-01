@@ -69,9 +69,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-KEYBINDINGS-NO-TIMEOUT
       reproducer: ./pocs/9dms-keybindings-no-timeout.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:13:11Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:32:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -79,7 +79,10 @@ hazard_review:
             - error_handling
             - boundary
             - edge_case
-          rationale: 'Worst case: the menu mislabels a binding - a resolved symbol from the wrong keymap section shadows a correct fallback, or an unknown code renders raw as code:N - misleading a user hunting for a keybinding, cosmetic and graded low because dispatch uses the binding''s own expression, never the displayed symbol. error_handling is the subject: xkbcli failure or an empty keymap degrades to the built-in fallback table, and </dev/null on the xkbcli pipe keeps a keymap read from consuming binding records on stdin - the composition trap this design closes. boundary: fallback-table codes are the fixed enumerated set (10..21, 59..61) plus mouse 272-274; a code outside both the keymap and the table is the uncovered edge that falls back to raw display. edge_case: GRAVE rewriting to ~ is a display convention over the layout-dependent keysym, so the symbol tracks whichever key the active layout puts left of 1 - witnessed by the source-derived keymap parse.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Worst case: the menu mislabels a binding - a resolved symbol from the wrong keymap section shadows a correct fallback, or an unknown code renders raw as code:N - misleading a user hunting for a keybinding, cosmetic and graded low because dispatch uses the binding''s own expression, never the displayed symbol. error_handling is the subject: xkbcli failure or an empty keymap degrades to the built-in fallback table, and </dev/null on the xkbcli pipe keeps a keymap read from consuming binding records on stdin - the composition trap this design closes. boundary: fallback-table codes are the fixed enumerated set (10..21, 59..61) plus mouse 272-274; a code outside both the keymap and the table is the uncovered edge that falls back to raw display. edge_case: GRAVE rewriting to ~ is a display convention over the layout-dependent keysym, so the symbol tracks whichever key the active layout puts left of 1 - witnessed by the source-derived keymap parse. Catalog 1.11.0 re-review: input_domain applied, it reads xkbcli keymap output and a built-in table; the producer emits machine-generated text, and an unresolvable code falls back to the table (already applied as error_handling). concurrency_scale not applicable, one keymap resolution per menu build.'
         - category: property
           disposition: reviewed
           applied:
