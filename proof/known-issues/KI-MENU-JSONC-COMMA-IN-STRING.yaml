@@ -1,6 +1,9 @@
 id: KI-MENU-JSONC-COMMA-IN-STRING
 title: 'stripJsonc comma regex rewrites strings that carry a comma before } or ] (omacom/omarchy#13250)'
-description: 'stripJsonc (shell/plugins/menu/MenuModel.js:2-6) drops trailing commas with the regex /,(\s*[}\]])/g. The regex does not track string literals. It also deletes a comma inside a label or an action when optional whitespace and } or ] follow it. JSON.parse accepts the rewritten text, so nothing fails. The label "x, ]y" renders as "x ]y". The action "mv f{.bak,}" runs as "mv f{.bak}" with the user privileges. Upstream issue: omacom/omarchy#13250. Report intake validated it (report cmulr8l6h0i461gw40vqqv64c).'
+description: |-
+    stripJsonc (shell/plugins/menu/MenuModel.js:2-6) drops trailing commas with the regex /,(\s*[}\]])/g. The regex does not track string literals. It also deletes a comma inside a label or an action when optional whitespace and } or ] follow it.
+
+    JSON.parse accepts the rewritten text, so nothing fails. The label "x, ]y" renders as "x ]y". The action "mv f{.bak,}" runs as "mv f{.bak}" with the user privileges. Upstream issue: omacom/omarchy#13250. Report intake validated it (report cmulr8l6h0i461gw40vqqv64c).
 affected_requirements:
     - SW-REQ-260922-E4J2
 evidence_manifests:

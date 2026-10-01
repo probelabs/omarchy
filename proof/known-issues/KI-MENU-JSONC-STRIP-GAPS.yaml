@@ -1,6 +1,11 @@
 id: KI-MENU-JSONC-STRIP-GAPS
 title: 'stripJsonc has no block-comment pass: a /* */ comment empties the whole file'
-description: 'Upstream stripJsonc (shell/plugins/menu/MenuModel.js:2-6) removes whole-line // comments and trailing commas only. A /* */ block comment stays in the text. JSON.parse rejects it, and parseMenuJsonc returns an empty item set for an otherwise valid menu file. Re-scope on the clean baseline (2026-10-01): the earlier record described the fork single-pass scanner. Its F1 shape (a comma behind an inline // comment) now belongs to KI-MENU-JSONC-INLINE-COMMENT. Fork commit 500b31bd introduced F2 (the // eater glues [1//c\n2] into [12]) and the full-line form of F1. Neither reproduces on upstream e332dc97. There the comment pass runs first and keeps every row, and preservation tests pin that. F4 (CR handling) does not reproduce on upstream either.'
+description: |-
+    Upstream stripJsonc (shell/plugins/menu/MenuModel.js:2-6) removes whole-line // comments and trailing commas only. A /* */ block comment stays in the text. JSON.parse rejects it, and parseMenuJsonc returns an empty item set for an otherwise valid menu file.
+
+    Re-scope on the clean baseline (2026-10-01): the earlier record described the fork single-pass scanner. Its F1 shape (a comma behind an inline // comment) now belongs to KI-MENU-JSONC-INLINE-COMMENT. Fork commit 500b31bd introduced F2 (the // eater glues [1//c\n2] into [12]) and the full-line form of F1.
+
+    Neither reproduces on upstream e332dc97. There the comment pass runs first and keeps every row, and preservation tests pin that. F4 (CR handling) does not reproduce on upstream either.
 affected_requirements:
     - SW-REQ-260922-E4J2
 evidence_manifests:

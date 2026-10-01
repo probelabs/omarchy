@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. Upstream e332dc97 rejects scalar and null roots only; a top-level JSON array root is walked with for..in and renders phantom rows (KI-MENU-JSONC-ARRAY-ROOT, omacom/omarchy#13492).
+rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. Upstream e332dc97 rejects scalar and null roots only; for..in walks a top-level JSON array root and renders phantom rows (KI-MENU-JSONC-ARRAY-ROOT, omacom/omarchy#13492).
 tags: []
 variables: []
 traces:

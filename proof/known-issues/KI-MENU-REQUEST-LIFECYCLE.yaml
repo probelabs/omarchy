@@ -1,6 +1,9 @@
 id: KI-MENU-REQUEST-LIFECYCLE
 title: dmenu request lifecycle drops waiters on re-summon, on a busy resultProc, and for doneFile-only requests
-description: 'A second open without close() replaces selectionFile/doneFile/requestActive with no write to the previous done file - the first caller waits forever (SX26/C06/C07; openExistingMenu/openDmenu bodies). This is omacom/omarchy#9057. The behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh drives two real omarchy-menu-select callers through the real Menu.qml open/openDmenu/cancel bodies. The superseded caller never gets its done file and polls forever. Upstream e332dc97 has no cancel-prior guard; PR 9056 adds one. finishRequest wipes requestActive and both paths BEFORE resultProc.running = true. Quickshell therefore ignores a command change while the previous write runs, and the new selection disappears (SX26/C14; the empty-selectionFile redirect variant is SX26/C15 and HFY2/C36).'
+description: |-
+    A second open without close() replaces selectionFile/doneFile/requestActive with no write to the previous done file - the first caller waits forever (SX26/C06/C07; openExistingMenu/openDmenu bodies). This is omacom/omarchy#9057. The behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh drives two real omarchy-menu-select callers through the real Menu.qml open/openDmenu/cancel bodies. The superseded caller never gets its done file and polls forever. Upstream e332dc97 has no cancel-prior guard; PR 9056 adds one.
+
+    finishRequest wipes requestActive and both paths BEFORE resultProc.running = true. Quickshell therefore ignores a command change while the previous write runs, and the new selection disappears (SX26/C14; the empty-selectionFile redirect variant is SX26/C15 and HFY2/C36).
 affected_requirements:
     - SW-REQ-260922-FGZQ
     - SW-REQ-260922-C8HX

@@ -1,6 +1,9 @@
 id: KI-MENU-JSONC-ARRAY-ROOT
 title: parseMenuJsonc walks a top-level JSON array and renders phantom rows keyed 0, 1, ... (omacom/omarchy#13492)
-description: 'parseMenuJsonc (shell/plugins/menu/MenuModel.js:44-66) rejects scalar and null roots only. typeof [] is "object", so an array root reaches the for..in loop. The loop iterates the array indices. Each object element becomes a row with id "0", "1", ... under root, with the label and action of the element. The default file and the user extension file use the same parser, and mergeMenuSources merges both. Upstream issue: omacom/omarchy#13492. Report intake validated it (report cmulr8j7z0hy31gw4pne8v6u4).'
+description: |-
+    parseMenuJsonc (shell/plugins/menu/MenuModel.js:44-66) rejects scalar and null roots only. typeof [] is "object", so an array root reaches the for..in loop. The loop iterates the array indices. Each object element becomes a row with id "0", "1", ... under root, with the label and action of the element.
+
+    The default file and the user extension file use the same parser, and mergeMenuSources merges both. Upstream issue: omacom/omarchy#13492. Report intake validated it (report cmulr8j7z0hy31gw4pne8v6u4).
 affected_requirements:
     - SW-REQ-260922-3T3F
 evidence_manifests:

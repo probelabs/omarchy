@@ -1,6 +1,9 @@
 id: KI-MENU-JSONC-INLINE-COMMENT
 title: stripJsonc removes only whole-line // comments; an inline comment tail empties the whole file (omacom/omarchy#13493)
-description: 'The stripJsonc comment pass (shell/plugins/menu/MenuModel.js:4) matches only at the start of a line. A // comment after content on the same line stays in the text. JSON.parse then rejects the file, and parseMenuJsonc returns no rows. One inline note in the user extension drops every user entry; in the default file it drops every row. docs/menu.md documents this limitation. Upstream issue: omacom/omarchy#13493. Report intake validated it (report cmulr8j7w0hy01gw4menggvbx).'
+description: |-
+    The stripJsonc comment pass (shell/plugins/menu/MenuModel.js:4) matches only at the start of a line. A // comment after content on the same line stays in the text. JSON.parse then rejects the file, and parseMenuJsonc returns no rows.
+
+    One inline note in the user extension drops every user entry; in the default file it drops every row. docs/menu.md documents this limitation. Upstream issue: omacom/omarchy#13493. Report intake validated it (report cmulr8j7w0hy01gw4menggvbx).
 affected_requirements:
     - SW-REQ-260922-E4J2
 evidence_manifests:

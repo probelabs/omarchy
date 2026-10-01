@@ -1,6 +1,11 @@
 id: KI-MENU-OPEN-QUADRATIC
 title: 'Opening a select menu walks its rows quadratically (omacom/omarchy#10601)'
-description: 'rebuildDmenuDisplay (shell/plugins/menu/Menu.qml) appends rows to displayModel one at a time. The visibleRowsHeight binding evaluates again after each append. Each pass calls foldedListHeight over the full row list. A menu of N rows thus costs about N(N+1)/2 row visits. 231 rows take 232 height passes and 27,027 row visits; 462 rows take 463 passes and 107,415 visits. The Super+K keybindings menu is the realistic large case. Upstream issue: omacom/omarchy#10601. Report intake validated it (report cmulr8ysi0jwr1gw4fjmt9khq). Upstream PR 10631 does not change the counts.'
+description: |-
+    rebuildDmenuDisplay (shell/plugins/menu/Menu.qml) appends rows to displayModel one at a time. The visibleRowsHeight binding evaluates again after each append. Each pass calls foldedListHeight over the full row list.
+
+    A menu of N rows thus costs about N(N+1)/2 row visits. 231 rows take 232 height passes and 27,027 row visits. 462 rows take 463 passes and 107,415 visits.
+
+    The Super+K keybindings menu is the realistic large case. Upstream issue: omacom/omarchy#10601. Report intake validated it (report cmulr8ysi0jwr1gw4fjmt9khq). Upstream PR 10631 does not change the counts.
 affected_requirements:
     - SW-REQ-260922-B757
 evidence_manifests:
