@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when space_outside_string the menu_model shall always satisfy space_passed_as_ascii
-description: The JSONC stripper takes any text as input. Outside string literals, each character that JS \s matches is whitespace. This includes ASCII whitespace and a byte order mark U+FEFF at the start or anywhere else. It also includes the Unicode spaces U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F and U+3000. The stripper keeps each line feed and emits each other such character as one ASCII space. Inside string literals it copies every character unchanged.
+description: The JSONC stripper takes any text as input. Outside string literals, each character that JS \s matches is whitespace. This includes ASCII whitespace with the vertical tab and the form feed, and a byte order mark U+FEFF at the start or anywhere else. It also includes the Unicode spaces U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F and U+3000. The stripper keeps each line feed and emits each other such character as one ASCII space. Inside string literals it copies every character unchanged.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -33,7 +33,7 @@ history:
     created_by: agent:claude-pr-13968
     created_at: "2026-10-01T17:41:54Z"
     last_modified_by: agent:claude-pr-13968
-    last_modified_at: "2026-10-01T18:04:59Z"
+    last_modified_at: "2026-10-01T18:41:20Z"
 obligation_checklist:
     - malformed_input
     - totality
