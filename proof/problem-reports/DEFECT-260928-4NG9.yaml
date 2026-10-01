@@ -33,9 +33,11 @@ disposition:
     requirements:
     - SW-REQ-260928-BMFE
     rationale: |-
-        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements, so this closure covers only its own class.
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements. This closure covers only its own class.
 
-        SW-REQ-260928-BMFE models the decision as a guard over array_root_present. On the pr/13968 mirror of omacom/omarchy#13968 the guard is Array.isArray(parsed) in the parseMenuJsonc root check; the witness rows in test/shell.d/menu-test.sh are replayed by test/node/menumodel-replay.test.mjs, code MC/DC of parseMenuJsonc is 100%, report #13492 exits 0, and KI-MENU-JSONC-ARRAY-ROOT is fixed. parseMenuJsonc is the single JSONC root-type gate; Menu.qml consumes only the normalized entry list.
+        SW-REQ-260928-BMFE models the decision as a guard over array_root_present. On the pr/13968 mirror the PR omacom/omarchy#13968 adds Array.isArray(parsed) to the parseMenuJsonc root check. Witnesses in test/shell.d/menu-test.sh cover the rows, and the node replay runs them again.
+
+        Code MC/DC of parseMenuJsonc is 100%. Report #13492 exits 0, and the PR fixes KI-MENU-JSONC-ARRAY-ROOT. parseMenuJsonc is the single JSONC root-type gate. Menu.qml reads only the normalized entry list.
     evidence:
         verified_by:
         - test/shell.d/menu-test.sh

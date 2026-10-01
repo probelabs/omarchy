@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js stripJsonc (a single string-aware scanner under PR omacom/omarchy#13968) and parseMenuJsonc. The scanner rules are decomposed into SW-REQ-260927-66FW (commas), SW-REQ-260928-C8W1 (comments) and SW-REQ-261001-BNZG (input domain and whitespace).
+rationale: 'MenuModel.js stripJsonc (a single string-aware scanner under PR omacom/omarchy#13968) and parseMenuJsonc. Three child requirements state the scanner rules: SW-REQ-260927-66FW (commas), SW-REQ-260928-C8W1 (comments) and SW-REQ-261001-BNZG (accepted characters and whitespace).'
 tags: []
 variables: []
 traces:
