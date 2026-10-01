@@ -518,7 +518,7 @@ assertEqual(
 // character that JS \s matches (19 classes, incl. the byte order mark) at the
 // start of the file, between tokens and in front of comments, and inside
 // strings. The reference tokenizes with one sticky regex (string literal |
-// // comment | any character), drops comments, reads each \s character
+// comment, or any character), drops comments, reads each \s character
 // outside a string as a space (a line feed stays), drops each comma whose
 // next non-space token is } or ], and treats a non-object root as no rows.
 // SW-REQ-261001-BNZG:malformed_input:differential
@@ -536,7 +536,7 @@ assertEqual(
   const str = () => JSON.stringify(pick(STR))
   const ws = () => pick(['', ' ', '\n', '\r\n', '\t']) + uni()
   const cm = () => rnd() < 0.35 ? uni() + pick([' // c', '\n// full line', '\n' + uni() + '// "q" , ] }', ' //']) + '\n' + uni() : ws()
-  function obj(depth) {
+  const obj = depth => {
     const n = Math.floor(rnd() * 3)
     let o = '{' + cm()
     for (let i = 0; i < n; i++) {
@@ -546,13 +546,13 @@ assertEqual(
     }
     return o + '}'
   }
-  function gen() {
+  const gen = () => {
     const head = (rnd() < 0.25 ? '﻿' : '') + uni() + (rnd() < 0.3 ? '// head\n' + uni() : '')
     const body = rnd() < 0.15 ? '[' + ws() + obj(1) + (rnd() < 0.5 ? ',' : '') + ws() + ']' : obj(0)
     return head + body + ws() + (rnd() < 0.3 ? uni() + '// tail' : '')
   }
-  function reference(text) {
-    const tok = /"(?:[^"\\\n]|\\.)*"|\/\/[^\n]*|[\s\S]/y
+  const reference = text => {
+    const tok = new RegExp('"(?:[^"\\\\\\n]|\\\\.)*"' + '|' + '/' + '/[^\\n]*' + '|[\\s\\S]', 'y')
     const toks = []
     let m
     while ((m = tok.exec(text)) !== null) {
