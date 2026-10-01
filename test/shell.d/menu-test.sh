@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89
+# Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1, SW-REQ-261001-BNZG
 #mcdc:ignore:defensive SW-REQ-260928-8VJQ: action_is_bare_summon=T, in_process_summon_equivalent=F => FALSE -- a matched bare summon whose delivered argv diverges from bash is exactly the defect the requirement forbids; summonAction is a pure regex + passthrough, so producing it needs a broken regex or a mutated payload copy [reviewed: REVIEW-74]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=T, parse_error_raised=F => FALSE -- a failed parse hits the catch that returns [] unconditionally; invalid input yielding items needs a broken catch [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=T => FALSE -- the same catch swallows the parse error by construction; a raised error needs the try/catch removed [reviewed: REVIEW-M8]
@@ -37,7 +37,7 @@ set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 run_node_test <<'JS'
-// Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89
+// Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1, SW-REQ-261001-BNZG
 const fs = require('fs')
 const menu = requireFromRoot('shell/plugins/menu/MenuModel.js')
 const menuQml = fs.readFileSync(path.join(root, 'shell/plugins/menu/Menu.qml'), 'utf8')
@@ -139,12 +139,11 @@ assertEqual(menu.parseMenuJsonc('{\n// comment\n"items":').length, 0, 'menu pars
 // SW-REQ-260922-3T3F:boundary:nominal
 assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}').length, 0, 'menu parses empty input and an empty item set to zero entries')
 
-// JSONC stripping as upstream e332dc97 ships it: two string-blind regex
-// passes. The first drops every whole-line // comment together with its line
-// break; the second drops a comma whose next non-whitespace character is } or
-// ]. The assertions below pin what that order gets RIGHT (preservation) and,
-// tagged Reproduces, what it gets wrong (known issues, pinned as green
-// tripwires: each flips red when the named upstream fix lands).
+// JSONC stripping under PR omacom/omarchy#13968: one string-aware scanner
+// replaces upstream e332dc97's two string-blind regex passes. The baseline's
+// preservation assertions below must hold unchanged on the new scanner (the
+// trailing-comma-then-comment shape is the #13512 regression); the known
+// issues the regexes had are asserted fixed further down.
 // SW-REQ-260922-E4J2: a real trailing comma before a closing brace is dropped.
 assertEqual(
   menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
@@ -245,23 +244,25 @@ assertEqual(
   'menu keeps all four rows of the shipped extension template with every example uncommented'
 )
 
-// Known issues, pinned as green tripwires of upstream's actual output.
+// Known issues fixed by PR omacom/omarchy#13968. On the baseline these were
+// green tripwires of upstream's wrong output; on this mirror each asserts the
+// fixed behaviour and stays as a regression guard for its (fixed) issue.
 // Reproduces: KI-MENU-JSONC-COMMA-IN-STRING
 assertEqual(
   menu.parseMenuJsonc('{"b": {"label": "x, ]y"}}')[0].label,
-  'x ]y',
-  'KI-MENU-JSONC-COMMA-IN-STRING tripwire: the comma pass rewrites a label carrying comma and closer (omacom/omarchy#13250)'
+  'x, ]y',
+  'KI-MENU-JSONC-COMMA-IN-STRING guard: a label carrying comma and closer survives (omacom/omarchy#13250)'
 )
 assertEqual(
   menu.parseMenuJsonc('{"b": {"label": "B", "action": "mv f{.bak,}"}}')[0].action,
-  'mv f{.bak}',
-  'KI-MENU-JSONC-COMMA-IN-STRING tripwire: the comma pass rewrites an action carrying comma and closer'
+  'mv f{.bak,}',
+  'KI-MENU-JSONC-COMMA-IN-STRING guard: an action carrying comma and closer survives'
 )
 // Reproduces: KI-MENU-JSONC-ARRAY-ROOT
 assertDeepEqual(
   menu.parseMenuJsonc('[{"label":"should-not-appear"},{"label":"ghost-2"}]').map(item => item.id + '=' + item.label),
-  ['0=should-not-appear', '1=ghost-2'],
-  'KI-MENU-JSONC-ARRAY-ROOT tripwire: an array root renders phantom rows keyed by index (omacom/omarchy#13492)'
+  [],
+  'KI-MENU-JSONC-ARRAY-ROOT guard: an array root renders no phantom rows (omacom/omarchy#13492)'
 )
 assertEqual(
   menu.parseMenuJsonc('{"items": [{"label":"x"}]}').length,
@@ -271,13 +272,13 @@ assertEqual(
 // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
 assertEqual(
   menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment tail empties the whole file (omacom/omarchy#13493)'
+  1,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment tail no longer empties the file (omacom/omarchy#13493)'
 )
 assertEqual(
   menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // first\n  "b": {"label": "B"}\n}').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment on an entry line empties the whole file'
+  2,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment on an entry line keeps every row'
 )
 // Reproduces: KI-MENU-JSONC-STRIP-GAPS
 assertEqual(
@@ -291,8 +292,10 @@ assertEqual(
 // parseMenuJsonc. Checked live under Quickshell 0.3.1: FileView drops a
 // leading UTF-8 byte-order mark, decodes invalid UTF-8 to U+FFFD, and keeps
 // CR, CRLF and every other character as read. The cases below pin the
-// upstream outcome of each partition; the two defects are green tripwires of
-// their known issues.
+// upstream outcome of each partition. On this mirror PR omacom/omarchy#13968
+// fixes KI-MENU-JSONC-UNICODE-WHITESPACE, so its tripwire asserts the fixed
+// output and stays as a regression guard; KI-MENU-JSONC-CR-LINE-ENDINGS is
+// unchanged by the PR and stays a green tripwire.
 const domainRows = text => menu.parseMenuJsonc(text).map(item => item.id + '=' + item.label).join('|')
 const domainDoc = '{\n  // comment\n  "a": {"label": "A"},\n  "b": {"label": "B"},\n}\n'
 // SW-REQ-260922-E4J2:input_domain:nominal -- LF and CRLF line endings, and a
@@ -328,6 +331,8 @@ assertEqual(domainRows(hugeDoc), 'a=A|b=B', 'menu JSONC parses a file over 1 MiB
 // SW-REQ-260922-3T3F:input_domain:negative -- empty input, whitespace only,
 // and U+FFFD or NUL outside a string reject the document as a whole: an
 // empty item set, no exception.
+// SW-REQ-260922-E4J2:input_domain:negative -- U+FFFD and NUL are not JS
+// whitespace, so the stripper passes them on and JSON.parse rejects the file.
 for (const text of ['', ' \t\r\n', '{�"a": {"label": "A"}}', '{"a":\u0000{"label": "A"}}']) {
   assertEqual(menu.parseMenuJsonc(text).length, 0, 'menu JSONC rejects ' + JSON.stringify(text) + ' to an empty item set')
 }
@@ -335,15 +340,16 @@ for (const text of ['', ' \t\r\n', '{�"a": {"label": "A"}}', '{"a":\u0000{"lab
 // parser as text first, so null and undefined read as empty input.
 assertEqual(menu.parseMenuJsonc(null).length + menu.parseMenuJsonc(undefined).length, 0, 'menu JSONC reads null and undefined as empty input')
 // Reproduces: KI-MENU-JSONC-UNICODE-WHITESPACE
-// SW-REQ-260922-E4J2:input_domain:negative -- a JS whitespace character that
+// SW-REQ-260922-E4J2:input_domain:nominal -- a JS whitespace character that
 // JSON does not accept (VT, FF, no-break space, the U+2000 spaces, line and
 // paragraph separators, ideographic space, a byte-order mark after the start)
-// between tokens rejects the whole file.
+// between tokens is read as a space (SW-REQ-261001-BNZG): the file keeps its
+// entries.
 for (const ch of ['\u000b', '\u000c', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '﻿']) {
   assertEqual(
     menu.parseMenuJsonc('{"a":' + ch + '{"label": "A"}}').length,
-    0,
-    'KI-MENU-JSONC-UNICODE-WHITESPACE tripwire: U+' + ch.charCodeAt(0).toString(16).padStart(4, '0') + ' between tokens empties the whole file'
+    1,
+    'KI-MENU-JSONC-UNICODE-WHITESPACE guard: U+' + ch.charCodeAt(0).toString(16).padStart(4, '0') + ' between tokens no longer empties the file'
   )
 }
 // Reproduces: KI-MENU-JSONC-CR-LINE-ENDINGS
@@ -351,6 +357,158 @@ assertEqual(
   menu.parseMenuJsonc(domainDoc.replace(/\n/g, '\r')).length,
   0,
   'KI-MENU-JSONC-CR-LINE-ENDINGS tripwire: with CR-only line endings a full-line comment swallows the rest of the file'
+)
+
+// SW-REQ-260927-66FW: string-aware trailing commas. A comma outside every
+// string is dropped only when the next character that is neither whitespace
+// nor part of a // comment is } or ]. A comma inside a string is data.
+// Decision under test: trailing_comma_dropped = !comma_in_string && next_char_closes_json
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=T => FALSE -- the scanner appends the comma whenever the look-ahead stops at end of input or on a character other than } or ]; a drop there needs that append removed [reviewed: REVIEW-21]
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=F => FALSE -- a comma outside every string whose look-ahead stops on } or ] is never appended; keeping it needs the closer test broken [reviewed: REVIEW-21]
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=T => FALSE -- inside a string the scanner copies every character before it tests for a comma, so an in-string comma is never dropped [reviewed: REVIEW-21]
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=F => TRUE
+// SW-REQ-260927-66FW:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"b": {"label": "x, ]y", "action": "a, }b"}}')[0].action,
+  'a, }b',
+  '66FW: the scanner keeps a comma before a closer inside a string literal'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"e": {"label": "a\\", ]b"}}')[0].label,
+  'a", ]b',
+  '66FW: the scanner keeps a comma after an escaped quote inside a string literal'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
+// SW-REQ-260927-66FW:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('{"c": {"label": "y"}, }').length,
+  1,
+  '66FW: the scanner drops a trailing comma before a closing brace'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A", "aliases": ["x", // c\n  // d\n]}}')[0].aliases.join(','),
+  'x',
+  '66FW: the look-ahead skips whitespace and // comments before the closing bracket'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}, // c\n "b": {"label": "B"}}').length,
+  2,
+  '66FW: the scanner keeps a comma when the look-ahead past a comment meets another entry'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}},').length,
+  0,
+  '66FW: the scanner keeps a comma at end of input, so JSON.parse still rejects it'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"o": {"label": "a, b"}}')[0].label,
+  'a, b',
+  '66FW: the scanner keeps a plain comma inside a string literal'
+)
+
+// SW-REQ-260928-BMFE: an array root is not an entry map and yields no rows,
+// like the scalar and null roots.
+// Decision under test: array_root_rejected = array_root_present
+//mcdc:ignore:defensive SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=F => FALSE -- the guard returns an empty set for any Array root unconditionally; an array yielding rows needs the Array.isArray check removed [reviewed: REVIEW-72]
+//mcdc:ignore:defensive SW-REQ-260928-BMFE: array_root_present=F, array_root_rejected=T => FALSE -- the rejection arm runs only when Array.isArray(parsed) is true; an object root taking it needs a broken condition [reviewed: REVIEW-72]
+// MCDC SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=T => TRUE
+// SW-REQ-260928-BMFE:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('// note\n[{"label": "x"}, {"label": "y"},]').length,
+  0,
+  'BMFE: a commented array root with a trailing comma yields no rows'
+)
+// MCDC SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('[]').length,
+  0,
+  'BMFE: an empty array root yields no rows'
+)
+// MCDC SW-REQ-260928-BMFE: array_root_present=F, array_root_rejected=F => TRUE [no-action: an object root parses to its entries -- the array rejection path is not taken]
+assertEqual(
+  menu.parseMenuJsonc('{"obj": {"label": "kept"}}').length,
+  1,
+  'BMFE: an object root still parses to its entries'
+)
+// SW-REQ-260928-BMFE:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('[1, "a", null]').length + menu.parseMenuJsonc('"x"').length + menu.parseMenuJsonc('null').length,
+  0,
+  'BMFE: an array of scalars, a string root and a null root all yield no rows'
+)
+
+// SW-REQ-260928-C8W1: a // opener outside every string starts a comment that
+// runs up to the line break, wherever it sits; the line break stays.
+// Decision under test: comment_tail_dropped = !comment_in_string
+// MCDC SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=T => TRUE
+// SW-REQ-260928-C8W1:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
+  1,
+  'C8W1: the scanner strips an inline comment tail at end of input'
+)
+// MCDC SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{ // opening note\n"a": {"label": "A"}, // first\n} // closing note\n// final line').length,
+  1,
+  'C8W1: the scanner strips whole-line and inline comments in one pass'
+)
+// MCDC SW-REQ-260928-C8W1: comment_in_string=T, comment_tail_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"s": {"label": "A // B", "action": "xdg-open https://example.org"}}')[0].action,
+  'xdg-open https://example.org',
+  'C8W1: the scanner keeps // inside a string literal'
+)
+// SW-REQ-260928-C8W1:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A", "n": 1//c\n2}}').length,
+  0,
+  'C8W1: the line break after a comment stays, so the tokens on each side are not joined'
+)
+//mcdc:ignore:defensive SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=F => FALSE -- a // opener outside every string always enters the comment branch; keeping its tail needs that branch removed [reviewed: REVIEW-73]
+assertEqual(
+  menu.parseMenuJsonc('{"n": {"label": "plain"}}').length,
+  1,
+  'C8W1: a comment-free object parses unchanged'
+)
+
+// SW-REQ-261001-BNZG: input domain. Outside strings every character that JS
+// \s matches (ASCII whitespace, the byte order mark, the Unicode spaces) is
+// whitespace: a line feed stays, any other one becomes one ASCII space.
+// Inside strings every character is copied unchanged.
+// Decision under test: space_passed_as_ascii = space_outside_string
+//mcdc:ignore:defensive SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=F => FALSE -- outside a string the scanner tests /\s/ on every character that is not a quote, a comment opener or a comma; a matched character skipping the rule needs that branch removed [reviewed: REVIEW-261001-ENZ2]
+//mcdc:ignore:defensive SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=T => FALSE -- the rule runs only in the outside-string branch, and the in-string branch copies each character as is; a rewrite there needs a broken string branch [reviewed: REVIEW-261001-ENZ2]
+// MCDC SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=T => TRUE
+// SW-REQ-261001-BNZG:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('\uFEFF{"a": {"label": "A"}}').length,
+  1,
+  'BNZG: a leading byte order mark reads as whitespace'
+)
+// MCDC SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=T => TRUE
+assertEqual(
+  menu.stripJsonc('{\u00A0"a"\u2028:\u3000\u2003\t1,\r\n}'),
+  '{ "a" :   1 \n}',
+  'BNZG: Unicode spaces, a tab and a carriage return become one space each, the line feed stays'
+)
+// MCDC SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=F => TRUE
+// SW-REQ-261001-BNZG:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A\u00A0B\uFEFFC\u2029D"}}')[0].label,
+  'A\u00A0B\uFEFFC\u2029D',
+  'BNZG: Unicode spaces and a byte order mark inside a string stay unchanged'
+)
+// SW-REQ-261001-BNZG:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('\uFEFF{\u00A0"a": {"label": "A"},\u3000"b"}').length,
+  0,
+  'BNZG: Unicode whitespace does not make a broken document parse'
 )
 
 const user = [

@@ -4,6 +4,26 @@ Companion narrative to `proof/surfaces/threat-surface.yaml` (schema_version 1).
 Synthesized 2026-09-27 by `agent:kimi-fix-jsonc-refresh` for checklist
 `upstream_refresh_v1`, step `threat_surface_synthesis`.
 
+## pr/13968 mirror (omacom/omarchy#13968, 2026-10-01)
+
+On `pr/13968` (quattro-proof `6fe078f2` plus the PR at `ff77cd02` and the
+pending follow-up `efa5170b`) the string-aware scanner IS present again, in
+the PR's form: string contents are copied verbatim, `//` comments are dropped
+wherever the opener sits (the line break stays), a comma is dropped only when
+the next character that is neither whitespace nor part of a `//` comment is
+`}` or `]`, an array root yields no rows, and any JS `\s` character outside a
+string (including a byte order mark and the Unicode spaces) is read as a
+space. So the silent-mutation mode described below is closed on this line:
+KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT and
+KI-MENU-JSONC-INLINE-COMMENT are fixed; KI-MENU-JSONC-STRIP-GAPS (block
+comments) stays open. The rules are SW-REQ-260927-66FW, SW-REQ-260928-BMFE,
+SW-REQ-260928-C8W1 and the input-domain requirement SW-REQ-261001-BNZG. The
+input-domain lesson: the first PR commit (`ff77cd02`) kept the documented
+grammar but lost the byte-order-mark-before-a-comment case upstream handled
+only by accident (its `^\s*//` regex is Unicode-aware); stating the input
+domain as a requirement, with a differential over all 19 non-ASCII `\s`
+characters, is what pins it.
+
 ## Clean baseline (quattro-clean, 2026-10-01)
 
 This narrative describes the 2026-09-27 fix branch. On `quattro-clean` the
