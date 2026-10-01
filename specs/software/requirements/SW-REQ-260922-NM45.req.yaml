@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-09-29T14:26:57.089495835Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T22:45:47.194737Z"
+    reviewed_by: agent:claude-pr-12223
     reviewed_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:underhang: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:underhang: file1:472526d002de8d982420c7fb73bfec8d
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -62,6 +62,17 @@ traces:
             - test/shell.d/menu-compositor-test.sh:445
             - test/shell.d/menu-compositor-test.sh:446
             - test/shell.d/menu-compositor-test.sh:447
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-01T22:45:47.194737Z"
+          reviewed_by: agent:claude-pr-12223
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof 9f3abc10 (upstream head b74292ac): the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected; menu-test.sh and the node replay (incl. the rebuildDisplay witnesses) are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:602
+            - shell/plugins/menu/Menu.qml:829
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:24
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
