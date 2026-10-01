@@ -1,26 +1,23 @@
 id: KI-MENU-JSONC-STRIP-GAPS
-title: 'stripJsonc parser gaps: comma behind a // comment survives, // eats the newline, block comments and CR pass through'
-description: stripJsonc (shell/plugins/menu/MenuModel.js:2-37) drops a comma only when the next non-whitespace char is }/]. So a // comment between them keeps the comma and JSON.parse rejects the file. The // eater consumes through end-of-line WITHOUT keeping the newline, gluing adjacent tokens ([1//c\n2] parses as [12]). Block comments /* */ have no branch and the stripper copies them through. A // comment under CR-only line endings eats to the next LF or EOF. Each corruption makes parseMenuJsonc return an empty item set for a valid JSONC menu.
+title: 'stripJsonc has no block-comment pass: a /* */ comment empties the whole file'
+description: 'Upstream stripJsonc (shell/plugins/menu/MenuModel.js:2-6) removes whole-line // comments and trailing commas only. A /* */ block comment stays in the text, JSON.parse rejects it, and parseMenuJsonc returns an empty item set for an otherwise valid menu file. Clean-baseline re-scope (2026-10-01): the earlier record described the fork single-pass scanner. Its F1 shape (comma behind an inline // comment) is the inline-comment class, now KI-MENU-JSONC-INLINE-COMMENT; F2 (the // eater gluing [1//c\n2] into [12]) and the full-line form of F1 (comma, whole-line comment, closer) were introduced by fork commit 500b31bd and do NOT reproduce on upstream e332dc97, where the whole-line comment pass runs first and keeps every row (pinned by preservation tests). F4 (CR handling) does not reproduce on upstream either.'
 affected_requirements:
     - SW-REQ-260922-E4J2
-    - SW-REQ-260922-3T3F
 evidence_manifests:
-    - pocs/menu-probes.js
-    - pocs/menu-probes2.js
-    - pocs/menu-probes3.js
+    - pocs/menu-jsonc-block-comment.sh
     - proof/evidence/ki-menu-jsonc-strip-gaps.yaml
 severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
+reproducer_command: sh pocs/menu-jsonc-block-comment.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: a whole-file comment or comma-shape already breaks the menu (parse returns []), which is visible
-remediation: strip only the comment bytes, preserving the line break; add a block-comment branch; treat CR as a line terminator
-owner: agent:opencode-quattro
-review_date: "2026-09-30"
+mitigation: 'Block comments are outside the documented grammar (docs/menu.md: whole-line // comments only); the failure is visible because the file''s entries disappear'
+remediation: 'Add a string-aware block-comment pass ahead of the comma pass, or document block comments as unsupported'
+owner: agent:claude-quattro-clean
+review_date: "2026-10-01"
 release_disposition: ship_with_known_issue
 status: open
 history:
@@ -47,6 +44,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-strip-gaps.yaml
+    - at: "2026-10-01T12:00:00Z"
+      by: agent:claude-quattro-clean
+      action: edit
+      detail: 'clean baseline re-scope to upstream e332dc97: block comments only; F1 -> KI-MENU-JSONC-INLINE-COMMENT; F2/full-line F1 were fork-only (500b31bd); reproducer pocs/menu-jsonc-block-comment.sh; affected_requirements E4J2'
 dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY: this is the stripJsonc comment/comma stripper losing or gluing tokens, that one is wrapper-shape detection discarding siblings of an items id; different parser stages'
 kill_domain: parsing
 affected_file:

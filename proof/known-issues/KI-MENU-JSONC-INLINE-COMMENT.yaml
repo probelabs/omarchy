@@ -1,0 +1,29 @@
+id: KI-MENU-JSONC-INLINE-COMMENT
+title: 'stripJsonc removes only whole-line // comments; an inline comment tail empties the whole file (omacom/omarchy#13493)'
+description: 'The stripJsonc comment pass (shell/plugins/menu/MenuModel.js:4) is anchored to the start of a line, so a // comment after content on the same line stays in the text. JSON.parse then rejects the file and parseMenuJsonc returns no rows: one inline note in the user extension silently drops every user entry, in the default file every row. docs/menu.md documents this limitation ("only whole-line // comments are removed, so an inline trailing comment breaks the parse"). Reported upstream as omacom/omarchy#13493 and validated by report intake (report cmulr8j7w0hy01gw4menggvbx).'
+affected_requirements:
+    - SW-REQ-260922-E4J2
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: MenuModel.parseMenuJsonc / stripJsonc whole-line comment pass
+reproducer_command: sh test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh
+tripwire_mutation: 'Strip // comments wherever the opener sits outside a string, while keeping the comment pass ahead of the comma pass: the green tripwires tagged Reproduces KI-MENU-JSONC-INLINE-COMMENT flip red and the red reproducer test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh starts exiting 0. The fix must keep the preservation tests green (a trailing comma, then a whole-line comment, then the closer keeps every row) - the single-pass scanner of PR 13512 / fork 500b31bd breaks that and empties the shipped extension template once its examples are uncommented.'
+introduced_in: inception
+defect_class: latent
+mitigation: Documented in docs/menu.md; comments on their own line work. The failure is visible (the user entries disappear) rather than silent corruption
+remediation: Strip inline // tails outside strings without breaking the comma-then-comment-line shape (omacom/omarchy PR 13512 needs that fix first; see fork prep/upstream-13512 and pr/13512 with SW-REQ-260928-C8W1)
+owner: agent:claude-quattro-clean
+review_date: "2026-10-01"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-10-01T12:00:00Z"
+      by: agent:claude-quattro-clean
+      action: created
+      detail: 'clean baseline: upstream e332dc97 defect (fork fix 500b31bd moved to pr/13512)'
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS: that one is block comments, this one is line comments after content on the same line'
+kill_domain: parsing
+affected_file:
+    - shell/plugins/menu/MenuModel.js
