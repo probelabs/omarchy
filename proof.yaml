@@ -239,7 +239,8 @@ project:
             # slices realizable with connected-component pruning. Budget
             # raised to the truthful current size plus headroom; revisit
             # if the plugin is ever split for real.
-            max_variables: 128
+            # 128 -> 130 (2026-10-01): room for the consolidated JSONC requirements + the input-domain requirement.
+            max_variables: 130
         slow_tests:
             enabled: true
         defect_review_current:
