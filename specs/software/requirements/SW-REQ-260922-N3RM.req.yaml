@@ -20,14 +20,14 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-09-29T14:26:57.080154014Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T22:45:46.786618Z"
+    reviewed_by: agent:claude-pr-12223
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:runAction: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:runAction: file1:472526d002de8d982420c7fb73bfec8d
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
             SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
@@ -59,6 +59,20 @@ traces:
             - test/shell.d/menu-test.sh:307
             - test/shell.d/menu-test.sh:342
             - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T22:45:46.786618Z"
+          reviewed_by: agent:claude-pr-12223
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof 9f3abc10 (upstream head b74292ac): the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected; menu-test.sh and the node replay (incl. the rebuildDisplay witnesses) are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:897
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:345
+            - test/shell.d/menu-test.sh:26
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C

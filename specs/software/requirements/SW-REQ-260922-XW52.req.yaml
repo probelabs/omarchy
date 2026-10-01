@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-09-29T14:26:57.116310317Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T22:45:50.058638Z"
+    reviewed_by: agent:claude-pr-12223
     reviewed_fingerprint: sha256:7dd1a4b8502776dfec2ad63fa9f83394117091a6e8ca8314af5cea25d1f92225
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:472526d002de8d982420c7fb73bfec8d
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:
@@ -49,6 +49,18 @@ traces:
             - test/shell.d/menu-test.sh:308
             - test/shell.d/menu-test.sh:336
             - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T22:45:50.058638Z"
+          reviewed_by: agent:claude-pr-12223
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof 9f3abc10 (upstream head b74292ac): the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected; menu-test.sh and the node replay (incl. the rebuildDisplay witnesses) are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:974
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:346
+            - test/shell.d/menu-test.sh:25
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
