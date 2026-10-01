@@ -64,6 +64,7 @@ function navHarness(disabledResults) {
   assertEqual(r.navStack.length, 1, 'drilling in pushes one navigation record')
   assertEqual(r.navStack[0].menu, 'root', 'the navigation record names the parent menu')
   assertEqual(r.navStack[0].itemId, 'style', 'the navigation record remembers the selected row id')
+  // Verifies: SW-REQ-261001-B4CK
   // MCDC SW-REQ-261001-B4CK: back_navigated=T, remembered_row_present=T, remembered_row_selected=T => TRUE
   r.goBack()
   assertEqual(r.activeMenu, 'root', 'Back returns to the parent menu')
@@ -77,6 +78,7 @@ function navHarness(disabledResults) {
   r.setActiveMenu('style', true)
   r.items.style = Object.assign({}, r.items.style, { disabled: 'omarchy-cmd-missing nothing' })
   r.disabledResults = { style: true }
+  // Verifies: SW-REQ-261001-B4CK
   // MCDC SW-REQ-261001-B4CK: back_navigated=T, remembered_row_present=F, remembered_row_selected=F => TRUE [no-action: the remembered row is disabled, so the id loop selects nothing and the saved index (settled off disabled rows) stands]
   r.goBack()
   assert(model[r.selectedIndex].itemId !== 'style', 'Back never parks the cursor on the now-disabled remembered row')
@@ -85,6 +87,7 @@ function navHarness(disabledResults) {
 
 { // entering a menu without Back keeps the cursor at the first row
   const { r, model } = navHarness()
+  // Verifies: SW-REQ-261001-B4CK
   // MCDC SW-REQ-261001-B4CK: back_navigated=F, remembered_row_present=F, remembered_row_selected=F => TRUE [no-action: a forward drill-in carries no restore record, so setActiveMenu starts at row 0]
   r.selectedIndex = 3
   r.setActiveMenu('style', true)
