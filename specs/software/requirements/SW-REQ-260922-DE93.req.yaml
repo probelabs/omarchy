@@ -19,14 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:41.283354Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:45:43.884134Z"
+    reviewed_by: agent:claude-pr-12223
     reviewed_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:goBack: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:setActiveMenu: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:underhang: file1:472526d002de8d982420c7fb73bfec8d
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -60,31 +59,16 @@ traces:
             - test/shell.d/menu-compositor-test.sh:363
             - test/shell.d/menu-compositor-test.sh:364
             - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:35.28466Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:45:43.884134Z"
+          reviewed_by: agent:claude-pr-12223
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #12223 review on quattro-proof 9f3abc10 (upstream head b74292ac): the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected; menu-test.sh and the node replay (incl. the rebuildDisplay witnesses) are green.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1204
-            - shell/plugins/menu/Menu.qml:783
-            - shell/plugins/menu/Menu.qml:799
+            - shell/plugins/menu/Menu.qml:797
+            - shell/plugins/menu/Menu.qml:813
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
-            - test/shell.d/menu-compositor-test.sh:352
-            - test/shell.d/menu-compositor-test.sh:362
-            - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:41.283354Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1205
-            - shell/plugins/menu/Menu.qml:783
-            - shell/plugins/menu/Menu.qml:799
-            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
-            - test/shell.d/menu-compositor-test.sh:352
-            - test/shell.d/menu-compositor-test.sh:362
+            - test/shell.d/menu-compositor-test.sh:23
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
