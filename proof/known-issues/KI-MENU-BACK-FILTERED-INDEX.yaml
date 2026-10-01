@@ -1,6 +1,6 @@
 id: KI-MENU-BACK-FILTERED-INDEX
 title: Back after drilling in from a filtered search parks the cursor on an unrelated parent row
-description: With omacom/omarchy#13012, setActiveMenu saves {menu, index, itemId} where index points into the FILTERED search list and itemId is the row just entered. A deeper submenu entered from a root search (e.g. query font -> install.style.font at filtered index 1) is not a row of the unfiltered root list, so goBack finds no itemId match and keeps the saved index; Back clears the filter, so the cursor lands on whatever root row sits at that index (learn). The baseline reset the cursor to row 0.
+description: 'With omacom/omarchy#13012, setActiveMenu saves the selected index and row id; the index points into the FILTERED search list. A deeper submenu entered from a root search is not a row of the unfiltered root list. Example: query font, Enter on install.style.font at filtered index 1. goBack finds no row-id match and keeps the saved index. Back clears the filter, so the cursor lands on the root row at that index (learn). The baseline reset the cursor to row 0.'
 affected_requirements:
     - SW-REQ-261001-B4CK
 evidence_manifests:
@@ -14,7 +14,7 @@ introduced_in: 7255fd06
 defect_class: new_defect
 minimization_status: minimized
 mitigation: Cursor placement only; no action runs and the user can move the cursor. Enter on the wrong row would open/run that row.
-remediation: Save the index only when filterText is empty (or save the root-level ancestor id of the entered row) so Back after a filtered drill-in starts at row 0 or on the ancestor
+remediation: Save the index only when filterText is empty. Alternatively save the root-level ancestor id of the entered row. Back after a filtered drill-in then starts at row 0 or on the ancestor.
 owner: agent:v2-third-party-review
 review_date: "2026-10-31"
 release_disposition: ship_with_known_issue
@@ -26,6 +26,22 @@ history:
     - at: "2026-10-01T08:12:40Z"
       by: human:Leonid Bugaev
       action: capture-evidence
+      detail: proof/evidence/ki-menu-back-filtered-index.yaml
+    - at: "2026-10-01T08:46:44Z"
+      by: agent:v2-third-party-review
+      action: edit
+      detail: set-description
+    - at: "2026-10-01T08:46:44Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-back-filtered-index.yaml
+    - at: "2026-10-01T08:46:59Z"
+      by: agent:v2-third-party-review
+      action: edit
+      detail: set-description,set-remediation
+    - at: "2026-10-01T08:46:59Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-back-filtered-index.yaml
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
