@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. Upstream e332dc97 rejects scalar and null roots only; for..in walks a top-level JSON array root and renders phantom rows (KI-MENU-JSONC-ARRAY-ROOT, omacom/omarchy#13492).
+rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. PR omacom/omarchy#13968 rejects an array root like the scalar and null roots (SW-REQ-260928-BMFE), so for..in never walks array indices into phantom rows (#13492).
 tags: []
 variables: []
 traces:
@@ -83,14 +83,14 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:00Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-28T00:00:21Z"
+    last_modified_by: agent:claude-pr-13968
+    last_modified_at: "2026-10-01T17:44:44Z"
 obligation_checklist:
     - boundary
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-29T10:06:05Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T17:55:00Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.10.1
     categories:
         - category: scenario
@@ -98,7 +98,7 @@ hazard_review:
           applied:
             - malformed_input
             - error_handling
-          rationale: 'Clean-baseline review against upstream e332dc97 (2026-10-01). malformed_input: unparseable-after-strip input routes to the unconditional catch that returns []; scalar and null roots return []; non-object entries are skipped. An array root is NOT rejected upstream: for..in walks its indices and renders phantom rows keyed 0,1,... - tracked as KI-MENU-JSONC-ARRAY-ROOT (#13492) with reproducer test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh. error_handling: the failure mode is a silent empty item set by design; no exception escapes. Comma and comment stripping belong to E4J2; their upstream gaps are KI-MENU-JSONC-COMMA-IN-STRING (#13250) and KI-MENU-JSONC-INLINE-COMMENT (#13493).'
+          rationale: 'PR omacom/omarchy#13968 review (2026-10-01). malformed_input: unparseable-after-strip input routes to the unconditional catch that returns []; scalar, null and (new with this PR, SW-REQ-260928-BMFE) array roots return []; non-object entries are skipped. KI-MENU-JSONC-ARRAY-ROOT (#13492) is fixed by this PR. error_handling: the failure mode is a silent empty item set by design; no exception escapes. Comma, comment and whitespace stripping belong to E4J2 and its children 66FW, C8W1 and BNZG.'
         - category: property
           disposition: reviewed
           applied:

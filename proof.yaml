@@ -209,7 +209,8 @@ project:
             #   JRW1  guard view application     12 decisions / 2 vars = 6.0
             #   SJ7P  searchScore ranking tiers   9 / 2 = 4.5
             #   66FW  stripJsonc scanner states   9 / 3 = 3.0
-            #   (66FW moved out 2026-10-01 with the fork JSONC fixes)
+            #   (66FW moved out 2026-10-01 with the fork JSONC fixes;
+            #   back on pr/13968 for the PR #13968 scanner)
             #   4EWA/KRBH/QMWP picker verb filter 6 / 2 = 3.0
             #   MQ37/Y58B guard script building   6 / 2 = 3.0
             # The two family_under_modeled findings share the same gate
@@ -239,7 +240,14 @@ project:
             # slices realizable with connected-component pruning. Budget
             # raised to the truthful current size plus headroom; revisit
             # if the plugin is ever split for real.
-            max_variables: 128
+            # 2026-10-01 (pr/13968, agent claude-pr-13968): 120 -> 129
+            # variables. The PR mirror re-applies 66FW (3), BMFE (2) and
+            # C8W1 (2) and adds the input-domain requirement BNZG (2).
+            # Budget 128 -> 130: the truthful size plus one, the same
+            # value pr/13012 used before 66FW/BMFE/C8W1 moved out. Solver
+            # cost is unchanged in kind: every guarantee still constrains
+            # a disjoint output (independence declared in menu.vars.yaml).
+            max_variables: 130
         slow_tests:
             enabled: true
         defect_review_current:
