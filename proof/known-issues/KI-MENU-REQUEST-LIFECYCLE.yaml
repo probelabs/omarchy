@@ -18,6 +18,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: A dropped waiter loses at most one prompt; the next summon re-handshakes cleanly and no stale selection is ever dispatched
 remediation: finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only
+notes:
+    - 'PR omacom/omarchy#9056 (head 0b4fe292, reviewed on pr/9056 over baseline e797ba5b): the re-summon leg (SX26/C06/C07, upstream #9057) is mitigated by the guard in open() that answers an active request as cancelled before dispatch - witnessed in test/shell.d/menu-summon-cancel-test.sh (fails on the baseline, passes with the PR) and governed by SW-REQ-260925-XTGG. The busy-resultProc leg (SX26/C14/C15) and the doneFile-only leg are NOT addressed by the PR and stay open. Note: the declared reproducer pocs/menu-qml-static.sh does not probe the re-summon mechanism, so its green tripwire does not flip on the PR.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -43,6 +45,14 @@ history:
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-09-30T21:02:57Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-01T07:43:28Z"
+      by: agent:v2-third-party-review
+      action: edit
+      detail: append-note
+    - at: "2026-10-01T07:43:28Z"
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
