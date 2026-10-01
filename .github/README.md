@@ -31,10 +31,10 @@ Audit results are stored as git notes next to the commits they describe (`refs/n
 ## Current state
 
 - **Upstream code covered:** `c05d901` (upstream `quattro` tip, merged into `quattro-proof`).
-- **Latest audit of this branch:** @@E@@ errors, @@W@@ warnings, @@I@@ notes (run `@@RUN@@`, ReqProof engine
-  `@@ENGINE@@`, full run without cache).
-  - @@NOTES@@
-  - Test results are part of the run: @@TESTS@@
+- **Latest audit of this branch:** 0 errors, 0 warnings (ReqProof engine `650534c`, full run without cache).
+  - The remaining notes are advisory: functions still waiting for property-based tests, and lint suggestions.
+  - Test results are part of the run: every suite in `proof.yaml` writes one JUnit report
+    (`test/junit/junit.sh`), and the audit links each test case to the requirements it verifies. No test fails.
   - Deferred obligations are no longer open debt: each one (missing timeouts around `hyprctl`, `xkbcli` and the
     menu guard batch; the non-atomic PAM stack write) is a known issue with a test that pins the current
     behaviour and turns red when it is fixed.
