@@ -1,6 +1,6 @@
 id: SW-REQ-261001-B4CK
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -22,14 +22,49 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-P708
+    reviewed_at: "2026-10-01T08:13:26.209227991Z"
+    reviewed_by: agent:v2-third-party-review
+    reviewed_fingerprint: sha256:e7c38a84942c83e8ee4e67c78ad0a08fed2e771e76257479edd21493417823f2
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:goBack: file1:c55c0e087c499aafc84417cf7f5eef78
+            shell/plugins/menu/Menu.qml:underhang: file1:c55c0e087c499aafc84417cf7f5eef78
+        satisfies:
+            SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
+    review_history:
+        - reviewed_at: "2026-10-01T08:13:04.303866688Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop); every link re-checked against the current annotation lines cited; new behaviour authored as SW-REQ-261001-B4CK; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-back-selection-test.sh:11
+            - test/shell.d/menu-back-selection-test.sh:5
+        - reviewed_at: "2026-10-01T08:13:26.209227991Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #13012 review: Menu.qml delta confined to setActiveMenu (navigation record push + restore scan) and goBack (record pop); every link re-checked against the current annotation lines cited; new behaviour authored as SW-REQ-261001-B4CK; other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:783
+            - shell/plugins/menu/Menu.qml:815
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-back-selection-test.sh:11
+            - test/shell.d/menu-back-selection-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
+    review:
+        status: ""
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: false
 history:
     created_by: agent:v2-third-party-review
     created_at: "2026-10-01T08:00:00Z"
     last_modified_by: agent:v2-third-party-review
-    last_modified_at: "2026-10-01T08:00:00Z"
+    last_modified_at: "2026-10-01T08:12:51Z"
 hazard_review:
     reviewed_at: "2026-10-01T08:00:00Z"
     reviewed_by: agent:v2-third-party-review
@@ -52,3 +87,10 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Array concat/slice of small records plus integer indices; no manual memory, pointers, or binary framing.
+lifecycle:
+    change_history:
+        - date: "2026-10-01T08:12:51Z"
+          from: draft
+          to: review
+          reason: '[omacom/omarchy#13012] PR #13012 review: requirement authored for Back selection restore; spec conformance REVIEW-261001-BFW5; executing witnesses in menu-back-selection-test.sh'
+          changed_by: agent:v2-third-party-review
