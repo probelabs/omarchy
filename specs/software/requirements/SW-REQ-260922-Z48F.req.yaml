@@ -19,16 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:46.122357Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:54:13.857902Z"
+    reviewed_by: agent:claude-pr-10631
     reviewed_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:nextSelectable: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:revealCursor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rowSelectable: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:select: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:revealCursor: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:underhang: file1:e0ef806c9646500306c01ffe1ef54b7e
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -67,37 +66,17 @@ traces:
             - test/shell.d/menu-compositor-test.sh:376
             - test/shell.d/menu-compositor-test.sh:377
             - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:39.309874Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:54:13.857902Z"
+          reviewed_by: agent:claude-pr-10631
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #10631 review on quattro-proof 9f3abc10 (upstream head a78528c9): the Menu.qml delta is the visibleRowsHeight binding (arguments reduced to layoutSerial), the rowListHeight / dmenuRowListHeight signatures (unused parameters dropped) and one extra layoutSerial bump on the rowsLoaded=false path of rebuildDisplay; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Behaviour diff with the real qml6 engine: identical heights at base and head. Each link re-checked against the cited annotation lines; no requirement intent changes.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1204
-            - shell/plugins/menu/Menu.qml:568
-            - shell/plugins/menu/Menu.qml:577
-            - shell/plugins/menu/Menu.qml:738
-            - shell/plugins/menu/Menu.qml:758
+            - shell/plugins/menu/Menu.qml:572
+            - shell/plugins/menu/Menu.qml:581
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-acceptance-test.sh:291
-            - test/shell.d/menu-compositor-test.sh:367
-            - test/shell.d/menu-compositor-test.sh:375
-            - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:46.122357Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1205
-            - shell/plugins/menu/Menu.qml:568
-            - shell/plugins/menu/Menu.qml:577
-            - shell/plugins/menu/Menu.qml:738
-            - shell/plugins/menu/Menu.qml:758
-            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
-            - test/shell.d/menu-acceptance-test.sh:291
-            - test/shell.d/menu-compositor-test.sh:367
-            - test/shell.d/menu-compositor-test.sh:375
+            - test/shell.d/menu-compositor-test.sh:27
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
