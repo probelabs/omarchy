@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:20.371786138Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T22:45:49.700635Z"
+    reviewed_by: agent:claude-pr-12223
     reviewed_fingerprint: sha256:b91978261365965ea5975ff28c9d069b1c5ef1fe4db20e794b9a371e0bc51a96
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardPrelude: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:guardPrelude: file1:2f6b152a605ef73b581a00575c5009ad
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -44,6 +44,16 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/MenuModel.js:457
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
+            - test/shell.d/menu-guards-test.sh:8
+        - reviewed_at: "2026-10-01T22:45:49.700635Z"
+          reviewed_by: agent:claude-pr-12223
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof 9f3abc10 (upstream head b74292ac): the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected; menu-test.sh and the node replay (incl. the rebuildDisplay witnesses) are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:461
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
             - test/shell.d/menu-guards-test.sh:8
