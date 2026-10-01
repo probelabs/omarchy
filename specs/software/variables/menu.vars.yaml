@@ -232,6 +232,18 @@ variables:
       type: bool
       direction: output
       description: Back pops the navigation stack, or falls back to the parent menu; the filter clears.
+    - name: back_navigated
+      type: bool
+      direction: input
+      description: Back (Backspace/Left on an empty filter) pops a navigation record that carries the parent menu's saved selection (index and row id).
+    - name: remembered_row_present
+      type: bool
+      direction: input
+      description: The row id saved in the popped navigation record is listed, and selectable, in the rebuilt parent menu.
+    - name: remembered_row_selected
+      type: bool
+      direction: output
+      description: The cursor rests on the remembered row in the parent menu.
     - name: dmenu_option_picked
       type: bool
       direction: input
