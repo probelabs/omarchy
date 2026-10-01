@@ -431,7 +431,7 @@ assertEqual(
   '{ "a" :   1 \n}',
   'BNZG: Unicode spaces, a tab and a carriage return become one space each, the line feed stays'
 )
-// MCDC SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=F => TRUE
+// MCDC SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=F => TRUE [no-action: the characters sit inside a string, so the scanner's string branch copies them and the whitespace rule never runs -- the label asserted below still carries U+00A0, U+FEFF and U+2029 unchanged, which proves zero rewrites]
 // SW-REQ-261001-BNZG:malformed_input:negative
 assertEqual(
   menu.parseMenuJsonc('{"a": {"label": "A\u00A0B\uFEFFC\u2029D"}}')[0].label,
@@ -444,6 +444,81 @@ assertEqual(
   0,
   'BNZG: Unicode whitespace does not make a broken document parse'
 )
+
+// Input domain (SW-REQ-261001-BNZG) under PR omacom/omarchy#13968: seeded
+// differential test against an independent token-level reference model. The
+// generator covers the documented grammar plus the shapes the PR fixes (a
+// comma and closer inside a string, inline comments, comments between a
+// trailing comma and its closer, array roots) and inserts every non-ASCII
+// character that JS \s matches (19 classes, incl. the byte order mark) at the
+// start of the file, between tokens and in front of comments, and inside
+// strings. The reference tokenizes with one sticky regex (string literal |
+// // comment | any character), drops comments, reads each \s character
+// outside a string as a space (a line feed stays), drops each comma whose
+// next non-space token is } or ], and treats a non-object root as no rows.
+// SW-REQ-261001-BNZG:malformed_input:differential
+// SW-REQ-261001-BNZG:totality:nominal
+// SW-REQ-261001-BNZG:totality:differential
+{
+  const SPACES = []
+  for (let c = 128; c < 0x10000; c++) if (/\s/.test(String.fromCharCode(c))) SPACES.push(String.fromCharCode(c))
+  assertEqual(SPACES.length, 19, 'JS \\s matches 19 non-ASCII characters')
+  let seed = 4242
+  const rnd = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return ((seed >>> 0) % 1e6) / 1e6 }
+  const pick = a => a[Math.floor(rnd() * a.length)]
+  const uni = () => rnd() < 0.35 ? pick(SPACES) : ''
+  const STR = ['a', 'A // B', 'x, ]y', 'mv f{.bak,}', 'q\\"', 'q\\\\', 'a b', '﻿', 'x y', '']
+  const str = () => JSON.stringify(pick(STR))
+  const ws = () => pick(['', ' ', '\n', '\r\n', '\t']) + uni()
+  const cm = () => rnd() < 0.35 ? uni() + pick([' // c', '\n// full line', '\n' + uni() + '// "q" , ] }', ' //']) + '\n' + uni() : ws()
+  function obj(depth) {
+    const n = Math.floor(rnd() * 3)
+    let o = '{' + cm()
+    for (let i = 0; i < n; i++) {
+      o += JSON.stringify(pick(['a', 'b', 'label', 'action', 'aliases']) + i) + ws() + ':' + ws()
+      o += depth < 1 && rnd() < 0.5 ? obj(depth + 1) : (rnd() < 0.3 ? '[' + cm() + str() + (rnd() < 0.5 ? ',' + cm() : '') + ']' : str())
+      o += i < n - 1 ? ',' + cm() : (rnd() < 0.5 ? ',' + cm() : cm())
+    }
+    return o + '}'
+  }
+  function gen() {
+    const head = (rnd() < 0.25 ? '﻿' : '') + uni() + (rnd() < 0.3 ? '// head\n' + uni() : '')
+    const body = rnd() < 0.15 ? '[' + ws() + obj(1) + (rnd() < 0.5 ? ',' : '') + ws() + ']' : obj(0)
+    return head + body + ws() + (rnd() < 0.3 ? uni() + '// tail' : '')
+  }
+  function reference(text) {
+    const tok = /"(?:[^"\\\n]|\\.)*"|\/\/[^\n]*|[\s\S]/y
+    const toks = []
+    let m
+    while ((m = tok.exec(text)) !== null) {
+      const t = m[0]
+      if (t.startsWith('//')) continue
+      toks.push(t.length === 1 && /\s/.test(t) ? (t === '\n' ? '\n' : ' ') : t)
+    }
+    const out = toks.filter((t, i) => {
+      if (t !== ',') return true
+      let j = i + 1
+      while (j < toks.length && (toks[j] === ' ' || toks[j] === '\n')) j++
+      return !(j < toks.length && (toks[j] === '}' || toks[j] === ']'))
+    }).join('')
+    let doc
+    try { doc = JSON.parse(out) } catch (e) { return '' }
+    if (typeof doc !== 'object' || doc === null || Array.isArray(doc)) return ''
+    return Object.keys(doc).filter(k => doc[k] && typeof doc[k] === 'object' && !Array.isArray(doc[k])).join(';')
+  }
+  let wrong = 0
+  let parsedOk = 0
+  let first = ''
+  for (let k = 0; k < 3000; k++) {
+    const src = gen()
+    const want = reference(src)
+    const got = menu.parseMenuJsonc(src).filter(r => r.parent === 'root' || r.id.indexOf('.') < 0).map(r => r.id).join(';')
+    if (want) parsedOk++
+    if (got !== want) { wrong++; if (!first) first = JSON.stringify({ src, want, got }) }
+  }
+  assert(parsedOk > 1000, 'the generator yields more than 1000 parseable documents with Unicode whitespace (' + parsedOk + ')')
+  assertEqual(wrong, 0, 'parseMenuJsonc matches the token-level reference on 3000 seeded inputs with Unicode whitespace' + (first ? ' -- first: ' + first : ''))
+}
 
 const user = [
   menu.normalizeItem('style.theme', { label: 'Theme picker', aliases: ['theme', 'colors'], action: 'custom-theme' }),
@@ -1197,81 +1272,6 @@ test('jsonc preservation: seeded differential property over the documented gramm
     if (got !== want) { wrong++; if (!first) first = JSON.stringify({ src, want, got }) }
   }
   assertEqual(wrong, 0, 'parseMenuJsonc matches the reference model on 2000 seeded inputs of the documented grammar' + (first ? ' -- first: ' + first : ''))
-})
-// ---------------------------------------------------------------------------
-// Input domain (SW-REQ-261001-BNZG) under PR omacom/omarchy#13968: seeded
-// differential test against an independent token-level reference model. The
-// generator covers the documented grammar plus the shapes the PR fixes (a
-// comma and closer inside a string, inline comments, comments between a
-// trailing comma and its closer, array roots) and inserts every non-ASCII
-// character that JS \s matches (19 classes, incl. the byte order mark) at the
-// start of the file, between tokens and in front of comments, and inside
-// strings. The reference tokenizes with one sticky regex (string literal |
-// // comment | any character), drops comments, reads each \s character
-// outside a string as a space (a line feed stays), drops each comma whose
-// next non-space token is } or ], and treats a non-object root as no rows.
-// ---------------------------------------------------------------------------
-// Verifies: SW-REQ-261001-BNZG, SW-REQ-260927-66FW, SW-REQ-260928-C8W1, SW-REQ-260928-BMFE
-// SW-REQ-261001-BNZG:malformed_input:differential
-test('jsonc input domain: seeded differential with Unicode whitespace against a token-level reference', () => {
-  const SPACES = []
-  for (let c = 128; c < 0x10000; c++) if (/\s/.test(String.fromCharCode(c))) SPACES.push(String.fromCharCode(c))
-  assertEqual(SPACES.length, 19, 'JS \\s matches 19 non-ASCII characters')
-  let seed = 4242
-  const rnd = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return ((seed >>> 0) % 1e6) / 1e6 }
-  const pick = a => a[Math.floor(rnd() * a.length)]
-  const uni = () => rnd() < 0.35 ? pick(SPACES) : ''
-  const STR = ['a', 'A // B', 'x, ]y', 'mv f{.bak,}', 'q\\"', 'q\\\\', 'a b', '﻿', 'x y', '']
-  const str = () => JSON.stringify(pick(STR))
-  const ws = () => pick(['', ' ', '\n', '\r\n', '\t']) + uni()
-  const cm = () => rnd() < 0.35 ? uni() + pick([' // c', '\n// full line', '\n' + uni() + '// "q" , ] }', ' //']) + '\n' + uni() : ws()
-  function obj(depth) {
-    const n = Math.floor(rnd() * 3)
-    let o = '{' + cm()
-    for (let i = 0; i < n; i++) {
-      o += JSON.stringify(pick(['a', 'b', 'label', 'action', 'aliases']) + i) + ws() + ':' + ws()
-      o += depth < 1 && rnd() < 0.5 ? obj(depth + 1) : (rnd() < 0.3 ? '[' + cm() + str() + (rnd() < 0.5 ? ',' + cm() : '') + ']' : str())
-      o += i < n - 1 ? ',' + cm() : (rnd() < 0.5 ? ',' + cm() : cm())
-    }
-    return o + '}'
-  }
-  function gen() {
-    const head = (rnd() < 0.25 ? '﻿' : '') + uni() + (rnd() < 0.3 ? '// head\n' + uni() : '')
-    const body = rnd() < 0.15 ? '[' + ws() + obj(1) + (rnd() < 0.5 ? ',' : '') + ws() + ']' : obj(0)
-    return head + body + ws() + (rnd() < 0.3 ? uni() + '// tail' : '')
-  }
-  function reference(text) {
-    const tok = /"(?:[^"\\\n]|\\.)*"|\/\/[^\n]*|[\s\S]/y
-    const toks = []
-    let m
-    while ((m = tok.exec(text)) !== null) {
-      const t = m[0]
-      if (t.startsWith('//')) continue
-      toks.push(t.length === 1 && /\s/.test(t) ? (t === '\n' ? '\n' : ' ') : t)
-    }
-    const out = toks.filter((t, i) => {
-      if (t !== ',') return true
-      let j = i + 1
-      while (j < toks.length && (toks[j] === ' ' || toks[j] === '\n')) j++
-      return !(j < toks.length && (toks[j] === '}' || toks[j] === ']'))
-    }).join('')
-    let doc
-    try { doc = JSON.parse(out) } catch (e) { return '' }
-    if (typeof doc !== 'object' || doc === null || Array.isArray(doc)) return ''
-    return Object.keys(doc).filter(k => doc[k] && typeof doc[k] === 'object' && !Array.isArray(doc[k])).join(';')
-  }
-  let wrong = 0
-  let parsedOk = 0
-  let first = ''
-  for (let k = 0; k < 3000; k++) {
-    const src = gen()
-    const want = reference(src)
-    const got = menuModel.parseMenuJsonc(src).filter(r => r.parent === 'root' || r.id.indexOf('.') < 0).map(r => r.id).join(';')
-    if (want) parsedOk++
-    if (got !== want) { wrong++; if (!first) first = JSON.stringify({ src, want, got }) }
-  }
-  assert(parsedOk > 1000, 'the generator yields more than 1000 parseable documents with Unicode whitespace (' + parsedOk + ')')
-  assertEqual(wrong, 0, 'parseMenuJsonc matches the token-level reference on 3000 seeded inputs with Unicode whitespace' + (first ? ' -- first: ' + first : ''))
 })
 // ---------------------------------------------------------------------------
 // MC/DC unique-cause cases for MenuModel.js (quattro, code_mcdc target
