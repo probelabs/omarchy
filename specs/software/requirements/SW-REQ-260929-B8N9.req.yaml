@@ -19,26 +19,24 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:47.269065Z"
+    reviewed_at: "2026-10-01T20:54:53.386968509Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:0faebab064ec5dad24c320b57dcfc96c16ca0857948daaa09a46ed81d3778693
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:item: file1:e7d0b382ee15ba3834e586da44adb708
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
-        - reviewed_at: "2026-10-02T16:54:47.269065Z"
+        - reviewed_at: "2026-10-01T20:54:53.386968509Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          rationale: 'PR #9056 review at head b7bd59c4 on quattro-proof 4f1a8197: the Menu.qml delta is the cancel-prior guard at the top of open() (0b4fe292), finishRequest writing each answer through Quickshell.execDetached with the resultProc Process and the requestSerial/applySerial counters removed (b7bd59c4), and Implements lines. Each link re-checked against the cited annotation lines and the diff; the removed resultProc.onExited re-close was redundant because every apply path sets opened=false itself; requirement intents outside open()/finishRequest are unaffected; the new behaviour is authored as SW-REQ-260925-XTGG and SW-REQ-261001-C19S'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:233
+            - shell/plugins/menu/Menu.qml:242
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/shell.d/menu-pointer-lifecycle-test.sh:42
-            - test/shell.d/menu-pointer-lifecycle-test.sh:46
-            - test/shell.d/menu-pointer-lifecycle-test.sh:49
+            - test/shell.d/menu-pointer-lifecycle-test.sh:19
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C
