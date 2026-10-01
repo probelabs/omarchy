@@ -87,6 +87,7 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Array concat/slice of small records plus integer indices; no manual memory, pointers, or binary framing.
+verification_state: failing
 lifecycle:
     change_history:
         - date: "2026-10-01T08:12:51Z"
@@ -94,3 +95,8 @@ lifecycle:
           to: review
           reason: '[omacom/omarchy#13012] PR #13012 review: requirement authored for Back selection restore; spec conformance REVIEW-261001-BFW5; executing witnesses in menu-back-selection-test.sh'
           changed_by: agent:v2-third-party-review
+        - date: "2026-10-01T08:46:44Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-261001-BFW5=present | known_issue:KI-MENU-BACK-FILTERED-INDEX=failing
+          changed_by: agent:auto-derive
