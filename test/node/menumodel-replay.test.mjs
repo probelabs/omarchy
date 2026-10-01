@@ -770,7 +770,7 @@ assert(
   'menu filter changes disarm pointer selection'
 )
 assert(
-  /function setActiveMenu\(id, pushHistory, fromPointer\)[\s\S]*if \(fromPointer\) pointerGate\.allowInitialSample\(\)\s*else root\.disarmPointer\(\)/.test(menuQml),
+  /function setActiveMenu\(id, pushHistory, fromPointer, restoreSelection\)[\s\S]*if \(fromPointer\) pointerGate\.allowInitialSample\(\)\s*else root\.disarmPointer\(\)/.test(menuQml),
   'menu route changes only accept an initial pointer sample for mouse activation'
 )
 assert(
@@ -1326,3 +1326,4 @@ test('mcdc summonAction: in-process summon shape and every rejection', () => {
   assertDeepEqual(menuModel.summonAction('omarchy-shell shell summon style'), { id: 'style', payload: '{}' }, 'summonAction parses a bare summon to an empty payload')
   assertDeepEqual(menuModel.summonAction("omarchy-shell shell summon style 'k=v'"), { id: 'style', payload: 'k=v' }, 'summonAction parses a quoted payload')
 })
+
