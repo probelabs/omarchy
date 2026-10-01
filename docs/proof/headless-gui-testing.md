@@ -5,9 +5,9 @@ videos, PR evidence clips, quickshell-dependent UI checks, or any QML target
 that needs a real Wayland compositor to render. This is the concrete recipe for
 getting the production shell on screen and capturing what it actually drew when
 there is no desktop session — it complements
-[`agents/skills/visual-verification.md`](visual-verification.md)
+[`agents/skills/visual-verification.md`](../../agents/skills/visual-verification.md)
 (running-desktop verification) and
-[`agents/skills/acceptance-tests.md`](acceptance-tests.md)
+[`agents/skills/acceptance-tests.md`](../../agents/skills/acceptance-tests.md)
 (disposable-VM acceptance suite). Everything here was proven on the ProbeLabs audit
 box (Arch Linux, sway 1.12 from a private sysroot). Tool locations below use
 `PROOF_ENV_DIR` (default `$HOME/proof-env`), the same convention as
@@ -141,5 +141,5 @@ ffmpeg -y -framerate 25 -pattern_type glob -i "$OUT/[0-9]*.png" \
 
 ## What this does NOT cover
 
-- Verifying a change against a real desktop session — follow [`agents/skills/visual-verification.md`](visual-verification.md).
-- The full graphical acceptance suite in a disposable VM — follow [`agents/skills/acceptance-tests.md`](acceptance-tests.md).
+- Verifying a change against a real desktop session — follow [`agents/skills/visual-verification.md`](../../agents/skills/visual-verification.md).
+- The full graphical acceptance suite in a disposable VM — follow [`agents/skills/acceptance-tests.md`](../../agents/skills/acceptance-tests.md).

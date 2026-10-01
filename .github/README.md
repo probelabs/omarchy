@@ -7,7 +7,7 @@ tests that check the code against those requirements, and an audit record of the
 upstream issues and pull requests against what the code is supposed to do.
 
 The proof layer lives in `proof/`, `specs/`, `test/`, `pocs/`, `review/`, `proof.yaml`, this file and one added
-guide, `agents/skills/headless-gui-testing.md`. Outside
+guide, `docs/proof/headless-gui-testing.md`. Outside
 those paths, the only differences from upstream are comments (such as `// Implements: <requirement>` markers), blank
 lines, QML `id:` attributes and one `.gitignore` line. `review/check-clean-product-diff.py e332dc97 HEAD` checks this.
 
@@ -95,7 +95,7 @@ the live menu UI). They are in [`review/media/`](../review/media/); [`review/med
 lists each clip's exact BEFORE and AFTER commits and how it was recorded. The scripts and input files behind
 them are in [`pocs/reproducers/`](../pocs/reproducers/). `pocs/reproducers/run-at-rev.sh <sha>` runs them
 against any commit, and that directory's README records their output on each commit.
-[`agents/skills/headless-gui-testing.md`](../agents/skills/headless-gui-testing.md) explains how to run
+[`docs/proof/headless-gui-testing.md`](../docs/proof/headless-gui-testing.md) explains how to run
 and record the real shell on a Linux machine with no display.
 
 ## How syncing with upstream works

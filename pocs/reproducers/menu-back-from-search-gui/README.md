@@ -13,5 +13,5 @@ like BEFORE.
 Note: the recording session ran these steps as ad-hoc shell lines and kept no script. `gui-drive.sh` is
 a reconstruction of them (2026-10-01), not the file that ran. It needs a harness sway config
 (`HEADLESS_CONF`; pattern: `test/qml/lock/sway-headless.conf`) and the environment described in
-`agents/skills/headless-gui-testing.md`, so treat it as the documented recipe; the model-level driver
+`docs/proof/headless-gui-testing.md`, so treat it as the documented recipe; the model-level driver
 runs standalone. Tool paths fall back to `${PROOF_ENV_DIR:-$HOME/proof-env}`.

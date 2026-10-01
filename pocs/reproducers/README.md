@@ -38,4 +38,4 @@ directory's README.
 #13512 PR head regresses it, and the consolidated fix keeps it working.
 
 `menu-back-from-search-gui/` is a recipe for the live-UI clip, not a one-command rerun (see its README
-and [`agents/skills/headless-gui-testing.md`](../../agents/skills/headless-gui-testing.md)).
+and [`docs/proof/headless-gui-testing.md`](../../docs/proof/headless-gui-testing.md)).

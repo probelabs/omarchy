@@ -6,8 +6,8 @@ Usage: review/check-clean-product-diff.py [UPSTREAM_REF] [CLEAN_REF]
 
 Product = every path the two refs differ on, except the proof layer
 (proof/, specs/, pocs/, review/, test/, proof.yaml, the fork front page
-.github/README.md, and our added guide agents/skills/headless-gui-testing.md,
-a new file upstream does not have). For each product file the
+.github/README.md, and the fork's own docs under docs/proof/, new files
+upstream does not have). For each product file the
 line diff is classified; every changed line must be one of:
   blank            an added/removed empty line
   comment          a full-line comment in the file's language
@@ -24,7 +24,7 @@ import difflib, re, subprocess, sys
 
 up = sys.argv[1] if len(sys.argv) > 1 else "e332dc97"
 cl = sys.argv[2] if len(sys.argv) > 2 else "HEAD"
-NONPRODUCT = ("proof/", "specs/", "pocs/", "review/", "test/")
+NONPRODUCT = ("proof/", "specs/", "pocs/", "review/", "test/", "docs/proof/")
 
 def git(*a):
     return subprocess.run(["git", *a], check=True, capture_output=True, text=True).stdout
@@ -53,7 +53,7 @@ def heredoc_ranges(lines):
     return out
 
 files = [f for f in git("diff", "--name-only", up, cl).split("\n") if f]
-NONPRODUCT_FILES = ("proof.yaml", ".github/README.md", "agents/skills/headless-gui-testing.md")
+NONPRODUCT_FILES = ("proof.yaml", ".github/README.md")
 product = [f for f in files if not f.startswith(NONPRODUCT) and f not in NONPRODUCT_FILES]
 bad, tally = [], {}
 for f in product:
