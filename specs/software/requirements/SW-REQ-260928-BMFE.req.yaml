@@ -21,6 +21,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-10-01T22:40:31.755312Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_fingerprint: sha256:de0d01a59f68c77d9c6dfa460da6f400714e0a86ccc71f0335e3f8e73ee1c966
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
         - reviewed_at: "2026-09-27T23:32:07.303648Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -43,14 +51,6 @@ traces:
             - test/node/menumodel-replay.test.mjs:348
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-    reviewed_at: "2026-10-01T22:40:31.755312Z"
-    reviewed_by: agent:claude-pr-13968
-    reviewed_fingerprint: sha256:de0d01a59f68c77d9c6dfa460da6f400714e0a86ccc71f0335e3f8e73ee1c966
-    reviewed_targets:
-        implemented_by:
-            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
-        satisfies:
-            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
 verification:
     assurance_level: C
     formalization_status: valid
@@ -101,6 +101,7 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Implementation is GC'd JavaScript (QML JS engine). No manual memory, pointer arithmetic, binary framing, or format strings exist here. The structural catalog targets C-family hazards that cannot exist here.
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T23:32:33Z"
@@ -112,4 +113,9 @@ lifecycle:
           from: review
           to: review
           reason: '[pr/13968] re-applied from e797ba5b onto the PR #13968 guard (Array.isArray in parseMenuJsonc); rationale and hazard text name the PR instead of the fork fix branch.'
+          changed_by: agent:claude-pr-13968
+        - date: "2026-10-01T22:57:21Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-72=present | tests_pass:test_status=passing
           changed_by: agent:claude-pr-13968

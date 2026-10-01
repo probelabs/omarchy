@@ -94,10 +94,16 @@ hazard_review:
           rationale: The code is garbage-collected JavaScript in the QML JS engine. It has no manual memory, pointer arithmetic, binary framing or format strings. It decodes no bytes, because the QML file reader supplies a JS string.
 requires_evidence:
     - differential
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-10-01T17:45:00Z"
           from: draft
           to: review
           reason: '[pr/13968] input-domain requirement for the PR #13968 scanner, including the follow-up commit efa5170b (Unicode whitespace outside strings read as a plain space).'
+          changed_by: agent:claude-pr-13968
+        - date: "2026-10-01T22:57:21Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-261001-ENZ2=present | tests_pass:test_status=passing
           changed_by: agent:claude-pr-13968
