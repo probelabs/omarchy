@@ -19,13 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:37.590199Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:50:53.55984Z"
+    reviewed_by: agent:claude-pr-13012
     reviewed_fingerprint: sha256:5062bd7cb7c5163fe264e63ebb7db55d538c8264a921a82cec7e0860047d5b3c
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:nextSelectable: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:settleCursor: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:c55c0e087c499aafc84417cf7f5eef78
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -57,29 +56,16 @@ traces:
             - test/shell.d/menu-compositor-test.sh:386
             - test/shell.d/menu-compositor-test.sh:387
             - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:32.077884Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:50:53.55984Z"
+          reviewed_by: agent:claude-pr-13012
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #13012 review on quattro-proof 9f3abc10 (upstream head 7a7fb10c): the Menu.qml delta is confined to setActiveMenu/goBack (remembered row index and id on the nav stack, restored on Back) plus one annotation move inside goBack; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; the new Back behaviour is authored as SW-REQ-261001-B4CK (witnesses now in test/node/menumodel-replay.test.mjs), other requirement intents are unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:577
             - shell/plugins/menu/Menu.qml:595
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
-            - test/shell.d/menu-compositor-test.sh:383
-            - test/shell.d/menu-compositor-test.sh:386
-            - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:37.590199Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:577
-            - shell/plugins/menu/Menu.qml:595
-            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
-            - test/shell.d/menu-compositor-test.sh:383
-            - test/shell.d/menu-compositor-test.sh:386
+            - test/shell.d/menu-compositor-test.sh:16
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C

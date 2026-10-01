@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:46.879495Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:51:32.949025Z"
+    reviewed_by: agent:claude-pr-13012
     reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:runAction: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:runAction: file1:c55c0e087c499aafc84417cf7f5eef78
             shell/plugins/menu/MenuModel.js:summonAction: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -70,19 +70,17 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:6
-        - reviewed_at: "2026-10-02T16:54:46.879495Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:51:32.949025Z"
+          reviewed_by: agent:claude-pr-13012
           method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          rationale: 'PR #13012 review on quattro-proof 9f3abc10 (upstream head 7a7fb10c): the Menu.qml delta is confined to setActiveMenu/goBack (remembered row index and id on the nav stack, restored on Back) plus one annotation move inside goBack; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; the new Back behaviour is authored as SW-REQ-261001-B4CK (witnesses now in test/node/menumodel-replay.test.mjs), other requirement intents are unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:143
             - shell/plugins/menu/MenuModel.js:515
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
-            - test/shell.d/menu-test.sh:1015
-            - test/shell.d/menu-test.sh:1039
-            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:6
 verification:
     assurance_level: C
     formalization_status: valid
