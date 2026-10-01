@@ -48,15 +48,17 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:42:00Z"
-    last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T06:51:06Z"
+    last_modified_by: agent:claude-quattro
+    last_modified_at: "2026-10-01T21:29:12Z"
 obligation_checklist:
     - atomic_write
 obligation_deferrals:
     - obligation_class: atomic_write
-      reason: as_root tee truncates and rewrites /etc/pam.d/omarchy-lock-password in place; an interrupted run can leave a torn PAM stack that breaks password unlock until the helper reruns; write-temp-rename is not implemented
-      tracking: hazard-batch-A/JW2J-nonatomic-pam-write
-      owner: agent:opencode-hazard-a
+      reason: as_root tee truncates and rewrites /etc/pam.d/omarchy-lock-password in place; an interrupted run can leave a torn PAM stack that breaks password unlock until the helper reruns; write-temp-rename is not implemented. Reproduced and tracked on KI-APPLY-LOCK-PAM-NONATOMIC-WRITE with a green tripwire (freeze-and-kill of the real helper leaves the torn prefix with no pam_unix line, previous stack gone, inode unchanged).
+      tracking: KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
+      owner: agent:claude-quattro
+      ki_ref: KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
+      reproducer: ./pocs/apply-lock-pam-torn-write.sh
 hazard_review:
     reviewed_at: "2026-09-30T06:51:01Z"
     reviewed_by: agent:opencode-hazard-a

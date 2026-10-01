@@ -1,0 +1,22 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-9DMS
+      command: ./pocs/9dms-keybindings-no-timeout.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-01T21:30:14Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-NO-TIMEOUT` from the KnownIssue''s reproducer command: ./pocs/9dms-keybindings-no-timeout.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: In bin/omarchy-menu-keybindings, `hyprctl binds` becomes `timeout 2 hyprctl binds` at both call sites (keybindings_cache_key and dynamic_bindings) and `keymap_cmd = "xkbcli compile-keymap </dev/null"` becomes `keymap_cmd = "timeout 2 xkbcli compile-keymap </dev/null"`: the hyprctl stall arm then finishes in about 6-7s (three bounded calls) inside its 10s watchdog and the xkbcli stall arm in about 2s inside its 5s watchdog, the rc=124 assertions in pocs/9dms-keybindings-no-timeout.sh fail, and the tripwire flips red. Bounding only one of the two calls flips the matching arm, so a partial fix also turns it red. The control arm is unaffected.'
+        - pocs/9dms-keybindings-no-timeout.sh
+      freshness_hashes:
+        pocs/9dms-keybindings-no-timeout.sh: sha256:7769f8e3bbe0785bdfd45e6715912880edfd514b220e554dcee773c94dfa0d59
+        proof/known-issues/KI-MENU-KEYBINDINGS-NO-TIMEOUT.yaml: ki-content-v1:sha256:4e3f4d3d21850838cbf6133abb05ee415d1f04520145c860244e4c2faaff6e93
+      known_issues:
+        - KI-MENU-KEYBINDINGS-NO-TIMEOUT
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

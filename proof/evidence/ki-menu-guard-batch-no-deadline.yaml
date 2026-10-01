@@ -1,0 +1,22 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SYS-REQ-260922-47T8
+      command: ./pocs/47t8-guard-batch-no-deadline.sh
+      status: pass
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-01T21:30:19Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-GUARD-BATCH-NO-DEADLINE` from the KnownIssue''s reproducer command: ./pocs/47t8-guard-batch-no-deadline.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: In shell/plugins/menu/Menu.qml evaluateGuards(), `guardProc.command = ["bash", "-lc", script]` becomes `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`: the blocked batch then exits (code 124) after about 2s, so the "still running with zero exits" assertion in pocs/47t8-guard-batch-no-deadline.sh fails, the pending evaluation starts a new batch (spawns become 3), guardsPending clears, and the tripwire flips red. A per-guard timeout in MenuModel.guardLine flips it the same way, since the harness runs the real MenuModel.js. A QML Timer-based watchdog is NOT observed by this node harness, which instantiates no QML Timer; such a fix needs the harness extended alongside it. The control arm is unaffected.'
+        - pocs/47t8-guard-batch-no-deadline.sh
+      freshness_hashes:
+        pocs/47t8-guard-batch-no-deadline.sh: sha256:e70a449ee93428576722df6e30326febdc8d077245bdf660c3ef97d5add0f184
+        proof/known-issues/KI-MENU-GUARD-BATCH-NO-DEADLINE.yaml: ki-content-v1:sha256:bd82b343a42b3fe3b2d768556ce3e34108ab9e7f69ebb6915398c240b5835ae3
+      known_issues:
+        - KI-MENU-GUARD-BATCH-NO-DEADLINE
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

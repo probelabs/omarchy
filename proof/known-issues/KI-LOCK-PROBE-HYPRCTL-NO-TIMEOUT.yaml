@@ -1,0 +1,62 @@
+id: KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT
+title: omarchy-hyprland-session-locked has no deadline on hyprctl -j monitors; a stalled compositor IPC hangs the lock-state probe
+description: 'bin/omarchy-hyprland-session-locked asks the compositor for lock state with `monitors=$(hyprctl -j monitors 2>/dev/null) || exit 2` and puts no deadline on that call. When the Hyprland IPC socket accepts the request but never answers (a stalled compositor, which happens in practice around lid and monitor transitions), the probe blocks for as long as hyprctl does instead of returning exit 2 (undetermined). Its caller, the stranded-lock recovery path, then waits on a probe that never reports, so recovery makes no progress for the duration of the stall. The Hyprland failsafe lock screen is the backstop: the session stays locked rather than exposed. pocs/eh0k-hyprctl-monitors-no-timeout.sh reproduces it: with hyprctl stalled, the real probe is still blocked when an external 5s watchdog kills it (rc=124), while the control arms answer 0 (locked) and 1 (unlocked) immediately.'
+affected_requirements:
+    - SW-REQ-260912-EH0K
+evidence_manifests:
+    - proof/evidence/ki-lock-probe-hyprctl-no-timeout.yaml
+severity: low
+severity_basis: reproducer
+risk: availability
+cve_surface: none
+affected_api: bin/omarchy-hyprland-session-locked (lock-state probe used by stranded-lock recovery)
+reproducer_command: ./pocs/eh0k-hyprctl-monitors-no-timeout.sh
+tripwire_mutation: 'bin/omarchy-hyprland-session-locked line 17 `monitors=$(hyprctl -j monitors 2>/dev/null) || exit 2` becomes `monitors=$(timeout 2 hyprctl -j monitors 2>/dev/null) || exit 2`: the stall arm then returns exit 2 (undetermined) after about 2s instead of being killed by the external 5s watchdog, the rc=124 assertion in pocs/eh0k-hyprctl-monitors-no-timeout.sh fails, and the tripwire flips red. The two control arms (exit 0 locked, exit 1 unlocked) are unaffected.'
+introduced_in: inception
+defect_class: latent
+minimization_status: minimized
+mitigation: 'The session never unlocks because of this defect: a stalled probe only delays stranded-lock recovery, and the Hyprland failsafe lock screen remains in place. Once the compositor IPC answers again, the next probe run returns a real verdict. Manual recovery is to kill the stuck hyprctl process or switch to a TTY and restart the lock.'
+remediation: 'Bound the IPC call in bin/omarchy-hyprland-session-locked, e.g. `monitors=$(timeout 2 hyprctl -j monitors 2>/dev/null) || exit 2`, so a stalled compositor maps onto the existing exit 2 (undetermined) contract that callers already handle. Then remove the SW-REQ-260912-EH0K external_call_timeout_bounded deferral and add a witness for the bounded path. Close criterion: pocs/eh0k-hyprctl-monitors-no-timeout.sh flips red because the stall arm returns exit 2 inside the watchdog.'
+owner: agent:claude-quattro
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: reviewed
+history:
+    - at: "2026-10-01T21:27:36Z"
+      by: agent:claude-quattro
+      action: created
+    - at: "2026-10-01T21:29:20Z"
+      by: agent:claude-quattro
+      action: review
+      detail: reviewer=agent:claude-quattro,new_review_date=2026-12-31
+    - at: "2026-10-01T21:29:58Z"
+      by: agent:claude-quattro
+      action: capture-evidence
+      detail: proof/evidence/ki-lock-probe-hyprctl-no-timeout.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/eh0k-hyprctl-monitors-no-timeout.sh runs the real bin/omarchy-hyprland-session-locked with the real jq; only hyprctl (the compositor IPC client) is a PATH stub, never the probe under test.
+        quantitative_impact: the metric is the probe's exit under a 5s external watchdog - the stall arm is still blocked at the watchdog (rc=124) instead of answering 0/1/2, while the controls answer in well under a second.
+        control_test: two control arms (monitor holding LOCK -> exit 0, readable unlocked monitor -> exit 1) plus a stub call-log check prove the harness drives the real 'hyprctl -j monitors' call and parse path.
+        operational_path_verified: the stall arm exercises the same call the stranded-lock recovery path invokes, end to end through the real script.
+        current_deployment_relevance: bin/omarchy-hyprland-session-locked line 17 carries the unbounded call on this branch today.
+        honest_severity: low - liveness of stranded-lock recovery during an IPC stall; the session stays locked behind the Hyprland failsafe, no exposure.
+        reproducible: deterministic stub harness, three arms, about 5s; exit codes alone decide every assertion; stub processes are killed on exit.
+        no_inflation: claims limited to the demonstrated unbounded wait on the IPC call; no unlock, privilege or data claims.
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
+        reachability_verified: 'no ingress access-control or trust boundary to traverse: the trigger is the user own session, compositor or system state, not an adversary input path'
+        untrusted_attacker: 'local availability/reliability defect: the trigger is a stalled or interrupted local process, not an adversary; no actor model applies'
+kill_domain: unbounded_wait
+affected_file: bin/omarchy-hyprland-session-locked

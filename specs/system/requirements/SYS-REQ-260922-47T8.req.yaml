@@ -45,16 +45,18 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:33:48Z"
-    last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T08:06:25Z"
+    last_modified_by: agent:claude-quattro
+    last_modified_at: "2026-10-01T21:29:12Z"
 obligation_checklist:
     - error_handling
     - external_call_timeout_bounded
 obligation_deferrals:
     - obligation_class: external_call_timeout_bounded
-      reason: 'the whole guard batch runs as one bash -lc child with no deadline: a user guard expression that blocks (waiting on a lock, a slow probe, stdin - guardLine wraps the expression but does not redirect stdin) wedges guardProc.running forever, guardsPending then defers every later evaluation, and the menu shows the last complete answer set indefinitely - rows checked/visible per state that no longer holds. Mitigation by design: a when: only hides on explicit false, so a dead batch fails visible, and a killed batch (exitStatus set) keeps the last complete set rather than adopting a half-read one. This is a child-process-without-deadline site, NOT the reproduced done_file poll-loop mechanism, so it takes its own tracking ref rather than KI-MENU-SELECT-POLL-DEADLOCK. The fix shape is a Process-side watchdog (kill + re-arm) with an explicit staleness policy on guard answers.'
-      tracking: hazard-batch-D/47T8-guard-bash-no-deadline
-      owner: human:Leonid Bugaev
+      reason: 'the whole guard batch runs as one bash -lc child with no deadline: a user guard expression that blocks (waiting on a lock, a slow probe, stdin - guardLine wraps the expression but does not redirect stdin) wedges guardProc.running forever, guardsPending then defers every later evaluation, and the menu shows the last complete answer set indefinitely - rows checked/visible per state that no longer holds. Mitigation by design: a when: only hides on explicit false, so a dead batch fails visible, and a killed batch (exitStatus set) keeps the last complete set rather than adopting a half-read one. This is a child-process-without-deadline site, NOT the reproduced done_file poll-loop mechanism of KI-MENU-SELECT-POLL-DEADLOCK. The fix shape is a Process-side deadline (kill + re-arm) with an explicit staleness policy on guard answers. Reproduced and tracked on KI-MENU-GUARD-BATCH-NO-DEADLINE with a green tripwire over the real Menu.qml guard code.'
+      tracking: KI-MENU-GUARD-BATCH-NO-DEADLINE
+      owner: agent:claude-quattro
+      ki_ref: KI-MENU-GUARD-BATCH-NO-DEADLINE
+      reproducer: ./pocs/47t8-guard-batch-no-deadline.sh
 hazard_review:
     reviewed_at: "2026-09-30T08:06:26Z"
     reviewed_by: human:Leonid Bugaev

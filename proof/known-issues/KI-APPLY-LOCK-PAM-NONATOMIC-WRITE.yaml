@@ -1,0 +1,63 @@
+id: KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
+title: omarchy-apply-lock rewrites the lock PAM stacks in place; an interrupted run leaves a torn stack on the live path
+description: 'bin/omarchy-apply-lock writes both lock-screen PAM stacks with `as_root tee /etc/pam.d/omarchy-lock-password` and, when a finger is enrolled, `as_root tee /etc/pam.d/omarchy-lock-fingerprint`, each fed from a heredoc. tee opens the live file with O_TRUNC and rewrites it in place; there is no write to a temp file followed by a rename. From the moment tee opens the file until it finishes, the live path holds a truncated prefix of the new stack, and the previous complete stack is already gone. If the helper is interrupted in that window (installer or update killed, session lost, power cut before the data is flushed), the lock screen is left authenticating against a torn stack. For the password stack that can mean no pam_unix line at all, so password unlock fails until the helper is re-run. For the fingerprint stack the pam_fprintd line can be cut short. The window is short (a few hundred bytes written by one process), so the likelihood is low, but the impact on a lock screen is high. pocs/apply-lock-pam-torn-write.sh reproduces it on the real helper: it freezes each write after 60 bytes and SIGKILLs the run. The live file is then the torn 60-byte prefix (of 549 and 122 bytes), the seeded previous stack is gone, and the inode is unchanged (in-place rewrite). The control arm shows an uninterrupted run writes both stacks byte-identical to the heredocs.'
+affected_requirements:
+    - SYS-REQ-260912-JW2J
+    - SW-REQ-260912-Y0WT
+evidence_manifests:
+    - proof/evidence/ki-apply-lock-pam-nonatomic-write.yaml
+severity: medium
+severity_basis: reproducer
+risk: availability
+cve_surface: none
+affected_api: bin/omarchy-apply-lock (writes /etc/pam.d/omarchy-lock-password and omarchy-lock-fingerprint)
+reproducer_command: ./pocs/apply-lock-pam-torn-write.sh
+tripwire_mutation: In bin/omarchy-apply-lock, each `as_root tee /etc/pam.d/<stack> >/dev/null <<'EOF'` becomes `as_root tee /etc/pam.d/<stack>.tmp >/dev/null <<'EOF'`, followed after the heredoc by `as_root mv -f /etc/pam.d/<stack>.tmp /etc/pam.d/<stack>`, for both omarchy-lock-password and omarchy-lock-fingerprint. The interrupted write then tears only the temp file, the live path keeps the previous complete stack, the "torn prefix" and "previous stack gone" assertions in pocs/apply-lock-pam-torn-write.sh fail on both arms, and the tripwire flips red. The control arm is unaffected.
+introduced_in: inception
+defect_class: latent
+minimization_status: minimized
+mitigation: The helper runs only at install, upgrade or an explicit reconfigure, and each write is a few hundred bytes, so the vulnerable window is short. Re-running bin/omarchy-apply-lock rewrites both stacks completely. If the lock screen rejects a correct password after an interrupted install or update, switch to a TTY, log in, and re-run the helper.
+remediation: 'Write each stack to a sibling temp file in /etc/pam.d and rename it over the live path (same filesystem, so the rename is atomic), e.g. `as_root tee /etc/pam.d/omarchy-lock-password.tmp >/dev/null <<''EOF'' ... EOF` then `as_root mv -f /etc/pam.d/omarchy-lock-password.tmp /etc/pam.d/omarchy-lock-password`, and the same for omarchy-lock-fingerprint. Optionally fsync before the rename. Then remove the atomic_write deferrals on SYS-REQ-260912-JW2J and SW-REQ-260912-Y0WT and add witnesses. Close criterion: pocs/apply-lock-pam-torn-write.sh flips red because the interrupted write leaves the previous complete stack on the live path.'
+owner: agent:claude-quattro
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: reviewed
+history:
+    - at: "2026-10-01T21:27:49Z"
+      by: agent:claude-quattro
+      action: created
+    - at: "2026-10-01T21:29:20Z"
+      by: agent:claude-quattro
+      action: review
+      detail: reviewer=agent:claude-quattro,new_review_date=2026-12-31
+    - at: "2026-10-01T21:30:13Z"
+      by: agent:claude-quattro
+      action: capture-evidence
+      detail: proof/evidence/ki-apply-lock-pam-nonatomic-write.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/apply-lock-pam-torn-write.sh runs a scratch copy of the real bin/omarchy-apply-lock in which only the /etc/pam.d/ prefix and the absolute /usr/bin/fprintd-list gate are retargeted into a temp dir; reverse substitution must reproduce the product file byte for byte or the harness aborts. The tee that writes the file is the real one; sudo, fprintd-list and omarchy-shell are stubs.
+        quantitative_impact: after a SIGKILL during the write the live file is exactly the first 60 bytes of the new stack (of 549 bytes for the password stack, 122 for the fingerprint stack), the seeded previous stack is gone, and the inode is unchanged; the torn password stack carries no pam_unix line.
+        control_test: an uninterrupted run writes both stacks byte-identical to the heredocs in the product file, and the sudo stub log shows both as_root writes reached the retargeted live paths.
+        operational_path_verified: both write sites are driven through the real as_root wrapper, including the fingerprint branch gated on an enrolled finger.
+        current_deployment_relevance: lines 34 and 50 of bin/omarchy-apply-lock carry the in-place tee writes on this branch today.
+        honest_severity: medium - high impact (password unlock can fail until the helper re-runs) times low likelihood (an interruption inside a sub-millisecond write window at install or upgrade time); the freeze-and-kill harness widens the window deterministically, it does not claim the window is wide in practice.
+        reproducible: deterministic, three arms, under 1s; byte comparison and inode equality decide every assertion; nothing outside a temp dir is touched and the run refuses to start as root.
+        no_inflation: claims limited to the demonstrated torn live file after an interrupted write; no privilege, bypass or remote claims.
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
+        reachability_verified: 'no ingress access-control or trust boundary to traverse: the trigger is the user own session, compositor or system state, not an adversary input path'
+        untrusted_attacker: 'local availability/reliability defect: the trigger is a stalled or interrupted local process, not an adversary; no actor model applies'
+kill_domain: non_atomic_write
+affected_file: bin/omarchy-apply-lock

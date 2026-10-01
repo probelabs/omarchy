@@ -1,0 +1,63 @@
+id: KI-MENU-GUARD-BATCH-NO-DEADLINE
+title: Menu guard batch runs as one bash child with no deadline; a blocking guard expression freezes guard answers for the session
+description: 'Menu.qml evaluateGuards() runs every when:, checked: and disabled: guard of the menu as one child process, `guardProc.command = ["bash", "-lc", script]`, and nothing puts a deadline on it. While guardProc.running is true, every later evaluateGuards() call only sets guardsPending and returns, so it is deferred until the batch exits. A single guard expression that blocks (waiting on a lock, a slow probe or a hung device query) therefore keeps the batch alive indefinitely. No later evaluation ever starts, and the menu keeps showing the last complete answer set for the rest of the session: rows checked, visible or dimmed for a state that no longer holds. A killed batch keeps the last complete set rather than adopting a half-read one, and a when: only hides on an explicit false, so the failure is stale-but-visible rather than hidden rows. pocs/47t8-guard-batch-no-deadline.sh reproduces it with the real evaluateGuards() and guardProc handlers extracted from Menu.qml and the real MenuModel.guardScript(). After a guard that waits on a held lock is added, the batch is still running at 4s with zero exits, a re-evaluation spawns nothing (guardsPending=true), and a row''s checked answer stays false after the state it describes has turned true. The control arm shows a healthy batch landing its answers and refreshing after a state flip.'
+affected_requirements:
+    - SYS-REQ-260922-47T8
+evidence_manifests:
+    - proof/evidence/ki-menu-guard-batch-no-deadline.yaml
+severity: low
+severity_basis: reproducer
+risk: availability
+cve_surface: none
+affected_api: 'shell/plugins/menu/Menu.qml evaluateGuards / guardProc (when:, checked:, disabled: guard batch)'
+reproducer_command: ./pocs/47t8-guard-batch-no-deadline.sh
+tripwire_mutation: 'In shell/plugins/menu/Menu.qml evaluateGuards(), `guardProc.command = ["bash", "-lc", script]` becomes `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`: the blocked batch then exits (code 124) after about 2s, so the "still running with zero exits" assertion in pocs/47t8-guard-batch-no-deadline.sh fails, the pending evaluation starts a new batch (spawns become 3), guardsPending clears, and the tripwire flips red. A per-guard timeout in MenuModel.guardLine flips it the same way, since the harness runs the real MenuModel.js. A QML Timer-based watchdog is NOT observed by this node harness, which instantiates no QML Timer; such a fix needs the harness extended alongside it. The control arm is unaffected.'
+introduced_in: inception
+defect_class: latent
+minimization_status: minimized
+mitigation: 'Only guard freshness is affected: rows keep their last complete answers and actions still run what the row says. Removing or fixing the blocking guard expression in the user menu file and restarting the shell (or killing the stuck guard bash process) restores evaluation; the default menu ships no blocking guards.'
+remediation: 'Give the guard batch a deadline: either wrap the child (e.g. `guardProc.command = ["timeout", "-k", "1", "2", "bash", "-lc", script]`) or a Process-side watchdog Timer that stops guardProc after a bound and re-arms the pending evaluation, or a per-guard timeout in MenuModel.guardLine so one slow guard cannot take the rest of the batch with it. Pair it with an explicit staleness policy for the answers of a killed batch. Then remove the SYS-REQ-260922-47T8 external_call_timeout_bounded deferral and add a witness. Close criterion: pocs/47t8-guard-batch-no-deadline.sh flips red because the blocked batch exits inside the observation window.'
+owner: agent:claude-quattro
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: reviewed
+history:
+    - at: "2026-10-01T21:27:49Z"
+      by: agent:claude-quattro
+      action: created
+    - at: "2026-10-01T21:29:20Z"
+      by: agent:claude-quattro
+      action: review
+      detail: reviewer=agent:claude-quattro,new_review_date=2026-12-31
+    - at: "2026-10-01T21:30:18Z"
+      by: agent:claude-quattro
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-guard-batch-no-deadline.yaml
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/47t8-guard-batch-no-deadline.js executes the evaluateGuards() body and the guardProc onRead/onExited bodies extracted verbatim from shell/plugins/menu/Menu.qml at run time, with the real MenuModel.guardScript(), and spawns the exact argv Menu.qml sets on guardProc.command under real bash. The Quickshell Process element itself is a minimal stand-in (spawn, line split, onExited with exitStatus 1 on a signal), and pacman is an empty PATH stub.
+        quantitative_impact: after a guard that waits on a held lock is added, the batch is still running at 4s with zero exits, the re-evaluation spawns nothing (spawn count stays 2, guardsPending=true), and a row's checked answer stays false after its state turned true.
+        control_test: the control arm runs a healthy batch that lands its answers and a re-evaluation that refreshes them after the state flips, through the same extracted code.
+        operational_path_verified: the evaluate -> spawn -> collect -> onExited -> deferred re-evaluation path is the one Menu.qml runs on every reload.
+        current_deployment_relevance: Menu.qml line 1096 sets the undeadlined command on this branch today.
+        honest_severity: low - stale-but-visible guard answers (a when: only hides on an explicit false); no action runs something other than what its row says.
+        reproducible: deterministic, two arms, about 5s; all spawned process groups (batch and lock holder) are killed on exit.
+        no_inflation: claims limited to the demonstrated frozen guard evaluation; a QML Timer watchdog fix is explicitly outside what this harness observes (stated in tripwire_mutation).
+    not_applicable:
+        attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
+        reachability_verified: 'no ingress access-control or trust boundary to traverse: the trigger is the user own session, compositor or system state, not an adversary input path'
+        untrusted_attacker: 'local availability/reliability defect: the trigger is a stalled or interrupted local process, not an adversary; no actor model applies'
+dedup_armor: 'Not a duplicate of KI-MENU-GUARD-BATCH-STALE-APPLY: that one is a missing generation token letting a finished batch publish onto a newer item set, while this one is a batch that never finishes because nothing bounds its runtime. Not KI-MENU-SELECT-POLL-DEADLOCK either: that is the omarchy-menu-select done_file poll loop, a different process and file.'
+kill_domain: unbounded_wait
+affected_file: shell/plugins/menu/Menu.qml
