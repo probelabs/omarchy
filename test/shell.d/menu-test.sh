@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89
+# Verifies: SW-REQ-260928-8VJQ, SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89, SW-REQ-260925-XTGG, SW-REQ-261001-C19S
 #mcdc:ignore:defensive SW-REQ-260928-8VJQ: action_is_bare_summon=T, in_process_summon_equivalent=F => FALSE -- a matched bare summon whose delivered argv diverges from bash is exactly the defect the requirement forbids; summonAction is a pure regex + passthrough, so producing it needs a broken regex or a mutated payload copy [reviewed: REVIEW-74]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=T, parse_error_raised=F => FALSE -- a failed parse hits the catch that returns [] unconditionally; invalid input yielding items needs a broken catch [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-3T3F: empty_item_set=T, json_invalid=T, parse_error_raised=T => FALSE -- the same catch swallows the parse error by construction; a raised error needs the try/catch removed [reviewed: REVIEW-M8]
@@ -31,6 +31,8 @@ set -euo pipefail
 #mcdc:ignore:defensive SW-REQ-260922-SJ7P: better_match_ranks_first=F, match_quality_varies=T => FALSE -- searchScore is a pure function of the match tier; a weaker match outscoring a stronger one needs the tier ladder reordered [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SYS-REQ-260922-V7W6: matching_rows_ranked=F, search_entered=T => FALSE -- every search row carries its searchScore and the QML search model sorts by it; an unranked result list needs the sort removed [reviewed: REVIEW-M8]
 #mcdc:ignore:defensive SW-REQ-260922-TKDP: matches_span_menus=T, sections_divided=F => FALSE -- displayRow copies the caller's section onto every row unconditionally; search rows arriving without their section needs that assignment removed [reviewed: REVIEW-M8]
+#mcdc:ignore:defensive SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=F => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set, before openDmenu/openRoute can overwrite or clear the request; finishRequest captures the done-file path before clearing state and issues the done-only write, so an abandoned prior caller needs that call removed [reviewed: REVIEW-261001-SYQB]
+#mcdc:ignore:defensive SW-REQ-261001-C19S: finish_requested=T, prior_answer_write_running=T, answer_write_started_concurrently=F => FALSE -- finishRequest hands every answer to Quickshell.execDetached, which starts a fresh process per call and never consults an earlier one; a dropped or queued answer needs the per-answer execDetached call replaced by a shared Process again [reviewed: REVIEW-261001-W7QD]
 # mcdc:witness-out-of-process
 #mcdc:ignore:defensive SYS-REQ-260927-WC89: lock_row_activated=T, system_lock_invoked=F => FALSE -- openRoute copies the row's action verbatim into Util.execDetached; an activated Lock row not invoking omarchy-system-lock needs the action field in default/omarchy/omarchy-menu.jsonc or the exec call removed [reviewed: REVIEW-28]
 
@@ -1087,6 +1089,132 @@ for (const action of summonCorpus) {
 assertEqual(menu.summonAction('omarchy-shell shell summon foo '), null, 'trailing-whitespace summon stays on the bash path')
 assertEqual(menu.summonAction('omarchy-shell shell summon foo bar'), null, 'unquoted payload stays on the bash path (grammar requires single quotes)')
 assertDeepEqual(menu.summonAction(`omarchy-shell shell summon foo ''`), { id: 'foo', payload: '{}' }, 'empty-quotes payload upgrades to the default object')
+JS
+
+# PR omacom/omarchy#9056 request lifecycle witnesses (SW-REQ-260925-XTGG, SW-REQ-261001-C19S)
+run_node_test <<'JS'
+// Verifies: SW-REQ-260925-XTGG, SW-REQ-261001-C19S
+const fs = require('fs')
+// PR omacom/omarchy#9056 review witnesses (proof-side, execute product code):
+// the REAL open / finishRequest / openDmenu / openExistingMenu / openRoute
+// bodies from Menu.qml run under node vm (bare property names resolve on the
+// root stub via `with`). Every answer write is recorded, whether it goes
+// through Quickshell.execDetached (one process per answer) or a shared
+// Process (modelled as it behaves live: a start while it is still running is
+// ignored). Writes stay in flight until drain(), as in a summon burst.
+const requestHarness = () => {
+  const vm = require('vm')
+  const qml = fs.readFileSync(path.join(root, 'shell/plugins/menu/Menu.qml'), 'utf8')
+  const names = ['open', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute']
+  const src = names.map(name => {
+    const m = qml.match(new RegExp('\\n  function ' + name + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
+    if (!m) throw new Error(name + ' not found in Menu.qml')
+    return m[0]
+  }).join('\n')
+  const writes = []
+  let inFlight = 0
+  let sharedBusy = false
+  const start = command => { writes.push({ command: command.slice(), concurrent: inFlight > 0 }); inFlight += 1 }
+  const resultProc = { command: [], set running(v) { if (v && !sharedBusy) { sharedBusy = true; start(this.command) } }, get running() { return sharedBusy } }
+  const Quickshell = { execDetached(command) { start(command) } }
+  const drain = () => { inFlight = 0; sharedBusy = false }
+  const r = {
+    opened: false, mode: 'menu', requestSerial: 0, applySerial: 0, requestActive: false, selectionFile: '', doneFile: '',
+    dmenuPrompt: '', dmenuOptions: [], dmenuWidth: 300, dmenuMaxHeight: 0, activeMenu: 'root', navStack: [],
+    filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '', pendingInitialMenu: 'root', appLibrary: null,
+    items: { root: { id: 'root', kind: 'menu' } }, itemOrder: ['root'],
+    item(id) { return this.items[id] || null },
+    resolveRoute(input) { return input },
+    disarmPointer() {}, evaluateGuards() {}, rebuildDisplay() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
+    cancel() { this.finishRequest(null) }, runAction() {}
+  }
+  const fns = vm.runInNewContext(`(function() { with (root) { ${src}; return { ${names.join(', ')} } } })()`, {
+    root: r, resultProc, Quickshell, keyCatcher: { forceActiveFocus() {} }, Qt: { callLater() {} },
+    Util: { shellQuote: s => "'" + String(s).replace(/'/g, "'\\''") + "'" }, JSON, Math, Number, String, Array
+  })
+  for (const n of names) r[n] = fns[n]
+  return { r, writes, drain }
+}
+const selectPayload = tag => JSON.stringify({ mode: 'select', prompt: 'Pick ' + tag, options: ['a', 'b'], selectionFile: '/tmp/sel-' + tag, doneFile: '/tmp/done-' + tag })
+
+{ // a summon while a select request is active answers the prior request as cancelled
+  const { r, writes } = requestHarness()
+  r.open(selectPayload('first'))
+  assertEqual(r.requestActive, true, 'the first select request is active')
+  assertEqual(writes.length, 0, 'opening the first request writes nothing')
+  // Verifies: SW-REQ-260925-XTGG
+  // MCDC SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=T => TRUE
+  r.open(selectPayload('second'))
+  assertEqual(writes.length, 1, 'the second summon issues exactly one answer write')
+  assertEqual(writes[0].command[2], ": > '/tmp/done-first'", 'the prior request is answered done-file-only (cancelled), no selection written')
+  assertEqual(r.doneFile, '/tmp/done-second', 'the new request owns its own done file after the cancel')
+  assertEqual(r.requestActive, true, 'the new request is active and not pre-answered')
+}
+
+{ // a plain route summon also cancels a pending picker
+  const { r, writes } = requestHarness()
+  r.open(selectPayload('pending'))
+  r.open(JSON.stringify({ menu: 'root' }))
+  assertEqual(writes.length, 1, 'the route summon answers the pending picker once')
+  assertEqual(writes[0].command[2], ": > '/tmp/done-pending'", 'the pending picker is answered as cancelled')
+  assertEqual(r.requestActive, false, 'no request stays active after a route summon')
+}
+
+{ // a summon with no active request cancels nothing
+  const { r, writes } = requestHarness()
+  // Verifies: SW-REQ-260925-XTGG
+  // MCDC SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=T, prior_request_cancelled=F => TRUE [no-action: no request is active before this summon, so the guard does not fire and no answer write is issued]
+  r.open(selectPayload('clean'))
+  assertEqual(writes.length, 0, 'a clean summon issues no answer write')
+  // Verifies: SW-REQ-260925-XTGG
+  // MCDC SW-REQ-260925-XTGG: menu_open_called=F, no_active_request=F, prior_request_cancelled=F => TRUE [no-action: with a request active but no new summon, open() is never entered and the request stays pending with no write]
+  assertEqual(r.requestActive, true, 'the request stays pending until answered')
+  assertEqual(writes.length, 0, 'an active request with no new summon receives no write')
+}
+
+{ // back-to-back answers while earlier writes are still running: every one is written (b7bd59c4)
+  const { r, writes } = requestHarness()
+  r.open(selectPayload('b1'))
+  r.open(selectPayload('b2'))
+  assertEqual(writes.length, 1, 'the first cancel write is in flight')
+  // Verifies: SW-REQ-261001-C19S
+  // MCDC SW-REQ-261001-C19S: finish_requested=T, prior_answer_write_running=T, answer_write_started_concurrently=T => TRUE
+  r.open(selectPayload('b3'))
+  r.finishRequest(null)
+  assertEqual(writes.map(w => w.command[2]).join(' | '), ": > '/tmp/done-b1' | : > '/tmp/done-b2' | : > '/tmp/done-b3'",
+    'back-to-back answers are all written, none dropped while an earlier write runs')
+  assertEqual(writes.map(w => w.concurrent).join(','), 'false,true,true', 'the second and third answers start their own write beside the one still running')
+}
+
+{ // a selection answered while a cancel write is still in flight is written with its value
+  const { r, writes } = requestHarness()
+  r.open(selectPayload('s1'))
+  r.open(selectPayload('s2'))
+  r.finishRequest('beta')
+  assertEqual(writes.length, 2, 'the selection is written although the cancel write is still running')
+  assertEqual(writes[1].command[2], "printf '%s\\n' 'beta' > '/tmp/sel-s2'; : > '/tmp/done-s2'", 'the selection write carries the value and then the done file')
+}
+
+{ // one answer with nothing in flight runs alone
+  const { r, writes } = requestHarness()
+  r.open(selectPayload('solo'))
+  // Verifies: SW-REQ-261001-C19S
+  // MCDC SW-REQ-261001-C19S: finish_requested=T, prior_answer_write_running=F, answer_write_started_concurrently=F => TRUE [no-action: no earlier answer write is in flight, so the one write this answer starts runs alone]
+  r.finishRequest(null)
+  assertEqual(writes.length, 1, 'a lone answer issues one write')
+  assertEqual(writes[0].concurrent, false, 'a lone answer write does not overlap another')
+}
+
+{ // a write in flight and no further answer: nothing else starts
+  const { r, writes, drain } = requestHarness()
+  r.open(selectPayload('w1'))
+  r.open(selectPayload('w2'))
+  // Verifies: SW-REQ-261001-C19S
+  // MCDC SW-REQ-261001-C19S: finish_requested=F, prior_answer_write_running=T, answer_write_started_concurrently=F => TRUE [no-action: the cancel write for w1 is still running and no further answer is issued, so no write starts beside it]
+  assertEqual(writes.filter(w => w.concurrent).length, 0, 'no write starts beside a running one without a new answer')
+  drain()
+  assertEqual(r.requestActive, true, 'the w2 request stays pending until it is answered')
+}
 JS
 
 font_charset=$(fc-query --format='%{charset}' "$ROOT/default/fonts/omarchy/omarchy.ttf")
