@@ -63,6 +63,14 @@ const parsed = menu.parseMenuJsonc(`
 // MCDC SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=F, parse_error_raised=F => TRUE [no-action: the valid JSONC parses to its items -- the invalid path is not taken]
 // SW-REQ-260922-3T3F:error_handling:nominal
 assertEqual(parsed.length, 3, 'menu parses JSONC with comments and trailing commas')
+
+const inlineComments = menu.parseMenuJsonc(`{
+  "a": { "label": "A" }, // after an entry
+  "b": { "label": "say \\"hi\\" // not a comment", "action": "omarchy-launch-webapp 'https://omarchy.org/'" },
+} // at the end, with no newline`)
+assertEqual(inlineComments.length, 2, 'menu parses JSONC with a comment after an entry on the same line')
+assertEqual(inlineComments[1].label, 'say "hi" // not a comment', 'menu keeps // after an escaped quote inside a string')
+assertEqual(inlineComments[1].action, "omarchy-launch-webapp 'https://omarchy.org/'", 'menu keeps // inside a string')
 // MCDC SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=T => TRUE
 assertDeepEqual(
   parsed.find(item => item.id === 'style.theme'),
