@@ -21,6 +21,27 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-10-01T22:40:32.577601Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_fingerprint: sha256:28e5f27bbff93a25826d182b00ea74db861609756695deabfb393106ef4278de
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
+    review_history:
+        - reviewed_at: "2026-10-01T22:40:32.577601Z"
+          reviewed_by: agent:claude-pr-13968
+          method: inspection
+          rationale: 'pr/13968: MenuModel.js stripJsonc is the PR #13968 string-aware scanner at the live head b2dae8db (ff77cd02 + b2dae8db) and parseMenuJsonc rejects an array root; product diff vs the upstream PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Re-read the linked functions against the requirement text; menu-test.sh (263 ok locally) and the node replay incl. both seeded differentials are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:1
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:414
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
