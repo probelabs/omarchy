@@ -6,4 +6,4 @@ subject: SW-REQ-260922-XW52
 decision: approved
 comment: Read openRoute. After resolveRoute, a resolved link entry makes the menu open at the link's target (an action leaf runs directly instead). resolved_kind_link models the kind==='link' arm; link_target_followed is the open-at-target behavior. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:960
+    - shell/plugins/menu/Menu.qml:974
