@@ -52,6 +52,10 @@ history:
       by: agent:claude-baseline-pass
       action: edit
       detail: set-title
+    - at: "2026-10-01T21:59:38Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-probe-hyprctl-no-timeout.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
