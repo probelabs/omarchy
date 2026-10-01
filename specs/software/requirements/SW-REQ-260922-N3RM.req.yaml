@@ -20,14 +20,14 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-10-02T16:54:43.512614Z"
+    reviewed_at: "2026-10-01T20:54:47.312224272Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:applySelected: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:openRoute: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:runAction: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:finishRequest: file1:e7d0b382ee15ba3834e586da44adb708
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:e7d0b382ee15ba3834e586da44adb708
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:e7d0b382ee15ba3834e586da44adb708
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
             SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
@@ -60,33 +60,17 @@ traces:
             - test/shell.d/menu-test.sh:342
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:37.365632Z"
+        - reviewed_at: "2026-10-01T20:54:47.312224272Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #9056 review at head b7bd59c4 on quattro-proof 4f1a8197: the Menu.qml delta is the cancel-prior guard at the top of open() (0b4fe292), finishRequest writing each answer through Quickshell.execDetached with the resultProc Process and the requestSerial/applySerial counters removed (b7bd59c4), and Implements lines. Each link re-checked against the cited annotation lines and the diff; the removed resultProc.onExited re-close was redundant because every apply path sets opened=false itself; requirement intents outside open()/finishRequest are unaffected; the new behaviour is authored as SW-REQ-260925-XTGG and SW-REQ-261001-C19S'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:883
-            - shell/plugins/menu/Menu.qml:960
+            - shell/plugins/menu/Menu.qml:152
+            - shell/plugins/menu/Menu.qml:890
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:43.512614Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:883
-            - shell/plugins/menu/Menu.qml:961
-            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
-            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:26
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
