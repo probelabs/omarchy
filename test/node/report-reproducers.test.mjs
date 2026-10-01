@@ -19,14 +19,14 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
-function runReport(id) {
+function runReport(id, env = {}) {
   const script = path.join(root, 'test', 'reports', `report-${id}.sh`)
-  const r = spawnSync('sh', [script], { cwd: root, encoding: 'utf8', timeout: 120000 })
+  const r = spawnSync('sh', [script], { cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, ...env } })
   return { status: r.status, out: (r.stdout || '') + (r.stderr || '') }
 }
 
-function expectReport(t, id, wantExit, wantLine) {
-  const { status, out } = runReport(id)
+function expectReport(t, id, wantExit, wantLine, env = {}) {
+  const { status, out } = runReport(id, env)
   if (status === 2) { t.skip(`SETUP: ${out.trim().split('\n').pop()}`); return }
   assert.equal(status, wantExit, `report ${id}: expected exit ${wantExit}, got ${status}\n${out}`)
   assert.match(out, wantLine, `report ${id}: output does not carry the expected verdict line\n${out}`)
@@ -60,7 +60,11 @@ test('report #9057 (superseded select summon never answered): expected failure w
   expectReport(t, 'cmulr95nw0kqr1gw46i7f50xj', 1, /DEFECT: caller A \(superseded summon\) never got an answer/)
 })
 
-// Not a defect: the label-prefix tier outranks the label-substring tier.
-test('report #10340 (chro ranks the Chrome setting above the Google Chrome app): specified order holds', t => {
-  expectReport(t, 'cmulr908f0k131gw4hy0pcx08', 0, /^ok: 'Chrome' \(label-prefix tier\) ranks above the app 'Google Chrome'/m)
+// PR omacom/omarchy#12223 (this mirror) changes SW-REQ-260922-SJ7P: installed
+// apps get a -100 bias and rank above every menu entry. The reporter's
+// requested order is now the specified order, so the script runs in its
+// reporter-expectation mode and must report MET. (Its default mode checks the
+// pre-#12223 tier ladder, which this PR replaces, so it reports a deviation.)
+test('report #10340 (chro ranks the Chrome setting above the Google Chrome app): with #12223 the installed app ranks first', t => {
+  expectReport(t, 'cmulr908f0k131gw4hy0pcx08', 0, /^MET: the installed app ranks first/m, { REPORT_ASSERT: 'reporter-expectation' })
 })
