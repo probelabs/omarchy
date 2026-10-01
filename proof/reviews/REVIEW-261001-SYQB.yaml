@@ -1,0 +1,11 @@
+id: REVIEW-261001-SYQB
+kind: spec_conformance
+reviewer: agent:v2-third-party-review
+reviewed_at: "2026-10-01T07:42:59Z"
+subject: SW-REQ-260925-XTGG
+decision: approved
+comment: 'Read open() and finishRequest on the PR #9056 tree. The guard if (root.requestActive) root.finishRequest(null) runs first in open(), before the openDmenu/openRoute dispatch that overwrites or clears selectionFile/doneFile/requestActive. requestActive is set only by openDmenu as !!doneFile, so requestActive implies a done file and the guard antecedent is exactly menu_open_called & !no_active_request. finishRequest(null) passes its own no-active-request early return, captures the done-file path, clears state, and issues the done-only write (: > doneFile) through Quickshell.execDetached (head b7bd59c4; resultProc on 0b4fe292), which is prior_request_cancelled. The violation row (open called, request active, no cancel) needs the guard call removed, so it is dispositioned defensive. The guard-false path leaves state untouched. On 0b4fe292 the write went through the shared resultProc, and a command change while it still ran an earlier write was ignored (busy-resultProc leg, SX26/C14); b7bd59c4 writes each answer in its own process (SW-REQ-261001-C19S, REVIEW-261001-W7QD). Re-read on b7bd59c4 2026-10-01.'
+citations:
+    - shell/plugins/menu/Menu.qml:22@open
+    - shell/plugins/menu/Menu.qml:33
+    - shell/plugins/menu/Menu.qml:130@finishRequest
