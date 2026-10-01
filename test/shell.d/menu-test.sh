@@ -36,6 +36,16 @@ assertEqual(menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length, 1, 'men
 assertEqual(menu.parseMenuJsonc('{ // opening note\n"a": {"label": "A"},\n} // closing note\n// final line').length, 1, 'menu strips full-line and inline comments in the same pass')
 assertEqual(menu.parseMenuJsonc('{"s": {"label": "A // B"}}')[0].label, 'A // B', 'menu preserves comment slashes inside a string literal')
 assertEqual(menu.parseMenuJsonc('{"a": {"label": "A"}} // }, "x": {"label": "X"}').length, 1, 'menu ignores JSON syntax carried inside a comment tail')
+assertEqual(menu.parseMenuJsonc('{\n  "a": {"label": "A"},\n  // "b": {"label": "B"},\n}').length, 1, 'menu drops a trailing comma when a whole-line comment sits between it and the closer')
+assertEqual(menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // note\n}').length, 1, 'menu drops a trailing comma when an inline comment follows it on the last entry')
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "aliases": ["x", // note\n]}}')[0].aliases.join(','), 'x', 'menu drops a trailing comma before ] behind a comment')
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "n": 1//c\n2}}').length, 0, 'menu keeps the line break after a comment so tokens on either side are not joined')
+const sampleExtension = fs.readFileSync(path.join(root, 'config/omarchy/extensions/omarchy-menu.jsonc'), 'utf8')
+assertEqual(
+  menu.parseMenuJsonc(sampleExtension.replace(/^  \/\/ ("personal[^"]*": \{[^\n]*)$/gm, '  $1')).map(item => item.id).join(','),
+  'personal,personal.notes,personal.files',
+  'menu loads the example rows uncommented in the sample extension'
+)
 assertDeepEqual(
   parsed.find(item => item.id === 'style.theme'),
   {

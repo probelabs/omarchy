@@ -1,9 +1,9 @@
 function stripJsonc(raw) {
   // Comments and trailing commas are stripped string-aware in a single pass:
   // string contents are copied verbatim, and outside any string // starts a
-  // comment dropped through the end of the line wherever the opener sits,
-  // and a comma is dropped only when the next non-whitespace character is
-  // } or ].
+  // comment dropped up to (not including) the end of the line wherever the
+  // opener sits, and a comma is dropped only when the next character that is
+  // neither whitespace nor part of a // comment is } or ].
   var input = String(raw || "")
   var out = ""
   var inString = false
@@ -20,10 +20,19 @@ function stripJsonc(raw) {
       inString = true
       out += ch
     } else if (ch === "/" && input[i + 1] === "/") {
-      while (i < input.length && input[i] !== "\n") i++
+      // Keep the newline so the tokens on either side stay apart.
+      while (i + 1 < input.length && input[i + 1] !== "\n") i++
     } else if (ch === ",") {
       var next = i + 1
-      while (next < input.length && /\s/.test(input[next])) next++
+      while (next < input.length) {
+        if (/\s/.test(input[next])) {
+          next++
+        } else if (input[next] === "/" && input[next + 1] === "/") {
+          while (next < input.length && input[next] !== "\n") next++
+        } else {
+          break
+        }
+      }
       if (next >= input.length || (input[next] !== "}" && input[next] !== "]"))
         out += ch
     } else {
