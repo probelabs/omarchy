@@ -43,5 +43,9 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-back-filtered-index.yaml
+    - at: "2026-10-01T11:14:55Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-back-filtered-index.yaml
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
