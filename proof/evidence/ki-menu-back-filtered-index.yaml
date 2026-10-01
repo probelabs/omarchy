@@ -5,14 +5,13 @@ results:
       command: node pocs/pr13012-back-from-search.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T11:14:56Z"
-      revision: c2bfbd17d3709f6b2ae2430a0471d5e68e75d449
+      executed_at: "2026-10-01T11:46:17Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-BACK-FILTERED-INDEX` from the KnownIssue''s reproducer command: node pocs/pr13012-back-from-search.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/pr13012-back-from-search.js
       freshness_hashes:
         pocs/pr13012-back-from-search.js: sha256:629425dd4dd6b873444ad1824ccfd59903678681a4f36971818edd0f4b8ed54c
-        proof/known-issues/KI-MENU-BACK-FILTERED-INDEX.yaml: ki-content-v1:sha256:10c927732a7e273aec21a88abf2e2d7e842e0f1b079bba113eb92e4e64619b17
+        proof/known-issues/KI-MENU-BACK-FILTERED-INDEX.yaml: ki-content-v1:sha256:ce754117df878887094b0bd6fdebe305b774de5a510ee13c99f6e9f135cfad19
       known_issues:
         - KI-MENU-BACK-FILTERED-INDEX
       config:
