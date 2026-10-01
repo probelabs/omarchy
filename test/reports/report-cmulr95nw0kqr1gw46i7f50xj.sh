@@ -11,8 +11,8 @@
 # The recorded payloads are then fed, in order, to the REAL Menu.qml request
 # functions (open, openDmenu, finishRequest, cancel — extracted verbatim from
 # shell/plugins/menu/Menu.qml and run in node with a stub QML scope; the
-# resultProc command they build is executed with bash exactly as Quickshell
-# would). Sequence = press Super+K, press Super+K again, then Escape.
+# resultProc or Quickshell.execDetached command they build is executed with
+# bash exactly as Quickshell would). Sequence = press Super+K, press Super+K again, then Escape.
 # Once the menu has closed nothing else will ever write a done file, so a
 # caller whose done file does not exist at that point can never exit on its
 # own. No wall-clock assertion: waits are event-driven, bounded only as a
@@ -88,7 +88,8 @@ const root = {
   openRoute() { throw new Error("route path not expected for a select summon") },
   keyCatcher: { forceActiveFocus() {} }, Qt: { callLater() {} },
   Util: { shellQuote: s => "'" + String(s).replace(/'/g, "'\\''") + "'", execDetached() {} },
-  resultProc: { command: [], set running(v) { if (!v) return; writes.push(this.command[2]); cp.execFileSync(process.env.BASH_BIN, this.command.slice(1)) } }
+  resultProc: { command: [], set running(v) { if (!v) return; writes.push(this.command[2]); cp.execFileSync(process.env.BASH_BIN, this.command.slice(1)) } },
+  Quickshell: { execDetached(command) { writes.push(command[2]); cp.execFileSync(process.env.BASH_BIN, command.slice(1)) } }
 }
 root.root = root
 const scope = new Function("root", "with (root) { " + names.map(n => "root." + n + " = " + fns[n].replace(/^function \w+/, "function")).join(";\n") + " }")
@@ -100,7 +101,7 @@ root.open(JSON.stringify(payloads[0]))   // Super+K
 root.open(JSON.stringify(payloads[1]))   // Super+K again, first popup still unanswered
 root.cancel()                            // Escape
 console.log("menu closed: opened=" + root.opened + " requestActive=" + root.requestActive + "; done-file writes issued by Menu.qml: " + writes.length)
-// A caller is answered iff a resultProc command Menu.qml issued creates its done file.
+// A caller is answered iff a write command Menu.qml issued creates its done file.
 const answered = payloads.map(p => writes.some(w => w.includes(root.Util.shellQuote(p.doneFile))) ? "answered" : "unanswered")
 fs.writeFileSync(process.env.SPOOL + ".done", answered.join("\n") + "\n")
 JS
