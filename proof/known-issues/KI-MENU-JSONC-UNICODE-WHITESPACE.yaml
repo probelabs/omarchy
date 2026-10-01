@@ -37,6 +37,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
+    - at: "2026-10-01T21:33:55Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS: this one is non-ASCII and control whitespace between tokens that JSON.parse rejects; those are block comments, inline comment tails, string rewriting, array roots and CR-only line endings'
 kill_domain: parsing
 affected_file: shell/plugins/menu/MenuModel.js

@@ -56,6 +56,10 @@ history:
       by: agent:claude-baseline-pass
       action: edit
       detail: set-description,set-review-date,set-dedup-armor
+    - at: "2026-10-01T21:33:55Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-strip-gaps.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT, KI-MENU-JSONC-UNICODE-WHITESPACE, KI-MENU-JSONC-CR-LINE-ENDINGS or KI-MENU-ITEMS-KEY-AMBIGUITY: this one is /* */ block comments left in the text, which omacom/omarchy#13968 keeps unsupported; those are inline // tails, string rewriting by the comma pass, array roots, non-ASCII whitespace, CR-only line endings and the items wrapper key'
 kill_domain: parsing
 affected_file:

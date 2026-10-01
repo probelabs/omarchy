@@ -43,6 +43,10 @@ history:
       by: agent:claude-baseline-pass
       action: edit
       detail: set-dedup-armor
+    - at: "2026-10-01T21:33:55Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
