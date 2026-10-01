@@ -49,7 +49,14 @@ assertEqual(parsed.length, 3, 'menu parses JSONC with comments and trailing comm
 const arrayRoot = menu.parseMenuJsonc('[{"label":"should-not-appear"},{"label":"ghost-2"}]')
 assertEqual(arrayRoot.length, 0, 'menu rejects a top-level array instead of rendering phantom rows')
 assertEqual(menu.parseMenuJsonc('{"obj": {"label":"kept"}}').length, 1, 'menu still parses an object root to its entries')
-assertEqual(menu.parseMenuJsonc('{"items": [{"label":"x"}]}').length, 0, 'menu rejects an array nested under the items key the same way')
+assertEqual(menu.parseMenuJsonc('[]').length, 0, 'menu rejects an empty top-level array')
+assertEqual(menu.parseMenuJsonc('[1, 2]').length, 0, 'menu rejects a top-level array of scalars')
+assertEqual(menu.parseMenuJsonc('// note\n[{"label":"x"},]').length, 0, 'menu rejects a commented top-level array with a trailing comma')
+assertEqual(
+  menu.parseMenuJsonc('{"items": [{"label":"x"}], "a": {"label":"A"}}').map(item => item.id).join(','),
+  'a',
+  'menu skips an items array rather than walking its indices'
+)
 assertDeepEqual(
   parsed.find(item => item.id === 'style.theme'),
   {
