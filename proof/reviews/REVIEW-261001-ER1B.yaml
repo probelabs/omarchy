@@ -1,0 +1,10 @@
+id: REVIEW-261001-ER1B
+kind: spec_conformance
+reviewer: agent:v2-third-party-review
+reviewed_at: "2026-10-01T07:51:59Z"
+subject: SW-REQ-260922-TKDP
+decision: approved
+comment: 'Re-read the rebuildDisplay search branch on the PR #12223 tree (supersedes REVIEW-66). Drilldown rows are split into app rows and deeper rows; rows = apps, then current-menu rows, then deeper rows. When apps match alongside menu rows, every menu row (current and deeper) takes the drilldown section, so exactly one divider sits between apps and menu entries and the former current/deeper divider disappears; with no app matches the old behaviour holds (current, divider, deeper). searchDivider is true exactly when both a drilldown-section row and a non-drilldown row exist. matches_span_menus -> sections_divided still holds (a divider is emitted whenever matches span groups); the grouping change is captured in the updated description and witnessed by executing rebuildDisplay in test/shell.d/menu-search-apps-first-test.sh.'
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - shell/plugins/menu/Menu.qml:711
