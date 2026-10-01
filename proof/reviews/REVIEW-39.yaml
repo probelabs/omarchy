@@ -6,4 +6,4 @@ subject: SW-REQ-260922-74BZ
 decision: approved
 comment: Read resolveRoute. After normalization (lowercase, underscores to dashes) the code checks exact id, then scans aliases of non-app entries, then falls through to 'return raw' — the literal input, no rewrite. The FRETish condition route_input & !exact_id_match & !alias_match models precisely this fall-through; the sibling reqs PRNV/CYB9 cover the other two arms of the same branch structure. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:210
+    - shell/plugins/menu/MenuModel.js:255
