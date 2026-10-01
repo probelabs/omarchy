@@ -1617,3 +1617,22 @@ test('mcdc summonAction: in-process summon shape and every rejection', () => {
   assertDeepEqual(menuModel.summonAction('omarchy-shell shell summon style'), { id: 'style', payload: '{}' }, 'summonAction parses a bare summon to an empty payload')
   assertDeepEqual(menuModel.summonAction("omarchy-shell shell summon style 'k=v'"), { id: 'style', payload: 'k=v' }, 'summonAction parses a quoted payload')
 })
+
+// Input domain of the array-root guard (SW-REQ-260928-BMFE), stated at the
+// text Quickshell's FileView hands to parseMenuJsonc on this mirror.
+test('SW-REQ-260928-BMFE input domain: an array root yields no rows in every encoding shape', () => {
+  const menu = requireFromRoot('shell/plugins/menu/MenuModel.js')
+  // SW-REQ-260928-BMFE:input_domain:nominal -- an array root yields no rows
+  // whatever whitespace, byte-order mark or line endings surround it: the
+  // stripper reads them as spaces, JSON.parse returns the array, the guard
+  // rejects it.
+  for (const [name, pre, nl] of [['plain', '', '\n'], ['a byte-order mark', '﻿', '\n'], ['a no-break space', ' ', '\n'], ['CRLF line endings', '', '\r\n'], ['a line separator', ' ', ' '], ['a vertical tab', '\u000B', '\n']]) {
+    assertEqual(menu.parseMenuJsonc(pre + '[{"label": "x"},' + nl + ' {"label": "y"},' + nl + ']' + nl).length, 0, 'BMFE: an array root wrapped in ' + name + ' yields no rows')
+  }
+  // SW-REQ-260928-BMFE:input_domain:negative -- an array root that still
+  // fails JSON.parse after stripping (a block comment, a NUL, U+FFFD between
+  // tokens) is rejected by the parse step: no rows and no exception.
+  for (const text of ['[/* c */ {"label": "x"}]', '[\u0000{"label": "x"}]', '[�{"label": "x"}]']) {
+    assertEqual(menu.parseMenuJsonc(text).length, 0, 'BMFE: the malformed array root ' + JSON.stringify(text) + ' yields no rows')
+  }
+})

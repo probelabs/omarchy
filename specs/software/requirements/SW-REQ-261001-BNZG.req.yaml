@@ -66,9 +66,9 @@ obligation_hazards:
       worst_case: 'FMEA mode: a character class outside the stated domain has no specified result, so a later refactor changes it silently. The ff77cd02 commit did exactly that for a byte order mark before a comment, and no requirement or test noticed. This requirement names every JS \s character, and the differential test inserts all 19 non-ASCII ones.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T17:45:00Z"
+    reviewed_at: "2026-10-01T23:10:00Z"
     reviewed_by: agent:claude-pr-13968
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -77,7 +77,10 @@ hazard_review:
             - boundary
             - edge_case
             - totality
-          rationale: 'totality: the description names every character class outside strings (each JS \s character, the comma, the comment opener, the quote, anything else via 66FW, C8W1 and E4J2) and inside strings (copied unchanged), so no input has unspecified handling. malformed_input: the input domain is any text, and each of the 19 non-ASCII characters that JS \s matches is whitespace outside strings. Witnessed rows cover a byte order mark, U+00A0, U+2028 and U+3000 before a leading comment, before an indented comment line and before the opening brace. boundary: a byte order mark as the first character and a line feed right before a comment. edge_case: Unicode spaces inside a string stay unchanged, and a carriage return becomes a space while its line feed stays.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'totality: the description names every character class outside strings (each JS \s character, the comma, the comment opener, the quote, anything else via 66FW, C8W1 and E4J2) and inside strings (copied unchanged), so no input has unspecified handling. malformed_input: the input domain is any text, and each of the 19 non-ASCII characters that JS \s matches is whitespace outside strings. Witnessed rows cover a byte order mark, U+00A0, U+2028 and U+3000 before a leading comment, before an indented comment line and before the opening brace. boundary: a byte order mark as the first character and a line feed right before a comment. edge_case: Unicode spaces inside a string stay unchanged, and a carriage return becomes a space while its line feed stays. Catalog 1.11.0 re-review: input_domain applied, this requirement states the byte-level domain of the stripper: every JS whitespace character outside strings, a byte-order mark anywhere, LF / CRLF line endings, any character inside strings; U+FFFD and NUL are not whitespace and still reject the file through JSON.parse. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:
