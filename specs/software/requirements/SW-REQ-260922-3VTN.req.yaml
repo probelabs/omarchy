@@ -19,7 +19,7 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-01T07:40:51.488640277Z"
+    reviewed_at: "2026-10-01T07:53:45.372356104Z"
     reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
     reviewed_targets:
@@ -68,6 +68,17 @@ traces:
             - test/shell.d/menu-dmenu-test.sh:5
             - test/shell.d/menu-dmenu-test.sh:84
             - test/shell.d/menu-dmenu-test.sh:96
+        - reviewed_at: "2026-10-01T07:53:45.372356104Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #9056 review: the only Menu.qml delta is the 8-line cancel-prior guard at the top of open() (+1 Implements line); every link re-checked against the current annotation lines cited; no requirement intent drift outside open()'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:131
+            - shell/plugins/menu/Menu.qml:902
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:10
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
