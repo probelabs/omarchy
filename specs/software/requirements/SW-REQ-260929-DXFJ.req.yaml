@@ -19,40 +19,26 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:54:47.596134Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:54:19.730742Z"
+    reviewed_by: agent:claude-pr-10631
     reviewed_fingerprint: sha256:47e688c32dde592847708eb624fd5d8fbd0e6a76ab3a8335db42c6a8642f9e03
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onShownChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:e0ef806c9646500306c01ffe1ef54b7e
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
-        - reviewed_at: "2026-10-02T16:44:39.973326Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:54:19.730742Z"
+          reviewed_by: agent:claude-pr-10631
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #10631 review on quattro-proof 9f3abc10 (upstream head a78528c9): the Menu.qml delta is the visibleRowsHeight binding (arguments reduced to layoutSerial), the rowListHeight / dmenuRowListHeight signatures (unused parameters dropped) and one extra layoutSerial bump on the rowsLoaded=false path of rebuildDisplay; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Behaviour diff with the real qml6 engine: identical heights at base and head. Each link re-checked against the cited annotation lines; no requirement intent changes.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1161
-            - shell/plugins/menu/Menu.qml:1169
-            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
-            - test/shell.d/menu-pointer-lifecycle-test.sh:66
-            - test/shell.d/menu-pointer-lifecycle-test.sh:7
-            - test/shell.d/menu-pointer-lifecycle-test.sh:72
-        - reviewed_at: "2026-10-02T16:54:47.596134Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1162
             - shell/plugins/menu/Menu.qml:1170
+            - shell/plugins/menu/Menu.qml:1178
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
-            - test/shell.d/menu-pointer-lifecycle-test.sh:66
+            - test/shell.d/menu-pointer-lifecycle-test.sh:20
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
-            - test/shell.d/menu-pointer-lifecycle-test.sh:72
 verification:
     assurance_level: C
     formalization_status: valid
