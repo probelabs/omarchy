@@ -1045,6 +1045,7 @@ test('mcdc normalizeItem: parent inference edges', () => {
   assertEqual(menuModel.normalizeItem('root', { label: 'Go' }).parent, '', 'normalizeItem strips the parent of root itself')
 })
 
+// SW-REQ-260922-3T3F:error_handling:negative -- non-object roots and null/scalar/array entries yield an empty or skipped item set
 test('mcdc parseMenuJsonc: scalar, null, and malformed item shapes', () => {
   assertEqual(menuModel.parseMenuJsonc('42').length, 0, 'parseMenuJsonc rejects a number root')
   assertEqual(menuModel.parseMenuJsonc('null').length, 0, 'parseMenuJsonc rejects a null root')
@@ -1057,6 +1058,8 @@ test('mcdc parseMenuJsonc: scalar, null, and malformed item shapes', () => {
   assertEqual(menuModel.parseMenuJsonc('{"a": {"label": "A"}, "b": {"label": "B"}}').length, 2, 'parseMenuJsonc keeps object entries')
 })
 
+// SYS-REQ-260922-PPDW:error_handling:negative -- null and id-less source entries are skipped; the tree still merges
+// SYS-REQ-260922-PPDW:boundary:nominal -- null (absent) sources merge as empty lists to a tree holding only the injected root
 test('mcdc mergeMenuSources: null entries, id-less entries, null sources', () => {
   const merged = menuModel.mergeMenuSources(
     [null, { label: 'no id' }, { id: 'a', label: 'A' }],

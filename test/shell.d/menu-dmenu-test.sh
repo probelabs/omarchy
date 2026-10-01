@@ -90,6 +90,7 @@ pass "menu select summons a shaped payload and prints the pick"
 
 FAKE_ANSWER=done-only
 run_dmenu omarchy-menu-select "Pick a browser" Brave Firefox Zen
+# SYS-REQ-260922-X6Z5:error_handling:negative -- a dismissed picker reaches the caller as no selection (exit one, nothing printed)
 [[ $STATUS -eq 1 ]] || fail "menu select exits one on a dismissal" "status: $STATUS"
 [[ -z $OUT ]] || fail "menu select prints nothing on a dismissal" "out: $OUT"
 [[ -z $ERR ]] || fail "menu select stays silent on a dismissal" "err: $ERR"

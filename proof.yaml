@@ -61,6 +61,10 @@ project:
             - default/omarchy/omarchy-menu.jsonc
             - test/shell.d/*menu*-test.sh
             - test/shell.d/keybindings-menu-test.sh
+            # Node suites (menu-node, menu-reports): in scope so their
+            # REQ:class:evidence tags reach the obligation corpus and join
+            # the combined JUnit report (P3 observed obligation results).
+            - test/node/**
         completeness:
             production_include:
                 - bin/omarchy-*lock*
@@ -141,33 +145,35 @@ project:
     commands:
         build: >-
             for f in bin/omarchy-apply-lock bin/omarchy-system-lock bin/omarchy-update-lock bin/omarchy-hyprland-session-locked bin/omarchy-system-sleep-lock bin/omarchy-menu bin/omarchy-menu-select bin/omarchy-menu-input bin/omarchy-menu-plugin bin/omarchy-menu-share bin/omarchy-menu-timezone bin/omarchy-menu-file bin/omarchy-menu-emoji-insert; do /usr/bin/bash -n "$f" || exit 1; done; node --check shell/plugins/menu/MenuModel.js
+        # Every command records its results through test/junit/junit.sh into
+        # ONE combined JUnit report, .proof/test-results/junit.xml
+        # (project.checks.test_results below): one <testcase> per shell test
+        # script (file="test/shell.d/<script>", <failure> + output excerpt on a
+        # non-zero exit), node --test results via its junit reporter. A failing
+        # script no longer stops its suite; junit_end still exits non-zero.
         tests:
             lock-shell:
                 language: bash
                 command: >-
-                    set -e; B=/usr/bin/bash;
-                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do "$B" "test/shell.d/$t-test.sh"; done;
-                    if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/update-lock-test.sh; else echo "SKIP update-lock-test.sh: requires Linux flock and /proc"; fi
+                    set -e; B=/usr/bin/bash; . test/junit/junit.sh; junit_begin lock-shell;
+                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do junit_run "$B" "test/shell.d/$t-test.sh"; done;
+                    if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then junit_run "$B" test/shell.d/update-lock-test.sh; else junit_skip test/shell.d/update-lock-test.sh "requires Linux flock and /proc"; fi;
+                    junit_end
             menu-shell:
                 language: bash
                 command: >-
-                    set -e; B=/usr/bin/bash;
-                    "$B" test/shell.d/menu-test.sh;
-                    "$B" test/shell.d/menu-pointer-lifecycle-test.sh;
-                    "$B" test/shell.d/tray-menu-test.sh;
-                    "$B" test/shell.d/menu-plugin-test.sh;
-                    "$B" test/shell.d/menu-dispatcher-test.sh;
-                    "$B" test/shell.d/menu-dmenu-test.sh;
-                    "$B" test/shell.d/menu-timezone-test.sh;
-                    "$B" test/shell.d/menu-share-test.sh;
-                    "$B" test/shell.d/menu-guards-test.sh;
-                    if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then "$B" test/shell.d/menu-images-test.sh; else echo "SKIP menu-images-test.sh: requires Linux flock and /proc"; fi;
-                    if command -v lua >/dev/null 2>&1; then "$B" test/shell.d/keybindings-menu-test.sh; else echo "SKIP keybindings-menu-test.sh: requires lua"; fi;
-                    if find /dev/null -printf '' >/dev/null 2>&1; then "$B" test/shell.d/menu-file-test.sh; else echo "SKIP menu-file-test.sh: requires GNU find (-printf)"; fi
+                    set -e; B=/usr/bin/bash; . test/junit/junit.sh; junit_begin menu-shell;
+                    for t in menu menu-pointer-lifecycle tray-menu menu-plugin menu-dispatcher menu-dmenu menu-timezone menu-share menu-guards; do junit_run "$B" "test/shell.d/$t-test.sh"; done;
+                    if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then junit_run "$B" test/shell.d/menu-images-test.sh; else junit_skip test/shell.d/menu-images-test.sh "requires Linux flock and /proc"; fi;
+                    if command -v lua >/dev/null 2>&1; then junit_run "$B" test/shell.d/keybindings-menu-test.sh; else junit_skip test/shell.d/keybindings-menu-test.sh "requires lua"; fi;
+                    if find /dev/null -printf '' >/dev/null 2>&1; then junit_run "$B" test/shell.d/menu-file-test.sh; else junit_skip test/shell.d/menu-file-test.sh "requires GNU find (-printf)"; fi;
+                    junit_end
             menu-node:
                 language: js
                 command: >-
-                    node --test test/node/menumodel-replay.test.mjs
+                    set -e; . test/junit/junit.sh; junit_begin menu-node;
+                    node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination="$JUNIT_PART" test/node/menumodel-replay.test.mjs || junit_fail $?;
+                    junit_end
             # Issue-report reproducers (test/reports/, from the fork
             # report/<id> branches) as a regression net: expected failures
             # bound to their known issues, skipped only when a runtime the
@@ -175,11 +181,15 @@ project:
             menu-reports:
                 language: js
                 command: >-
-                    node --test test/node/report-reproducers.test.mjs
+                    set -e; . test/junit/junit.sh; junit_begin menu-reports;
+                    node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination="$JUNIT_PART" test/node/report-reproducers.test.mjs || junit_fail $?;
+                    junit_end
             lock-qml:
                 language: qml
                 command: >-
-                    bash test/qml/lock/run.sh
+                    set -e; . test/junit/junit.sh; junit_begin lock-qml;
+                    junit_run bash test/qml/lock/run.sh;
+                    junit_end
     lint:
         exclude:
             # Post-quattro upstream additions (herdr 03b825f5, tmux 3edf254a):
@@ -241,8 +251,30 @@ project:
             # if the plugin is ever split for real.
             # 128 -> 130 (2026-10-01): room for the consolidated JSONC requirements + the input-domain requirement.
             max_variables: 130
+        test_results:
+            # P3 observed obligation results: tests_pass links this report and
+            # writes its run record (<report>.run.json), which the evidence
+            # assembler's currency check requires. Written by every test
+            # command through test/junit/junit.sh (see project.commands.tests).
+            auto_link: true
+            report_path: .proof/test-results/junit.xml
+            format: junit
+            # Every command that writes part of the report. tests_pass runs
+            # each of them in every audit path: the shared code-level MC/DC
+            # run executes only the commands its targets bind, so without this
+            # list menu-reports (the issue-report reproducers) never reached
+            # the report in a full audit.
+            commands: [lock-shell, menu-shell, menu-node, menu-reports, lock-qml]
         slow_tests:
             enabled: true
+            # A <testcase> in the combined report is a WHOLE test script or
+            # harness (test/junit/junit.sh), not one assertion: lock-qml drives
+            # a headless sway + quickshell session (~100s on the loaded audit
+            # box), sleep-lock-test.sh ~30s. The engine does not mark the
+            # bash/qml shared code-level MC/DC run's timings as instrumented
+            # (only go's), so the default 5s per-test budget would fail on
+            # whole-suite durations. 300s flags a hung or runaway script.
+            threshold_seconds: 300
         defect_review_current:
             # Scoped by the upstream_refresh_v1 campaign on
             # fix/jsonc-trailing-comma-in-strings (2026-09-27, agent

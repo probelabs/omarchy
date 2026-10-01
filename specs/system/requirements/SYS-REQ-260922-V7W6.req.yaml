@@ -69,6 +69,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'redos_resistant evaluated and suppressed with rationale: the matcher constructs no RegExp from the query and uses linear-time indexOf scans, so catastrophic backtracking is structurally impossible on this surface - the class precondition (regex evaluation on the input path) does not fire, which is stronger than tuning a bounded pattern set. No external call, IPC, or trust boundary: search narrows an in-memory tree built from the user own config and same-machine providers.'
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -76,3 +77,8 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T18:23:08Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=1; tests_pass:test_status=passing
+          changed_by: agent:claude-test-results
