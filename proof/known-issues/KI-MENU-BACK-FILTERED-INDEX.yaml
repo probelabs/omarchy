@@ -10,7 +10,7 @@ severity_basis: risk
 risk: correctness
 cve_surface: none
 reproducer_command: node pocs/pr13012-back-from-search.js
-introduced_in: 7255fd06
+introduced_in: a38415fa
 defect_class: new_defect
 minimization_status: minimized
 mitigation: Cursor placement only; no action runs and the user can move the cursor. Enter on the wrong row would open/run that row.
@@ -43,5 +43,9 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-back-filtered-index.yaml
+    - at: "2026-10-01T22:50:33Z"
+      by: agent:claude-pr-13012
+      action: edit
+      detail: introduced-in=a38415fa
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
