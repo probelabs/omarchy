@@ -9,7 +9,7 @@ set -euo pipefail
 # openExistingMenu / openRoute bodies from shell/plugins/menu/Menu.qml under
 # node vm, with resultProc captured instead of spawning bash, and observes
 # which answer writes each summon issues.
-#mcdc:ignore:defensive SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=F => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set, before openDmenu/openRoute can overwrite or clear the request; finishRequest captures the done-file path before clearing state and issues the done-only write, so an abandoned prior caller needs that call removed [reviewed: REVIEW-80]
+#mcdc:ignore:defensive SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=F => FALSE -- open() calls finishRequest(null) unconditionally when requestActive is set, before openDmenu/openRoute can overwrite or clear the request; finishRequest captures the done-file path before clearing state and issues the done-only write, so an abandoned prior caller needs that call removed [reviewed: REVIEW-261001-SYQB]
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 

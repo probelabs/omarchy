@@ -1,6 +1,6 @@
 id: SW-REQ-260925-XTGG
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -25,11 +25,16 @@ traces:
 verification:
     assurance_level: C
     formalization_status: valid
+    review:
+        status: ""
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: false
 history:
     created_by: agent:v2-third-party-review
     created_at: "2026-10-01T08:00:00Z"
     last_modified_by: agent:v2-third-party-review
-    last_modified_at: "2026-10-01T08:00:00Z"
+    last_modified_at: "2026-10-01T07:43:12Z"
 hazard_review:
     reviewed_at: "2026-10-01T08:00:00Z"
     reviewed_by: agent:v2-third-party-review
@@ -51,3 +56,10 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: QML/JS (GC'd) plus bash writing a constant-format truncation; no manual memory, pointers, or binary framing.
+lifecycle:
+    change_history:
+        - date: "2026-10-01T07:43:12Z"
+          from: draft
+          to: review
+          reason: '[omacom/omarchy#9056] PR #9056 review: requirement authored for the cancel-prior guard; spec conformance REVIEW-261001-SYQB; executing witnesses in menu-summon-cancel-test.sh'
+          changed_by: agent:v2-third-party-review
