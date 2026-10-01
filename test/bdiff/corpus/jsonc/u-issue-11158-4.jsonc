@@ -1,0 +1,8 @@
+{
+  "id": "reidenxerx.idle-dim",
+  "kinds": ["bar-widget"],
+  "menu": {
+    "setup.idle-dim": { "icon": "󰣝", "label": "Idle dim", "aliases": ["dim", "brightness"] },
+    "setup.idle-dim.delay.60": { "label": "1 minute", "action": "$PLUGIN_BIN/idle-dim-config set-delay 60" }
+  }
+}

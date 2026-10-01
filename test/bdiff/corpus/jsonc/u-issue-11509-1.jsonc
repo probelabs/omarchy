@@ -1,0 +1,4 @@
+{
+"trigger.capture.screenrecord.no-audio": {"action": "omarchy-capture-screenrecording --resolution=1920x1080"},
+
+}

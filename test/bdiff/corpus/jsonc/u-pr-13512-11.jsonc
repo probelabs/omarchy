@@ -1,0 +1,8 @@
+{
+input:  {\n  "a": {"label": "A"},\n  // "b": {"label": "B"},\n}
+output: {\n  "a": {"label": "A"},\n  }        <- JSON.parse rejects the comma
+
+input:  {\n  "a": {"label": "A"}, // note\n}
+output: {\n  "a": {"label": "A"}, }
+
+}

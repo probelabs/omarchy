@@ -1,0 +1,5 @@
+{
+"apps":  { "icon": "󰀻", "label": "Apps", "aliases": ["app","applications"], "provider": "apps" },
+"about": { "icon": "", "label": "About", "action": "omarchy-launch-about" }
+
+}

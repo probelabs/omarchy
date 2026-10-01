@@ -1,0 +1,4 @@
+{
+"setup.default.agent.cursor": {"icon":"...","label":"Cursor","when":"omarchy-cmd-present agent","checked":"[[ \"cursor\" == \"cursor\" ]]","action":"omarchy-default-agent cursor"},
+
+}

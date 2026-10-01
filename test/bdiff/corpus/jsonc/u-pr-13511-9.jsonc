@@ -1,0 +1,2 @@
+[{"label":"x"},{"label":"y"}] -> parsed rows: 2 visible: []
+[{"label":"Notes","action":"echo notes"}] -> parsed rows: 1 visible: ["Notes"]
