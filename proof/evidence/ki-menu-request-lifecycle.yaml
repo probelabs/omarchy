@@ -6,16 +6,16 @@ results:
         - SW-REQ-260922-C8HX
         - SW-REQ-260922-3VTN
         - SYS-REQ-260922-X6Z5
-      command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
-      status: fail
+      command: pocs/menu-qml-static.sh
+      status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-04T19:47:33Z"
+      executed_at: "2026-10-01T11:09:02Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-REQUEST-LIFECYCLE` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
-        - test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
+        - 'Captured by `proof evidence capture KI-MENU-REQUEST-LIFECYCLE` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - pocs/menu-qml-static.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-REQUEST-LIFECYCLE.yaml: ki-content-v1:sha256:9559fde60cc83d179f29f02bc201943756144b3ba4ccf90106945402d03b9575
-        test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh: sha256:f576fa65e0aa77869652a554c3554e8437213f0a1a01564be421e53ff3e90c16
+        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
+        proof/known-issues/KI-MENU-REQUEST-LIFECYCLE.yaml: ki-content-v1:sha256:192b0b562996919ea9bc43d0074eb9d13219c277544e04fbaf347491c0502753
       known_issues:
         - KI-MENU-REQUEST-LIFECYCLE
       config:
