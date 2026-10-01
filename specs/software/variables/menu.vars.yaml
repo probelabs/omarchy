@@ -296,6 +296,10 @@ variables:
       type: bool
       direction: output
       description: The menu closes without touching any file.
+    - name: prior_request_cancelled
+      type: bool
+      direction: output
+      description: A summon arriving while a select/input request is active first answers that prior request as cancelled (finishRequest(null), done file only) before the new open proceeds.
     - name: picker_verb_given
       type: bool
       direction: input
