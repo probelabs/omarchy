@@ -1,0 +1,10 @@
+id: REVIEW-261001-EAD8
+kind: spec_conformance
+reviewer: agent:v2-third-party-review
+reviewed_at: "2026-10-01T07:51:58Z"
+subject: SW-REQ-260922-SJ7P
+decision: approved
+comment: 'Re-read searchScore on the PR #12223 tree (supersedes REVIEW-62, which described the old -5 in-tier app demotion). Tier ladder unchanged: exact label (root-deprioritized), whole-word app name, label prefix, label substring, name text, description; menus/links -2. Apps now take -100, more than the whole tier range (0-80), so any matching app scores below (ranks above) every matching menu entry, and apps keep tier order among themselves; final order still breaks ties by depth*25 then declaration order. match_quality_varies -> better_match_ranks_first holds within each kind; across kinds the kind bias dominates by design per the updated description. Consequence recorded for maintainers: an app matching only by description/keyword outranks a menu entry whose label equals the query (witnessed in test/shell.d/menu-search-apps-first-test.sh with Update).'
+citations:
+    - shell/plugins/menu/MenuModel.js:354@searchScore
+    - shell/plugins/menu/MenuModel.js:377
