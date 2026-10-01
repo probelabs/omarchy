@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-01T09:52:15.216189783Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T11:23:19.679408264Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:stripJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/Menu.qml:item: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:2f6b152a605ef73b581a00575c5009ad
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:2f6b152a605ef73b581a00575c5009ad
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
@@ -64,6 +64,18 @@ traces:
           reviewed_by: agent:claude-quattro-clean
           method: inspection
           rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:44
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:7
+        - reviewed_at: "2026-10-01T11:23:19.679408264Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof: the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:259

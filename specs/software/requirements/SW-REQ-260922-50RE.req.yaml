@@ -19,16 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-09-29T14:26:56.986519539Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T11:23:20.89437663Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:open: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:openDmenu: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:open: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:openDmenu: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:472526d002de8d982420c7fb73bfec8d
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -84,6 +84,17 @@ traces:
             - shell/plugins/menu/Menu.qml:924
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh
+        - reviewed_at: "2026-10-01T11:23:20.89437663Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof: the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - shell/plugins/menu/Menu.qml:35
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:20
+            - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-09-29T14:26:57.106923853Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T11:23:27.187370848Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:472526d002de8d982420c7fb73bfec8d
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -51,6 +51,18 @@ traces:
             - test/shell.d/menu-test.sh:309
             - test/shell.d/menu-test.sh:33
             - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T11:23:27.187370848Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #12223 review on quattro-proof: the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:493
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/shell.d/menu-search-apps-first-test.sh:5
+            - test/shell.d/menu-test.sh:33
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
