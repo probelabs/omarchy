@@ -14,13 +14,13 @@ risk: correctness
 cve_surface: none
 affected_api: MenuModel.parseMenuJsonc root-type guard
 reproducer_command: sh test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh
-tripwire_mutation: 'Add Array.isArray(parsed) to the parseMenuJsonc root guard (as the pr/13511 line does): the green tripwire tagged Reproduces KI-MENU-JSONC-ARRAY-ROOT flips red and the red reproducer test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh starts exiting 0.'
+tripwire_mutation: 'Add Array.isArray(parsed) to the parseMenuJsonc root guard (as omacom/omarchy#13968 does): the green tripwire tagged Reproduces KI-MENU-JSONC-ARRAY-ROOT flips red and the red reproducer test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh starts exiting 0.'
 introduced_in: inception
 defect_class: latent
 mitigation: The trigger is a menu file with an array root, and the documented format never uses one. The phantom rows show in the root menu, so the user sees that the file is wrong
-remediation: Reject an array root like the scalar roots (omacom/omarchy PR 13511, fork line pr/13511 with SW-REQ-260928-BMFE)
+remediation: Reject an array root like the scalar roots, as omacom/omarchy#13968 does with an Array.isArray guard (SW-REQ-260928-BMFE on its proof mirror).
 owner: agent:claude-quattro-clean
-review_date: "2026-10-01"
+review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
 status: open
 history:
@@ -36,6 +36,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-array-root.yaml
+    - at: "2026-10-01T21:22:15Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-tripwire-mutation,set-remediation,set-review-date
 dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-INLINE-COMMENT or KI-MENU-JSONC-STRIP-GAPS: this one is an array root walked by index into phantom rows; those are the items wrapper key, string rewriting, inline comment tails and block comments'
 kill_domain: parsing
 affected_file:

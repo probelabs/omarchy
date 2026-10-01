@@ -14,13 +14,13 @@ risk: data_integrity
 cve_surface: none
 affected_api: MenuModel.parseMenuJsonc / stripJsonc trailing-comma pass (default and user menu JSONC)
 reproducer_command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh
-tripwire_mutation: 'Make the stripJsonc comma pass string-aware (copy string-literal bytes verbatim, as the pr/13255 scanner does): the green tripwires tagged Reproduces KI-MENU-JSONC-COMMA-IN-STRING in test/shell.d/menu-test.sh and test/node/menumodel-replay.test.mjs flip red, and the red reproducer test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh starts exiting 0.'
+tripwire_mutation: 'Make the stripJsonc comma pass string-aware (copy string-literal bytes verbatim, as omacom/omarchy#13968 does): the green tripwires tagged Reproduces KI-MENU-JSONC-COMMA-IN-STRING in test/shell.d/menu-test.sh and test/node/menumodel-replay.test.mjs flip red, and the red reproducer test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh starts exiting 0.'
 introduced_in: inception
 defect_class: latent
 mitigation: The defect needs a user or extension string with a comma directly before } or ]. The shipped default menu has no such string. An author can drop the comma or put a character between the comma and the closer
-remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim (omacom/omarchy PR 13255, fork line pr/13255 with SW-REQ-260927-66FW). Keep the whole-line comment pass first, so a trailing comma followed by comment lines and the closer is still dropped (pinned by the preservation tests)
+remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim, as omacom/omarchy#13968 does (SW-REQ-260927-66FW on its proof mirror). Keep dropping a trailing comma that is followed by comment lines and the closer, which the preservation tests pin.
 owner: agent:claude-quattro-clean
-review_date: "2026-10-01"
+review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
 status: open
 history:
@@ -40,6 +40,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-01T21:22:15Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-tripwire-mutation,set-remediation,set-review-date
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

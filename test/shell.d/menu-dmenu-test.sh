@@ -119,6 +119,61 @@ run_dmenu omarchy-menu-select "Pick a browser"
 # MCDC SW-REQ-260922-FGZQ: finish_requested=F, selection_and_done_written=F => TRUE [no-action: the payload spy captured nothing -- the run never reaches a finish]
 pass "menu select refuses an empty option list with usage and exit one"
 
+# --- Options from stdin: the input domain of the line reader ---------------
+# With no option arguments and a non-terminal stdin, every stdin line is one
+# option (mapfile -t). Each line is decoded as UTF-8 for the payload; the
+# outcome per partition is pinned below.
+
+run_dmenu_stdin() {
+  local input="$1"; shift
+  rm -f "$TMPDIR/payload"
+  OUT=$(printf '%b' "$input" | PATH="$STUB_DIR:$PATH" SPY_PAYLOAD="$TMPDIR/payload" FAKE_ANSWER="$FAKE_ANSWER" FAKE_SELECTION="${FAKE_SELECTION:-}" \
+    "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-select" "$@" 2>"$TMPDIR/err") && STATUS=0 || STATUS=$?
+  ERR=$(cat "$TMPDIR/err")
+  PAYLOAD=""
+  [[ -f $TMPDIR/payload ]] && PAYLOAD=$(cat "$TMPDIR/payload")
+  return 0
+}
+
+FAKE_ANSWER=selection
+FAKE_SELECTION=Brave
+# SW-REQ-260922-Q6ZS:input_domain:nominal -- LF lines become options in order;
+# a missing final newline still ends the last option.
+run_dmenu_stdin 'Brave\nFirefox\nZen' "Pick a browser"
+printf '%s' "$PAYLOAD" | jq -e '.options == ["Brave", "Firefox", "Zen"]' >/dev/null ||
+  fail "menu select reads LF-separated stdin lines as options" "payload: $PAYLOAD"
+# SW-REQ-260922-Q6ZS:input_domain:nominal -- CRLF lines keep their CR: the
+# option text is the line as read, so a CRLF producer gets its own bytes back.
+run_dmenu_stdin 'Brave\r\nZen\r\n' "Pick a browser"
+printf '%s' "$PAYLOAD" | jq -e '.options == ["Brave\r", "Zen\r"]' >/dev/null ||
+  fail "menu select keeps the CR of CRLF stdin lines in the option text" "payload: $PAYLOAD"
+# SW-REQ-260922-Q6ZS:input_domain:nominal -- a byte-order mark, Unicode
+# spaces and a tab stay part of the option text; blank lines are empty options.
+run_dmenu_stdin '\xef\xbb\xbfBrave\n\xc2\xa0Zen\xe3\x80\x80\n\nA\tB\n' "Pick a browser"
+printf '%s' "$PAYLOAD" | jq -e '.options == ["﻿Brave", " Zen　", "", "A\tB"]' >/dev/null ||
+  fail "menu select passes BOM, Unicode spaces, blank lines and tabs through as option text" "payload: $PAYLOAD"
+# SW-REQ-260922-Q6ZS:input_domain:nominal -- invalid UTF-8 decodes to U+FFFD
+# instead of aborting the payload encode.
+run_dmenu_stdin 'Br\xffave\nZen\xe2\x82\n' "Pick a browser"
+[[ $STATUS -eq 0 ]] || fail "menu select accepts invalid UTF-8 on stdin" "status: $STATUS err: $ERR"
+printf '%s' "$PAYLOAD" | jq -e '.options == ["Br�ave", "Zen�"]' >/dev/null ||
+  fail "menu select decodes invalid UTF-8 stdin bytes to U+FFFD" "payload: $PAYLOAD"
+# SW-REQ-260922-Q6ZS:input_domain:nominal -- a large stdin (5000 lines) arrives whole.
+run_dmenu_stdin "$(for i in $(seq 1 5000); do printf 'option-%s\\n' "$i"; done)" "Pick a browser"
+printf '%s' "$PAYLOAD" | jq -e '(.options | length) == 5000 and .options[4999] == "option-5000"' >/dev/null ||
+  fail "menu select reads 5000 stdin lines as 5000 options" "options: $(printf '%s' "$PAYLOAD" | jq '.options | length')"
+# SW-REQ-260922-Q6ZS:input_domain:negative -- an empty stdin is no options:
+# usage on stderr, exit one, no summon.
+run_dmenu_stdin '' "Pick a browser"
+[[ $STATUS -eq 1 && -z $PAYLOAD ]] || fail "menu select treats an empty stdin as no options" "status: $STATUS payload: $PAYLOAD"
+[[ $ERR == "Usage: omarchy-menu-select <prompt> [option...] [-- menu args...]" ]] ||
+  fail "menu select prints usage for an empty stdin" "err: $ERR"
+# SW-REQ-260922-Q6ZS:input_domain:negative -- option arguments win: stdin is not read.
+run_dmenu_stdin 'Ignored\n' "Pick a browser" Brave
+printf '%s' "$PAYLOAD" | jq -e '.options == ["Brave"]' >/dev/null ||
+  fail "menu select ignores stdin when options come from arguments" "payload: $PAYLOAD"
+pass "menu select reads stdin lines as options per the stated input domain"
+
 # --- Input mode: same protocol, text answer --------------------------------
 
 FAKE_ANSWER=selection

@@ -245,6 +245,73 @@ assertEqual(
   'KI-MENU-JSONC-STRIP-GAPS tripwire: a block comment is not stripped and empties the whole file'
 )
 
+// Input domain of the menu JSONC reader (SW-REQ-260922-E4J2, SW-REQ-260922-3T3F),
+// stated per partition at the text Quickshell's FileView hands to
+// parseMenuJsonc. Checked live under Quickshell 0.3.1: FileView drops a
+// leading UTF-8 byte-order mark, decodes invalid UTF-8 to U+FFFD, and keeps
+// CR, CRLF and every other character as read. The cases below pin the
+// upstream outcome of each partition; the two defects are green tripwires of
+// their known issues.
+const domainRows = text => menu.parseMenuJsonc(text).map(item => item.id + '=' + item.label).join('|')
+const domainDoc = '{\n  // comment\n  "a": {"label": "A"},\n  "b": {"label": "B"},\n}\n'
+// SW-REQ-260922-E4J2:input_domain:nominal -- LF and CRLF line endings, and a
+// CR-only file without comments, parse to the same entries.
+assertEqual(domainRows(domainDoc), 'a=A|b=B', 'menu JSONC with LF line endings parses to its entries')
+assertEqual(domainRows(domainDoc.replace(/\n/g, '\r\n')), 'a=A|b=B', 'menu JSONC with CRLF line endings parses like LF')
+assertEqual(domainRows('{\r  "a": {"label": "A"},\r}\r'), 'a=A', 'menu JSONC with CR-only line endings and no comment parses')
+// SW-REQ-260922-E4J2:input_domain:nominal -- any JS whitespace character
+// (no-break space, ideographic space, VT, FF, a byte-order mark) indenting a
+// full-line comment is dropped together with the comment.
+for (const ch of [' ', '　', '\u000b', '\u000c', '﻿', ' ']) {
+  assertEqual(
+    domainRows(domainDoc.replace('  // comment', ch + ch + '// comment')),
+    'a=A|b=B',
+    'menu JSONC drops a full-line comment indented with U+' + ch.charCodeAt(0).toString(16).padStart(4, '0')
+  )
+}
+// SW-REQ-260922-E4J2:input_domain:nominal -- inside a string literal every
+// character is data: Unicode spaces, a byte-order mark, a line separator and
+// the U+FFFD that FileView decodes invalid UTF-8 to are copied unchanged.
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "x y﻿ �z"}}')[0].label,
+  'x y﻿ �z',
+  'menu JSONC copies non-ASCII characters inside a string literal unchanged'
+)
+// SW-REQ-260922-E4J2:input_domain:nominal -- a huge file (over 1 MiB: a
+// 40000-line comment block and a 64 KiB string value) parses completely. The
+// bulk sits in comments and one string, so few rows reach the model.
+const hugeDoc = '{\n' + Array.from({ length: 40000 }, (_, i) => '  // line ' + i + ' ' + 'c'.repeat(12) + '\n').join('') +
+  '  "a": {"label": "A", "description": "' + 'd'.repeat(65536) + '"},\n  "b": {"label": "B"},\n}\n'
+assertEqual(hugeDoc.length > 1048576, true, 'the huge menu JSONC case is over 1 MiB')
+assertEqual(domainRows(hugeDoc), 'a=A|b=B', 'menu JSONC parses a file over 1 MiB to all of its entries')
+// SW-REQ-260922-3T3F:input_domain:negative -- empty input, whitespace only,
+// and U+FFFD or NUL outside a string reject the document as a whole: an
+// empty item set, no exception.
+for (const text of ['', ' \t\r\n', '{�"a": {"label": "A"}}', '{"a":\u0000{"label": "A"}}']) {
+  assertEqual(menu.parseMenuJsonc(text).length, 0, 'menu JSONC rejects ' + JSON.stringify(text) + ' to an empty item set')
+}
+// SW-REQ-260922-3T3F:input_domain:nominal -- a non-string value reaches the
+// parser as text first, so null and undefined read as empty input.
+assertEqual(menu.parseMenuJsonc(null).length + menu.parseMenuJsonc(undefined).length, 0, 'menu JSONC reads null and undefined as empty input')
+// Reproduces: KI-MENU-JSONC-UNICODE-WHITESPACE
+// SW-REQ-260922-E4J2:input_domain:negative -- a JS whitespace character that
+// JSON does not accept (VT, FF, no-break space, the U+2000 spaces, line and
+// paragraph separators, ideographic space, a byte-order mark after the start)
+// between tokens rejects the whole file.
+for (const ch of ['\u000b', '\u000c', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '　', '﻿']) {
+  assertEqual(
+    menu.parseMenuJsonc('{"a":' + ch + '{"label": "A"}}').length,
+    0,
+    'KI-MENU-JSONC-UNICODE-WHITESPACE tripwire: U+' + ch.charCodeAt(0).toString(16).padStart(4, '0') + ' between tokens empties the whole file'
+  )
+}
+// Reproduces: KI-MENU-JSONC-CR-LINE-ENDINGS
+assertEqual(
+  menu.parseMenuJsonc(domainDoc.replace(/\n/g, '\r')).length,
+  0,
+  'KI-MENU-JSONC-CR-LINE-ENDINGS tripwire: with CR-only line endings a full-line comment swallows the rest of the file'
+)
+
 const user = [
   menu.normalizeItem('style.theme', { label: 'Theme picker', aliases: ['theme', 'colors'], action: 'custom-theme' }),
   menu.normalizeItem('tools', { label: 'Tools' })

@@ -95,12 +95,17 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T15:09:54Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T20:47:45Z"
+    last_modified_by: agent:claude-baseline-pass
+    last_modified_at: "2026-10-01T21:23:26Z"
+obligation_suppressions:
+    - id: input_domain
+      reason: refresh() only re-triggers the two FileView loads of the default and user menu files; the bytes are parsed by MenuModel.parseMenuJsonc, whose input domain is stated and witnessed on SW-REQ-260922-E4J2 and SW-REQ-260922-3T3F. 50RE itself reads no external input.
+      suppressed_by: agent:claude-baseline-pass
+      suppressed_at: "2026-10-01T21:23:26Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:04:08Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:16Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -109,7 +114,10 @@ hazard_review:
             - error_handling
             - boundary
             - concurrent
-          rationale: 'Worst case: a malformed or hostile IPC payload - unparsable JSON, unknown mode, absent menu id - crashes or wedges the IpcHandler and takes down the whole Quickshell desktop shell, or a second summon arrives while the menu is open and clobbers the live request''s doneFile/selection state. malformed_input: JSON.parse sits in a try/catch degrading to {} so an unparsable payload answers as a root-menu open instead of killing the handler - the declared parse policy. error_handling: every dispatch arm answers (dmenu flow, route fallback to root, close, refresh, ping); no payload shape leaves the call unanswered. boundary: the exact mode strings select/input split dmenu from route, and initialMenu/menu/root is a three-step fallback chain whose arms are the tested partition. concurrent: open-while-open and open-while-dmenu-active interleave through the opened/requestActive/requestSerial discipline, but a second select summon while the first is unanswered replaces selectionFile/doneFile without answering the first caller, so that omarchy-menu-select polls forever - KI-MENU-REQUEST-LIFECYCLE (omacom/omarchy#9057), behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh; upstream e332dc97 has no cancel-prior guard (that is PR #9056). Note: payload.fontFamily is an accepted same-user cosmetic override, graded low - the IPC endpoint is same-user local and carries no privilege.'
+            - concurrency_scale
+          suppressed:
+            - input_domain
+          rationale: 'Worst case: a malformed or hostile IPC payload - unparsable JSON, unknown mode, absent menu id - crashes or wedges the IpcHandler and takes down the whole Quickshell desktop shell, or a second summon arrives while the menu is open and clobbers the live request''s doneFile/selection state. malformed_input: JSON.parse sits in a try/catch degrading to {} so an unparsable payload answers as a root-menu open instead of killing the handler - the declared parse policy. error_handling: every dispatch arm answers (dmenu flow, route fallback to root, close, refresh, ping); no payload shape leaves the call unanswered. boundary: the exact mode strings select/input split dmenu from route, and initialMenu/menu/root is a three-step fallback chain whose arms are the tested partition. concurrent: open-while-open and open-while-dmenu-active interleave through the opened/requestActive/requestSerial discipline, but a second select summon while the first is unanswered replaces selectionFile/doneFile without answering the first caller, so that omarchy-menu-select polls forever - KI-MENU-REQUEST-LIFECYCLE (omacom/omarchy#9057), behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh; upstream e332dc97 has no cancel-prior guard (that is PR #9056). Note: payload.fontFamily is an accepted same-user cosmetic override, graded low - the IPC endpoint is same-user local and carries no privilege. Catalog 1.11.0 re-review: input_domain suppressed, suppressed with a reason on this requirement: refresh() re-triggers the FileView loads, and the bytes are parsed by parseMenuJsonc (SW-REQ-260922-E4J2, SW-REQ-260922-3T3F). concurrency_scale applied, the IPC handler serves open/close/refresh/ping requests that can arrive back to back; request supersession is stated on SYS-REQ-260922-X6Z5.'
         - category: property
           disposition: reviewed
           applied:

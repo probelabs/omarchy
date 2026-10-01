@@ -1,0 +1,42 @@
+id: KI-MENU-JSONC-UNICODE-WHITESPACE
+title: Unicode or control whitespace between JSONC tokens empties the whole menu file
+description: 'parseMenuJsonc (shell/plugins/menu/MenuModel.js) hands the stripped text to JSON.parse, which accepts only space, tab, LF and CR as whitespace. JavaScript''s \s, which the comment pass uses, is wider: VT, FF, U+00A0 no-break space, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F, U+3000 and U+FEFF. Such a character indenting a whole-line // comment is removed with the comment, but anywhere else between tokens JSON.parse throws, and the catch returns an empty item set for the whole file. A user extension pasted from a web page or a word processor (where no-break spaces are common) therefore silently loses every entry, with no diagnostic. Checked live under Quickshell 0.3.1: FileView keeps these characters as read (it drops only a leading byte-order mark), and the real MenuModel.js parses a file with one U+00A0 or U+000B between tokens to 0 rows. pocs/menu-jsonc-unicode-whitespace.sh reproduces it for all 21 characters against an ASCII-space control; test/shell.d/menu-test.sh pins it as a green tripwire.'
+affected_requirements:
+    - SW-REQ-260922-E4J2
+    - SW-REQ-260922-3T3F
+evidence_manifests:
+    - proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: MenuModel.parseMenuJsonc (default and user menu JSONC)
+reproducer_command: sh pocs/menu-jsonc-unicode-whitespace.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: minimized
+mitigation: 'Replace no-break spaces and other non-ASCII spaces in the menu file with ASCII spaces (for example: sed -i ''s/\xc2\xa0/ /g'' <file>); the shipped default menu carries none.'
+remediation: 'Read every JS whitespace character outside a string literal as plain whitespace before JSON.parse, as omacom/omarchy#13968 does (characters inside strings stay data). Close criterion: pocs/menu-jsonc-unicode-whitespace.sh exits 0 and the KI-MENU-JSONC-UNICODE-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
+owner: agent:claude-baseline-pass
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-10-01T21:21:16Z"
+      by: agent:claude-baseline-pass
+      action: created
+    - at: "2026-10-01T21:21:25Z"
+      by: agent:claude-baseline-pass
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
+    - at: "2026-10-01T21:21:25Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: add-evidence-manifest
+    - at: "2026-10-01T21:21:40Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS: this one is non-ASCII and control whitespace between tokens that JSON.parse rejects; those are block comments, inline comment tails, string rewriting, array roots and CR-only line endings'
+kill_domain: parsing
+affected_file: shell/plugins/menu/MenuModel.js

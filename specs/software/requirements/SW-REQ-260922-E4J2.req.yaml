@@ -80,12 +80,14 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:00Z"
-    last_modified_by: agent:kimi-zero-warnings
-    last_modified_at: "2026-09-27T21:25:40Z"
+    last_modified_by: agent:claude-baseline-pass
+    last_modified_at: "2026-10-01T21:23:25Z"
+obligation_checklist:
+    - input_domain
 hazard_review:
-    reviewed_at: "2026-09-30T07:19:32Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:18Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -93,7 +95,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'Clean-baseline review against upstream e332dc97 (2026-10-01). Upstream stripJsonc is two string-blind regex passes: a line-anchored pass drops each whole-line // comment with its line break, then a pass drops each comma whose next non-whitespace character is } or ]. Worst case: the comma pass also matches inside string literals, so a label or action carrying comma+closer ("x, ]y", mv f{.bak,}) is silently rewritten while the parse still succeeds (KI-MENU-JSONC-COMMA-IN-STRING, #13250); an inline // tail is not stripped, so JSON.parse rejects the file and the whole file contributes no rows (KI-MENU-JSONC-INLINE-COMMENT, #13493; docs/menu.md documents the limitation); block comments are not stripped (KI-MENU-JSONC-STRIP-GAPS). Within the documented grammar the order of the two passes is the control: a trailing comma followed by whole-line comments and then } or ] is dropped, so a commented-out entry after the last real one keeps every row (preservation tests in menu-test.sh and test/node/menumodel-replay.test.mjs, incl. the shipped extension template with its examples uncommented, and a 2000-case seeded differential property test). boundary: EOF without a trailing newline after a comment line is matched by (\n|$); a file that strips to whitespace yields []. edge_case: // inside a string survives because only line-leading comments are matched; CRLF comment lines are removed whole.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Clean-baseline review against upstream e332dc97 (2026-10-01). Upstream stripJsonc is two string-blind regex passes: a line-anchored pass drops each whole-line // comment with its line break, then a pass drops each comma whose next non-whitespace character is } or ]. Worst case: the comma pass also matches inside string literals, so a label or action carrying comma+closer ("x, ]y", mv f{.bak,}) is silently rewritten while the parse still succeeds (KI-MENU-JSONC-COMMA-IN-STRING, #13250); an inline // tail is not stripped, so JSON.parse rejects the file and the whole file contributes no rows (KI-MENU-JSONC-INLINE-COMMENT, #13493; docs/menu.md documents the limitation); block comments are not stripped (KI-MENU-JSONC-STRIP-GAPS). Within the documented grammar the order of the two passes is the control: a trailing comma followed by whole-line comments and then } or ] is dropped, so a commented-out entry after the last real one keeps every row (preservation tests in menu-test.sh and test/node/menumodel-replay.test.mjs, incl. the shipped extension template with its examples uncommented, and a 2000-case seeded differential property test). boundary: EOF without a trailing newline after a comment line is matched by (\n|$); a file that strips to whitespace yields []. edge_case: // inside a string survives because only line-leading comments are matched; CRLF comment lines are removed whole. Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: LF, CRLF, comment indentation with any JS whitespace, any character inside strings and huge files are accepted; non-ASCII whitespace between tokens and CR-only files with a comment empty the menu (KI-MENU-JSONC-UNICODE-WHITESPACE, KI-MENU-JSONC-CR-LINE-ENDINGS). concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

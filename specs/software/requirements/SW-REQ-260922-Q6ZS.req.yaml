@@ -48,10 +48,11 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:04Z"
-    last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T07:46:53Z"
+    last_modified_by: agent:claude-baseline-pass
+    last_modified_at: "2026-10-01T21:23:26Z"
 obligation_checklist:
     - external_call_timeout_bounded
+    - input_domain
 obligation_deferrals:
     - obligation_class: external_call_timeout_bounded
       reason: 'This requirement implementation carries the done_file poll itself (while [[ ! -e $done_file ]]; sleep 0.05) with no deadline and no peer-liveness probe: a selector that dies after a successful summon hangs the script and every synchronous dmenu caller - the reproduced defect the KI pins. The bound belongs to the KI fix at this site.'
@@ -60,9 +61,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:46:51Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:20Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -70,7 +71,10 @@ hazard_review:
             - boundary
             - edge_case
             - malformed_input
-          rationale: 'Worst case: caller-supplied bytes corrupting the summon payload into a shape the shell misreads as a different mode or destination - closed structurally: every string field passes an explicit UTF-8 decode and JSON encode in perl, so any argv bytes arrive as payload values, never structure. boundary: the options-source partition is the contract spine - argv options, or stdin lines when no arguments and stdin is non-terminal, or the B839 usage exit when neither source exists; width/maxHeight appear only when given and are int-coerced. edge_case: an empty pipe yields an empty options array (defined empty menu rather than an error, with B839 owning the no-source case); invalid UTF-8 argv dies loudly at the decode instead of mojibake-ing into the payload.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Worst case: caller-supplied bytes corrupting the summon payload into a shape the shell misreads as a different mode or destination - closed structurally: every string field passes an explicit UTF-8 decode and JSON encode in perl, so any argv bytes arrive as payload values, never structure. boundary: the options-source partition is the contract spine - argv options, or stdin lines when no arguments and stdin is non-terminal, or the B839 usage exit when neither source exists; width/maxHeight appear only when given and are int-coerced. edge_case: an empty pipe yields an empty options array (defined empty menu rather than an error, with B839 owning the no-source case); invalid UTF-8 argv dies loudly at the decode instead of mojibake-ing into the payload. Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: LF and CRLF lines, a BOM, Unicode spaces, blank lines, invalid UTF-8 (decoded to U+FFFD) and 5000 lines all become option text, and an empty stdin is no options (witnesses in test/shell.d/menu-dmenu-test.sh). concurrency_scale not applicable, each run owns its own mktemp selection and done files; supersession of overlapping requests is stated on SYS-REQ-260922-X6Z5.'
         - category: property
           disposition: reviewed
           applied:
@@ -83,6 +87,15 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Local mktemp paths and the session shell IPC summon; the far side of the protocol is the shell plugin siblings own surface, and this side carries no network, crypto, or privilege boundary.
+defect_review:
+    reviewed_at: "2026-09-30T12:57:19Z"
+    session: CRS-260930-K02D
+    fingerprint_sha: sha256:543bdaba6f78786e87b8a584e2864906b7dc2f1b078a79c6d6b5a459da02d8cf
+    via: cli-session
+    counts:
+        emitted: 16
+        verified: 4
+        dismissed: 11
 verification_state: failing
 lifecycle:
     change_history:
@@ -96,12 +109,3 @@ lifecycle:
           to: review
           reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
           changed_by: agent:kimi-zero-warnings
-defect_review:
-    reviewed_at: "2026-09-30T12:57:19Z"
-    session: CRS-260930-K02D
-    fingerprint_sha: sha256:543bdaba6f78786e87b8a584e2864906b7dc2f1b078a79c6d6b5a459da02d8cf
-    via: cli-session
-    counts:
-        emitted: 16
-        verified: 4
-        dismissed: 11

@@ -1,0 +1,23 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirements:
+        - SW-REQ-260922-E4J2
+        - SW-REQ-260922-3T3F
+      command: sh pocs/menu-jsonc-unicode-whitespace.sh
+      status: fail
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-01T21:21:41Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-JSONC-UNICODE-WHITESPACE` from the KnownIssue''s reproducer command: sh pocs/menu-jsonc-unicode-whitespace.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - pocs/menu-jsonc-unicode-whitespace.sh
+      freshness_hashes:
+        pocs/menu-jsonc-unicode-whitespace.sh: sha256:0f103ac63eeadb773235ca3eec991de8f33bc958689ec3e99a848db1db087114
+        proof/known-issues/KI-MENU-JSONC-UNICODE-WHITESPACE.yaml: ki-content-v1:sha256:c6bc9b6a66f82eba7b31fc1449539f5b48d5a8f6bba80efa3859eddf0eb607be
+      known_issues:
+        - KI-MENU-JSONC-UNICODE-WHITESPACE
+      config:
+        - os:darwin
+        - arch:arm64
+        - arch:aarch64
+        - privilege:non-root

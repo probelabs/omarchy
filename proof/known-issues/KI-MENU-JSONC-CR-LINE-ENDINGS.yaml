@@ -1,0 +1,41 @@
+id: KI-MENU-JSONC-CR-LINE-ENDINGS
+title: A whole-line comment in a CR-only menu file swallows the rest of the file
+description: 'The comment pass in stripJsonc (shell/plugins/menu/MenuModel.js) is /^\s*\/\/[^\n]*(\n|$)/gm. With the m flag, ^ also matches after a lone CR, but [^\n]* stops only at LF. In a file saved with CR-only line endings (classic Mac style) the first whole-line // comment therefore runs to the end of the file, the rest of the document is deleted, JSON.parse fails, and parseMenuJsonc returns an empty item set. Checked live under Quickshell 0.3.1: FileView keeps CR as read, and the real MenuModel.js parses a CR-only file with one comment line to 0 rows. LF and CRLF files, and CR-only files without comments, parse correctly. pocs/menu-jsonc-cr-line-endings.sh reproduces it with LF, CRLF and comment-free controls; test/shell.d/menu-test.sh pins it as a green tripwire.'
+affected_requirements:
+    - SW-REQ-260922-E4J2
+evidence_manifests:
+    - proof/evidence/ki-menu-jsonc-cr-line-endings.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: MenuModel.stripJsonc comment pass (default and user menu JSONC)
+reproducer_command: sh pocs/menu-jsonc-cr-line-endings.sh
+introduced_in: inception
+defect_class: latent
+minimization_status: minimized
+mitigation: Save the menu file with LF (or CRLF) line endings; CR-only files without comments are unaffected.
+remediation: 'End a // comment at any line terminator the m flag treats as one (CR, LF, U+2028, U+2029), or normalise CR and CRLF to LF before stripping. omacom/omarchy#13968 does not change this: its comment drop also stops only before LF. Close criterion: pocs/menu-jsonc-cr-line-endings.sh exits 0 and the KI-MENU-JSONC-CR-LINE-ENDINGS tripwire in test/shell.d/menu-test.sh flips red.'
+owner: agent:claude-baseline-pass
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-10-01T21:21:16Z"
+      by: agent:claude-baseline-pass
+      action: created
+    - at: "2026-10-01T21:21:25Z"
+      by: agent:claude-baseline-pass
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-jsonc-cr-line-endings.yaml
+    - at: "2026-10-01T21:21:25Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: add-evidence-manifest
+    - at: "2026-10-01T21:21:40Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-cr-line-endings.yaml
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-UNICODE-WHITESPACE: this one is a line comment running past a lone CR to the end of the file; those are block comments, inline comment tails, string rewriting, array roots and non-ASCII whitespace'
+kill_domain: parsing
+affected_file: shell/plugins/menu/MenuModel.js

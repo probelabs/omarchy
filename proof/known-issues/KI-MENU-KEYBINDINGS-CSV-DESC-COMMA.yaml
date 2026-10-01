@@ -39,6 +39,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-csv-desc-comma.yaml
+    - at: "2026-10-01T21:22:30Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-dedup-armor
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -64,6 +68,7 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
         untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-INLINE-COMMENT: this one is the keybindings menu script splitting its own comma-joined cache rows (bin/omarchy-menu-keybindings), not menu JSONC parsing in MenuModel.js; a comma in a binding description shifts the CSV fields whatever the JSONC fix'
 kill_domain: parsing
 do_not_refile_as: comma in the command/arg breaks parsing (args are rebuilt from field 5 onward and round-trip; only the middle description field is unquoted)
 affected_file: bin/omarchy-menu-keybindings
