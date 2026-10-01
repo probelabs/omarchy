@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T23:52:19.643709544Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T07:42:03.713588409Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:5d70ec11c2728a6a84828b2ec501a60914f63731954459963091601fb12a2222
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:item: file1:59b4437c6bd5e88c5c40a028f1a04877
             shell/plugins/menu/MenuModel.js:normalizeItem: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
@@ -54,6 +54,18 @@ traces:
             - test/shell.d/menu-test.sh:66
             - test/shell.d/menu-test.sh:9
             - test/shell.d/menu-test.sh:97
+        - reviewed_at: "2026-10-01T07:42:03.713588409Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #9056 review: the only Menu.qml delta is the 8-line cancel-prior guard at the top of open() (+1 Implements line); every link re-checked against the current annotation lines cited; no requirement intent drift outside open()'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:258
+            - shell/plugins/menu/Menu.qml:263
+            - shell/plugins/menu/MenuModel.js:47
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:9
 verification:
     assurance_level: C
     formalization_status: valid

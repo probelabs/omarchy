@@ -19,15 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-09-29T14:26:57.123970864Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T07:41:37.310228735Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:revealCursor: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:underhang: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml: file1:59b4437c6bd5e88c5c40a028f1a04877
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:59b4437c6bd5e88c5c40a028f1a04877
+            shell/plugins/menu/Menu.qml:revealCursor: file1:59b4437c6bd5e88c5c40a028f1a04877
+            shell/plugins/menu/Menu.qml:underhang: file1:59b4437c6bd5e88c5c40a028f1a04877
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -65,6 +65,38 @@ traces:
             - test/shell.d/menu-compositor-test.sh:375
             - test/shell.d/menu-compositor-test.sh:376
             - test/shell.d/menu-compositor-test.sh:377
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-01T07:41:09.673949722Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #9056 review: the only Menu.qml delta is the 8-line cancel-prior guard at the top of open() (+1 Implements line); every link re-checked against the current annotation lines cited; no requirement intent drift outside open()'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1213
+            - shell/plugins/menu/Menu.qml:577
+            - shell/plugins/menu/Menu.qml:586
+            - shell/plugins/menu/Menu.qml:747
+            - shell/plugins/menu/Menu.qml:767
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:291
+            - test/shell.d/menu-compositor-test.sh:27
+            - test/shell.d/menu-compositor-test.sh:367
+            - test/shell.d/menu-compositor-test.sh:368
+            - test/shell.d/menu-compositor-test.sh:375
+            - test/shell.d/menu-compositor-test.sh:376
+            - test/shell.d/menu-compositor-test.sh:377
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-01T07:41:37.310228735Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #9056 review: the only Menu.qml delta is the 8-line cancel-prior guard at the top of open() (+1 Implements line); every link re-checked against the current annotation lines cited; no requirement intent drift outside open()'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:577
+            - shell/plugins/menu/Menu.qml:586
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:291
+            - test/shell.d/menu-compositor-test.sh:27
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C

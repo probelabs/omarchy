@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-09-29T23:52:19.813261679Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T07:41:37.799956214Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:runAction: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:runAction: file1:59b4437c6bd5e88c5c40a028f1a04877
             shell/plugins/menu/MenuModel.js:stripJsonc: file1:083952493ac11b0d139e04ee8d9ec0f9
             shell/plugins/menu/MenuModel.js:summonAction: file1:083952493ac11b0d139e04ee8d9ec0f9
         satisfies:
@@ -60,6 +60,35 @@ traces:
             - test/shell.d/menu-test.sh:919
             - test/shell.d/menu-test.sh:932
             - test/shell.d/menu-test.sh:943
+        - reviewed_at: "2026-10-01T07:41:10.406459173Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #9056 review: the only Menu.qml delta is the 8-line cancel-prior guard at the top of open() (+1 Implements line); every link re-checked against the current annotation lines cited; no requirement intent drift outside open()'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:152
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:551
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:6
+            - test/shell.d/menu-test.sh:921
+            - test/shell.d/menu-test.sh:922
+            - test/shell.d/menu-test.sh:935
+            - test/shell.d/menu-test.sh:946
+        - reviewed_at: "2026-10-01T07:41:37.799956214Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #9056 review: the only Menu.qml delta is the 8-line cancel-prior guard at the top of open() (+1 Implements line); every link re-checked against the current annotation lines cited; no requirement intent drift outside open()'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:152
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:551
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:6
 verification:
     assurance_level: C
     formalization_status: valid
