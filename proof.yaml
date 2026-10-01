@@ -240,15 +240,7 @@ project:
             # slices realizable with connected-component pruning. Budget
             # raised to the truthful current size plus headroom; revisit
             # if the plugin is ever split for real.
-            # 2026-10-01 (pr/13012 advisory review, agent
-            # v2-third-party-review): +3 variables for SW-REQ-261001-B4CK
-            # (Back restores the remembered row: back_navigated,
-            # remembered_row_present, remembered_row_selected) take
-            # specs/software/menu from 127 to 130. Budget raised to the
-            # truthful size, same disposition as above; with pr/9056
-            # (+1, prior_request_cancelled) also merged the menu spec
-            # holds 131 and needs 131.
-            max_variables: 130
+            max_variables: 128
         slow_tests:
             enabled: true
         defect_review_current:
