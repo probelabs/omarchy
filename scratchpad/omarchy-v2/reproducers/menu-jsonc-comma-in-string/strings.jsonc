@@ -1,0 +1,4 @@
+{
+  "backup": {"icon":"","label":"Keep f{.bak,}","description":"mv f{.bak,} old/*.jpg"},
+  "cleanup": {"icon":"","label":"Clean tmp","action":"rm -v /tmp/*.cache"},
+}

@@ -1,0 +1,4 @@
+[
+  {"id": "personal", "label": "Personal"},
+  {"id": "personal.notes", "label": "Notes", "action": "omarchy-launch-editor ~/notes"}
+]
