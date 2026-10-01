@@ -104,7 +104,7 @@ assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}')
 // ]. The assertions below pin what that order gets RIGHT (preservation) and,
 // tagged Reproduces, what it gets wrong (known issues, pinned as green
 // tripwires: each flips red when the named upstream fix lands).
-// SW-REQ-260922-E4J2: a real trailing comma before a closing brace is dropped.
+// SW-REQ-260922-E4J2:boundary:nominal -- a real trailing comma before a closing brace is dropped.
 assertEqual(
   menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
   1,
