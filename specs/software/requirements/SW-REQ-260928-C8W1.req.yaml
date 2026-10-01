@@ -1,0 +1,91 @@
+id: SW-REQ-260928-C8W1
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: the menu_model shall always satisfy comment_tail_dropped <=> !comment_in_string
+description: When the JSONC stripper meets a // comment opener outside every string literal, it drops the comment wherever the opener sits on the line. The drop stops before the line break, so the tokens on each side stay apart. An opener inside a string literal is data, and the stripper copies it unchanged.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-PPDW
+component: menu
+rationale: Upstream MenuModel.js stripJsonc removes only whole-line comments. An inline comment tail stays in the text, JSON.parse rejects the whole file, and the menu goes empty (#13493). PR omacom/omarchy#13968 strips comments in its string-aware scanner and keeps the line break.
+tags: []
+variables:
+    - comment_in_string
+    - comment_tail_dropped
+traces:
+    satisfies:
+        - SYS-REQ-260922-PPDW
+    review_history:
+        - reviewed_at: "2026-09-27T23:58:50.63446Z"
+          reviewed_by: agent:kimi-zero-warnings
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:1
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml:1
+            - test/shell.d/menu-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-13968
+        reviewed_at: "2026-10-01T17:45:00Z"
+        ai_generated: true
+        motivation:
+            kind: defect
+            ref: DEFECT-260928-7AX9
+            rationale: 'This requirement closes the inline-comment-tail class (#13493) on the PR #13968 scanner. It models the comment-strip decision (comment_in_string -> comment_tail_dropped).'
+history:
+    created_by: agent:kimi-zero-warnings
+    created_at: "2026-09-27T23:52:32Z"
+    last_modified_by: agent:claude-pr-13968
+    last_modified_at: "2026-10-01T17:44:24Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'FMEA mode (a): an inline comment tail stays in the text and JSON.parse rejects the whole menu file. Every row of that file goes away until the user edits the file. FMEA mode (b): a scanner that drops the line break with the comment joins the tokens on each side, so 1//c and then 2 on the next line becomes 12 and changes a value. FMEA mode (c): a comment opener inside a string is taken as a comment and cuts a label or action. The PR #13968 scanner forbids all three modes.'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-10-01T17:45:00Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+          rationale: 'malformed_input: an inline comment tail is legal JSONC that the stripper must remove without a change to string bytes. boundary: a comment at end of input with no line break drops to the end, and a comment between two tokens keeps its line break, so 1//c, a line break and 2 is still rejected. edge_case: // inside a string ("A // B") stays as data, JSON syntax inside a comment tail has no effect, and a whole-line comment with an unbalanced quote does not open a string.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: The scanner is one left-to-right pass with no environment, order or time inputs, so the same text always strips the same way. The seeded differential test in test/node/menumodel-replay.test.mjs includes inline comments.
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags (HTTP, crypto or IPC frameworks) apply. The component parses a local user-authored config file into a menu model.
+        - category: structural
+          disposition: not_applicable
+          rationale: The code is garbage-collected JavaScript in the QML JS engine. It has no manual memory, pointer arithmetic, binary framing or format strings, so the C-family structural catalog does not apply.
+lifecycle:
+    change_history:
+        - date: "2026-09-27T23:58:50Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-inline-comment-tail] fix branch review: equivalence verified against stripJsonc by REVIEW-73; RED->GREEN witnessed in both harnesses this campaign'
+          changed_by: agent:kimi-zero-warnings
+        - date: "2026-10-01T17:45:00Z"
+          from: review
+          to: review
+          reason: '[pr/13968] re-applied from e797ba5b and reworded to the PR #13968 scanner: the comment drop keeps the line break.'
+          changed_by: agent:claude-pr-13968
