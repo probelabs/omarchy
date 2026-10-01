@@ -6,4 +6,4 @@ subject: SW-REQ-260922-3VTN
 decision: approved
 comment: Read finishRequest and cancel in Menu.qml plus menu-dmenu-test.sh. finishRequest's first branch returns early with only opened=false when no request is active or no done file exists — it creates or truncates nothing, and the dismissal path (menu-dmenu-test.sh:91) observes empty stdout/stderr and exit 1. The no_active_request condition models the !requestActive || !doneFile guard exactly; cancel() routes dmenu dismissal through the same finishRequest(null). Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:132@finishRequest
+    - shell/plugins/menu/Menu.qml:130@finishRequest
