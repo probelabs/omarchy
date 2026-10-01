@@ -8,6 +8,8 @@ description: |-
     We checked this with the real MenuModel.js at the PR head merged onto the baseline. pocs/pr6525-comment-indent-whitespace.sh shows it for all 21 characters against an ASCII-indented control. Quickshell's FileView drops a byte-order mark at the very start of the file, so a leading BOM before a header comment does not trigger it under the shell; the same character on any later line does.
 affected_requirements:
     - SW-REQ-260922-E4J2
+evidence_manifests:
+    - proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
 severity: low
 severity_basis: risk
 risk: correctness
@@ -28,6 +30,10 @@ history:
     - at: "2026-10-01T23:03:20Z"
       by: agent:claude-pr-6525
       action: created
+    - at: "2026-10-01T23:03:55Z"
+      by: agent:claude-pr-6525
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-UNICODE-WHITESPACE: that one is non-JSON whitespace BETWEEN tokens, present on the baseline and unchanged by #6525; this one is the same characters INDENTING a whole-line comment, which the baseline accepts and #6525 newly rejects. Also not KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS (inline comment tails, block comments, string rewriting, array roots, CR-only line endings).'
 kill_domain: parsing
 affected_file: shell/plugins/menu/MenuModel.js
