@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when match_quality_varies the menu_search shall eventually satisfy better_match_ranks_first
-description: Scores tier exact label, whole-word app name, label prefix, label substring, name text, then description. Menus and links promote by 2. Apps demote by 100, which exceeds the whole tier range, so every matching installed app ranks above every matching menu entry while apps keep tier order among themselves. Final order breaks ties by depth then declaration order.
+description: Scores tier exact label, whole-word app name, label prefix, label substring, name text, then description. Menus and links promote by 2. Apps demote by 100, which exceeds the whole tier range. Every matching installed app thus ranks above every matching menu entry. Apps keep tier order among themselves. Final order breaks ties by depth then declaration order.
 formalization_strategy: fretish
 informal_verification:
     method: ""
