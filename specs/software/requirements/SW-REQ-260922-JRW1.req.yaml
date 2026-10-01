@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:18.536807824Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T22:51:18.403442Z"
+    reviewed_by: agent:claude-pr-13012
     reviewed_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:c55c0e087c499aafc84417cf7f5eef78
             shell/plugins/menu/MenuModel.js:isDisabled: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:isVisible: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:labelFor: file1:4f7f286f5fa1815a2a370c084b85fb34
@@ -68,6 +68,21 @@ traces:
             - shell/plugins/menu/MenuModel.js:262
             - shell/plugins/menu/MenuModel.js:285
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-test.sh:29
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T22:51:18.403442Z"
+          reviewed_by: agent:claude-pr-13012
+          method: inspection
+          rationale: 'PR #13012 review on quattro-proof 9f3abc10 (upstream head 7a7fb10c): the Menu.qml delta is confined to setActiveMenu/goBack (remembered row index and id on the nav stack, restored on Back) plus one annotation move inside goBack; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; the new Back behaviour is authored as SW-REQ-261001-B4CK (witnesses now in test/node/menumodel-replay.test.mjs), other requirement intents are unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:498
+            - shell/plugins/menu/Menu.qml:506
+            - shell/plugins/menu/MenuModel.js:262
+            - shell/plugins/menu/MenuModel.js:285
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:302
             - test/shell.d/menu-test.sh:29
             - test/shell.d/menu-test.sh:5
 verification:
