@@ -21,6 +21,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-10-01T22:40:32.23978Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_fingerprint: sha256:0c34f90de08562484d5c9874022b82d1f39c638e0821be235060518a2921f24e
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
         - reviewed_at: "2026-09-27T23:58:50.63446Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -43,14 +51,6 @@ traces:
             - test/node/menumodel-replay.test.mjs:379
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-    reviewed_at: "2026-10-01T22:40:32.23978Z"
-    reviewed_by: agent:claude-pr-13968
-    reviewed_fingerprint: sha256:0c34f90de08562484d5c9874022b82d1f39c638e0821be235060518a2921f24e
-    reviewed_targets:
-        implemented_by:
-            shell/plugins/menu/MenuModel.js:stripJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
-        satisfies:
-            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
 verification:
     assurance_level: C
     formalization_status: valid
@@ -100,6 +100,7 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: The code is garbage-collected JavaScript in the QML JS engine. It has no manual memory, pointer arithmetic, binary framing or format strings, so the C-family structural catalog does not apply.
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T23:58:50Z"
@@ -111,4 +112,9 @@ lifecycle:
           from: review
           to: review
           reason: '[pr/13968] re-applied from e797ba5b and reworded to the PR #13968 scanner: the comment drop keeps the line break.'
+          changed_by: agent:claude-pr-13968
+        - date: "2026-10-01T22:57:21Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-73=present | tests_pass:test_status=passing
           changed_by: agent:claude-pr-13968
