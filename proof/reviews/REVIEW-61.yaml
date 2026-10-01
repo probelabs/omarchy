@@ -6,4 +6,4 @@ subject: SW-REQ-260922-RGCV
 decision: approved
 comment: Read guardHelpers. The prelude builds __omarchy_pkgs from pacman -Qq plus parsed Provides entries, and __omarchy_pkg_has falls back to pacman -Q for version-constrained names, so omarchy-pkg-present/missing agree with pacman -Q including provides resolution and the no-argument case. pkg_presence_asked models calls to the shadows; shadow_matches_pacman is the cache-plus-fallback construction. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:461
+    - shell/plugins/menu/MenuModel.js:506

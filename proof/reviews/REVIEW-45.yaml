@@ -6,4 +6,4 @@ subject: SW-REQ-260922-CYB9
 decision: approved
 comment: Read resolveRoute. With no exact id hit, the alias scan compares the normalized input (lowercased, underscores mapped to dashes) against each non-app entry's normalized aliases and returns the declaring item's id on a hit. The condition route_input & !exact_id_match & alias_match models exactly this middle arm; app entries are deliberately skipped, matching the description's scope. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:210
+    - shell/plugins/menu/MenuModel.js:255
