@@ -9,13 +9,14 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T11:09:02Z"
+      executed_at: "2026-10-01T20:54:02Z"
+      revision: 8d10f137dc4db428a924588bba09097766dd14ad
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-REQUEST-LIFECYCLE` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
         pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-REQUEST-LIFECYCLE.yaml: ki-content-v1:sha256:192b0b562996919ea9bc43d0074eb9d13219c277544e04fbaf347491c0502753
+        proof/known-issues/KI-MENU-REQUEST-LIFECYCLE.yaml: ki-content-v1:sha256:6312cafadde82b23303b7804368a62661b76051c5adf8036760ebd00c470477f
       known_issues:
         - KI-MENU-REQUEST-LIFECYCLE
       config:
