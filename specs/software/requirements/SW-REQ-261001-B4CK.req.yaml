@@ -56,10 +56,10 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: ""
-        reviewer: ""
-        reviewed_at: ""
-        ai_generated: false
+        status: in_review
+        reviewer: agent:v2-third-party-review
+        reviewed_at: "2026-10-01T08:20:00Z"
+        ai_generated: true
 history:
     created_by: agent:v2-third-party-review
     created_at: "2026-10-01T08:00:00Z"
