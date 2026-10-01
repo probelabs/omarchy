@@ -155,6 +155,7 @@ project:
                     "$B" test/shell.d/menu-plugin-test.sh;
                     "$B" test/shell.d/menu-dispatcher-test.sh;
                     "$B" test/shell.d/menu-dmenu-test.sh;
+                    "$B" test/shell.d/menu-search-apps-first-test.sh;
                     "$B" test/shell.d/menu-timezone-test.sh;
                     "$B" test/shell.d/menu-share-test.sh;
                     "$B" test/shell.d/menu-guards-test.sh;

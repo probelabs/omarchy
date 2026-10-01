@@ -299,6 +299,11 @@ assert(
   'menu search skips disabled rows, which belong to the submenu they sit in rather than a list of what you can do'
 )
 
+assert(
+  /if \(drilldownRows\[f\]\.kind === "app"\) appRows\.push\(drilldownRows\[f\]\)[\s\S]*?rows = appRows\.concat\(currentRows\)\.concat\(deeperRows\)/.test(menuQml),
+  'menu pins matching app rows above the direct children in search'
+)
+
 const entry = merged.items['style.theme']
 // MCDC SW-REQ-260922-DQ9P: all_terms_matched=T, query_terms_given=T, row_hidden_from_results=F => FALSE
 assert(menu.matchesQuery(entry, 'theme', true), 'menu matches labels and aliases')
@@ -378,8 +383,22 @@ assert(
   'menu ranks an app matching the query as a whole word above exact-labeled menu entries'
 )
 assert(
-  rankScore('style.font', 'font') < rankScore('apps.fontforge', 'font'),
-  'menu keeps a better-matching menu entry above a weaker app match'
+  rankScore('apps.fontforge', 'font') < rankScore('style.font', 'font'),
+  'menu ranks an installed app above a menu entry even when the menu entry matches better'
+)
+
+// "vsc" matches the VSCode menu entries by label prefix but the installed
+// app only by keyword substring, so without an apps-first bias the app
+// sorts second. The menu must still put the app on top.
+const vscRanked = menu.mergeAppRows(rankBase.items, rankBase.itemOrder, [
+  { id: 'apps.code', parent: 'apps', kind: 'app', label: 'Visual Studio Code', description: 'Text Editor', aliases: ['Text Editor', 'vscode'] }
+])
+const vscScore = (id, query) => menu.searchScore(vscRanked.items, vscRanked.items[id], query)
+assert(
+  ['setup.default.editor.vscode', 'install.editor.vscode'].every(
+    id => vscScore('apps.code', 'vsc') < vscScore(id, 'vsc')
+  ),
+  'menu ranks the installed VS Code app above its VSCode menu entries for vsc'
 )
 
 // Ranking only engages when match quality varies: two whole-word app matches
@@ -1216,8 +1235,8 @@ test('mcdc searchScore: every tier with a deterministic order and depth', () => 
   assertEqual(sc('ex', 'zen'), 0, 'searchScore puts an exact root-level menu label at the top of its tier')
   assertEqual(sc('ax', 'zen'), 2000, 'searchScore keeps an exact action label two points above an exact menu label')
   assertEqual(sc('nx', 'zen'), -1975, 'searchScore drops a nested exact label below root-level and adds one depth step')
-  assertEqual(sc('ap', 'zen'), -5000, 'searchScore puts an app whole-word match in its own negative tier')
-  assertEqual(sc('ap2', 'zen'), 5000, 'searchScore keeps an app label that only prefixes the query out of the whole-word tier')
+  assertEqual(sc('ap', 'zen'), -100000, 'searchScore puts an app whole-word match in its own negative tier, below every menu tier')
+  assertEqual(sc('ap2', 'zen'), -90000, 'searchScore keeps an app label that only prefixes the query out of the whole-word tier, still above every menu row')
   assertEqual(sc('pf', 'zen'), 8000, 'searchScore scores a label-prefix match at ten')
   assertEqual(sc('lk', 'zen'), 8000, 'searchScore scores a link row like a menu row')
   assertEqual(sc('ct', 'zen'), 28000, 'searchScore scores a mid-label match at thirty')
@@ -1260,3 +1279,4 @@ test('mcdc summonAction: in-process summon shape and every rejection', () => {
   assertDeepEqual(menuModel.summonAction('omarchy-shell shell summon style'), { id: 'style', payload: '{}' }, 'summonAction parses a bare summon to an empty payload')
   assertDeepEqual(menuModel.summonAction("omarchy-shell shell summon style 'k=v'"), { id: 'style', payload: 'k=v' }, 'summonAction parses a quoted payload')
 })
+
