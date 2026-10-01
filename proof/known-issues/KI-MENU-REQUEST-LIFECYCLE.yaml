@@ -23,6 +23,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: A dropped waiter loses at most one prompt; the next summon re-handshakes cleanly and no stale selection is ever dispatched
 remediation: finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only
+notes:
+    - 'PR omacom/omarchy#9056 (head 0b4fe292, mirrored on pr/9056 over quattro-proof): the guard at the top of open() answers an active request as cancelled before the new summon dispatches. This fixes the re-summon leg (SX26/C06/C07, upstream #9057). On this mirror the behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh exits 0, and test/shell.d/menu-summon-cancel-test.sh witnesses the guard (SW-REQ-260925-XTGG). The PR does not address the busy-resultProc leg (SX26/C14/C15) or the doneFile-only leg. Those legs stay open and have static evidence only.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -59,6 +61,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-01T11:07:23Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: append-note
 kill_domain: handshake
 affected_file:
     - shell/plugins/menu/MenuModel.js
