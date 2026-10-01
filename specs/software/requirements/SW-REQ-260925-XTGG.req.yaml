@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-X6Z5
 component: menu
-rationale: 'Upstream PR omacom/omarchy#9056 (commit 0b4fe292, kept unchanged at head b7bd59c4) adds the guard "if (root.requestActive) root.finishRequest(null)" at the top of Menu.qml open(), ahead of the openDmenu/openRoute dispatch that overwrites or clears selectionFile/doneFile/requestActive. Fixes omacom/omarchy#9057 and the re-summon leg (SX26/C06/C07) of KI-MENU-REQUEST-LIFECYCLE.'
+rationale: 'Upstream PR omacom/omarchy#9056 (head 0b4fe292) adds the guard "if (root.requestActive) root.finishRequest(null)" at the top of Menu.qml open(), ahead of the openDmenu/openRoute dispatch that overwrites or clears selectionFile/doneFile/requestActive. Fixes omacom/omarchy#9057 and the re-summon leg (SX26/C06/C07) of KI-MENU-REQUEST-LIFECYCLE. The later head b7bd59c4 keeps this guard unchanged.'
 tags: []
 variables:
     - menu_open_called
