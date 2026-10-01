@@ -989,6 +989,18 @@ assert(
   'mouse activation carries pointer intent into subordinate menus'
 )
 
+const openBody = menuQml.match(/function open\(payloadJson\) \{([\s\S]*?)\n  \}/)[1]
+assert(
+  /if \(root\.requestActive\) root\.finishRequest\(null\)/.test(openBody)
+    && openBody.indexOf('root.finishRequest(null)') < openBody.indexOf('root.openDmenu(payload)'),
+  'menu answers a request still in flight before a new summon replaces it'
+)
+const finishBody = menuQml.match(/function finishRequest\(selection\) \{([\s\S]*?)\n  \}/)[1]
+assert(
+  (finishBody.match(/Quickshell\.execDetached\(/g) || []).length === 2 && !/\.running = true/.test(finishBody),
+  'menu writes every answer in a process of its own, so back-to-back answers cannot drop one'
+)
+
 // WC89: menu -> lock interface contract. The default config's Lock row
 // carries action "omarchy-system-lock" verbatim, and openRoute runs action
 // rows through Util.execDetached (REVIEW-28).
