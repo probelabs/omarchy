@@ -3,7 +3,7 @@
 Flags: >25 words in descriptive fields, >20 in procedural (AC text), passive voice."""
 import re, sys, yaml, pathlib
 
-root = pathlib.Path("/private/tmp/omarchy-fix-jsonc-comma")
+root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")  # checkout to scan (default: current directory)
 DESCRIPTIVE = {"description", "rationale", "story", "notes", "reason", "detail", "result"}
 PROCEDURAL = {"text"}  # acceptance criteria text
 

@@ -1,8 +1,8 @@
 // Reproducer: inside Style, search "font", open the Font row, press Back.
 // Drives the shipped code: MenuModel.js search + setActiveMenu/goBack/activateIndex
 // extracted verbatim from Menu.qml (same extraction the menu test suite uses).
-// (from the scratchpad/omarchy-v2 recording session; originally staged ad hoc in
-// a session dir, landed here 2026-10-01). Paths resolve repo-relative; the menu
+// (written for the evidence-clip recording session, landed here 2026-10-01).
+// Paths resolve repo-relative; the menu
 // fixture is the copy recorded at the clip's revs, override with MENU_DATA=<file>.
 const fs = require("fs")
 const vm = require("vm")
