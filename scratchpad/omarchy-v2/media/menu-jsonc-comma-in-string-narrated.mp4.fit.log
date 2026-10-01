@@ -1,0 +1,6 @@
+video duration: 17.266667s
+line 1	start=0.05	end=1.95	win=1.900s	raw=2.173696s	ratio=1.144	TEMPO
+line 2	start=2.15	end=8.90	win=6.750s	raw=7.493696s	ratio=1.110	TEMPO
+line 3	start=9.10	end=10.15	win=1.050s	raw=1.233288s	ratio=1.175	TEMPO
+line 4	start=10.40	end=17.10	win=6.700s	raw=6.448798s	ratio=0.963	OK
+audio total=17.266667s (video 17.266667s)

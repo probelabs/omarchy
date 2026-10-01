@@ -56,3 +56,54 @@ Each clip's driver, fixtures, and README now live in-repo under `reproducers/<cl
   The first keystroke of each fresh wtype process also races seat focus and
   is dropped, so every wtype invocation is prefixed with a no-op Shift
   keypress; the burned-in captions are the only post-capture addition.
+
+## Narrated variants (2026-10-01)
+
+The narrated-video-evidence role treatment was applied to all five clips: visuals
+re-rendered by re-running the committed reproducers on the same headless-sway
+harness (BEFORE/AFTER takes with off-camera rev swaps), captions re-burned
+unchanged, plus a synchronized TTS voiceover per the role's Phase 5 doctrine
+(local piper, storyboard-driven sync, `-c:v copy` mux). Narration states only
+what the clip shows; fit logs land beside each output as
+`<name>-narrated.mp4.fit.log`.
+
+- TTS backend: piper 1.2.0 release binary + `en_US-lessac-medium` voice, already
+  present in userland at `~/proof-env/tts/` (the role's sanctioned userland
+  install; no cloud TTS, no sudo). Voiceover assembler: the role's
+  `voiceover.sh` (deployed at `~/proof-env/gui/voiceover.sh`).
+
+| Narrated file | Duration | Speech before / after | Narration (abridged) |
+|---|---|---|---|
+| `menu-jsonc-comment-tail-narrated.mp4` | 16.8s | 7.3s / 6.4s | A comment can blank the whole menu — trailing comma + inline comment parse to 0 rows on the shipped parser; the fixed scanner parses both files to 3 rows. |
+| `menu-jsonc-comma-in-string-narrated.mp4` | 17.3s | 8.2s / 6.1s | A comma in a string gets rewritten — the old parser eats it while still succeeding; the string-aware strip round-trips values verbatim. |
+| `menu-jsonc-array-root-narrated.mp4` | 17.3s | 7.4s / 5.5s | An array root invents rows 0,1 on the old parser; the fix rejects it like scalar roots — 0 rows, no phantom ids. |
+| `menu-back-from-search-narrated.mp4` | 18.1s | 6.1s / 5.1s | Search font, open Font, press Back — old build lands on Theme row 0; fix restores the selection by id (Font, row 3). |
+| `menu-back-from-search-gui-narrated.mp4` | 18.4s | 6.7s / 6.5s | Same flow on the live menu UI — old build lands on Theme; fix lands back on Font. |
+
+The silent originals in this directory are untouched. Visuals of the narrated
+variants come from fresh takes:
+
+- Terminal clips (4): re-ran `record-take.sh` with the committed drivers,
+  staging `git show <rev>:shell/plugins/menu/{MenuModel.js,Menu.qml}` into the
+  demo dir per side, then re-assembled with the same confs. The pipeline is
+  deterministic: all four re-assembled files match the committed silent clips'
+  byte sizes and durations exactly (309215 / 177428 / 147111 / 169450 bytes).
+- `menu-back-from-search-gui-narrated.mp4` deviations from the silent
+  original: 18.4s vs 25.2s — the re-run capture is 23+23 stills at 2.5 fps
+  (9.2 s per half) vs the original's 31/32, same steps and same revs
+  (d3cfd53b / 7a7fb10c `Menu.qml` swap). The menu was summoned with the shell
+  IPC call directly (`qs ipc -n -p <worktree>/shell call -- shell summon
+  omarchy.menu '{"menu":"style"}'`) because omarchy-shell's socat path hung on
+  this box today (its fallback is the same qs ipc call). Keystrokes used
+  `wtype -k Shift_L` as the focus-race prime (the reconstructed recipe's
+  `Shift_Left` keysym name is rejected by xkbcommon) with `-k Return` /
+  `-k BackSpace` from the full wtype build at `~/proof-env/wtype-build` (the
+  sysroot wtype is a text-only build). GUI captions render in JetBrains Mono
+  rather than the original's sans (drawtext fontfile fallback); text,
+  placement, and box style are unchanged.
+
+Verification per narrated clip: AAC track present, no clipping (volumedetect
+mean −16.6..−18.9 dB, max ≤ 0 dBFS), speech present in both the BEFORE and
+AFTER halves (silencedetect per half), zero WARN-TOO-LONG storyboard lines in
+the fit log, and 2 extracted frames per clip confirm the burned captions and
+the on-screen deltas.
