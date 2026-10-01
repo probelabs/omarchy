@@ -7,7 +7,7 @@ decision: approved
 comment: 'Delta-touch conformance for the fix branch: agent-25 extended the description and rationale to name the string-aware trailing-comma semantics (trailing_comma_dropped = !comma_in_string && next_char_closes_json) and the pre-fix silent-corruption behavior. Verified against MenuModel.js: the stripJsonc scanner drops a comma iff it is outside every string literal and the next non-whitespace byte is } or ], and parseMenuJsonc still routes any post-strip parse failure to the catch that returns [] with no exception escaping (fretish: json_invalid -> eventually empty_item_set & !parse_error_raised unchanged and still honored; unterminated-string case verified by direct execution this campaign). The added prose is descriptive, not normative; the normative equivalence lives in SW-REQ-260927-66FW. Status promoted draft -> review on 2026-09-28 by agent:kimi-zero-warnings after the defect_review stamp gained verified:2 (CRS-0017/C03 array-root claim closed by SW-REQ-260928-BMFE; CRS-0017/C01 inline-comment claim closed by SW-REQ-260928-C8W1), which put this spec into the branch changed set.'
 citations:
     - shell/plugins/menu/MenuModel.js:2
-    - shell/plugins/menu/MenuModel.js:72
-    - shell/plugins/menu/MenuModel.js:80
+    - shell/plugins/menu/MenuModel.js:117
+    - shell/plugins/menu/MenuModel.js:125
     - shell/plugins/menu/MenuModel.js:1
     - test/shell.d/menu-test.sh:98
