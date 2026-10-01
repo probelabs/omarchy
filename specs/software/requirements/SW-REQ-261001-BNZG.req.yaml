@@ -66,7 +66,7 @@ obligation_hazards:
       worst_case: 'FMEA mode: a character class outside the stated domain has no specified result, so a later refactor changes it silently. The ff77cd02 commit did exactly that for a byte order mark before a comment, and no requirement or test noticed. This requirement names every JS \s character, and the differential test inserts all 19 non-ASCII ones.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T23:10:00Z"
+    reviewed_at: "2026-10-01T22:58:00Z"
     reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:

@@ -64,7 +64,7 @@ obligation_hazards:
       worst_case: 'FMEA mode (a): the stripper changes a label such as "x, ]y" to "x ]y" while the parse still succeeds, so the user sees a wrong row name. FMEA mode (b): an action such as mv f{.bak,} loses its in-string comma, and the changed command runs with the user''s privileges on row activation. FMEA mode (c): a look-ahead that does not skip // comments keeps a real trailing comma before a commented-out entry, JSON.parse rejects the file, and the whole file contributes no rows. JSON.parse accepts the text in modes (a) and (b), so no error shows. The PR #13968 scanner forbids all three modes.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T23:10:00Z"
+    reviewed_at: "2026-10-01T22:58:00Z"
     reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:
