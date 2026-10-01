@@ -17,12 +17,15 @@ severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
+reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: 'Nothing bounds the wait. A superseded caller, or one whose menu process dies, keeps polling forever: 19 of 20 in a burst on quattro c05d9019. Later summons still work.'
 remediation: 'Finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only. #9056 (head b7bd59c4) answers a superseded request and fixes the busy-writer race; a deadline in omarchy-menu-select is still needed for a dead menu process.'
+notes:
+    - 'PR omacom/omarchy#9056 at head b7bd59c4 (mirrored on pr/9056 over quattro-proof 4f1a8197) fixes two legs. (1) Commit 0b4fe292: the guard at the top of open() answers an active request as cancelled before the new summon dispatches, which fixes the re-summon leg (SX26/C06/C07, upstream #9057; SW-REQ-260925-XTGG). (2) Commit b7bd59c4 (pushed by @omarchybot): finishRequest writes each answer through Quickshell.execDetached, one process per answer, instead of the shared resultProc, which fixes the busy-resultProc leg (SX26/C14; SW-REQ-261001-C19S). On this mirror the behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh exits 0 (its harness now runs execDetached commands too), and test/shell.d/menu-test.sh witnesses both changes; the back-to-back witness fails on the 0b4fe292 Menu.qml. Live burst of 20 concurrent omarchy-menu-select: 0 callers stuck on b7bd59c4, 7-12 on 0b4fe292, 19 on quattro. Still open on this mirror: the doneFile-only leg and the empty-selectionFile redirect variant (SX26/C15, HFY2/C36), which the PR does not touch, and the peer-death trigger (the shell dies after a summon; omarchy-menu-select has no deadline).'
+    - 'On this mirror the reproducer is pocs/menu-qml-static.sh again (the green tripwire the KI used before quattro-proof), because the #9057 script no longer reproduces. That script pins Menu.qml mechanisms by static grep; it does not execute the open C15 or doneFile-only legs, so their evidence on this mirror is static only.'
 customer_impact: Summoning a menu again before answering the previous one, for example by pressing Super+K several times, leaves the earlier caller waiting forever. Each one stays behind as a background process, and the action that opened it never completes. The same happens when the menu process dies while a caller waits. Later menus still open and work.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -74,6 +77,22 @@ history:
       detail: set-mitigation
     - at: "2026-10-02T15:24:53Z"
       by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-01T11:07:23Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: append-note
+    - at: "2026-10-01T11:08:28Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-reproducer-command
+    - at: "2026-10-01T11:09:01Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: append-note
+    - at: "2026-10-01T11:09:01Z"
+      by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
 kill_domain: handshake
