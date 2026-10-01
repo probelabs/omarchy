@@ -91,16 +91,19 @@ history:
 obligation_checklist:
     - atomicity
 hazard_review:
-    reviewed_at: "2026-09-30T07:44:45Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:23Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: a merge that mutates its input maps mid-render corrupts the live item set the view is drawing from (lost rows, duplicated entries compounding across runs) - the purity half of the contract closes it: both functions build fresh containers and only read their inputs. boundary: the zero cases are pinned - empty/missing maps and arrays normalize to fresh empties, an orphan id (order entry with no item) is dropped rather than carried, and a duplicated incoming id is listed once, first occurrence winning. edge_case: incoming row objects do get order (and providerMenu on the swap path) written onto themselves - the never-write half covers the input maps as the contract states, and call sites pass provider-fresh rows; a static item claiming another provider providerMenu is dropped when that provider reruns (config-owned data at the same authority), provider rows claiming static ids are skipped so static beats provider, and app rows are always replaced wholesale by mergeAppRows.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a merge that mutates its input maps mid-render corrupts the live item set the view is drawing from (lost rows, duplicated entries compounding across runs) - the purity half of the contract closes it: both functions build fresh containers and only read their inputs. boundary: the zero cases are pinned - empty/missing maps and arrays normalize to fresh empties, an orphan id (order entry with no item) is dropped rather than carried, and a duplicated incoming id is listed once, first occurrence winning. edge_case: incoming row objects do get order (and providerMenu on the swap path) written onto themselves - the never-write half covers the input maps as the contract states, and call sites pass provider-fresh rows; a static item claiming another provider providerMenu is dropped when that provider reruns (config-owned data at the same authority), provider rows claiming static ids are skipped so static beats provider, and app rows are always replaced wholesale by mergeAppRows. Catalog 1.11.0 re-review: input_domain not applicable, rows reach it already parsed. concurrency_scale applied, providers and the app library re-run repeatedly; each rerun must rebuild fresh maps without duplicates or writes into its inputs.'
         - category: property
           disposition: reviewed
           applied:

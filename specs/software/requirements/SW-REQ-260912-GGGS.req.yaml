@@ -51,16 +51,19 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:45Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:13Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - error_handling
             - edge_case
-          rationale: 'Worst case: a stuck Hyprland IPC call during a lid transition consumes the lock window before Quickshell begins securing the session, so the machine suspends unlocked. error_handling: the reconciliation helper is bounded at 0.4s with kill-after and its failure is absorbed, so a stalled IPC cannot consume the budget. edge_case: the lid transition that temporarily stalls Hyprland IPC is exactly the trigger condition, and the ordering requirement is what keeps it from pre-empting the lock request.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a stuck Hyprland IPC call during a lid transition consumes the lock window before Quickshell begins securing the session, so the machine suspends unlocked. error_handling: the reconciliation helper is bounded at 0.4s with kill-after and its failure is absorbed, so a stalled IPC cannot consume the budget. edge_case: the lid transition that temporarily stalls Hyprland IPC is exactly the trigger condition, and the ordering requirement is what keeps it from pre-empting the lock request. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, it orders two steps inside one suspend; rapid repeated suspends are stated on SYS-REQ-260912-HC86.'
         - category: property
           disposition: not_applicable
           rationale: A single ordering statement between two calls; no algebraic or repeated-application surface beyond the sequence itself.

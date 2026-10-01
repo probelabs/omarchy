@@ -51,16 +51,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:38Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:04:06Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:16Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - error_handling
             - boundary
-          rationale: 'Worst case: a cancelled or failed pick still reaches sudo timedatectl set-timezone - either silently changing the zone from a stale answer or invoking it with an empty zone string. The || exit 1 after the picker pipeline is the whole guard: any picker failure (cancel exit 1, empty selection exit 1, IPC dead) aborts before the set call, and set -e plus the pipeline''s last-command semantics make the picker''s own status the branch. boundary: picker exit 0 with an empty zone string - list-timezones broken while the picker answers - is the residual edge where set-timezone runs with an argument; it fails loudly in timedatectl rather than setting a wrong zone, and the non-cancel contract (set+refresh) is SWFT''s subject. error_handling is the subject: every failure of the picker lands in exit 1 before the privileged call.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a cancelled or failed pick still reaches sudo timedatectl set-timezone - either silently changing the zone from a stale answer or invoking it with an empty zone string. The || exit 1 after the picker pipeline is the whole guard: any picker failure (cancel exit 1, empty selection exit 1, IPC dead) aborts before the set call, and set -e plus the pipeline''s last-command semantics make the picker''s own status the branch. boundary: picker exit 0 with an empty zone string - list-timezones broken while the picker answers - is the residual edge where set-timezone runs with an argument; it fails loudly in timedatectl rather than setting a wrong zone, and the non-cancel contract (set+refresh) is SWFT''s subject. error_handling is the subject: every failure of the picker lands in exit 1 before the privileged call. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

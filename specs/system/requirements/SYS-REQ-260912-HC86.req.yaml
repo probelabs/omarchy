@@ -54,9 +54,9 @@ obligation_checklist:
     - boundary
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:59Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:25Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -64,7 +64,10 @@ hazard_review:
             - boundary
             - error_handling
             - edge_case
-          rationale: 'Parent-level partitions carried by satisfying children: boundary via FAWV (cap, reserve, validation thresholds), error_handling via H2YF (unsecured report and exit 1) and FAWV (busctl fallback), edge_case via FAWV (zero window, locale edge) and GGGS (lid-transition IPC stall). The suspend-mid-lock worst case is owned jointly: the budget bounds it and the report surfaces it.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Parent-level partitions carried by satisfying children: boundary via FAWV (cap, reserve, validation thresholds), error_handling via H2YF (unsecured report and exit 1) and FAWV (busctl fallback), edge_case via FAWV (zero window, locale edge) and GGGS (lid-transition IPC stall). The suspend-mid-lock worst case is owned jointly: the budget bounds it and the report surfaces it. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, suspends can follow each other quickly; each requests the lock within its own budget.'
         - category: property
           disposition: not_applicable
           rationale: Decomposition-level statement; totality of the bounded wait is recorded on child FAWV.

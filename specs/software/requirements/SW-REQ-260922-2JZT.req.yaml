@@ -61,16 +61,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:36Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:56:51Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: a guard expression embedding the plain form inside a larger word, e.g. x$(omarchy-default-browser)y, is substring-matched and rewritten to a broken token, so the guard script emits a malformed command that fails silently under >/dev/null 2>&1 and the row answers 0 - a row can misreport visible state. boundary: the plain-form/non-plain split is an exact-string match; forms touching it on either side are the tested partition (untouched test leaves command -v, env-prefixed, and piped forms intact). edge_case: containment occurrences and repeated occurrences of the same reader inside one expression are the unusual-but-valid inputs; global split/join handles repetition and the containment risk is graded, not ignored.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a guard expression embedding the plain form inside a larger word, e.g. x$(omarchy-default-browser)y, is substring-matched and rewritten to a broken token, so the guard script emits a malformed command that fails silently under >/dev/null 2>&1 and the row answers 0 - a row can misreport visible state. boundary: the plain-form/non-plain split is an exact-string match; forms touching it on either side are the tested partition (untouched test leaves command -v, env-prefixed, and piped forms intact). edge_case: containment occurrences and repeated occurrences of the same reader inside one expression are the unusual-but-valid inputs; global split/join handles repetition and the containment risk is graded, not ignored. Catalog 1.11.0 re-review: input_domain not applicable, it rewrites guard expressions authored in the menu config, which reach it already parsed by SW-REQ-260922-E4J2. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

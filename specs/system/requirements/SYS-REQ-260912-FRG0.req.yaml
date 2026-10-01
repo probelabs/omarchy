@@ -91,9 +91,9 @@ history:
 obligation_checklist:
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:57Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:25Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -101,7 +101,10 @@ hazard_review:
             - error_handling
             - concurrent
             - boundary
-          rationale: 'Parent-level partitions over the lock-state contract, each carried by a satisfying child: error_handling via WJYM (undetermined answers and guard refusals) and EH0K pipeline failures, concurrent via WJYM (probe-versus-lock race) and EH0K, boundary via EH0K (the three-exit partition) and WJYM (recovered-once latch). No obligation is held at this level alone.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Parent-level partitions over the lock-state contract, each carried by a satisfying child: error_handling via WJYM (undetermined answers and guard refusals) and EH0K pipeline failures, concurrent via WJYM (probe-versus-lock race) and EH0K, boundary via EH0K (the three-exit partition) and WJYM (recovered-once latch). No obligation is held at this level alone. Catalog 1.11.0 re-review: input_domain not applicable, the probe input is machine-generated monitor JSON (SW-REQ-260912-EH0K). concurrency_scale applied, the state is probed repeatedly by the stranded-lock recovery timer.'
         - category: property
           disposition: not_applicable
           rationale: Decomposition-level statement; the only repeated-application property, at-most-once recovery, is recorded on the satisfying child WJYM as idempotency.

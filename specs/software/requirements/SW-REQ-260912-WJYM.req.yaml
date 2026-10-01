@@ -85,9 +85,9 @@ history:
 obligation_checklist:
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:54Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -95,7 +95,10 @@ hazard_review:
             - error_handling
             - concurrent
             - boundary
-          rationale: 'Worst case: a shell restart leaves an orphan ext-session-lock nobody can unlock, or the recovery itself flaps, taking the lock repeatedly. error_handling: an undetermined probe answer (exit 2) leaves the strand unresolved instead of acting, and recovery refuses without passwordPamConfigured, deferring to the J8SX fail-closed denial. concurrent: checkStrandedLock refuses to probe while locked or lockRequested, and the probe onExited verdict re-checks the same flags, closing the probe-in-flight versus lock-taken race. boundary: recovered-once is the strandedLock plus strandedLockResolved latch.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a shell restart leaves an orphan ext-session-lock nobody can unlock, or the recovery itself flaps, taking the lock repeatedly. error_handling: an undetermined probe answer (exit 2) leaves the strand unresolved instead of acting, and recovery refuses without passwordPamConfigured, deferring to the J8SX fail-closed denial. concurrent: checkStrandedLock refuses to probe while locked or lockRequested, and the probe onExited verdict re-checks the same flags, closing the probe-in-flight versus lock-taken race. boundary: recovered-once is the strandedLock plus strandedLockResolved latch. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, the recovery must take the session lock exactly once under repeated probe ticks.'
         - category: property
           disposition: reviewed
           applied:

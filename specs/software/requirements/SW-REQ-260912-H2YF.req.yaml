@@ -53,16 +53,19 @@ history:
 obligation_checklist:
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:46Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:13Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - error_handling
             - edge_case
-          rationale: 'Worst case: the machine suspends with the session exposed and nobody ever finds out, because the failure is silent. error_handling: budget expiry unconditionally prints the stderr diagnostic, sends the critical notification, and exits 1; that path is the requirement. edge_case: the notification service may be absent right after resume, so the send is declared best-effort while the stderr report and exit 1 still fire; a notification failure never downgrades the report to success.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the machine suspends with the session exposed and nobody ever finds out, because the failure is silent. error_handling: budget expiry unconditionally prints the stderr diagnostic, sends the critical notification, and exits 1; that path is the requirement. edge_case: the notification service may be absent right after resume, so the send is declared best-effort while the stderr report and exit 1 still fire; a notification failure never downgrades the report to success. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, the outcome of one bounded wait inside one suspend; repeated suspends are stated on SYS-REQ-260912-HC86.'
         - category: property
           disposition: not_applicable
           rationale: Single-shot reporter; each expiry produces exactly one report and one exit, with no repeated-application or ordering surface.

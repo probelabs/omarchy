@@ -34,9 +34,9 @@ obligation_checklist:
     - error_handling
     - boundary
 hazard_review:
-    reviewed_at: "2026-09-30T06:51:03Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:24Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -44,7 +44,10 @@ hazard_review:
             - nominal
             - error_handling
             - boundary
-          rationale: 'Story-level partitions that decompose through the SYS layer: nominal (lock on demand results in a compositor-reported locked session) through T0XP and WC89, error_handling (suspends that beat the lock are reported, missing PAM refuses to lock) through HC86, H2YF, FRG0, and J8SX, boundary (lock-before-suspend deadlines, enrollment-driven PAM provisioning, exclusive update lock) through HC86, FAWV, JW2J, and H8A5. Unlock only after successful authentication is witnessed by the AC-001 acceptance test.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Story-level partitions that decompose through the SYS layer: nominal (lock on demand results in a compositor-reported locked session) through T0XP and WC89, error_handling (suspends that beat the lock are reported, missing PAM refuses to lock) through HC86, H2YF, FRG0, and J8SX, boundary (lock-before-suspend deadlines, enrollment-driven PAM provisioning, exclusive update lock) through HC86, FAWV, JW2J, and H8A5. Unlock only after successful authentication is witnessed by the AC-001 acceptance test. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, the user can lock on demand while a suspend also requests the lock; both paths must leave one engaged lock.'
         - category: property
           disposition: not_applicable
           rationale: Story-level intent; no algebraic property is stated at this level, and the at-most-once and bounded-wait properties are recorded on the SYS and SW children that specify them.

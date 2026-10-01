@@ -66,16 +66,19 @@ obligation_hazards:
       worst_case: 'the Lock row activation closes the menu and forks omarchy-system-lock, which then fails silently (binary absent after a partial sync, or the lock component refuses without a notification surface): the menu is already dismissed so no error reaches the user, and the user walks away from a session they believe locked - impact high, likelihood near zero (the lock binary is a default-set runtime invariant), graded medium on impact times the one-way visibility loss; the callees own lock engagement and its failure surfacing (SYS-REQ-260912-T0XP family, reviewed in batch A)'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-09-30T08:09:48Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:27Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - nominal
             - error_handling
-          rationale: 'Worst case graded on the error_handling obligation above (silent lock failure behind an already-closed menu - medium). nominal: the row is a fixed zero-argument invocation, the callee engages the lock and exits 0, and the row is the single menu-to-lock path (lock never calls menu), so no recursion or re-entry loop can exist. error_handling: a callee refusal exits coded and the menu-side runner prints non-zero exits to its stderr - but the menu has already dismissed, which is exactly the visibility gap graded above; the contract deliberately scopes this req to the invocation wiring and leaves engagement/failure surfacing to the lock component. malformed_input does not fire: no user-shaped input reaches the row (action string is repo-shipped).'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case graded on the error_handling obligation above (silent lock failure behind an already-closed menu - medium). nominal: the row is a fixed zero-argument invocation, the callee engages the lock and exits 0, and the row is the single menu-to-lock path (lock never calls menu), so no recursion or re-entry loop can exist. error_handling: a callee refusal exits coded and the menu-side runner prints non-zero exits to its stderr - but the menu has already dismissed, which is exactly the visibility gap graded above; the contract deliberately scopes this req to the invocation wiring and leaves engagement/failure surfacing to the lock component. malformed_input does not fire: no user-shaped input reaches the row (action string is repo-shipped). Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, one exec per Lock row activation; overlapping lock requests are stated on SYS-REQ-260912-T0XP.'
         - category: property
           disposition: reviewed
           applied:

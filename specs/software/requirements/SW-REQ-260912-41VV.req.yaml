@@ -64,15 +64,18 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:38Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:12Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
-          rationale: 'Worst case: an indicator shown with no sensor invites a touch that can never authenticate, and reserved space for a missing sensor shifts the password field. The configured/not-configured threshold is the whole trigger: the binding is fingerprintConfigured ? iconWidth+12 : 0, so both arms are the boundary pair.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: an indicator shown with no sensor invites a touch that can never authenticate, and reserved space for a missing sensor shifts the password field. The configured/not-configured threshold is the whole trigger: the binding is fingerprintConfigured ? iconWidth+12 : 0, so both arms are the boundary pair. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, view state recomputed from the current rows on each UI event: no process, timer or lock, and events are handled one at a time.'
         - category: property
           disposition: reviewed
           applied:

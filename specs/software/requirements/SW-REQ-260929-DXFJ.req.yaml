@@ -47,16 +47,19 @@ obligation_hazards:
       worst_case: 'the freeze capture lands while the active filter has zero visible rows: maxRowsHeight pins at 0 and cardTop pins at the centered position, so the card grows downward from a top computed for an empty card until the menu closes - a cosmetic wedge the freeze-once semantics makes sticky for the whole open'
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:04:30Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:23Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - edge_case
             - nominal
-          rationale: 'Worst case graded above: freeze captured over an empty filtered set pins cardTop/maxRowsHeight at empty-card values until close; accepted low (cosmetic, self-clears on close). nominal: first filter keystroke or submenu move captures the on-screen top and rows height, after which resize grows the card downward - the witnessed happy path. boundary: the sentinel pair cardTop=-1/maxRowsHeight=-1 is distinguished from the valid frozen value 0 (top at the very screen edge) by the >= 0 test, so a legitimately-zero top survives; closing clears both sentinels. malformed_input does not fire: no external input reaches the freeze path.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case graded above: freeze captured over an empty filtered set pins cardTop/maxRowsHeight at empty-card values until close; accepted low (cosmetic, self-clears on close). nominal: first filter keystroke or submenu move captures the on-screen top and rows height, after which resize grows the card downward - the witnessed happy path. boundary: the sentinel pair cardTop=-1/maxRowsHeight=-1 is distinguished from the valid frozen value 0 (top at the very screen edge) by the >= 0 test, so a legitimately-zero top survives; closing clears both sentinels. malformed_input does not fire: no external input reaches the freeze path. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, view state recomputed from the current rows on each UI event: no process, timer or lock, and events are handled one at a time.'
         - category: property
           disposition: reviewed
           applied:

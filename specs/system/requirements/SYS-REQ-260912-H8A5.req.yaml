@@ -53,9 +53,9 @@ history:
 obligation_checklist:
     - boundary
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:58Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:25Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -63,7 +63,10 @@ hazard_review:
             - concurrent
             - error_handling
             - boundary
-          rationale: 'Parent-level partitions carried by satisfying children: concurrent via FVHS (flock contention arbiter) and 0Y70 (live held answer against holders), error_handling via FVHS (refusal diagnostic, usage exit 2) and 0Y70 (stale or foreign descriptor answers non-zero), boundary via FVHS (zero-arg, missing lock dir) and 0Y70 (descriptor edges). The embedding suggester independently ranked concurrent top for this requirement, matching the rule pass.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Parent-level partitions carried by satisfying children: concurrent via FVHS (flock contention arbiter) and 0Y70 (live held answer against holders), error_handling via FVHS (refusal diagnostic, usage exit 2) and 0Y70 (stale or foreign descriptor answers non-zero), boundary via FVHS (zero-arg, missing lock dir) and 0Y70 (descriptor edges). The embedding suggester independently ranked concurrent top for this requirement, matching the rule pass. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, its whole purpose is mutual exclusion of concurrent updates.'
         - category: property
           disposition: not_applicable
           rationale: Decomposition-level statement; totality of the probe and run partitions is recorded on children 0Y70 and FVHS respectively.

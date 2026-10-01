@@ -51,16 +51,19 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:41Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:12Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - access_denied
             - boundary
-          rationale: 'Worst case: root runs the helper with a hostile inherited PATH, so a user-writable directory supplies a shadow binary executed with full root privileges during install or upgrade. access_denied: the unconditional PATH export inside the EUID==0 guard is the permission posture; the hostile-PATH execution attempt is refused by construction before any optional command runs. boundary: the EUID 0-vs-non-0 threshold is the trigger itself; the non-root arm keeps user PATH but executes nothing privileged (as_root prefixes sudo, which re-derives secure_path).'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: root runs the helper with a hostile inherited PATH, so a user-writable directory supplies a shadow binary executed with full root privileges during install or upgrade. access_denied: the unconditional PATH export inside the EUID==0 guard is the permission posture; the hostile-PATH execution attempt is refused by construction before any optional command runs. boundary: the EUID 0-vs-non-0 threshold is the trigger itself; the non-root arm keeps user PATH but executes nothing privileged (as_root prefixes sudo, which re-derives secure_path). Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, it rewrites PATH inside one run before any optional command; concurrent apply-lock runs share only the PAM files, whose writes are stated on SYS-REQ-260912-JW2J.'
         - category: property
           disposition: not_applicable
           rationale: A single unconditional assignment; there is no multi-input behavior, ordering, or repeated-application surface to constrain.

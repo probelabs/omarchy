@@ -70,16 +70,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:36Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:58:55Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: the cursor parks on a row Enter cannot run, so a visible cursor implies an actionable row that is not - or settleCursor leaves selectedIndex pointing at a row that just vanished and a later consumer reads it without checking cursorActive, acting on the wrong row. settleCursor pins selectedIndex=0 whenever target is -1, so the parked-cursor state must survive only while cursorActive=false; composition with any consumer that ignores cursorActive is the graded residual, guarded by the activation paths checking row disabled state (Z48F/SYS-P708 siblings). boundary: count==0 returns -1 before any index math - the empty-model edge. edge_case: the all-rows-disabled menu and the transition where one row becomes selectable again (cursor must grow back) are the witnessed corners.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the cursor parks on a row Enter cannot run, so a visible cursor implies an actionable row that is not - or settleCursor leaves selectedIndex pointing at a row that just vanished and a later consumer reads it without checking cursorActive, acting on the wrong row. settleCursor pins selectedIndex=0 whenever target is -1, so the parked-cursor state must survive only while cursorActive=false; composition with any consumer that ignores cursorActive is the graded residual, guarded by the activation paths checking row disabled state (Z48F/SYS-P708 siblings). boundary: count==0 returns -1 before any index math - the empty-model edge. edge_case: the all-rows-disabled menu and the transition where one row becomes selectable again (cursor must grow back) are the witnessed corners. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, view state recomputed from the current rows on each UI event: no process, timer or lock, and events are handled one at a time.'
         - category: property
           disposition: reviewed
           applied:

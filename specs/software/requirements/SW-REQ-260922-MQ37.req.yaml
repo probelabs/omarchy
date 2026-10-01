@@ -73,9 +73,9 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:35:31Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:20Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -83,7 +83,10 @@ hazard_review:
             - boundary
             - edge_case
             - malformed_input
-          rationale: 'Worst case: a malformed predicate (unbalanced quote, stray newline) breaks the generated script wholesale, so every guard fails to answer and the view falls open (JRW1 renders unguarded rows) - honest degradation, and the failure is visible in the guard script exit rather than a wrong 0/1 verdict. boundary: exactly one if-line per declared when/checked/disabled is the whole contract, with the zero case (items with no guard emit no lines) as the tested half. edge_case: a predicate that blocks stalls the refresh for as long as it runs - accepted design per the documented tradeoff that the menu opens on the last evaluation results; GUARD_READER substitution is slot-based so reader output never re-enters shell parsing.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a malformed predicate (unbalanced quote, stray newline) breaks the generated script wholesale, so every guard fails to answer and the view falls open (JRW1 renders unguarded rows) - honest degradation, and the failure is visible in the guard script exit rather than a wrong 0/1 verdict. boundary: exactly one if-line per declared when/checked/disabled is the whole contract, with the zero case (items with no guard emit no lines) as the tested half. edge_case: a predicate that blocks stalls the refresh for as long as it runs - accepted design per the documented tradeoff that the menu opens on the last evaluation results; GUARD_READER substitution is slot-based so reader output never re-enters shell parsing. Catalog 1.11.0 re-review: input_domain not applicable, guard expressions reach it already parsed by SW-REQ-260922-E4J2. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

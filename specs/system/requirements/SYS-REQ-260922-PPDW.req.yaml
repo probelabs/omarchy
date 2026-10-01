@@ -55,16 +55,18 @@ obligation_hazards:
       worst_case: 'one syntax slip in the user menu JSONC (unbalanced brace a hundred rows in) silently drops the ENTIRE user extension for that session: parseMenuJsonc catches and returns [], the menu renders defaults only, and no diagnostic anywhere tells the user their customization was discarded - fail-visible only by absence, recovery documented but undiscoverable'
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:08:04Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:26Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - malformed_input
             - boundary
-          rationale: 'Worst case graded above (whole-user-extension silent drop on one malformed key - low: documented recovery, menu stays usable on defaults, and the fix is one lint pass; graded low because the failure is total but benign). malformed_input: the parser declares its policy - whole-line comments and trailing commas are stripped before JSON.parse, unparsable text catches to [], scalar and null roots are treated as no rows (an array root is walked with for..in and renders phantom rows keyed 0,1,... - KI-MENU-JSONC-ARRAY-ROOT, #13492), and non-object entries are skipped during normalization, so malformed shape can never enter the tree. boundary: an empty file yields [] with the injected root, and a user override for an unknown key still merges (per-key override semantics do not require the key to exist upstream).'
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case graded above (whole-user-extension silent drop on one malformed key - low: documented recovery, menu stays usable on defaults, and the fix is one lint pass; graded low because the failure is total but benign). malformed_input: the parser declares its policy - whole-line comments and trailing commas are stripped before JSON.parse, unparsable text catches to [], scalar and null roots are treated as no rows (an array root is walked with for..in and renders phantom rows keyed 0,1,... - KI-MENU-JSONC-ARRAY-ROOT, #13492), and non-object entries are skipped during normalization, so malformed shape can never enter the tree. boundary: an empty file yields [] with the injected root, and a user override for an unknown key still merges (per-key override semantics do not require the key to exist upstream). Catalog 1.11.0 re-review: input_domain applied, it merges the default and user menu files, whose byte-level domain is stated and witnessed on SW-REQ-260922-E4J2 and SW-REQ-260922-3T3F. concurrency_scale applied, the two FileView loads finish in either order and each rebuilds the tree, so the merged tree must not depend on their order.'
         - category: property
           disposition: reviewed
           applied:

@@ -67,9 +67,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:40Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:20:02Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:18Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -77,7 +77,10 @@ hazard_review:
             - boundary
             - concurrent
             - edge_case
-          rationale: 'Worst case: the caller''s read races the write - the done marker landing before the selection bytes are durable converts a real pick into a spurious cancel (the CLI exits 1 on an empty selection), or a late answer for an already-finished request writes into the next invocation''s files; the single bash -c ordering (selection flushed, then done truncated) is the commit protocol and the up-front field clearing plus the activeSelection/activeDone locals pin the write to this request''s mktemp-unique paths. boundary: the null-selection dismissal arm versus the answered arm is the exact partition this requirement sits on the answered side of (done-only is C8HX). concurrent: the single-threaded QML loop plus the requestActive re-check make a second finish a silent no-op rather than a duplicate write. edge_case: a selection with newlines or shell metacharacters passes verbatim through Util.shellQuote into printf - the caller receives exactly what was picked, multi-line included, and the quoting helper''s own requirements own its correctness; the polling CLI side and its unbounded wait are the Q6ZS/9ABD siblings'' tracked debt.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: the caller''s read races the write - the done marker landing before the selection bytes are durable converts a real pick into a spurious cancel (the CLI exits 1 on an empty selection), or a late answer for an already-finished request writes into the next invocation''s files; the single bash -c ordering (selection flushed, then done truncated) is the commit protocol and the up-front field clearing plus the activeSelection/activeDone locals pin the write to this request''s mktemp-unique paths. boundary: the null-selection dismissal arm versus the answered arm is the exact partition this requirement sits on the answered side of (done-only is C8HX). concurrent: the single-threaded QML loop plus the requestActive re-check make a second finish a silent no-op rather than a duplicate write. edge_case: a selection with newlines or shell metacharacters passes verbatim through Util.shellQuote into printf - the caller receives exactly what was picked, multi-line included, and the quoting helper''s own requirements own its correctness; the polling CLI side and its unbounded wait are the Q6ZS/9ABD siblings'' tracked debt. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, part of the menu request lifecycle: the answer write can race a superseding summon.'
         - category: property
           disposition: reviewed
           applied:

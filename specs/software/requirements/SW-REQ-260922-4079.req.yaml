@@ -66,9 +66,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:37Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:00:57Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:15Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -76,7 +76,9 @@ hazard_review:
             - concurrent
             - error_handling
             - edge_case
-          rationale: 'Worst case: a killed batch has answered only the rows it reached, and a row whose when: went unanswered shows by default - so applying the half-read buffer flips rows to visible against real state, or a stranded guardsPending freezes the whole menu on stale results forever (liveness loss). The early return on nonzero exit/signal plus the callLater reevaluation close both arms. concurrent: evaluateGuards re-entered while the batch runs must not kill the in-flight run - guardsPending is the serialization protocol, and Process ignoring command changes while running means a naive restart would throw away read lines and let the surviving tail pass as the whole answer. edge_case: a signal leaves exit code 0, so exitStatus is the discriminator - the exitCode-only check is the trap this requirement forbids. error_handling is the subject itself: discard-and-keep is the declared failure behavior.'
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a killed batch has answered only the rows it reached, and a row whose when: went unanswered shows by default - so applying the half-read buffer flips rows to visible against real state, or a stranded guardsPending freezes the whole menu on stale results forever (liveness loss). The early return on nonzero exit/signal plus the callLater reevaluation close both arms. concurrent: evaluateGuards re-entered while the batch runs must not kill the in-flight run - guardsPending is the serialization protocol, and Process ignoring command changes while running means a naive restart would throw away read lines and let the surviving tail pass as the whole answer. edge_case: a signal leaves exit code 0, so exitStatus is the discriminator - the exitCode-only check is the trap this requirement forbids. error_handling is the subject itself: discard-and-keep is the declared failure behavior. Catalog 1.11.0 re-review: input_domain applied, it reads the guard batch output lines; unparsable lines are the shape-guarded malformed rows already covered by error_handling. concurrency_scale applied, guard evaluations requested while a batch is in flight are coalesced and run once after it exits.'
         - category: property
           disposition: reviewed
           applied:

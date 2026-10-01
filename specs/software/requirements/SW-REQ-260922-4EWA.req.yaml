@@ -51,9 +51,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:37Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:02:35Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:16Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -61,7 +61,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'Worst case: the pick resolves to the wrong target - cut -f2 on a selection line whose id contains a tab or the row label itself contains a tab yields a truncated or shifted token, and for the remove verb that wrong token is passed to omarchy-plugin-remove, a destructive action on a plugin the user did not select. malformed_input: plugin ids are directory-derived and user-clonable, so odd identifiers are reachable input, and the unconditional field-2 cut is the declared parse policy. boundary: exactly-two-field lines are the well-formed case; one-field (missing tab) and three-plus-field lines are the edges where the cut silently mangles the id. edge_case: two plugins sharing a display name is the subject and is witnessed; the arguments are shell-quoted with printf %q at the terminal-launch sinks, so no injection chain composes onto the wrong-token case beyond the wrong-target removal graded here.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the pick resolves to the wrong target - cut -f2 on a selection line whose id contains a tab or the row label itself contains a tab yields a truncated or shifted token, and for the remove verb that wrong token is passed to omarchy-plugin-remove, a destructive action on a plugin the user did not select. malformed_input: plugin ids are directory-derived and user-clonable, so odd identifiers are reachable input, and the unconditional field-2 cut is the declared parse policy. boundary: exactly-two-field lines are the well-formed case; one-field (missing tab) and three-plus-field lines are the edges where the cut silently mangles the id. edge_case: two plugins sharing a display name is the subject and is witnessed; the arguments are shell-quoted with printf %q at the terminal-launch sinks, so no injection chain composes onto the wrong-token case beyond the wrong-target removal graded here. Catalog 1.11.0 re-review: input_domain not applicable, plugin ids come from the installed plugin list, not from a parsed text file. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

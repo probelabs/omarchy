@@ -64,16 +64,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:44Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:43:32Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:22Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: a link silently lands somewhere other than its target - the misdirect cost is one wrong panel the user navigates away from, since routing grants no authority. boundary: the zero case is the targetless link - a link entry with an empty target skips the follow branch and opens at the link itself rather than dereferencing undefined. edge_case: the follow is single-hop by construction (id = entry.target, then open) so a chain a->b->c lands on the b row and needs a second follow, and a link whose target is an action bypasses the direct-run branch (that check ran on the original resolved entry) and opens a childless panel - both config-authored cosmetic edges, no hang and no route loop (one dereference, no iteration).'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a link silently lands somewhere other than its target - the misdirect cost is one wrong panel the user navigates away from, since routing grants no authority. boundary: the zero case is the targetless link - a link entry with an empty target skips the follow branch and opens at the link itself rather than dereferencing undefined. edge_case: the follow is single-hop by construction (id = entry.target, then open) so a chain a->b->c lands on the b row and needs a second follow, and a link whose target is an action bypasses the direct-run branch (that check ran on the original resolved entry) and opens a childless panel - both config-authored cosmetic edges, no hang and no route loop (one dereference, no iteration). Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

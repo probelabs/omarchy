@@ -94,9 +94,9 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:50Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:13Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -104,7 +104,10 @@ hazard_review:
             - concurrent
             - boundary
             - edge_case
-          rationale: 'Worst case: the idle countdown blanks the display while a password check is in flight, hiding the field mid-authentication, or a suspend-frozen timer fires on resume and blanks the freshly woken unlock screen under the user. concurrent: the timer fire interleaves with in-flight authentication, so the gate reads authenticatingPassword only, deliberately excluding the long-lived fingerprint PAM. boundary: the interval+2000ms wall-clock threshold is the frozen-timer detector. edge_case: the post-suspend stale countdown re-arms instead of blanking.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: the idle countdown blanks the display while a password check is in flight, hiding the field mid-authentication, or a suspend-frozen timer fires on resume and blanks the freshly woken unlock screen under the user. concurrent: the timer fire interleaves with in-flight authentication, so the gate reads authenticatingPassword only, deliberately excluding the long-lived fingerprint PAM. boundary: the interval+2000ms wall-clock threshold is the frozen-timer detector. edge_case: the post-suspend stale countdown re-arms instead of blanking. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, it is driven by the idle blank timer racing an in-flight password authentication.'
         - category: property
           disposition: not_applicable
           rationale: Declarative timer policy over two boolean gates; no algebraic or ordering surface beyond the recorded interleaving.

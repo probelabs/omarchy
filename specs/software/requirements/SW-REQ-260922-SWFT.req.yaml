@@ -60,9 +60,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:42:14Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:21Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -70,7 +70,10 @@ hazard_review:
             - boundary
             - error_handling
             - edge_case
-          rationale: 'Worst case: a confirmation notification fires for a timezone that was never set (user trusts a wrong clock until it matters) - closed by the set -e ladder ordering: sudo failure aborts before the clock refresh and the confirmation, so a sent notification implies a completed set. boundary: the zero case is the cancel arm - no pick exits 1 before sudo runs, touching nothing. edge_case: the picked value originates from timedatectl list-timezones (system tz database names) and is still double-quoted into the sudo call, so even a corrupted zone list cannot re-enter shell parsing; a stale zone list entry that timedatectl rejects aborts mid-ladder with no notification, which is the honest direction.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a confirmation notification fires for a timezone that was never set (user trusts a wrong clock until it matters) - closed by the set -e ladder ordering: sudo failure aborts before the clock refresh and the confirmation, so a sent notification implies a completed set. boundary: the zero case is the cancel arm - no pick exits 1 before sudo runs, touching nothing. edge_case: the picked value originates from timedatectl list-timezones (system tz database names) and is still double-quoted into the sudo call, so even a corrupted zone list cannot re-enter shell parsing; a stale zone list entry that timedatectl rejects aborts mid-ladder with no notification, which is the honest direction. Catalog 1.11.0 re-review: input_domain not applicable, the picked timezone is passed through, not parsed. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

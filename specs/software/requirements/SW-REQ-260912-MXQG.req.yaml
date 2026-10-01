@@ -53,9 +53,9 @@ history:
 obligation_checklist:
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:49Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:13Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -63,7 +63,10 @@ hazard_review:
             - error_handling
             - boundary
             - concurrent
-          rationale: 'Worst case: ttfx survives or ignores the signal and its terminal closes over a stuck fullscreen process at lock time. error_handling: pkill no-match and missing-binary exits are absorbed by explicit best-effort policies, so the signal step can never fail the lock. boundary: the 1s pidwait cap is the specified wait bound. concurrent: ttfx handles SIGTERM asynchronously, so the wait observes the interleaving of signal delivery and process exit instead of assuming a fixed ordering.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: ttfx survives or ignores the signal and its terminal closes over a stuck fullscreen process at lock time. error_handling: pkill no-match and missing-binary exits are absorbed by explicit best-effort policies, so the signal step can never fail the lock. boundary: the 1s pidwait cap is the specified wait bound. concurrent: ttfx handles SIGTERM asynchronously, so the wait observes the interleaving of signal delivery and process exit instead of assuming a fixed ordering. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, it signals the ttfx process and waits for it to exit; two lock invocations can race on the same process.'
         - category: property
           disposition: not_applicable
           rationale: Fire-and-observe sequence run once per lock; no algebraic or repeated-application surface.

@@ -71,9 +71,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T20:47:45Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:15:34Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:17Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -81,7 +81,10 @@ hazard_review:
             - boundary
             - concurrent
             - edge_case
-          rationale: 'Worst case: a dismissal forges an answer - a selection file written where the caller expects done-only - or the done marker lands before the selection content is durable, so the CLI wakes on done and reads an empty selection, converting a real pick into a cancel; the two-arm command (printf selection then truncate done, in one bash -c) plus the null-selection done-only arm are the entire protection. boundary: done-only versus selection+done is the exact two-arm partition this requirement names, and the guard front door (no active request or no done file) is the stale-finish edge shared with 3VTN. concurrent: the request fields are cleared before the write spawns, so a second finish is a silent no-op rather than a second write, and the single-threaded QML event loop serializes entries. edge_case: a selection containing newlines or shell metacharacters passes through Util.shellQuote into the printf verbatim - the quoting helper is the trusted boundary and its own requirements own its correctness; mktemp-unique paths rule out cross-request file collisions.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a dismissal forges an answer - a selection file written where the caller expects done-only - or the done marker lands before the selection content is durable, so the CLI wakes on done and reads an empty selection, converting a real pick into a cancel; the two-arm command (printf selection then truncate done, in one bash -c) plus the null-selection done-only arm are the entire protection. boundary: done-only versus selection+done is the exact two-arm partition this requirement names, and the guard front door (no active request or no done file) is the stale-finish edge shared with 3VTN. concurrent: the request fields are cleared before the write spawns, so a second finish is a silent no-op rather than a second write, and the single-threaded QML event loop serializes entries. edge_case: a selection containing newlines or shell metacharacters passes through Util.shellQuote into the printf verbatim - the quoting helper is the trusted boundary and its own requirements own its correctness; mktemp-unique paths rule out cross-request file collisions. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, part of the menu request lifecycle: a dismissal can race a superseding summon.'
         - category: property
           disposition: reviewed
           applied:

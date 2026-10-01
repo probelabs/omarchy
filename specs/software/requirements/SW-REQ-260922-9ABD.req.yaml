@@ -62,9 +62,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:13:10Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:17Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -72,7 +72,10 @@ hazard_review:
             - boundary
             - error_handling
             - edge_case
-          rationale: 'Worst case: a cancel masquerades as success - exit 0 with empty output would make callers such as confirmation prompts proceed on an answer nobody gave; the -s partition is the whole guard, sending an empty selection file to the unconditional exit 1 arm with nothing on stdout. boundary: selection-file empty versus non-empty is the exact partition this contract names, and done-file-present-but-selection-absent is the cancel encoding it must resolve. edge_case: the selection file vanishing between the -s test and cat fails under set -e to the same observable (nonzero, silent), and a whitespace-only answer counts as non-empty by -s and is passed through verbatim - the caller-side trim is out of this contract. The done-file wait feeding this arm carries the same unbounded poll already tracked on Q6ZS; the identical loop in bin/omarchy-menu-input is that KI''s second site and is deferred, not suppressed.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a cancel masquerades as success - exit 0 with empty output would make callers such as confirmation prompts proceed on an answer nobody gave; the -s partition is the whole guard, sending an empty selection file to the unconditional exit 1 arm with nothing on stdout. boundary: selection-file empty versus non-empty is the exact partition this contract names, and done-file-present-but-selection-absent is the cancel encoding it must resolve. edge_case: the selection file vanishing between the -s test and cat fails under set -e to the same observable (nonzero, silent), and a whitespace-only answer counts as non-empty by -s and is passed through verbatim - the caller-side trim is out of this contract. The done-file wait feeding this arm carries the same unbounded poll already tracked on Q6ZS; the identical loop in bin/omarchy-menu-input is that KI''s second site and is deferred, not suppressed. Catalog 1.11.0 re-review: input_domain not applicable, it tests whether the selection file is empty and parses nothing. concurrency_scale not applicable, the client side of one request; request supersession is stated on SYS-REQ-260922-X6Z5.'
         - category: property
           disposition: reviewed
           applied:

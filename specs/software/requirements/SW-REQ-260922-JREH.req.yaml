@@ -66,9 +66,9 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:29:16Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:19Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -76,7 +76,10 @@ hazard_review:
             - boundary
             - edge_case
             - error_handling
-          rationale: 'Worst case: a chooser that writes a pick then exits above 1 makes the share drop a file the user explicitly chose - defined fail-safe (nothing is sent without a clean success), though the critical message (chooser did not open) can be mildly misleading about the real failure. boundary: the status 1 vs above-1 partition is the entire trigger; status 1 and the portal client EXIT_NOTHING_PICKED both land in the silent exit-0 arm because the chooser taxonomy calls both a decision rather than a fault. edge_case: a newline inside a picked filename splits readarray entries along the line protocol and the bad entry fails at the send step, never sending a wrong file; a notification-send failure under set -e aborts nonzero anyway.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a chooser that writes a pick then exits above 1 makes the share drop a file the user explicitly chose - defined fail-safe (nothing is sent without a clean success), though the critical message (chooser did not open) can be mildly misleading about the real failure. boundary: the status 1 vs above-1 partition is the entire trigger; status 1 and the portal client EXIT_NOTHING_PICKED both land in the silent exit-0 arm because the chooser taxonomy calls both a decision rather than a fault. edge_case: a newline inside a picked filename splits readarray entries along the line protocol and the bad entry fails at the send step, never sending a wrong file; a notification-send failure under set -e aborts nonzero anyway. Catalog 1.11.0 re-review: input_domain not applicable, it reads only the chooser exit status and the picked path. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

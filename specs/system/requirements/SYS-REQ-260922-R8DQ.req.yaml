@@ -54,16 +54,19 @@ obligation_hazards:
       worst_case: 'route precedence ambiguity: a user-declared alias that equals another item exact id (alias power on the item whose id is also power, or a slugified app claiming a menu id) flips which entry an alias route opens - resolution iterates itemOrder, so merged order (default-then-user, provider swaps) decides the winner; the exact-id-first partition and single-claim merge keep the wrong-target window at config-authoring time, graded low'
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:08:38Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:27Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case graded on the boundary obligation above (alias/exact-id shadowing across merged sources - low). boundary: the resolution partition is exact id first, then declared alias (lowercased, underscore-normalized), then normalized-spelling fallthrough, then the unknown string opened as a literal id - each arm is a child contract (exact/alias/normalized/literal), so the parent partition is covered arm by arm. edge_case: the unknown-string-as-literal-id fallthrough means a typo route opens a menu row named by the typo text instead of erroring - documented behavior, loud by row presence, and the fallback-to-root guarantee lives in the lookup child (B8N9 family).'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case graded on the boundary obligation above (alias/exact-id shadowing across merged sources - low). boundary: the resolution partition is exact id first, then declared alias (lowercased, underscore-normalized), then normalized-spelling fallthrough, then the unknown string opened as a literal id - each arm is a child contract (exact/alias/normalized/literal), so the parent partition is covered arm by arm. edge_case: the unknown-string-as-literal-id fallthrough means a typo route opens a menu row named by the typo text instead of erroring - documented behavior, loud by row presence, and the fallback-to-root guarantee lives in the lookup child (B8N9 family). Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

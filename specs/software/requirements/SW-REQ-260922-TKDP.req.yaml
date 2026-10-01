@@ -66,16 +66,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:44Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:46:53Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:22Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: the divider renders with only one group populated, presenting a phantom drilldown section for a query with no deep matches (or hiding the split for a query with both) - the exactly-when-both-nonempty half is the whole risk surface. boundary: the zero cases are pinned - both groups empty renders no divider and no rows, either single group renders alone, and the divider exists only at the current/deep boundary. edge_case: the depth partition of rows into current versus drilldown groups is total per item (an item sits at exactly one depth), so no row can appear in both groups and flip the split; group membership recomputes per keystroke without accumulating stale sections.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the divider renders with only one group populated, presenting a phantom drilldown section for a query with no deep matches (or hiding the split for a query with both) - the exactly-when-both-nonempty half is the whole risk surface. boundary: the zero cases are pinned - both groups empty renders no divider and no rows, either single group renders alone, and the divider exists only at the current/deep boundary. edge_case: the depth partition of rows into current versus drilldown groups is total per item (an item sits at exactly one depth), so no row can appear in both groups and flip the split; group membership recomputes per keystroke without accumulating stale sections. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

@@ -77,9 +77,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:42Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:37:49Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:20Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -87,7 +87,10 @@ hazard_review:
             - boundary
             - edge_case
             - malformed_input
-          rationale: 'Worst case: a row shaped label TAB subtext with no glyph - an illegal shape under this protocol - is silently reinterpreted (label becomes the icon, subtext renders as the label, detail is lost), so the caller sees different text than it sent and gets subtext back as the pick; consequence is a confused display and a shifted stable key on a caller-contract violation, with no crash and no cross-row bleed. boundary: the zero cases are pinned - a glyph-less row takes the label-first branch, an empty label after the shift renders as empty, and an empty query keeps every row. edge_case: a label containing embedded tabs re-splits for display but the returned key round-trips the original tail intact (label TAB detail reassembles everything after the glyph), so same-named-row disambiguation stays faithful; query filtering covers label and subtext together.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Worst case: a row shaped label TAB subtext with no glyph - an illegal shape under this protocol - is silently reinterpreted (label becomes the icon, subtext renders as the label, detail is lost), so the caller sees different text than it sent and gets subtext back as the pick; consequence is a confused display and a shifted stable key on a caller-contract violation, with no crash and no cross-row bleed. boundary: the zero cases are pinned - a glyph-less row takes the label-first branch, an empty label after the shift renders as empty, and an empty query keeps every row. edge_case: a label containing embedded tabs re-splits for display but the returned key round-trips the original tail intact (label TAB detail reassembles everything after the glyph), so same-named-row disambiguation stays faithful; query filtering covers label and subtext together. Catalog 1.11.0 re-review: input_domain applied, it splits option text on TAB; the bytes of each option are the stdin partitions stated on SW-REQ-260922-Q6ZS, and the TAB shapes are the malformed_input partition already applied here. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

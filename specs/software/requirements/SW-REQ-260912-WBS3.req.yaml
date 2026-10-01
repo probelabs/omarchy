@@ -67,15 +67,18 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:53Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
-          rationale: 'Worst case: an unbounded dot row overflows the field and leaks the password length beyond the field edge. boundary: the overflow threshold where measured advance exceeds usable width is the scaling trigger, and Math.min(1, ...) caps the scale at full size for short passwords.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: an unbounded dot row overflows the field and leaks the password length beyond the field edge. boundary: the overflow threshold where measured advance exceeds usable width is the scaling trigger, and Math.min(1, ...) caps the scale at full size for short passwords. Catalog 1.11.0 re-review: input_domain not applicable, the password text is held, not parsed. concurrency_scale not applicable, view state recomputed from the current rows on each UI event: no process, timer or lock, and events are handled one at a time.'
         - category: property
           disposition: reviewed
           applied:

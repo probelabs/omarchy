@@ -83,9 +83,9 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:35:31Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:20Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -93,7 +93,10 @@ hazard_review:
             - boundary
             - edge_case
             - error_handling
-          rationale: 'Worst case: a route resolves to an action item, the menu closes, and the action silently never runs (execDetached is fire-and-forget) - the user loses the interaction with no reopen path in this slice; consequence is a lost launch, not a wrong one. boundary: the zero cases are pinned - empty id cancels, empty action no-ops, and applySelected closes the menu before dispatch so a failed action cannot leave the menu half-open. edge_case: the summonAction fast path passes the single-quoted payload literally to the in-process summon while the bash path would have shell-expanded it - same user authority, different expansion timing; the divergence is owned by SW-REQ-260928-8VJQ which pins the fast path, and N3RM only requires that a resolved action runs directly without opening a menu.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a route resolves to an action item, the menu closes, and the action silently never runs (execDetached is fire-and-forget) - the user loses the interaction with no reopen path in this slice; consequence is a lost launch, not a wrong one. boundary: the zero cases are pinned - empty id cancels, empty action no-ops, and applySelected closes the menu before dispatch so a failed action cannot leave the menu half-open. edge_case: the summonAction fast path passes the single-quoted payload literally to the in-process summon while the bash path would have shell-expanded it - same user authority, different expansion timing; the divergence is owned by SW-REQ-260928-8VJQ which pins the fast path, and N3RM only requires that a resolved action runs directly without opening a menu. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

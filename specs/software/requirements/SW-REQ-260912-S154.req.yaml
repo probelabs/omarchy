@@ -51,9 +51,9 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:08Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:51Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -61,7 +61,10 @@ hazard_review:
             - access_denied
             - error_handling
             - boundary
-          rationale: 'Worst case: a PATH-resolved fprintd-list runs attacker-controlled code as root during install or upgrade. access_denied: invoking /usr/bin/fprintd-list by packaged absolute path refuses any PATH-supplied substitute; the requirement is the refusal. error_handling: a probe failure or nonzero exit is treated as not-enrolled and routes to the removal branch, the fail-safe direction. boundary: the executable-bit check on the absolute path is the present-but-not-executable edge feeding the same removal branch.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a PATH-resolved fprintd-list runs attacker-controlled code as root during install or upgrade. access_denied: invoking /usr/bin/fprintd-list by packaged absolute path refuses any PATH-supplied substitute; the requirement is the refusal. error_handling: a probe failure or nonzero exit is treated as not-enrolled and routes to the removal branch, the fail-safe direction. boundary: the executable-bit check on the absolute path is the present-but-not-executable edge feeding the same removal branch. Catalog 1.11.0 re-review: input_domain not applicable, it invokes fprintd-list by absolute path and reads only its exit status. concurrency_scale not applicable, one probe per apply-lock run.'
         - category: property
           disposition: not_applicable
           rationale: One probe feeding one branch; no algebraic or repeated-application surface.

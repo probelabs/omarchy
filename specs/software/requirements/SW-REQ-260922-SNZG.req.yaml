@@ -53,9 +53,9 @@ history:
 obligation_checklist:
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T07:40:47Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:21Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -63,7 +63,10 @@ hazard_review:
             - boundary
             - error_handling
             - edge_case
-          rationale: 'Worst case: a caller scripts omarchy-menu <typo> in a chain and misreads exit 2 as success - the taxonomy is the mitigation: usage errors (missing args) exit 1, unknown verbs exit 2, so programmatic callers get two distinct failure classes, and the diagnostic names the offending verb plus the --help pointer on stderr where it cannot be mistaken for output. boundary: the case dispatch is total - every known verb, --help (exit 0), and the catch-all unknown arm - with no argv shape falling off the dispatcher. edge_case: the raw verb is echoed unquoted into the message, so terminal escape bytes in a hand-typed verb render raw in the user own terminal; the source is the user own command line (self-owned authority, same as any command echoing its arguments), and the bytes pass to stderr only, never to a parser.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a caller scripts omarchy-menu <typo> in a chain and misreads exit 2 as success - the taxonomy is the mitigation: usage errors (missing args) exit 1, unknown verbs exit 2, so programmatic callers get two distinct failure classes, and the diagnostic names the offending verb plus the --help pointer on stderr where it cannot be mistaken for output. boundary: the case dispatch is total - every known verb, --help (exit 0), and the catch-all unknown arm - with no argv shape falling off the dispatcher. edge_case: the raw verb is echoed unquoted into the message, so terminal escape bytes in a hand-typed verb render raw in the user own terminal; the source is the user own command line (self-owned authority, same as any command echoing its arguments), and the bytes pass to stderr only, never to a parser. Catalog 1.11.0 re-review: input_domain not applicable, it compares the verb argument to a fixed list. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

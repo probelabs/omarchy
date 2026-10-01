@@ -86,9 +86,9 @@ history:
 obligation_checklist:
     - path_pair_agreement
 hazard_review:
-    reviewed_at: "2026-09-29T10:06:24Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:23Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -96,8 +96,11 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
+          not_applicable:
+            - input_domain
+            - concurrency_scale
           rationale: >-
-            malformed_input: an action string that half-matches the summon grammar (trailing junk, unbalanced quote, shell substitution) must NOT take the fast path - verified by battery cases 5-10 all returning null (bash fallback). boundary: payload absent vs empty-string - absent defaults to '{}' matching omarchy-shell:51; an explicit empty-quotes payload matches with the empty string upgraded to '{}' (match[2] falsy), a byte divergence triaged unreachable+benign in CRS-0021/C01. edge_case: payload containing double quotes/spaces inside single quotes passes through with bytes identical to bash word-splitting (battery case 4).
+            malformed_input: an action string that half-matches the summon grammar (trailing junk, unbalanced quote, shell substitution) must NOT take the fast path - verified by battery cases 5-10 all returning null (bash fallback). boundary: payload absent vs empty-string - absent defaults to '{}' matching omarchy-shell:51; an explicit empty-quotes payload matches with the empty string upgraded to '{}' (match[2] falsy), a byte divergence triaged unreachable+benign in CRS-0021/C01. edge_case: payload containing double quotes/spaces inside single quotes passes through with bytes identical to bash word-splitting (battery case 4). Catalog 1.11.0 re-review: input_domain not applicable, the action string reaches it already parsed by SW-REQ-260922-E4J2; the grammar match is the malformed_input partition already applied here. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.
         - category: property
           disposition: reviewed
           applied:

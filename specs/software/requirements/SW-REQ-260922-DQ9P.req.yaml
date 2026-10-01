@@ -90,9 +90,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:40Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:19:31Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:18Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -100,7 +100,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'Worst case: a search for a secret-flavored query surfaces rows the user cannot act on - invisible or disabled rows matching the terms and inviting selection of a gated action; the !visible early return is the trust partition and the null/root guards bound the entry shape. malformed_input: the query is free-typed text - normalization (lowercase, trim, whitespace split) absorbs odd casing and runs of spaces, and matching is literal indexOf, so regex metacharacters and punctuation are inert by construction, no interpretation to exploit. boundary: the all-terms AND semantics flip on a single missed term; empty terms from whitespace runs are skipped rather than failing every row; a one-character term is the narrowest legitimate match. edge_case: description matches are whole-word only (termInSearchWords) while name matches are substring - a term inside a description word does not match, and an empty description reduces the row to name text only; disabled-but-visible rows are excluded by the caller folding guard results into visible.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a search for a secret-flavored query surfaces rows the user cannot act on - invisible or disabled rows matching the terms and inviting selection of a gated action; the !visible early return is the trust partition and the null/root guards bound the entry shape. malformed_input: the query is free-typed text - normalization (lowercase, trim, whitespace split) absorbs odd casing and runs of spaces, and matching is literal indexOf, so regex metacharacters and punctuation are inert by construction, no interpretation to exploit. boundary: the all-terms AND semantics flip on a single missed term; empty terms from whitespace runs are skipped rather than failing every row; a one-character term is the narrowest legitimate match. edge_case: description matches are whole-word only (termInSearchWords) while name matches are substring - a term inside a description word does not match, and an empty description reduces the row to name text only; disabled-but-visible rows are excluded by the caller folding guard results into visible. Catalog 1.11.0 re-review: input_domain not applicable, the query is typed text matched as is; normalisation gaps are tracked as KI-MENU-SEARCH-TEXT-NORMALIZATION-MISSES. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

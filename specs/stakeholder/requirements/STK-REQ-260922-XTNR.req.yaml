@@ -34,9 +34,9 @@ obligation_checklist:
     - error_handling
     - boundary
 hazard_review:
-    reviewed_at: "2026-09-30T06:51:05Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:24Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -44,7 +44,10 @@ hazard_review:
             - nominal
             - error_handling
             - boundary
-          rationale: 'Story-level partitions that decompose through the nine derived menu requirements: nominal (menu presents and routes verbs, pickers return answers) through J0AN and X6Z5, error_handling (unknown verbs and missing options answer loudly) through the dispatcher and dmenu protocol children such as SNZG and B839, boundary (comma-before-closing-brace text kept verbatim through JSONC trailing-comma stripping, per AC-002) through PPDW. Menu rows reflecting current state without stale display is the sum of the state-query children.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Story-level partitions that decompose through the nine derived menu requirements: nominal (menu presents and routes verbs, pickers return answers) through J0AN and X6Z5, error_handling (unknown verbs and missing options answer loudly) through the dispatcher and dmenu protocol children such as SNZG and B839, boundary (comma-before-closing-brace text kept verbatim through JSONC trailing-comma stripping, per AC-002) through PPDW. Menu rows reflecting current state without stale display is the sum of the state-query children. Catalog 1.11.0 re-review: input_domain not applicable, the byte-level domains are stated on SW-REQ-260922-E4J2, SW-REQ-260922-3T3F and SW-REQ-260922-Q6ZS. concurrency_scale applied, scripts pose overlapping picker and input prompts; supersession is stated on SYS-REQ-260922-X6Z5.'
         - category: property
           disposition: not_applicable
           rationale: Story-level intent; the verbatim-text property is specified and witnessed at child PPDW, and no algebraic property is stated at this level.

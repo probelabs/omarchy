@@ -60,9 +60,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:28:29Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:18Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -70,7 +70,10 @@ hazard_review:
             - boundary
             - edge_case
             - error_handling
-          rationale: 'Worst case: a hostile directory layout makes the picker lie - a dot-directory prune miss leaks hidden files into a user-facing pick list, and a case-fold mismatch silently drops files the caller asked for. boundary: dotfile vs dot-directory pruning is the exact partition (files named .jpg are dropped by the ! -name .*, dot-directories are pruned except the search roots themselves via ! -name ., and -iname matches case-insensitively while the prune stays case-sensitive). edge_case: filenames containing tabs or newlines collide with the %T@ tab record format, mangling single rows (cosmetic row loss, no crash, no wrong file selected); an empty formats word lands in the usage guard. error_handling: every nonexistent path element rejects with stderr and exit 1 before any listing (tested); find stderr is suppressed so an unreadable subdirectory yields a silently partial listing rather than an abort - honest gap, consequence limited to a truncated pick list.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a hostile directory layout makes the picker lie - a dot-directory prune miss leaks hidden files into a user-facing pick list, and a case-fold mismatch silently drops files the caller asked for. boundary: dotfile vs dot-directory pruning is the exact partition (files named .jpg are dropped by the ! -name .*, dot-directories are pruned except the search roots themselves via ! -name ., and -iname matches case-insensitively while the prune stays case-sensitive). edge_case: filenames containing tabs or newlines collide with the %T@ tab record format, mangling single rows (cosmetic row loss, no crash, no wrong file selected); an empty formats word lands in the usage guard. error_handling: every nonexistent path element rejects with stderr and exit 1 before any listing (tested); find stderr is suppressed so an unreadable subdirectory yields a silently partial listing rather than an abort - honest gap, consequence limited to a truncated pick list. Catalog 1.11.0 re-review: input_domain not applicable, it lists file names and modification times and reads no file contents. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

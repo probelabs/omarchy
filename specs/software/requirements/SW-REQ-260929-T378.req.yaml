@@ -47,16 +47,19 @@ obligation_hazards:
       worst_case: synthetic hover churn under a stationary pointer (a redraw loop or a stray device emitting move events with sub-threshold deltas) repeatedly re-enters selectFromPointer; the gate exists precisely so this cannot walk the selection, but a gate threshold crossed by accumulated sub-threshold jitter across one event burst would land the cursor on a row the user never aimed at - the disarm enumeration (keyboard nav, filtering, menu transition, delete dialog, open) must keep covering every interaction that should reset intent
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:04:55Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:24Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - edge_case
             - malformed_input
-          rationale: 'Worst case graded above: synthetic hover churn is the exact threat the movement gate exists to defeat, and the residual is jitter accumulating across a burst - graded low, guarded by the moved() threshold plus the rowSelectable second guard. edge_case: every interaction that should reset intent (keyboard nav, filtering, menu transitions, the delete dialog, opening the menu) calls disarmPointer, so gate state cannot survive a context switch. malformed_input: a non-selectable row answer short-circuits the write before cursorActive/selectedIndex change - selection can never park on a disabled row. nominal is witnessed by the executing assertions in menu-pointer-lifecycle-test.sh.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case graded above: synthetic hover churn is the exact threat the movement gate exists to defeat, and the residual is jitter accumulating across a burst - graded low, guarded by the moved() threshold plus the rowSelectable second guard. edge_case: every interaction that should reset intent (keyboard nav, filtering, menu transitions, the delete dialog, opening the menu) calls disarmPointer, so gate state cannot survive a context switch. malformed_input: a non-selectable row answer short-circuits the write before cursorActive/selectedIndex change - selection can never park on a disabled row. nominal is witnessed by the executing assertions in menu-pointer-lifecycle-test.sh. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, the pointer gate exists for rapidly repeated synthetic hover events, which must not move the selection.'
         - category: property
           disposition: reviewed
           applied:

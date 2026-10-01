@@ -51,9 +51,9 @@ history:
     last_modified_by: agent:kimi-dogfood
     last_modified_at: "2026-09-12T23:32:09Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:37Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:12Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -61,7 +61,10 @@ hazard_review:
             - concurrent
             - error_handling
             - boundary
-          rationale: 'Worst case: a forged or stale OMARCHY_UPDATE_LOCK_FD makes held answer 0 while no lock is held, so a caller proceeds into a snapshot while another update runs and pacman transactions interleave. The /proc fd-existence check, readlink -f identity against the canonical lock path, and the final flock -n arbiter close that chain; -f vs -m canonicalization means alias paths compare equal only for the true lock inode. concurrent: the answer is defined against live lock contention and flock -n can never block. error_handling: unset, dangling, and wrong-file descriptors must answer non-zero, never crash or hang. boundary: descriptor-present-but-foreign and vanishing-between-check-and-readlink are the tested stale-descriptor edges.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a forged or stale OMARCHY_UPDATE_LOCK_FD makes held answer 0 while no lock is held, so a caller proceeds into a snapshot while another update runs and pacman transactions interleave. The /proc fd-existence check, readlink -f identity against the canonical lock path, and the final flock -n arbiter close that chain; -f vs -m canonicalization means alias paths compare equal only for the true lock inode. concurrent: the answer is defined against live lock contention and flock -n can never block. error_handling: unset, dangling, and wrong-file descriptors must answer non-zero, never crash or hang. boundary: descriptor-present-but-foreign and vanishing-between-check-and-readlink are the tested stale-descriptor edges. Catalog 1.11.0 re-review: input_domain not applicable, it reads a descriptor number from the environment, not text. concurrency_scale applied, the update lock exists to serialize concurrent updates: one holder, a second caller answered by flock on the shared lock file.'
         - category: property
           disposition: reviewed
           applied:

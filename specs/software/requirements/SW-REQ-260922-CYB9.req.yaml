@@ -61,16 +61,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:39Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:16:50Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:17Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: two menu items declare the same alias and the route silently opens whichever comes first in itemOrder - a user summoning power lands on an unrelated item; the scan is order-driven and first-match-wins, which makes the outcome deterministic but the conflict itself is config-author error with a low cosmetic blast radius (a wrong menu opens, nothing executes). boundary: the exact-id beat over any alias is the precedence boundary shared with 74BZ, and excluding app rows from the alias scan is the deliberate trust boundary that keeps .desktop Keywords from shadowing real routes (htop ships Keywords=system). edge_case: underscore-to-dash normalization makes power_menu and power-menu one alias (collision collapses harmlessly), aliases on action and link kinds route through openRoute''s kind handling, and an empty alias string can never match because raw is rooted before the scan.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: two menu items declare the same alias and the route silently opens whichever comes first in itemOrder - a user summoning power lands on an unrelated item; the scan is order-driven and first-match-wins, which makes the outcome deterministic but the conflict itself is config-author error with a low cosmetic blast radius (a wrong menu opens, nothing executes). boundary: the exact-id beat over any alias is the precedence boundary shared with 74BZ, and excluding app rows from the alias scan is the deliberate trust boundary that keeps .desktop Keywords from shadowing real routes (htop ships Keywords=system). edge_case: underscore-to-dash normalization makes power_menu and power-menu one alias (collision collapses harmlessly), aliases on action and link kinds route through openRoute''s kind handling, and an empty alias string can never match because raw is rooted before the scan. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

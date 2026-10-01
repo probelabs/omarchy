@@ -68,16 +68,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:36Z"
 hazard_review:
-    reviewed_at: "2026-09-30T06:58:57Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:15Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: a finish arrives with no active request and the code, unguarded, creates or truncates the done file of a future summons - a forged empty answer delivered to an invocation that has not happened yet; the !requestActive || !doneFile guard is the entire protection, so both disjuncts are the boundary pair (active request but empty doneFile path, and stale request flag with a leftover doneFile). edge_case: double dismissal - scrim click after Esc, or cancel() racing an already-finished request - reaches finishRequest a second time and must be a silent no-op; the compositor test witnesses done-only silence end to end. malformed_input is owned upstream: doneFile provenance and payload parsing live in the summon requirements (C8HX/FGZQ hold the write arm); this requirement only decides the empty-arm behavior.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a finish arrives with no active request and the code, unguarded, creates or truncates the done file of a future summons - a forged empty answer delivered to an invocation that has not happened yet; the !requestActive || !doneFile guard is the entire protection, so both disjuncts are the boundary pair (active request but empty doneFile path, and stale request flag with a leftover doneFile). edge_case: double dismissal - scrim click after Esc, or cancel() racing an already-finished request - reaches finishRequest a second time and must be a silent no-op; the compositor test witnesses done-only silence end to end. malformed_input is owned upstream: doneFile provenance and payload parsing live in the summon requirements (C8HX/FGZQ hold the write arm); this requirement only decides the empty-arm behavior. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, it is part of the menu request lifecycle: a finish can arrive when no request is active (a superseded or repeated finish), and it must close without touching files.'
         - category: property
           disposition: reviewed
           applied:

@@ -72,9 +72,9 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:39:22Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:21Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -82,7 +82,10 @@ hazard_review:
             - boundary
             - edge_case
             - error_handling
-          rationale: 'Worst case: pacman -Qq fails (broken db) and stderr is suppressed, so the mapfile seeds empty and every plain package name reads missing - Install rows flip to installable and already-installed marks vanish; consequence is wrong UI state until the next open, with no destructive action firing automatically (installs are user-clicked) and the guarded verb re-evaluating each refresh. boundary: the no-argument case is pinned by contract - present of nothing is true (vacuous all-loop), missing of nothing is false - and the tested half matches the implementation exactly. edge_case: provides entries are extracted by the awk field split with version operations stripped, multi-provide lists split on spaces, and the literal None skipped; version-constraint arguments (containing <,>,=) bypass the snapshot and defer to a live pacman -Q, so a mid-session install makes constrained args fresh while plain names stay snapshot-stale - bounded staleness inherent to the one-shot mapfile design. error_handling is the declared class: the all-missing degrade above is the failure mode, silent but recoverable and UI-level.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Worst case: pacman -Qq fails (broken db) and stderr is suppressed, so the mapfile seeds empty and every plain package name reads missing - Install rows flip to installable and already-installed marks vanish; consequence is wrong UI state until the next open, with no destructive action firing automatically (installs are user-clicked) and the guarded verb re-evaluating each refresh. boundary: the no-argument case is pinned by contract - present of nothing is true (vacuous all-loop), missing of nothing is false - and the tested half matches the implementation exactly. edge_case: provides entries are extracted by the awk field split with version operations stripped, multi-provide lists split on spaces, and the literal None skipped; version-constraint arguments (containing <,>,=) bypass the snapshot and defer to a live pacman -Q, so a mid-session install makes constrained args fresh while plain names stay snapshot-stale - bounded staleness inherent to the one-shot mapfile design. error_handling is the declared class: the all-missing degrade above is the failure mode, silent but recoverable and UI-level. Catalog 1.11.0 re-review: input_domain applied, it reads pacman -Q answers through the prelude shadows; the producer emits machine-generated text and only the exit status decides. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:
@@ -95,13 +98,6 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Read-only pacman queries against the local package database; -Q takes no database lock and performs no network access, and the shadow adds no authority - it only answers what pacman would answer, faster.
-lifecycle:
-    change_history:
-        - date: "2026-09-27T21:25:07Z"
-          from: draft
-          to: review
-          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
-          changed_by: agent:kimi-zero-warnings
 defect_review:
     reviewed_at: "2026-09-30T12:57:18Z"
     session: CRS-260930-2T3A
@@ -111,3 +107,10 @@ defect_review:
         emitted: 15
         verified: 8
         dismissed: 7
+lifecycle:
+    change_history:
+        - date: "2026-09-27T21:25:07Z"
+          from: draft
+          to: review
+          reason: '[agent:kimi-zero-warnings] Branch changes reviewed this campaign: STE100 prose rewrite (REVIEW-23..27), trace links re-reviewed with per-link citations (2026-09-27), no semantic drift; promoting out of authoring state.'
+          changed_by: agent:kimi-zero-warnings

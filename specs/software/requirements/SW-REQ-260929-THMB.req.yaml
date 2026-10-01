@@ -85,9 +85,9 @@ obligation_hazards:
       worst_case: 'vipsthumbnail runs with no timeout wrapper: a still image that stalls vips (corrupt/pathological file, stalled mount) wedges its fan-out lane forever; in --preload mode drain_pending_thumbnails runs before the picker opens, so enough wedged stills block the image picker open, and lazy opens leak one orphaned vipsthumbnail per open into the menu process'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-09-30T08:02:17Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:24Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -95,7 +95,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'Worst case: a directory whose stills all stall vips wedges every nproc lane and the preload drain never returns, so the image picker never opens. malformed_input: a vanished file or unparsable image fails its stat/converter guard and is skipped or queued without a row (thumbnail_for stat guard, generator failure arms); hashes are md5 of path+size+mtime, so hostile bytes never steer control flow. boundary: the legacy directory-lock reap fires only past 120s and only when the path is still a directory, and a fresh legacy lock makes the exec redirect fail so the generator bails rather than clobbering a live owner. edge_case: timeout(124) and SIGKILL(137) converter exits deliberately write no rejection marker so the next open retries, while any other non-zero exit records one - the asymmetry is the documented retry policy.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a directory whose stills all stall vips wedges every nproc lane and the preload drain never returns, so the image picker never opens. malformed_input: a vanished file or unparsable image fails its stat/converter guard and is skipped or queued without a row (thumbnail_for stat guard, generator failure arms); hashes are md5 of path+size+mtime, so hostile bytes never steer control flow. boundary: the legacy directory-lock reap fires only past 120s and only when the path is still a directory, and a fresh legacy lock makes the exec redirect fail so the generator bails rather than clobbering a live owner. edge_case: timeout(124) and SIGKILL(137) converter exits deliberately write no rejection marker so the next open retries, while any other non-zero exit records one - the asymmetry is the documented retry policy. Catalog 1.11.0 re-review: input_domain not applicable, media files are handed to converters by extension; their contents are not parsed here. concurrency_scale applied, lazy and queued generation run concurrently, serialized per file on a content-hash lock.'
         - category: property
           disposition: reviewed
           applied:

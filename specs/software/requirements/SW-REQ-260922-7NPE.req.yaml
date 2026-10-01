@@ -79,9 +79,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:38Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:06:24Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:16Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -89,7 +89,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'Worst case: a user extension entry with a JavaScript object-protocol key (__proto__, constructor) is written into the plain nextItems map, where the __proto__ assignment mutates the map''s prototype instead of adding a row - corrupting later lookups menu-wide - and an entry without an id is silently dropped by the !entry.id guard. malformed_input: both shapes are reachable from the user-editable extension JSONC, and silent-drop versus prototype-corruption is the declared handling of each. boundary: the root injection fires exactly when no source declares root - a user-declared root suppressing the Go label is the identity edge, and the merge is last-source-wins per key. edge_case: override preserving the first source''s order slot while later sources append, duplicate ids within one source (first sets order, later merges), and shallow per-key replacement of nested values like aliases are the witnessed corners. Blast radius is same-user config rendering the menu wrong - graded low; no privilege or write surface composes onto it.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a user extension entry with a JavaScript object-protocol key (__proto__, constructor) is written into the plain nextItems map, where the __proto__ assignment mutates the map''s prototype instead of adding a row - corrupting later lookups menu-wide - and an entry without an id is silently dropped by the !entry.id guard. malformed_input: both shapes are reachable from the user-editable extension JSONC, and silent-drop versus prototype-corruption is the declared handling of each. boundary: the root injection fires exactly when no source declares root - a user-declared root suppressing the Go label is the identity edge, and the merge is last-source-wins per key. edge_case: override preserving the first source''s order slot while later sources append, duplicate ids within one source (first sets order, later merges), and shallow per-key replacement of nested values like aliases are the witnessed corners. Blast radius is same-user config rendering the menu wrong - graded low; no privilege or write surface composes onto it. Catalog 1.11.0 re-review: input_domain not applicable, entries reach it already parsed by SW-REQ-260922-E4J2. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

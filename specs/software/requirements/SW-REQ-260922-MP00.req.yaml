@@ -63,9 +63,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:33:46Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:19Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -73,7 +73,10 @@ hazard_review:
             - boundary
             - edge_case
             - error_handling
-          rationale: 'Worst case: the shell menu writes done_file before the selection bytes are flushed, so a user pick resolves through the -s test to the silent exit-1 cancel arm - the pick is dropped. The failure direction is fail-safe (nothing is acted on), and the write ordering lives on the QML writer side of the protocol, owned by the summon sibling; this arm pins the reader half. boundary: selection-file empty versus non-empty is the exact partition, with mktemp-guaranteed fresh files closing stale-pick replay (no previous run pick can masquerade). edge_case: the selection file vanishing between -s and cat fails under set -e to the same silent nonzero as a cancel; whitespace-only answers count as non-empty and pass through verbatim, with caller-side trimming out of this contract. error_handling: missing or empty files resolve defined, never crash; both implementations (menu-select, menu-input) share the identical arm shape.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the shell menu writes done_file before the selection bytes are flushed, so a user pick resolves through the -s test to the silent exit-1 cancel arm - the pick is dropped. The failure direction is fail-safe (nothing is acted on), and the write ordering lives on the QML writer side of the protocol, owned by the summon sibling; this arm pins the reader half. boundary: selection-file empty versus non-empty is the exact partition, with mktemp-guaranteed fresh files closing stale-pick replay (no previous run pick can masquerade). edge_case: the selection file vanishing between -s and cat fails under set -e to the same silent nonzero as a cancel; whitespace-only answers count as non-empty and pass through verbatim, with caller-side trimming out of this contract. error_handling: missing or empty files resolve defined, never crash; both implementations (menu-select, menu-input) share the identical arm shape. Catalog 1.11.0 re-review: input_domain not applicable, it prints the selection file verbatim and parses nothing. concurrency_scale not applicable, the client side of one request; request supersession is stated on SYS-REQ-260922-X6Z5.'
         - category: property
           disposition: reviewed
           applied:

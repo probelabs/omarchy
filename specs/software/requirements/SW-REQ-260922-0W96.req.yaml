@@ -65,17 +65,20 @@ obligation_suppressions:
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
 hazard_review:
-    reviewed_at: "2026-09-29T10:06:04Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:14Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - malformed_input
             - boundary
+            - input_domain
+          not_applicable:
+            - concurrency_scale
           rationale: >-
-            malformed_input (post-de63134b): dispatcher values that are nil, unmarked tables, or unregistered functions fall through the resolution chain with kind="" exactly as pre-delta - the new elseif only fires when o.bind_commands holds an entry for the exact dispatcher key. boundary: a registered function bind resolves to its single mapped command; Lua table keys are function-identity unique, so cross-bind command confusion is structurally impossible. Stale-cache boundary closed by the v13->v14 key bump (verified in keybindings_cache_key).
+            malformed_input (post-de63134b): dispatcher values that are nil, unmarked tables, or unregistered functions fall through the resolution chain with kind="" exactly as pre-delta - the new elseif only fires when o.bind_commands holds an entry for the exact dispatcher key. boundary: a registered function bind resolves to its single mapped command; Lua table keys are function-identity unique, so cross-bind command confusion is structurally impossible. Stale-cache boundary closed by the v13->v14 key bump (verified in keybindings_cache_key). Catalog 1.11.0 re-review: input_domain applied, it parses hyprctl binds output and the source-derived cache; the producers emit machine-generated text, and malformed rows are the malformed_input partition already applied here. concurrency_scale not applicable, one display mapping per bind row; the cache rebuild is owned by the keybindings script build.
         - category: property
           disposition: reviewed
           applied:

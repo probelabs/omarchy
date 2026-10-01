@@ -87,9 +87,9 @@ obligation_hazards:
       worst_case: a corrupt video that crashes ffmpegthumbnailer with a non-timeout status is marker-suppressed until edited; acceptable by design, but a file whose size+mtime are restored (touch -d) after a real repair re-inherits the stale marker
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:03:18Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:24Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -97,7 +97,10 @@ hazard_review:
             - error_handling
             - edge_case
             - concurrent
-          rationale: 'Worst case: an environmental converter failure (ffmpegthumbnailer briefly absent, transient ENOSPC) writes a standing marker whose row stays suppressed until the file signature changes - the marker conflates file defect with environment defect, graded medium in obligation_hazards. error_handling: every refusal arm is dispositioned - non-timeout failure records the marker, timeout(124)/kill(137) deliberately record nothing so the next open retries, and success publishes the thumbnail; a failed lazy generation leaves nothing behind by the same failure arm. edge_case: still images never produce markers even on failure, so the marker asymmetry between lanes is contract, not accident. concurrent: two generators racing one file serialize on the content-hash flock and write byte-identical empty markers, so interleaving cannot produce a partial marker.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: an environmental converter failure (ffmpegthumbnailer briefly absent, transient ENOSPC) writes a standing marker whose row stays suppressed until the file signature changes - the marker conflates file defect with environment defect, graded medium in obligation_hazards. error_handling: every refusal arm is dispositioned - non-timeout failure records the marker, timeout(124)/kill(137) deliberately record nothing so the next open retries, and success publishes the thumbnail; a failed lazy generation leaves nothing behind by the same failure arm. edge_case: still images never produce markers even on failure, so the marker asymmetry between lanes is contract, not accident. concurrent: two generators racing one file serialize on the content-hash flock and write byte-identical empty markers, so interleaving cannot produce a partial marker. Catalog 1.11.0 re-review: input_domain not applicable, it records an empty marker keyed by a content hash and parses no file. concurrency_scale applied, concurrent generators share the marker directory; a timeout or kill must leave no marker so a later open retries.'
         - category: property
           disposition: reviewed
           applied:

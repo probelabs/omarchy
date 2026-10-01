@@ -99,9 +99,9 @@ obligation_checklist:
     - error_handling
     - nominal
 hazard_review:
-    reviewed_at: "2026-09-30T06:51:02Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:25Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -109,7 +109,10 @@ hazard_review:
             - error_handling
             - concurrent
             - boundary
-          rationale: 'Parent-level partitions carried by satisfying children: error_handling via J8SX (missing-pam refusal path) and MXQG (best-effort signal absorption), concurrent via ND55 (timer versus in-flight authentication) and MXQG (async SIGTERM exit), boundary via 41VV and WBS3 (configured and overflow thresholds) and MXQG (1s wait cap). No obligation is held at this level alone.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Parent-level partitions carried by satisfying children: error_handling via J8SX (missing-pam refusal path) and MXQG (best-effort signal absorption), concurrent via ND55 (timer versus in-flight authentication) and MXQG (async SIGTERM exit), boundary via 41VV and WBS3 (configured and overflow thresholds) and MXQG (1s wait cap). No obligation is held at this level alone. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, lock requests from the menu, keybindings and suspend can overlap; one engaged lock must result.'
         - category: property
           disposition: not_applicable
           rationale: Decomposition-level statement; totality and the no-feedback-loop idempotence are recorded on child WBS3 where the code lives.

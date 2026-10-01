@@ -54,16 +54,19 @@ obligation_hazards:
       worst_case: 'the dispatcher exec fails (omarchy-shell not running, socket refusal): the keybind or script caller sees a one-line error on the invoking terminal and no menu - recoverable and loud, graded low because refusal is immediate rather than hung, and the verb surface is fixed (toggle/summon/close/refresh/ping) with jq --arg payload construction making payload injection structurally impossible'
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:07:25Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:26Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - malformed_input
             - error_handling
-          rationale: 'Worst case graded on the existing error_handling obligation above (exec refusal surfaces as terminal error text, no menu - low). malformed_input: an unknown verb exits 2 with usage text, an unknown route degrades to the documented root default, and payloads are built with jq -nc --arg so shell metacharacters in a route cannot break the JSON envelope or the IPC call. error_handling: each verb is a single exec, so the IPC result code IS the dispatcher result - no swallow point exists between the verb case and the process exit; refresh/ping answers are passed through unmodified.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case graded on the existing error_handling obligation above (exec refusal surfaces as terminal error text, no menu - low). malformed_input: an unknown verb exits 2 with usage text, an unknown route degrades to the documented root default, and payloads are built with jq -nc --arg so shell metacharacters in a route cannot break the JSON envelope or the IPC call. error_handling: each verb is a single exec, so the IPC result code IS the dispatcher result - no swallow point exists between the verb case and the process exit; refresh/ping answers are passed through unmodified. Catalog 1.11.0 re-review: input_domain not applicable, routes travel as JSON built by a JSON encoder. concurrency_scale applied, verbs arrive as independent IPC calls that can follow each other quickly (SW-REQ-260922-50RE).'
         - category: property
           disposition: reviewed
           applied:

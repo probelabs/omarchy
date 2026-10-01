@@ -55,9 +55,9 @@ history:
 obligation_checklist:
     - boundary
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:42Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:12Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -67,7 +67,10 @@ hazard_review:
             - malformed_input
             - empty_input
             - edge_case
-          rationale: 'Worst case: a derived budget that overshoots the real logind window strands a closed laptop suspended mid-lock. boundary: the 12000 ms cap, the at-least-1000 ms logind reserve, and the positive-int-within-cap argument validation are the requirement threshold set (capped-window and invalid-arg scenarios). error_handling: an unreadable InhibitDelayMaxUSec, including a busctl timeout, falls back to 5000 ms. malformed_input: a non-numeric busctl tail or caller argument fails the ^[0-9]+$ regex and routes to the derived budget. empty_input: an absent argument is the default derivation path. edge_case: a zero window cannot drive the reserve negative because of the max(window/5,1000) floor.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Worst case: a derived budget that overshoots the real logind window strands a closed laptop suspended mid-lock. boundary: the 12000 ms cap, the at-least-1000 ms logind reserve, and the positive-int-within-cap argument validation are the requirement threshold set (capped-window and invalid-arg scenarios). error_handling: an unreadable InhibitDelayMaxUSec, including a busctl timeout, falls back to 5000 ms. malformed_input: a non-numeric busctl tail or caller argument fails the ^[0-9]+$ regex and routes to the derived budget. empty_input: an absent argument is the default derivation path. edge_case: a zero window cannot drive the reserve negative because of the max(window/5,1000) floor. Catalog 1.11.0 re-review: input_domain applied, it reads the logind InhibitDelayMaxUSec property as text; empty, non-numeric and failed reads are the malformed_input and empty_input partitions already applied here (5000 ms fallback). concurrency_scale not applicable, one property read per suspend; repeated suspends are stated on SYS-REQ-260912-HC86.'
         - category: property
           disposition: reviewed
           applied:

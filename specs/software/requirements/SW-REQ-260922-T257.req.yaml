@@ -80,9 +80,9 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:42:14Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:22Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -90,7 +90,10 @@ hazard_review:
             - boundary
             - error_handling
             - malformed_input
-          rationale: 'Worst case: a route string carrying JSON-breaking bytes corrupts the payload and the shell rejects an otherwise valid verb - closed by jq -nc --arg encoding, which JSON-escapes the route unconditionally so any argv bytes arrive as a well-formed string payload; a route that is not a real menu id reaches the shell and surfaces as its own not-found handling on the plugin side. boundary: the case allowlist pins the five verbs plus help, with toggle/summon carrying payloads and close/refresh/ping the empty object - no verb/route combination builds a different call shape. error_handling is the declared class: exec replaces the process with omarchy-shell, so IPC failure surfaces as the client own exit status with no masking, retry, or swallow in this wrapper.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a route string carrying JSON-breaking bytes corrupts the payload and the shell rejects an otherwise valid verb - closed by jq -nc --arg encoding, which JSON-escapes the route unconditionally so any argv bytes arrive as a well-formed string payload; a route that is not a real menu id reaches the shell and surfaces as its own not-found handling on the plugin side. boundary: the case allowlist pins the five verbs plus help, with toggle/summon carrying payloads and close/refresh/ping the empty object - no verb/route combination builds a different call shape. error_handling is the declared class: exec replaces the process with omarchy-shell, so IPC failure surfaces as the client own exit status with no masking, retry, or swallow in this wrapper. Catalog 1.11.0 re-review: input_domain not applicable, it passes the route through as a JSON payload built by a JSON encoder. concurrency_scale not applicable, each CLI call execs one IPC call and keeps no state; the server side is stated on SW-REQ-260922-50RE.'
         - category: property
           disposition: reviewed
           applied:

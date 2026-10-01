@@ -90,9 +90,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:40Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:19:34Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:18Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -100,7 +100,10 @@ hazard_review:
             - boundary
             - edge_case
             - concurrent
-          rationale: 'Worst case: a provider rerun leaves its previous batch behind - a just-disabled plugin still listed - or the swap erases another provider''s rows or the menu''s static children; the providerMenu===menuId filter drops exactly the re-run provider''s rows and the fresh-map rebuild copies everything else verbatim, so static children and other providers'' rows cannot be touched by construction. boundary: an empty incoming batch (provider now yields nothing) drops the previous batch and appends nothing - the subject''s core edge; a row colliding with a static child''s id is silently dropped in favor of the static row, the deliberate trust precedence. edge_case: duplicate ids within one batch keep the first occurrence, rows without an id are dropped by the guard, and stamping providerMenu/order onto incoming rows aliases the caller''s objects - model-owned mutation, safe because the caller does not reuse the batch. concurrent: the caller serializes provider applications through the requestSerial/applySerial discipline (a stale batch cannot displace a newer one at this layer), which this function relies on rather than re-implements - recorded as the composition boundary.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a provider rerun leaves its previous batch behind - a just-disabled plugin still listed - or the swap erases another provider''s rows or the menu''s static children; the providerMenu===menuId filter drops exactly the re-run provider''s rows and the fresh-map rebuild copies everything else verbatim, so static children and other providers'' rows cannot be touched by construction. boundary: an empty incoming batch (provider now yields nothing) drops the previous batch and appends nothing - the subject''s core edge; a row colliding with a static child''s id is silently dropped in favor of the static row, the deliberate trust precedence. edge_case: duplicate ids within one batch keep the first occurrence, rows without an id are dropped by the guard, and stamping providerMenu/order onto incoming rows aliases the caller''s objects - model-owned mutation, safe because the caller does not reuse the batch. concurrent: the caller serializes provider applications through the requestSerial/applySerial discipline (a stale batch cannot displace a newer one at this layer), which this function relies on rather than re-implements - recorded as the composition boundary. Catalog 1.11.0 re-review: input_domain not applicable, provider rows reach it already parsed. concurrency_scale applied, providers re-run while an earlier batch is still in the model; each swap replaces exactly that provider rows.'
         - category: property
           disposition: reviewed
           applied:

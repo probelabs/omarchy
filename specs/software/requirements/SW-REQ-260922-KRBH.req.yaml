@@ -60,9 +60,9 @@ obligation_deferrals:
       ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
-    reviewed_at: "2026-09-30T07:33:33Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:19Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -70,7 +70,10 @@ hazard_review:
             - boundary
             - edge_case
             - error_handling
-          rationale: 'Worst case: a jq filter bug turns remove into a destructive verb aimed at first-party plugins, which cannot be re-fetched after deletion. The filter is (.firstParty | not), so a plugin record whose firstParty marker is absent (structural-trust inversion: the inventory flag gates a destructive verb) falls on the removable side - mitigated by the fact that clones are legitimately non-first-party, the id is cut from the returned row not re-derived, and omarchy-plugin-remove re-checks what it is deleting; residual consequence needs a defective inventory generator. boundary: one filter per verb is the exact partition, allowlisted by the case. edge_case: a tab inside a plugin name shifts the cut -f2 id column (line protocol), and the action then misses the intended plugin - ids are slugs, so a collision with a different plugin is implausible. error_handling: a plugin-list failure kills under set -e before any listing; empty rows notify and exit 0 per the sibling QMWP contract.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a jq filter bug turns remove into a destructive verb aimed at first-party plugins, which cannot be re-fetched after deletion. The filter is (.firstParty | not), so a plugin record whose firstParty marker is absent (structural-trust inversion: the inventory flag gates a destructive verb) falls on the removable side - mitigated by the fact that clones are legitimately non-first-party, the id is cut from the returned row not re-derived, and omarchy-plugin-remove re-checks what it is deleting; residual consequence needs a defective inventory generator. boundary: one filter per verb is the exact partition, allowlisted by the case. edge_case: a tab inside a plugin name shifts the cut -f2 id column (line protocol), and the action then misses the intended plugin - ids are slugs, so a collision with a different plugin is implausible. error_handling: a plugin-list failure kills under set -e before any listing; empty rows notify and exit 0 per the sibling QMWP contract. Catalog 1.11.0 re-review: input_domain not applicable, plugin state comes from the installed plugin list, not from a parsed text file. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

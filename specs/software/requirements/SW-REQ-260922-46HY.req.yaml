@@ -80,9 +80,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:37Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:02:34Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:15Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -90,7 +90,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'Worst case: an entry whose declared shape is ambiguous or hostile - action AND target both present, an id with leading/trailing/double dots, or a non-object raw - normalizes into a tree node that silently loses a declared behavior (link target dropped because kind precedence picks action) or derives a parent that matches no other node (empty-string parent from an id like .x), so the row never renders or renders at the wrong depth. malformed_input: raw||{}, the action-over-target precedence, and the dotted-id derivation are exactly the declared-shape handling this class names, and the shipped config is user-extensible so shapes beyond the happy path are reachable. boundary: id==root forcing empty parent versus derived root parent is the identity edge of the tree; the three-way kind precedence is the type boundary. edge_case: explicit parent overriding the derived one, and dotted ids of every arity, are the witnessed corners.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: an entry whose declared shape is ambiguous or hostile - action AND target both present, an id with leading/trailing/double dots, or a non-object raw - normalizes into a tree node that silently loses a declared behavior (link target dropped because kind precedence picks action) or derives a parent that matches no other node (empty-string parent from an id like .x), so the row never renders or renders at the wrong depth. malformed_input: raw||{}, the action-over-target precedence, and the dotted-id derivation are exactly the declared-shape handling this class names, and the shipped config is user-extensible so shapes beyond the happy path are reachable. boundary: id==root forcing empty parent versus derived root parent is the identity edge of the tree; the three-way kind precedence is the type boundary. edge_case: explicit parent overriding the derived one, and dotted ids of every arity, are the witnessed corners. Catalog 1.11.0 re-review: input_domain not applicable, entries reach it already parsed by SW-REQ-260922-E4J2. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

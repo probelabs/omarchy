@@ -69,9 +69,9 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T21:25:37Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:00:59Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:15Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -79,7 +79,10 @@ hazard_review:
             - boundary
             - edge_case
             - concurrent
-          rationale: 'Worst case: rows served from cache describe image files that no longer exist or have changed - a user picks an entry whose target was deleted or renamed under a preserved mtime. The fast signature (dir path + dir mtime) gates reuse; a lost fast-signature file falls back to the per-image size:mtime full compare, which vouches for the same rows without a rebuild. boundary: missing rows cache, missing fast signature, empty image dir, and the v3->v4 schema bump are the tested partition edges. edge_case: an edit that preserves both size and mtime slips past both signatures - the honest residual of mtime-based coherence, graded low because the actor is the same user and the cost is a stale picker row, not a wrong write. concurrent: two selectors opening the same cache must not interleave a half-written rows file with its signature - rows and signatures publish together under the cache lock, and the concurrent-runs scenario is witnessed.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: rows served from cache describe image files that no longer exist or have changed - a user picks an entry whose target was deleted or renamed under a preserved mtime. The fast signature (dir path + dir mtime) gates reuse; a lost fast-signature file falls back to the per-image size:mtime full compare, which vouches for the same rows without a rebuild. boundary: missing rows cache, missing fast signature, empty image dir, and the v3->v4 schema bump are the tested partition edges. edge_case: an edit that preserves both size and mtime slips past both signatures - the honest residual of mtime-based coherence, graded low because the actor is the same user and the cost is a stale picker row, not a wrong write. concurrent: two selectors opening the same cache must not interleave a half-written rows file with its signature - rows and signatures publish together under the cache lock, and the concurrent-runs scenario is witnessed. Catalog 1.11.0 re-review: input_domain not applicable, it compares directory paths and mtimes, not file contents. concurrency_scale applied, the rows cache and signatures are shared state across invocations and concurrent opens.'
         - category: property
           disposition: reviewed
           applied:

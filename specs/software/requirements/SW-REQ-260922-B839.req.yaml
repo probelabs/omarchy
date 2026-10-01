@@ -53,16 +53,19 @@ history:
 obligation_checklist:
     - error_handling
 hazard_review:
-    reviewed_at: "2026-09-30T07:15:33Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:17Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - error_handling
             - boundary
-          rationale: 'Worst case: a script invoked with missing arguments proceeds silently and summons a menu nobody can answer, or worse exits 0 so the caller interprets no-answer as a legitimate empty input; the two unconditional usage+exit 1 gates (argv below the prompt floor, options map empty after parsing both argv and stdin paths) are the guard, and the diagnostic on stderr keeps stdout clean for pipelines. boundary: exactly-zero options versus one option is the tested floor; prompt-only invocation (options empty through the stdin mapfile path) is the second gate''s edge. error_handling is the requirement''s own declared class - usage failure is loud, exits 1, and never reaches the summon.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'Worst case: a script invoked with missing arguments proceeds silently and summons a menu nobody can answer, or worse exits 0 so the caller interprets no-answer as a legitimate empty input; the two unconditional usage+exit 1 gates (argv below the prompt floor, options map empty after parsing both argv and stdin paths) are the guard, and the diagnostic on stderr keeps stdout clean for pipelines. boundary: exactly-zero options versus one option is the tested floor; prompt-only invocation (options empty through the stdin mapfile path) is the second gate''s edge. error_handling is the requirement''s own declared class - usage failure is loud, exits 1, and never reaches the summon. Catalog 1.11.0 re-review: input_domain applied, inherited from SYS-REQ-260922-X6Z5; its partition is the empty stdin, witnessed on SW-REQ-260922-Q6ZS (usage and exit 1). concurrency_scale not applicable, one argument check per invocation.'
         - category: property
           disposition: reviewed
           applied:

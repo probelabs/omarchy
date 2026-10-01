@@ -54,15 +54,18 @@ obligation_hazards:
       worst_case: 'a provider rerun that swaps rows in place loses the write (QML var-property writes are occasionally dropped): orphan ids linger in itemOrder with no item behind them, the next merge carries the orphan forward, and the launcher lists the same app twice - the exact historical defect the fresh-object merge semantics exist to prevent'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-09-30T08:05:52Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:26Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - malformed_input
-          rationale: 'Worst case graded above (in-place swap loss compounding into duplicate rows - the shipped-history defect, fixed by mergeMenuSources/mergeAppRows/swapProviderRows rebuilding fresh objects and never writing into QML var properties). malformed_input: a junk provider row (missing id, non-object) or a duplicate desktop id is skipped at the guard, so junk never enters the map, and ids already claimed are listed once by the nextItems occupancy check. Orphaned ids (provider vanished its batch) are dropped rather than carried, so a lost write cannot compound. Static JSONC rows are untouched by the swap, per contract.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case graded above (in-place swap loss compounding into duplicate rows - the shipped-history defect, fixed by mergeMenuSources/mergeAppRows/swapProviderRows rebuilding fresh objects and never writing into QML var properties). malformed_input: a junk provider row (missing id, non-object) or a duplicate desktop id is skipped at the guard, so junk never enters the map, and ids already claimed are listed once by the nextItems occupancy check. Orphaned ids (provider vanished its batch) are dropped rather than carried, so a lost write cannot compound. Static JSONC rows are untouched by the swap, per contract. Catalog 1.11.0 re-review: input_domain not applicable, rows reach it already parsed. concurrency_scale applied, dynamic sources re-run repeatedly; each batch replaces its predecessor atomically.'
         - category: property
           disposition: reviewed
           applied:

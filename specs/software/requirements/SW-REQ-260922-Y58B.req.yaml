@@ -70,16 +70,19 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:43:34Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:22Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: a guard process spawns for a menu with nothing to guard - wasted spawn plus a stale-answers window - closed by the empty-script early return that also clears all three result maps, so a zero-guard menu renders with no marks and no bash at all. boundary: both halves of the zero case are pinned - no declared guards yields the empty script (the generator contract this consumption sits on) and the empty script yields no process. edge_case: an evaluation while a guard run is in flight defers to the in-flight run (guardsPending), and a guard expression that never completes keeps that run alive forever, stalling all future refreshes - consequence bounded to answer staleness per the documented menu-opens-on-last-answers tradeoff, with the UI itself unaffected.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a guard process spawns for a menu with nothing to guard - wasted spawn plus a stale-answers window - closed by the empty-script early return that also clears all three result maps, so a zero-guard menu renders with no marks and no bash at all. boundary: both halves of the zero case are pinned - no declared guards yields the empty script (the generator contract this consumption sits on) and the empty script yields no process. edge_case: an evaluation while a guard run is in flight defers to the in-flight run (guardsPending), and a guard expression that never completes keeps that run alive forever, stalling all future refreshes - consequence bounded to answer staleness per the documented menu-opens-on-last-answers tradeoff, with the UI itself unaffected. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, no guard means no process runs at all.'
         - category: property
           disposition: reviewed
           applied:

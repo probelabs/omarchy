@@ -47,16 +47,19 @@ obligation_hazards:
       worst_case: 'an id that names an Object.prototype member (constructor, toString, valueOf - all pure a-z, so slugify preserves them and a desktop app literally named Constructor gets slug id constructor) escapes the || null fallback: root.items[id] resolves up the prototype chain to a truthy function instead of null, so the callers null check passes and a function object flows where an entry is expected - the root-menu fallback this req promises is skipped and the row/bind path throws on the missing entry fields'
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:03:53Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:23Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - malformed_input
             - edge_case
-          rationale: 'Worst case: prototype-member id (constructor/toString) resolves to an inherited truthy function, skipping the || null fallback and the root-menu fallback the req promises - slugify keeps pure a-z ids and desktop-derived app rows share the items map, so the mechanism is reachable, graded low (menu-surface error, no data or privilege). malformed_input: any other absent id answers null and the caller falls back to root, the exact contract. edge_case: an id present with a falsy value would also fall through the || chain, but every merged entry is an object (truthy), so only inherited members can take the wrong arm.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: prototype-member id (constructor/toString) resolves to an inherited truthy function, skipping the || null fallback and the root-menu fallback the req promises - slugify keeps pure a-z ids and desktop-derived app rows share the items map, so the mechanism is reachable, graded low (menu-surface error, no data or privilege). malformed_input: any other absent id answers null and the caller falls back to root, the exact contract. edge_case: an id present with a falsy value would also fall through the || chain, but every merged entry is an object (truthy), so only inherited members can take the wrong arm. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:

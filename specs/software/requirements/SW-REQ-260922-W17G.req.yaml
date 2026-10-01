@@ -70,16 +70,19 @@ obligation_suppressions:
         - NIST-800-53 SC-5
         - OWASP-ASVS-v4 V11.1.4
 hazard_review:
-    reviewed_at: "2026-09-30T07:46:54Z"
-    reviewed_by: agent:opencode-hazard-c
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:22Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: a shared reader with side effects (a counter, a cache write) executes once per referencing guard line instead of once per batch - the substitution covers only the plain $(reader) form, and documented non-plain forms (VAR=x reader, command -v reader, nested substitutions) are deliberately left to run the real command at eval time, so read-once holds exactly for the contract shape and degrades to repeated execution outside it; consequence is duplicate side effects and a slower batch, accepted and documented in MenuModel.js. boundary: a reader referenced by zero guards emits no capture line at all (the slot-membership test) - the read-once-only-when-shared half. edge_case: a reader exiting nonzero captures empty under the ||: isolation, so its dependents evaluate against an empty value (typically a false answer) instead of killing the batch, and one hung reader stalls the eager prelude - the freshness-only stall family dispositioned at MQ37.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a shared reader with side effects (a counter, a cache write) executes once per referencing guard line instead of once per batch - the substitution covers only the plain $(reader) form, and documented non-plain forms (VAR=x reader, command -v reader, nested substitutions) are deliberately left to run the real command at eval time, so read-once holds exactly for the contract shape and degrades to repeated execution outside it; consequence is duplicate side effects and a slower batch, accepted and documented in MenuModel.js. boundary: a reader referenced by zero guards emits no capture line at all (the slot-membership test) - the read-once-only-when-shared half. edge_case: a reader exiting nonzero captures empty under the ||: isolation, so its dependents evaluate against an empty value (typically a false answer) instead of killing the batch, and one hung reader stalls the eager prelude - the freshness-only stall family dispositioned at MQ37. Catalog 1.11.0 re-review: input_domain not applicable, guard expressions reach it already parsed by SW-REQ-260922-E4J2. concurrency_scale not applicable, shared value commands are deduplicated within one generated batch; batch overlap is stated on SW-REQ-260922-4079.'
         - category: property
           disposition: reviewed
           applied:

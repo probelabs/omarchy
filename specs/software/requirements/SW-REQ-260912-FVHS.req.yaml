@@ -53,9 +53,9 @@ history:
 obligation_checklist:
     - boundary
 hazard_review:
-    reviewed_at: "2026-09-30T06:50:43Z"
-    reviewed_by: agent:opencode-hazard-a
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:12Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -64,7 +64,10 @@ hazard_review:
             - error_handling
             - access_denied
             - boundary
-          rationale: 'Worst case: a second update enters its pre-update snapshot while the first runs, interleaving snapshots and package transactions. concurrent: flock -n on a dedicated descriptor is the mutual-exclusion arbiter; contention is the trigger. error_handling: a failed flock prints a diagnostic and exits 1, and a missing command answers usage with exit 2. access_denied: an unopenable lock file, including permission denial on the runtime directory, refuses the run under set -e with the failure on stderr rather than running unlocked. boundary: the zero-argument edge and the missing lock directory (mkdir best-effort) are the tested edges of the open path.'
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: 'Worst case: a second update enters its pre-update snapshot while the first runs, interleaving snapshots and package transactions. concurrent: flock -n on a dedicated descriptor is the mutual-exclusion arbiter; contention is the trigger. error_handling: a failed flock prints a diagnostic and exits 1, and a missing command answers usage with exit 2. access_denied: an unopenable lock file, including permission denial on the runtime directory, refuses the run under set -e with the failure on stderr rather than running unlocked. boundary: the zero-argument edge and the missing lock directory (mkdir best-effort) are the tested edges of the open path. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale applied, it takes the exclusive update lock with flock; a second concurrent run is refused with a diagnostic and exit 1.'
         - category: property
           disposition: reviewed
           applied:

@@ -78,16 +78,19 @@ obligation_hazards:
       worst_case: 'a drill-down or filter rebuild lands the cursor on a row that is now disabled (row set changed under the held selection index): the user presses Enter and the activation targets a row that renders dimmed - the contract forbids cursor-on-disabled and the children guard it (disabled rows skipped on cursor moves, no parked cursor when all rows are disabled), so the residual is only a rebuild racing an open dialog, graded low'
       severity: low
 hazard_review:
-    reviewed_at: "2026-09-30T08:07:45Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:26Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case graded above (rebuild parks cursor on newly-disabled row - low, guarded by the child skip/no-park guarantees the trace carries). boundary: an all-disabled submenu admits no cursor at all (child no-parked-cursor), and back navigation retraces the drill path rather than popping to root - the two partition edges this contract names. edge_case: activating a link-type row follows its target instead of running an action, and submenu rows drill instead of executing - kind inferred at merge decides which, so a mis-inferred kind is the malformed half and is owned by the merge children. The direct implementation site (Menu.qml row activation + back stack) carries the Implements marker.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case graded above (rebuild parks cursor on newly-disabled row - low, guarded by the child skip/no-park guarantees the trace carries). boundary: an all-disabled submenu admits no cursor at all (child no-parked-cursor), and back navigation retraces the drill path rather than popping to root - the two partition edges this contract names. edge_case: activating a link-type row follows its target instead of running an action, and submenu rows drill instead of executing - kind inferred at merge decides which, so a mis-inferred kind is the malformed half and is owned by the merge children. The direct implementation site (Menu.qml row activation + back stack) carries the Implements marker. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, view state recomputed from the current rows on each UI event: no process, timer or lock, and events are handled one at a time.'
         - category: property
           disposition: reviewed
           applied:

@@ -58,18 +58,21 @@ obligation_suppressions:
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:09:13Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:16Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - error_handling
             - boundary
+          not_applicable:
+            - input_domain
+            - concurrency_scale
           suppressed:
             - error_handling
-          rationale: 'Worst case: the clipboard - which routinely holds passwords and tokens - lands in a /tmp file that outlives the script by design, or a failed clipboard read ships an empty file to the LAN picker. mktemp creates the file 0600, so the retention window is same-user-readable only and system cleanup owns reaping - a documented, graded-low tradeoff. boundary: wl-paste failure produces an empty temp file that still flows into the send (the script does not gate the send on a non-empty clipboard) - the empty-share edge; a chooser status above 1 is distinguished from a user cancel through command substitution so a chooser that never opened cannot pass as an empty selection. error_handling is suppressed as a pointer to the standing obligation_suppressions entry: the chooser-status-capturing command substitution is exactly why set -e/pipefail is wrong here, and the remaining pipeline steps fail soft with no partial state; the critical-notification path for chooser failure is witnessed under JREH.'
+          rationale: 'Worst case: the clipboard - which routinely holds passwords and tokens - lands in a /tmp file that outlives the script by design, or a failed clipboard read ships an empty file to the LAN picker. mktemp creates the file 0600, so the retention window is same-user-readable only and system cleanup owns reaping - a documented, graded-low tradeoff. boundary: wl-paste failure produces an empty temp file that still flows into the send (the script does not gate the send on a non-empty clipboard) - the empty-share edge; a chooser status above 1 is distinguished from a user cancel through command substitution so a chooser that never opened cannot pass as an empty selection. error_handling is suppressed as a pointer to the standing obligation_suppressions entry: the chooser-status-capturing command substitution is exactly why set -e/pipefail is wrong here, and the remaining pipeline steps fail soft with no partial state; the critical-notification path for chooser failure is witnessed under JREH. Catalog 1.11.0 re-review: input_domain not applicable, the clipboard text is passed through to a file, not parsed. concurrency_scale not applicable, one run per user action that owns its own temp files and shares no state with a concurrent run.'
         - category: property
           disposition: reviewed
           applied:

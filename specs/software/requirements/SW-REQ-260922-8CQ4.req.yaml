@@ -71,16 +71,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T20:47:46Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:09:12Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:16Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: the destructive arm fires on the wrong object or without consent - confirm binding to the cursor row at confirm time instead of the row the dialog named (closed: deleteTarget snapshots appId+label at open and confirmDelete consumes only that snapshot, so cursor movement under a live dialog cannot retarget the removal), or the dialog failing open (closed: the dialog opens with its selection preset to the No arm, cancel and reopen both reset it, and onOpenedChanged clears dialog state the moment the menu closes). boundary: cursor bounds (no cursor, negative, past end) and the kind!==app gate are the tested partition edges - non-app rows ignore Delete entirely. edge_case: double Delete while the dialog is open re-snapshots the target, Enter-Enter double-confirm finds deleteTarget already null and returns, and Esc-then-reopen starts a clean dialog - none of which can stack two removals. The removal itself and its privilege handling are the app library''s own requirements.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the destructive arm fires on the wrong object or without consent - confirm binding to the cursor row at confirm time instead of the row the dialog named (closed: deleteTarget snapshots appId+label at open and confirmDelete consumes only that snapshot, so cursor movement under a live dialog cannot retarget the removal), or the dialog failing open (closed: the dialog opens with its selection preset to the No arm, cancel and reopen both reset it, and onOpenedChanged clears dialog state the moment the menu closes). boundary: cursor bounds (no cursor, negative, past end) and the kind!==app gate are the tested partition edges - non-app rows ignore Delete entirely. edge_case: double Delete while the dialog is open re-snapshots the target, Enter-Enter double-confirm finds deleteTarget already null and returns, and Esc-then-reopen starts a clean dialog - none of which can stack two removals. The removal itself and its privilege handling are the app library''s own requirements. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, one modal confirmation at a time; repeated Delete presses re-open the same dialog.'
         - category: property
           disposition: reviewed
           applied:

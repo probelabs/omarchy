@@ -71,16 +71,19 @@ history:
     last_modified_by: agent:kimi-zero-warnings
     last_modified_at: "2026-09-27T20:47:46Z"
 hazard_review:
-    reviewed_at: "2026-09-30T07:15:31Z"
-    reviewed_by: agent:opencode-hazard-b
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_at: "2026-10-01T21:26:17Z"
+    reviewed_by: agent:claude-baseline-pass
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
           applied:
             - boundary
             - edge_case
-          rationale: 'Worst case: the card ends exactly on a row boundary, so the last visible row is fully drawn and a user believes the list is complete - the fold affordance silently vanishes and rows below stay undiscovered; the never-comes-out-even rule and the 70-percent panel cap are the two protections, and the overflow/exact-fit partition plus the cap arithmetic are the boundary pair. boundary: every-row-fits versus rows-overflow flips the height source (full list height versus folded height), and the frozen-top ceiling once a search pins the card is the second cap boundary. edge_case: mixed base and detail row heights (search narrowing or dmenu subtext) make the fold land at a different row for the same row count, and submenu drilling reusing the starting ceiling are the witnessed corners - all display-only misestimates graded low, no state or data consequence.'
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the card ends exactly on a row boundary, so the last visible row is fully drawn and a user believes the list is complete - the fold affordance silently vanishes and rows below stay undiscovered; the never-comes-out-even rule and the 70-percent panel cap are the two protections, and the overflow/exact-fit partition plus the cap arithmetic are the boundary pair. boundary: every-row-fits versus rows-overflow flips the height source (full list height versus folded height), and the frozen-top ceiling once a search pins the card is the second cap boundary. edge_case: mixed base and detail row heights (search narrowing or dmenu subtext) make the fold land at a different row for the same row count, and submenu drilling reusing the starting ceiling are the witnessed corners - all display-only misestimates graded low, no state or data consequence. Catalog 1.11.0 re-review: input_domain not applicable, it reads no external text input. concurrency_scale not applicable, view state recomputed from the current rows on each UI event: no process, timer or lock, and events are handled one at a time.'
         - category: property
           disposition: reviewed
           applied:
