@@ -326,6 +326,11 @@ assert(
   'menu search skips disabled rows, which belong to the submenu they sit in rather than a list of what you can do'
 )
 
+assert(
+  /if \(drilldownRows\[f\]\.kind === "app"\) appRows\.push\(drilldownRows\[f\]\)[\s\S]*?rows = appRows\.concat\(currentRows\)\.concat\(deeperRows\)/.test(menuQml),
+  'menu pins matching app rows above the direct children in search'
+)
+
 const entry = merged.items['style.theme']
 // MCDC SW-REQ-260922-DQ9P: all_terms_matched=T, query_terms_given=T, row_hidden_from_results=F => FALSE
 assert(menu.matchesQuery(entry, 'theme', true), 'menu matches labels and aliases')
@@ -405,8 +410,22 @@ assert(
   'menu ranks an app matching the query as a whole word above exact-labeled menu entries'
 )
 assert(
-  rankScore('style.font', 'font') < rankScore('apps.fontforge', 'font'),
-  'menu keeps a better-matching menu entry above a weaker app match'
+  rankScore('apps.fontforge', 'font') < rankScore('style.font', 'font'),
+  'menu ranks an installed app above a menu entry even when the menu entry matches better'
+)
+
+// "vsc" matches the VSCode menu entries by label prefix but the installed
+// app only by keyword substring, so without an apps-first bias the app
+// sorts second. The menu must still put the app on top.
+const vscRanked = menu.mergeAppRows(rankBase.items, rankBase.itemOrder, [
+  { id: 'apps.code', parent: 'apps', kind: 'app', label: 'Visual Studio Code', description: 'Text Editor', aliases: ['Text Editor', 'vscode'] }
+])
+const vscScore = (id, query) => menu.searchScore(vscRanked.items, vscRanked.items[id], query)
+assert(
+  ['setup.default.editor.vscode', 'install.editor.vscode'].every(
+    id => vscScore('apps.code', 'vsc') < vscScore(id, 'vsc')
+  ),
+  'menu ranks the installed VS Code app above its VSCode menu entries for vsc'
 )
 
 // Ranking only engages when match quality varies: two whole-word app matches
@@ -1282,8 +1301,8 @@ test('mcdc searchScore: every tier with a deterministic order and depth', () => 
   assertEqual(sc('ex', 'zen'), 0, 'searchScore puts an exact root-level menu label at the top of its tier')
   assertEqual(sc('ax', 'zen'), 2000, 'searchScore keeps an exact action label two points above an exact menu label')
   assertEqual(sc('nx', 'zen'), -1975, 'searchScore drops a nested exact label below root-level and adds one depth step')
-  assertEqual(sc('ap', 'zen'), -5000, 'searchScore puts an app whole-word match in its own negative tier')
-  assertEqual(sc('ap2', 'zen'), 5000, 'searchScore keeps an app label that only prefixes the query out of the whole-word tier')
+  assertEqual(sc('ap', 'zen'), -100000, 'searchScore puts an app whole-word match in its own negative tier, below every menu tier')
+  assertEqual(sc('ap2', 'zen'), -90000, 'searchScore keeps an app label that only prefixes the query out of the whole-word tier, still above every menu row')
   assertEqual(sc('pf', 'zen'), 8000, 'searchScore scores a label-prefix match at ten')
   assertEqual(sc('lk', 'zen'), 8000, 'searchScore scores a link row like a menu row')
   assertEqual(sc('ct', 'zen'), 28000, 'searchScore scores a mid-label match at thirty')
@@ -1325,4 +1344,84 @@ test('mcdc summonAction: in-process summon shape and every rejection', () => {
   assertEqual(menuModel.summonAction('omarchy-shell shell summon bad id'), null, 'summonAction rejects an id with a space')
   assertDeepEqual(menuModel.summonAction('omarchy-shell shell summon style'), { id: 'style', payload: '{}' }, 'summonAction parses a bare summon to an empty payload')
   assertDeepEqual(menuModel.summonAction("omarchy-shell shell summon style 'k=v'"), { id: 'style', payload: 'k=v' }, 'summonAction parses a quoted payload')
+})
+
+
+// PR omacom/omarchy#12223 witnesses (SW-REQ-260922-TKDP, SW-REQ-260922-SJ7P):
+// the REAL rebuildDisplay search branch from shell/plugins/menu/Menu.qml runs
+// under node vm against the real MenuModel.js and the shipped default menu
+// merged with app rows. They live here, in the menu-node suite, so the mirror
+// adds no suite line to proof.yaml.
+test('Menu.qml rebuildDisplay search ranking with installed apps (PR #12223 witnesses)', () => {
+const menu = requireFromRoot('shell/plugins/menu/MenuModel.js')
+// PR omacom/omarchy#12223 review witness (proof-side, executes product code):
+// runs the REAL rebuildDisplay search branch from Menu.qml under vm against
+// the real MenuModel.js and the shipped default menu merged with app rows,
+// so the apps-first pinning and the divider placement are observed in
+// execution rather than matched as source text.
+function searchDisplay(appRows, activeMenu, query) {
+  const vm = require('vm')
+  const fs = require('fs')
+  const qml = fs.readFileSync(path.join(root, 'shell/plugins/menu/Menu.qml'), 'utf8')
+  const fnMatch = qml.match(/\n  function rebuildDisplay\(\) \{[\s\S]*?\n  \}\n/)
+  if (!fnMatch) throw new Error('rebuildDisplay not found in Menu.qml')
+  const defaults = menu.parseMenuJsonc(fs.readFileSync(path.join(root, 'default/omarchy/omarchy-menu.jsonc'), 'utf8'))
+  const base = menu.mergeMenuSources(defaults, [])
+  const merged = menu.mergeAppRows(base.items, base.itemOrder, appRows)
+  const model = []
+  const displayModel = { clear() { model.length = 0 }, append(r) { model.push(r) }, get count() { return model.length } }
+  const r = {
+    dmenuActive: false, rowsLoaded: true, activeMenu, filterText: query, searchDivider: false,
+    items: merged.items, itemOrder: merged.itemOrder, whenResults: {}, disabledResults: {}, checkedResults: {},
+    item(id) { return this.items[id] || null },
+    isDescendantOf(id, a) { return menu.isDescendantOf(this.items, id, a) },
+    isVisible(e) { return menu.isVisible(this.items, this.itemOrder, this.whenResults, e) },
+    isDisabled(e) { return menu.isDisabled(this.disabledResults, e) },
+    matchesQuery(e, q) { return menu.matchesQuery(e, q, this.isVisible(e) && !this.isDisabled(e)) },
+    parentPathFor(id) { return menu.parentPathFor(this.items, id) },
+    searchScore(e, q) { return menu.searchScore(this.items, e, q) },
+    displayRow(e, d, s, sec) { return menu.displayRow(this.items, this.itemOrder, this.checkedResults, this.disabledResults, e, d, s, sec) },
+    settleCursor() {}, revealCursor() {}
+  }
+  const fn = vm.runInNewContext(`(function() {${fnMatch[0]}; return rebuildDisplay })()`, {
+    root: r, displayModel, layoutSerial: 0, Qt: { callLater() {} }
+  })
+  fn.call(r)
+  return { rows: model.slice(), divider: r.searchDivider }
+}
+
+{ // root search pins apps above direct children and deeper entries
+  const apps = [
+    { id: 'apps.chromium', parent: 'apps', kind: 'app', label: 'Chromium', description: 'Web Browser', aliases: [] },
+    { id: 'apps.calculator', parent: 'apps', kind: 'app', label: 'Calculator', description: '', aliases: [] }
+  ]
+  const { rows, divider } = searchDisplay(apps, 'root', 'c')
+  assert(rows.length > 2, 'root search for c lists rows')
+  const firstMenu = rows.findIndex(row => row.kind !== 'app')
+  assert(firstMenu > 0, 'apps occupy the leading rows of a root search')
+  assert(rows.slice(firstMenu).every(row => row.kind !== 'app'), 'no app row sorts below a menu row')
+  assert(rows.slice(0, firstMenu).every(row => row.section !== 'drilldown'), 'app rows carry no drilldown section')
+  assert(rows.slice(firstMenu).every(row => row.section === 'drilldown'), 'every menu row after the apps sits in the drilldown section')
+  const boundaries = rows.filter((row, i) => i > 0 && row.section === 'drilldown' && rows[i - 1].section !== 'drilldown').length
+  assertEqual(boundaries, 1, 'exactly one divider is drawn, between apps and menu entries')
+  assertEqual(divider, true, 'searchDivider is set when apps and menu entries both match')
+}
+
+{ // without app matches, direct children stay above deeper entries with one divider
+  const { rows, divider } = searchDisplay([], 'root', 'c')
+  const firstDeep = rows.findIndex(row => row.section === 'drilldown')
+  assert(firstDeep > 0, 'direct children lead a root search with no app matches')
+  assert(rows.slice(firstDeep).every(row => row.section === 'drilldown'), 'deeper entries all follow the divider')
+  assertEqual(divider, true, 'searchDivider is set when direct and deeper matches both exist')
+}
+
+{ // a keyword-only app match outranks an exact-label menu entry (intended-behavior question)
+  const ranked2 = menu.mergeAppRows(menu.mergeMenuSources(menu.parseMenuJsonc(require('fs').readFileSync(path.join(root, 'default/omarchy/omarchy-menu.jsonc'), 'utf8')), []).items,
+    menu.mergeMenuSources(menu.parseMenuJsonc(require('fs').readFileSync(path.join(root, 'default/omarchy/omarchy-menu.jsonc'), 'utf8')), []).itemOrder,
+    [{ id: 'apps.gradience', parent: 'apps', kind: 'app', label: 'Gradience', description: 'Customize the update look', aliases: [] }])
+  const exactId = Object.keys(ranked2.items).find(id => ranked2.items[id].kind !== 'app' && String(ranked2.items[id].label).toLowerCase() === 'update')
+  assert(!!exactId, 'the default menu carries an entry labelled exactly Update')
+  const s = id => menu.searchScore(ranked2.items, ranked2.items[id], 'update')
+  assert(s('apps.gradience') < s(exactId), 'a description-only app match ranks above the exact-label Update menu entry under the apps-first bias')
+}
 })
