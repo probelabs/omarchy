@@ -96,7 +96,7 @@ surfaces:
     oracle_families_armed:
       - valid-subset-survives / invalid-superset-degrades (L6) — menu-test.sh preservation block + node replay
       - metamorphic pairs (L7) — adding/removing full-line comments and legal trailing commas must not change the model (holds upstream, incl. comma -> comment line -> closer)
-      - differential fuzz vs independent reference models (L5/L7) — 2000-case seeded documented-grammar property test plus a 3000-case seeded token-level differential with inline comments, comma+closer strings, array roots and all 19 non-ASCII \s characters, both in-suite and green on pr/13968; out of suite 200k-document Unicode differential vs c05d9019 (0 upstream-correct inputs parsed differently)
+      - differential fuzz vs independent reference models (L5/L7) — 2000-case seeded documented-grammar property test plus a 3000-case seeded token-level differential with inline comments, comma+closer strings, array roots, the vertical tab, the form feed and all 19 non-ASCII \s characters, both in-suite and green on pr/13968; out of suite 200k-document Unicode differential vs c05d9019 (0 upstream-correct inputs parsed differently)
     oracle_families_blocked:
       - crash oracles — DEAD on a recovery-posture surface (L1)
       - live differential vs a second production parser — none exists (verified: no bin/ script parses the menu JSONC)
