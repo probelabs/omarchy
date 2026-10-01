@@ -54,6 +54,7 @@ const selectPayload = (tag) => JSON.stringify({ mode: 'select', prompt: 'Pick ' 
   r.open(selectPayload('first'))
   assertEqual(r.requestActive, true, 'the first select request is active')
   assertEqual(writes.length, 0, 'opening the first request writes nothing')
+  // Verifies: SW-REQ-260925-XTGG
   // MCDC SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=F, prior_request_cancelled=T => TRUE
   r.open(selectPayload('second'))
   assertEqual(writes.length, 1, 'the second summon issues exactly one answer write')
@@ -73,9 +74,11 @@ const selectPayload = (tag) => JSON.stringify({ mode: 'select', prompt: 'Pick ' 
 
 { // a summon with no active request cancels nothing
   const { r, writes } = requestHarness()
+  // Verifies: SW-REQ-260925-XTGG
   // MCDC SW-REQ-260925-XTGG: menu_open_called=T, no_active_request=T, prior_request_cancelled=F => TRUE [no-action: no request is active before this summon, so the guard does not fire and no answer write is issued]
   r.open(selectPayload('clean'))
   assertEqual(writes.length, 0, 'a clean summon issues no answer write')
+  // Verifies: SW-REQ-260925-XTGG
   // MCDC SW-REQ-260925-XTGG: menu_open_called=F, no_active_request=F, prior_request_cancelled=F => TRUE [no-action: with a request active but no new summon, open() is never entered and the request stays pending with no write]
   assertEqual(r.requestActive, true, 'the request stays pending until answered')
   assertEqual(writes.length, 0, 'an active request with no new summon receives no write')
