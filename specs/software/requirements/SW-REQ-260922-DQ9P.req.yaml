@@ -19,21 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:41.575128Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:45:44.28066Z"
+    reviewed_by: agent:claude-pr-12223
     reviewed_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:descriptionTextMatches: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:leafIdFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:matchesQuery: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:nameSearchText: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:parentPathFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:pathFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:searchableToken: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:setFilter: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:termInSearchWords: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:matchesQuery: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:underhang: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/MenuModel.js:matchesQuery: file1:2f6b152a605ef73b581a00575c5009ad
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -83,45 +76,19 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:30
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:35.597601Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:45:44.28066Z"
+          reviewed_by: agent:claude-pr-12223
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #12223 review on quattro-proof 9f3abc10 (upstream head b74292ac): the Menu.qml delta is confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and the MenuModel.js delta to the searchScore app bias (-5 -> -100); product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; SJ7P/TKDP descriptions carry the new ranking, other requirement intents are unaffected; menu-test.sh and the node replay (incl. the rebuildDisplay witnesses) are green.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:483
             - shell/plugins/menu/Menu.qml:488
-            - shell/plugins/menu/Menu.qml:518
-            - shell/plugins/menu/Menu.qml:523
-            - shell/plugins/menu/Menu.qml:528
-            - shell/plugins/menu/Menu.qml:533
-            - shell/plugins/menu/Menu.qml:538
-            - shell/plugins/menu/Menu.qml:553
-            - shell/plugins/menu/Menu.qml:772
             - shell/plugins/menu/MenuModel.js:334
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:41.575128Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:483
-            - shell/plugins/menu/Menu.qml:488
-            - shell/plugins/menu/Menu.qml:518
-            - shell/plugins/menu/Menu.qml:523
-            - shell/plugins/menu/Menu.qml:528
-            - shell/plugins/menu/Menu.qml:533
-            - shell/plugins/menu/Menu.qml:538
-            - shell/plugins/menu/Menu.qml:553
-            - shell/plugins/menu/Menu.qml:772
-            - shell/plugins/menu/MenuModel.js:334
-            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
+            - test/node/menumodel-replay.test.mjs:317
+            - test/shell.d/menu-test.sh:30
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
