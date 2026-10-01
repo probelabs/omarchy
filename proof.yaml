@@ -165,6 +165,14 @@ project:
                 language: js
                 command: >-
                     node --test test/node/menumodel-replay.test.mjs
+            # Issue-report reproducers (test/reports/, from the fork
+            # report/<id> branches) as a regression net: expected failures
+            # bound to their known issues, skipped only when a runtime the
+            # script needs (Qt qml, perl, bash>=4) is absent.
+            menu-reports:
+                language: js
+                command: >-
+                    node --test test/node/report-reproducers.test.mjs
             lock-qml:
                 language: qml
                 command: >-
@@ -198,6 +206,7 @@ project:
             #   JRW1  guard view application     12 decisions / 2 vars = 6.0
             #   SJ7P  searchScore ranking tiers   9 / 2 = 4.5
             #   66FW  stripJsonc scanner states   9 / 3 = 3.0
+            #   (66FW moved out 2026-10-01 with the fork JSONC fixes)
             #   4EWA/KRBH/QMWP picker verb filter 6 / 2 = 3.0
             #   MQ37/Y58B guard script building   6 / 2 = 3.0
             # The two family_under_modeled findings share the same gate
@@ -255,8 +264,9 @@ project:
             # mechanism the delta extended (bind_commands); claims
             # session CRS-0022, 4/4 dismissed with executed refutations
             # (luajit differential harness, real sandbox + helpers.lua).
+            # 2026-10-01 (quattro-clean): SW-REQ-260927-66FW moved out
+            # with the fork JSONC fixes (belongs to pr/13255).
             specs:
-                - SW-REQ-260927-66FW
                 - SW-REQ-260922-3T3F
                 - SW-REQ-260922-E4J2
                 - SW-REQ-260928-8VJQ

@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when json_invalid the menu_model shall eventually satisfy empty_item_set & !parse_error_raised
-description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser. Trailing-comma stripping is string-aware. It preserves commas inside string literals verbatim. It drops only a comma outside any string whose next non-whitespace character is } or ] (trailing_comma_dropped = !comma_in_string && next_char_closes_json).
+description: Unparseable input (after stripping), non-object JSON, and non-object entries yield an empty or skipped item set; no exception escapes the parser.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js parseMenuJsonc and stripJsonc. A crashing parser would take the whole menu down on a user edit. The pre-fix string-blind comma regex silently corrupted labels such as "x, ]y" while the parse still succeeded.
+rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. Upstream e332dc97 rejects scalar and null roots only; a top-level JSON array root is walked with for..in and renders phantom rows (KI-MENU-JSONC-ARRAY-ROOT, omacom/omarchy#13492).
 tags: []
 variables: []
 traces:
@@ -86,7 +86,7 @@ hazard_review:
           applied:
             - malformed_input
             - error_handling
-          rationale: 'Delta-touched by the fix branch: description and rationale now name string-aware comma semantics. malformed_input: unparseable-after-strip input still routes to the unconditional catch returning []. Verified by direct execution on 2026-09-27: unterminated string -> parse fail -> empty set, no exception escapes. error_handling: the failure mode is silent empty menu by design. 66FW''s prevention handles the subclass where parse SUCCEEDED on corrupted text, not error handling here.'
+          rationale: 'Clean-baseline review against upstream e332dc97 (2026-10-01). malformed_input: unparseable-after-strip input routes to the unconditional catch that returns []; scalar and null roots return []; non-object entries are skipped. An array root is NOT rejected upstream: for..in walks its indices and renders phantom rows keyed 0,1,... - tracked as KI-MENU-JSONC-ARRAY-ROOT (#13492) with reproducer test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh. error_handling: the failure mode is a silent empty item set by design; no exception escapes. Comma and comment stripping belong to E4J2; their upstream gaps are KI-MENU-JSONC-COMMA-IN-STRING (#13250) and KI-MENU-JSONC-INLINE-COMMENT (#13493).'
         - category: property
           disposition: reviewed
           applied:

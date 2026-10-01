@@ -1,26 +1,35 @@
 id: L-MENU-JSONC-001
-title: Post-fix JSONC grammar-edge residency under the string-aware scanner
-description: 'Theme residual delta for hazard classes malformed_input+boundary (66FW), closed 2026-09-28 after both deferred grammar edges were fixed and landed on fix/jsonc-trailing-comma-in-strings. Fix-sibling sweep 2026-09-27: Menu.qml delegates to MenuModel.stripJsonc; no bin/ script parses menu JSONC; remaining .replace sites are slug normalizers - NO isomorphic site exists (attested in DEFECT-260927-CMMA sibling_sweep). Reopen only if a NEW grammar edge class surfaces (e.g. block comments, BOMs, or a third-party extension pipeline feeding machine-generated configs outside the documented grammar).'
+title: JSONC grammar residency of upstream stripJsonc within the documented grammar
+description: 'Clean-baseline re-disposition (2026-10-01, quattro-clean on upstream e332dc97). The previous record claimed the residual for the fork string-aware scanner (fix branches 0d93b9e7/f443c9e2/500b31bd); that code is not on this baseline and the old claim was wrong anyway - its fuzz never generated a comment between a trailing comma and its closer, the shape the fork scanner (and upstream PR #13512) breaks for 1,021 of 20,000 inputs. Upstream ships two string-blind regex passes (whole-line comments first, then trailing commas). Within the grammar docs/menu.md documents, upstream parses every input to its declared entries. Everything outside that grammar that upstream gets wrong is a KnownIssue, not part of this residual. Fix-sibling sweep: Menu.qml delegates to MenuModel.stripJsonc; no bin/ script parses menu JSONC. Reopen if a fix branch replaces the two-pass strip, or a new grammar edge class surfaces.'
 status: closed
 severity: low
-kill_number: 0 semantic divergences on clean inputs in 20000 fuzz cases (consolidated tip vs pristine quattro ce925cb1, seeded xorshift, review/fuzz-diff.js); 0 mutated strings in the adversarial payload set (mv/awk/label cases verified old-vs-new); bug-class inputs diverge only in the fixed direction (array root -> empty set; inline comment tail -> rows preserved)
-kill_domain: 'Menu JSONC configs within the documented grammar: object root, full-line and inline // comments, trailing commas outside string literals, escape sequences per JSON. Under this domain the 66FW equivalence (trailing_comma_dropped <=> !comma_in_string & next_char_closes_json) is proven. RETRACTED 2026-09-28: the top-level-array exclusion (CRS-0019/C01) is fixed by SW-REQ-260928-BMFE (guard + MC/DC witnesses, DEFECT-260928-4NG9 covered_by_requirement), landed via merge 851c990e (PR #4); array roots now join the scalar club and return an empty item set. RETRACTED 2026-09-28: the inline-comment-tail exclusion (CRS-0017/C01 = CRS-0019/C02 = CRS-0020/C01) is fixed by SW-REQ-260928-C8W1 (scanner fold-in + MC/DC witnesses, DEFECT-260928-7AX9 covered_by_requirement), landed via merge 5f9f43a6 (PR #5); comment tails now strip to end-of-line wherever the opener sits outside a string. No exclusions remain.'
+kill_number: 0 divergences from an independent reference model in 20000 seeded fuzz cases of the documented grammar (review/fuzz-upstream-grammar.js against shell/plugins/menu/MenuModel.js at e332dc97; the fork e797ba5b scanner diverges on 8222 of the same inputs), pinned in-suite by a 2000-case seeded property test in test/node/menumodel-replay.test.mjs
+kill_domain: 'Menu JSONC configs within the grammar docs/menu.md documents: object root, whole-line // comments (indented or not, LF or CRLF), trailing commas before } or ] (also across whole-line comments), string literals with JSON escapes that never carry a comma followed by optional whitespace and } or ]. Excluded and tracked as KnownIssues: comma+closer inside a string literal (KI-MENU-JSONC-COMMA-IN-STRING, #13250), top-level array root (KI-MENU-JSONC-ARRAY-ROOT, #13492), inline // comment tails (KI-MENU-JSONC-INLINE-COMMENT, #13493), block comments (KI-MENU-JSONC-STRIP-GAPS).'
 sample_table:
-    - pair: comma_in_string_before_closer
-      notes: preserved-verbatim-witnessed
     - pair: trailing_comma_outside_string
       notes: dropped-witnessed
-    - pair: escaped_quote_then_comma_closer
-      notes: preserved-witnessed
-    - pair: comment_plus_trailing_comma_metamorphic
-      notes: model-unchanged-fuzz
-    - pair: comma_at_eof
-      notes: dropped-unobservable-invalid-json-either-way
-    - pair: top_level_array_root
-      notes: empty-item-set-witnessed-SW-REQ-260928-BMFE
-    - pair: inline_comment_tail_after_content
-      notes: stripped-rows-preserved-witnessed-SW-REQ-260928-C8W1
+    - pair: comma_then_whole_line_comment_then_closer
+      notes: dropped-rows-preserved-witnessed-incl-shipped-extension-template
+    - pair: commented_out_entry_after_last_entry
+      notes: rows-preserved-witnessed
     - pair: comment_slashes_inside_string
       notes: preserved-verbatim-witnessed
-kill_method: analytic + MC/DC witnesses (66FW 5/5 rows; BMFE and C8W1 rows all witnessed in both harnesses) + differential fuzz vs pristine quattro baseline
+    - pair: escaped_quote_then_slashes_inside_string
+      notes: preserved-verbatim-witnessed
+    - pair: crlf_comment_lines
+      notes: stripped-witnessed
+    - pair: plain_comma_inside_string
+      notes: preserved-verbatim-witnessed
+    - pair: comma_and_closer_inside_string
+      notes: excluded-KI-MENU-JSONC-COMMA-IN-STRING
+    - pair: top_level_array_root
+      notes: excluded-KI-MENU-JSONC-ARRAY-ROOT
+    - pair: inline_comment_tail
+      notes: excluded-KI-MENU-JSONC-INLINE-COMMENT
+kill_method: analytic (two regex passes, comment pass first) + preservation witnesses in menu-test.sh and menumodel-replay.test.mjs + seeded differential fuzz vs an independent reference model
+related_known_issues:
+    - KI-MENU-JSONC-COMMA-IN-STRING
+    - KI-MENU-JSONC-ARRAY-ROOT
+    - KI-MENU-JSONC-INLINE-COMMENT
+    - KI-MENU-JSONC-STRIP-GAPS
 source_vector: V-MENU-JSONC-INPUT

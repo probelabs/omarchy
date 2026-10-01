@@ -1,15 +1,22 @@
 id: V-MENU-JSONC-STRIP-EDGES
 title: 'stripJsonc pre-existing edges: comma-in-string corruption, inline comments empty whole menu'
-description: 'Pre-existing parser surface (not delta). Deferred claims CRS-0030/C01+C02, reproduced by review/poc-jsonc-strip-edges.mjs. Hunt: characterize full edge set of the comment/trailing-comma stripper and decide KI vs residual in Phase 2.'
+description: 'Pre-existing parser surface (not delta). Deferred claims CRS-0030/C01+C02, reproduced by review/poc-jsonc-strip-edges.mjs. Hunt: characterize the edge set of the comment/trailing-comma stripper and decide KI vs residual. On the clean baseline both edges reproduce and exit as KnownIssues.'
 priority: P2
-status: closed-null
+status: closed-ki
 related_obligation_classes:
     - malformed_input
 stacks:
     - qml
-close_note: 'Phase-2 PoC (review/poc-jsonc-strip-edges.mjs) executed on Linux at quattro f0893298: C01 comma-in-string label preserved verbatim (''x, ]y''), C02 inline-trailing-comment parse returns 1 item (no empty-menu). Both hunted defects do not reproduce; regression assertions added to test/node/menumodel-replay.test.mjs.'
+close_note: 'Clean-baseline re-disposition on quattro-clean (upstream e332dc97 product code). The previous closed-null was recorded on the fork scanner, which is not on this baseline. On upstream both hunted defects reproduce: a comma+closer inside a string label is rewritten (x, ]y -> x ]y, omacom/omarchy#13250) and an inline // tail empties the whole file (#13493). Exit closed-ki: KI-MENU-JSONC-COMMA-IN-STRING and KI-MENU-JSONC-INLINE-COMMENT, each with an in-suite green tripwire and the report reproducer as an expected failure in test/node/report-reproducers.test.mjs.'
+related_known_issues:
+    - KI-MENU-JSONC-COMMA-IN-STRING
+    - KI-MENU-JSONC-INLINE-COMMENT
 campaign_log:
     - at: "2026-09-29T13:53:30Z"
       status: closed-null
       note: 'Phase-2 PoC (review/poc-jsonc-strip-edges.mjs) executed on Linux at quattro f0893298: C01 comma-in-string label preserved verbatim (''x, ]y''), C02 inline-trailing-comment parse returns 1 item (no empty-menu). Both hunted defects do not reproduce; regression assertions added to test/node/menumodel-replay.test.mjs.'
+      actor: agent
+    - at: "2026-10-01T12:00:00Z"
+      status: closed-ki
+      note: 'Clean-baseline re-disposition on quattro-clean (upstream e332dc97 product code). The previous closed-null was recorded on the fork scanner, which is not on this baseline. On upstream both hunted defects reproduce: a comma+closer inside a string label is rewritten (x, ]y -> x ]y, omacom/omarchy#13250) and an inline // tail empties the whole file (#13493). Exit closed-ki: KI-MENU-JSONC-COMMA-IN-STRING and KI-MENU-JSONC-INLINE-COMMENT, each with an in-suite green tripwire and the report reproducer as an expected failure in test/node/report-reproducers.test.mjs.'
       actor: agent

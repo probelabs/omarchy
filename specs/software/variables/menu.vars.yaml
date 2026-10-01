@@ -84,18 +84,6 @@ variables:
       type: bool
       direction: output
       description: A parse exception escapes to the caller.
-    - name: comma_in_string
-      type: bool
-      direction: input
-      description: The comma sits inside a JSON string literal.
-    - name: next_char_closes_json
-      type: bool
-      direction: input
-      description: The next non-whitespace character after the comma is } or ].
-    - name: trailing_comma_dropped
-      type: bool
-      direction: output
-      description: The comma is dropped from the stripped JSON before parsing.
     - name: entry_shape_declared
       type: bool
       direction: input
@@ -444,22 +432,6 @@ variables:
       type: bool
       direction: output
       description: A confirmation dialog opens; confirm removes the app through the app library, cancel restores focus without removing.
-    - name: array_root_present
-      type: bool
-      direction: input
-      description: The parsed JSONC root is a JSON array rather than an object map.
-    - name: array_root_rejected
-      type: bool
-      direction: output
-      description: The parser returned an empty item set for a top-level array root.
-    - name: comment_in_string
-      type: bool
-      direction: input
-      description: The comment opener sits inside a string literal
-    - name: comment_tail_dropped
-      type: bool
-      direction: output
-      description: The bytes from the comment opener to the end of the line are dropped
     - name: action_is_bare_summon
       type: bool
       direction: input

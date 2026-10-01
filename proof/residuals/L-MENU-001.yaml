@@ -1,9 +1,9 @@
 id: L-MENU-001
-title: Concurrent-summon abandoned-caller angle residual after PR#9056 cancel-prior guard
-description: 'Theme residual delta for hazard classes concurrent+atomicity. Fix-sibling sweep 2026-09-25: the only isomorphic request/done-file site, shell/plugins/image-picker/ImagePicker.qml, ALREADY carries the same mitigation shape (openSelector finishes the prior doneFile before re-arming, :211; cancel()/closeSelector() finishDoneFile too) — no sibling fix needed. Reopen if the Phase-2 live harness reaches the resultProc busy-drop (promote to KI) or a new summon entry bypasses open().'
-status: provisional_kill
+title: Concurrent-summon abandoned-caller angle residual (upstream e332dc97 has no cancel-prior guard)
+description: 'Theme residual delta for hazard classes concurrent+atomicity. Fix-sibling sweep 2026-09-25: the only isomorphic request/done-file site, shell/plugins/image-picker/ImagePicker.qml, ALREADY carries the same mitigation shape (openSelector finishes the prior doneFile before re-arming, :211; cancel()/closeSelector() finishDoneFile too) — no sibling fix needed. Reopen if the Phase-2 live harness reaches the resultProc busy-drop (promote to KI) or a new summon entry bypasses open(). REOPENED 2026-10-01 (quattro-clean): the provisional kill assumed the PR #9056 cancel-prior guard, which upstream e332dc97 does not carry. The engine-executed reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh (omacom/omarchy#9057) drives two real omarchy-menu-select callers through the real Menu.qml open/openDmenu/cancel bodies: the superseded caller never gets a done file and polls forever. That interleaving is KI-MENU-REQUEST-LIFECYCLE, not a residual.'
+status: reopened
 severity: low
-kill_number: 0 abandoned-caller interleavings reachable in 50 attacked claims (48 dismissed with refutations, 2 declared exclusions); 15/15 fold-complete sessions
+kill_number: 1 abandoned-caller interleaving reachable (superseded select summon, reproduced by test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh on e332dc97); the 48 refutations of the earlier sessions assumed the absent cancel-prior guard and are not re-credited
 kill_domain: 'Summon-while-request-active interleavings reaching Menu.qml open() (the single summon entry; openDmenu/openExistingMenu dispatch only after open() entry) on both dmenu backends (wayland 1072-1073, X11 1094-1095); caller side bin/omarchy-menu-select|input done-file poll. Excludes: (a) resultProc busy-drop race (deferred claim from a session not carried to baseline, Phase-2 live PoC), (b) compositor peer-death (KI-MENU-SELECT-POLL-DEADLOCK)'
 sample_table:
     - pair: summon_during_active_select
@@ -19,4 +19,5 @@ sample_table:
 kill_method: analytic (spec+code inspection) + defect-claims sessions CRS-0023..0036 (renumbered to landed sequence; earliest session not carried to baseline) + KI reproducer
 related_known_issues:
     - KI-MENU-SELECT-POLL-DEADLOCK
+    - KI-MENU-REQUEST-LIFECYCLE
 source_vector: V-MENU-SUMMON-WHILE-ACTIVE

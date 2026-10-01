@@ -4,6 +4,19 @@ Companion narrative to `proof/surfaces/threat-surface.yaml` (schema_version 1).
 Synthesized 2026-09-27 by `agent:kimi-fix-jsonc-refresh` for checklist
 `upstream_refresh_v1`, step `threat_surface_synthesis`.
 
+## Clean baseline (quattro-clean, 2026-10-01)
+
+This narrative describes the 2026-09-27 fix branch. On `quattro-clean` the
+product code is upstream `e332dc97`: the string-aware scanner is NOT present,
+so the "pre-fix" mode below is the LIVE behaviour, tracked as
+KI-MENU-JSONC-COMMA-IN-STRING (#13250), with the sibling edges
+KI-MENU-JSONC-ARRAY-ROOT (#13492), KI-MENU-JSONC-INLINE-COMMENT (#13493) and
+KI-MENU-JSONC-STRIP-GAPS. The fix and its records (SW-REQ-260927-66FW,
+DEFECT-260927-CMMA) moved to the pr/13255 line. Upstream's correct behaviour
+on the documented grammar - notably a trailing comma, then whole-line
+comments, then the closer - is pinned by preservation tests and residual
+L-MENU-JSONC-001.
+
 ## What the delta changed about the attack surface
 
 The delta is our own fix, so the surface story runs backwards from the usual
