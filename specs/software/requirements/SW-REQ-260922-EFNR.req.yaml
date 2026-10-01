@@ -19,8 +19,8 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-01T09:52:18.136009684Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T17:53:49.823598Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
@@ -29,7 +29,7 @@ traces:
             shell/plugins/menu/Menu.qml:mergeProviderRows: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:startNextProvider: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:startProviderForMenu: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
@@ -73,6 +73,18 @@ traces:
             - shell/plugins/menu/Menu.qml:355
             - shell/plugins/menu/Menu.qml:376
             - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:19
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T17:53:49.823598Z"
+          reviewed_by: agent:claude-pr-13968
+          method: inspection
+          rationale: 'pr/13968: the PR #13968 changes only stripJsonc and parseMenuJsonc in MenuModel.js (product diff vs the upstream PR is annotation-only, review/check-clean-product-diff.py); the function this requirement links to is byte-identical to the baseline 6fe078f2, so the link turned suspect only through the shared file fingerprint. Re-read the linked function and its witnesses; menu-test.sh, the node replay and code MC/DC are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:355
+            - shell/plugins/menu/Menu.qml:376
+            - shell/plugins/menu/MenuModel.js:190
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:19
             - test/shell.d/menu-test.sh:5
