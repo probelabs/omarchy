@@ -13,7 +13,8 @@ One-line captions are burned in; voiceover omitted (optional).
 | `menu-jsonc-comment-tail.mp4` | #13493 | `8b4eae66` (upstream quattro) → `ff77cd02` (`prep/upstream-jsonc-consolidated-v3`) | JSONC // comment tail empties the menu (3→0) — fixed: parses 3 rows | real `node check-menu.js` against shipped `MenuModel.js.parseMenuJsonc`, headless-sway terminal capture |
 | `menu-jsonc-comma-in-string.mp4` | #13250 | `8b4eae66` → `ff77cd02` | Comma inside a string value is silently rewritten — fixed: string-aware strip | real `node check-menu.js` against shipped `MenuModel.js`, headless-sway terminal capture |
 | `menu-jsonc-array-root.mp4` | #13492 | `8b4eae66` → `ff77cd02` | Array root invents rows 0,1 — ids lost; fixed: rejected like scalar roots | real `node check-menu.js` against shipped `MenuModel.js`, headless-sway terminal capture |
-| `menu-back-from-search.mp4` | #13012 | `d3cfd53b` (PR base) → `7a7fb10c` (PR #13012 head) | Back after search lands on Theme (row 0) — fixed: returns to Font | real `node back-from-search.js`: shipped `MenuModel.js` search + `setActiveMenu`/`goBack`/`activateIndex` extracted verbatim from shipped `Menu.qml` (same extraction the menu test suite uses), driven with the shipped default menu data |
+| `menu-back-from-search.mp4` | #13012 | `d3cfd53b` (PR base) → `7a7fb10c` (PR #13012 head) | Back after search lands on Theme (row 0) — fixed: returns to Font | real `node back-from-search.js`: shipped `MenuModel.js` search + `setActiveMenu`/`goBack`/`activateIndex` extracted verbatim from shipped `Menu.qml` (same extraction the menu test suite uses), driven with the shipped default menu data; model-level supplementary evidence — the on-screen menu UI clip is `menu-back-from-search-gui.mp4` |
+| `menu-back-from-search-gui.mp4` | #13012 | `d3cfd53b` (PR base) → `7a7fb10c` (PR #13012 head) | BEFORE d3cfd53b (bug) - Back after search lands on Theme; AFTER 7a7fb10c (fix) - Back restores the Font row | real quickshell menu UI: full production `shell/shell.qml` (bar + all plugins) on the private headless sway harness, menu summoned over the shell's IPC (`omarchy-shell shell summon omarchy.menu {"menu":"style"}`), real keystrokes via wtype (search "font", Enter, Backspace), screen captured as timed `grim -o HEADLESS-1` stills assembled with ffmpeg (wf-recorder drops its buffered tail on this pixman headless setup — see deviations); `Menu.qml` swapped between revs off-camera |
 
 ## Verified deltas (read back from extracted frames)
 
@@ -44,3 +45,12 @@ One-line captions are burned in; voiceover omitted (optional).
   #7072/#10299) were skipped: the JSONC findings are model-level (no GUI
   render changes), and the lock fail-open harness was not exercised in this
   session — not forced per the task's time-box.
+- The #13012 GUI clip is captured at ~2.5 fps (one `grim` still every 0.4 s,
+  assembled at 25 fps) rather than a wf-recorder take: wf-recorder runs on
+  this pixman headless sway but its final 2-4 s of buffered frames are lost
+  at SIGINT, which cut off the exact Back-landing moment; repeated takes
+  (SIGINT after 3 s and 8 s holds, and the `-d` flag is a DRM device option,
+  not duration) reproduced the loss, so the stills assembler is used instead.
+  The first keystroke of each fresh wtype process also races seat focus and
+  is dropped, so every wtype invocation is prefixed with a no-op Shift
+  keypress; the burned-in captions are the only post-capture addition.
