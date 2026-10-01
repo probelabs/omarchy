@@ -6,4 +6,4 @@ subject: SW-REQ-260922-46HY
 decision: approved
 comment: 'Read normalizeItem. kind is decided by the exact chain the description states: action present -> action, else target present -> link, else menu; an undeclared parent derives from the dotted id prefix, defaulting to root, and root''s parent is forced empty. Both branch chains map one-to-one onto kind_and_parent_inferred under entry_shape_declared. Formula conforms to the code.'
 citations:
-    - shell/plugins/menu/MenuModel.js:41
+    - shell/plugins/menu/MenuModel.js:83
