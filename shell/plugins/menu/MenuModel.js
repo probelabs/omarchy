@@ -1,35 +1,29 @@
 // Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260927-66FW, SW-REQ-260928-C8W1, SW-REQ-260928-8VJQ
 function stripJsonc(raw) {
-  // Comments and trailing commas are stripped string-aware in a single pass:
-  // string contents are copied verbatim, and outside any string
-  //   - // starts a comment that is dropped through the end of the line,
-  //     wherever the opener sits (the pre-fix line-anchored regex stripped
-  //     only whole-line comments, so an inline tail survived and JSON.parse
-  //     rejected the whole file);
-  //   - a comma is dropped only when the next non-whitespace character is
-  //     } or ]; everything else (including "\" escapes inside strings) is
-  //     copied verbatim.
-  var input = String(raw || "")
+  var noComments = String(raw || "")
+    .replace(/^\s*\/\/[^\n]*(\n|$)/gm, "")
+  // Trailing commas are stripped string-aware: a comma inside a string
+  // literal is data, not JSONC syntax. A comma outside any string is dropped
+  // only when the next non-whitespace character is } or ]; everything else
+  // (including "\" escapes inside strings) is copied verbatim.
   var out = ""
   var inString = false
-  for (var i = 0; i < input.length; i++) {
-    var ch = input[i]
+  for (var i = 0; i < noComments.length; i++) {
+    var ch = noComments[i]
     if (inString) {
       out += ch
       if (ch === "\\") {
-        if (i + 1 < input.length) out += input[++i]
+        if (i + 1 < noComments.length) out += noComments[++i]
       } else if (ch === "\"") {
         inString = false
       }
     } else if (ch === "\"") {
       inString = true
       out += ch
-    } else if (ch === "/" && input[i + 1] === "/") {
-      while (i < input.length && input[i] !== "\n") i++
     } else if (ch === ",") {
       var next = i + 1
-      while (next < input.length && /\s/.test(input[next])) next++
-      if (next >= input.length || (input[next] !== "}" && input[next] !== "]"))
+      while (next < noComments.length && /\s/.test(noComments[next])) next++
+      if (next >= noComments.length || (noComments[next] !== "}" && noComments[next] !== "]"))
         out += ch
     } else {
       out += ch
@@ -85,10 +79,7 @@ function parseMenuJsonc(raw) {
   } catch (e) {
     return []
   }
-  // A JSON array root is not a menu entry map either. Treat it like the
-  // scalars above and return no rows; walking it with for..in would render
-  // phantom rows keyed "0", "1", ... off the array indices.
-  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return []
+  if (typeof parsed !== "object" || parsed === null) return []
 
   var source = (parsed.items && typeof parsed.items === "object" && !Array.isArray(parsed.items))
     ? parsed.items
