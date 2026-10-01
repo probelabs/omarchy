@@ -70,14 +70,15 @@ history:
     last_modified_at: "2026-10-01T17:44:24Z"
 obligation_checklist:
     - malformed_input
+    - input_domain
 obligation_hazards:
     - class: malformed_input
       worst_case: 'FMEA mode (a): a menu file whose root is a JSON array parses cleanly. for..in then walks the array indices and renders phantom rows id "0","1",... parented to root. Rows the config never defined appear in the menu. FMEA mode (b), the realistic payload: a phantom row carries a label and an action out of the array element. Activating it runs a command the user never placed in the menu, with the user''s full privileges. No error surfaces in either mode because JSON.parse accepts the array. The corruption is visible only as extra rows. PR #13968 adds Array.isArray to the root-type guard. The grade records the upstream worst case that this requirement forbids.'
       severity: medium
 hazard_review:
-    reviewed_at: "2026-10-01T17:45:00Z"
+    reviewed_at: "2026-10-01T23:10:00Z"
     reviewed_by: agent:claude-pr-13968
-    reviewed_against_catalog_version: 1.10.1
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
@@ -85,7 +86,10 @@ hazard_review:
             - malformed_input
             - boundary
             - edge_case
-          rationale: 'malformed_input: a top-level JSON array is legal JSON but not a menu entry map; the parser must reject it like every scalar root instead of iterating indices. Both FMEA modes (phantom rows id 0,1,...; an unintended user-privilege action on a phantom row) lived here pre-fix and the guarded rows now forbid them. boundary: empty array [] and empty object {} both yield zero rows (witnessed). edge_case: an array nested under "items" is rejected by the same pre-existing items-shape check, witnessed as a negative row.'
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'malformed_input: a top-level JSON array is legal JSON but not a menu entry map; the parser must reject it like every scalar root instead of iterating indices. Both FMEA modes (phantom rows id 0,1,...; an unintended user-privilege action on a phantom row) lived here pre-fix and the guarded rows now forbid them. boundary: empty array [] and empty object {} both yield zero rows (witnessed). edge_case: an array nested under "items" is rejected by the same pre-existing items-shape check, witnessed as a negative row. Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: an array root yields no rows whatever whitespace, byte-order mark or line endings surround it (read as spaces by SW-REQ-261001-BNZG), and an array root that still fails JSON.parse after stripping (a block comment, a NUL) is rejected by the parse step with no rows and no exception (witnesses in test/node/menumodel-replay.test.mjs). concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:
