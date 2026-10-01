@@ -1,0 +1,12 @@
+id: REVIEW-261001-ENZ2
+kind: spec_conformance
+reviewer: agent:claude-pr-13968
+reviewed_at: "2026-10-01T17:49:42Z"
+subject: SW-REQ-261001-BNZG
+decision: approved
+comment: 'Read stripJsonc on the PR #13968 tree including efa5170b. Outside a string, every character that is not a quote, a // opener or a comma reaches the branch /\s/.test(ch), which emits a line feed as is and any other match as one ASCII space; the in-string branch copies every character before any other test, so a Unicode space inside a string stays unchanged. JS \s is the Unicode White_Space set plus U+FEFF: the four ASCII characters JSON.parse accepts, the remaining ASCII controls \v and \f, and 19 non-ASCII characters (the test asserts the count). A leading byte order mark therefore becomes a space, so no separate BOM rule is needed. A comma look-ahead uses the same \s test, so a Unicode space between a trailing comma and its closer does not keep the comma. The violation rows need the \s branch removed (outside a string a matched character skips the rule) or a broken string branch (inside a string a character is rewritten), so both are dispositioned defensive. Witnessed rows: byte order mark, U+00A0, U+2028, U+3000, U+2003, tab and carriage return outside strings; U+00A0, U+FEFF and U+2029 inside a string; a seeded differential with all 19 characters against a token-level reference model (3000 inputs, 0 mismatches).'
+citations:
+    - shell/plugins/menu/MenuModel.js:2@stripJsonc
+    - shell/plugins/menu/MenuModel.js:39
+    - shell/plugins/menu/MenuModel.js:42
+    - test/shell.d/menu-test.sh:414

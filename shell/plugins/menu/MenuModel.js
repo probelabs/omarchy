@@ -1,4 +1,4 @@
-// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
+// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260927-66FW, SW-REQ-260928-C8W1, SW-REQ-261001-BNZG
 function stripJsonc(raw) {
   // Comments and trailing commas are stripped string-aware in a single pass:
   // string contents are copied verbatim, and outside any string // starts a
@@ -83,7 +83,7 @@ function normalizeItem(id, raw) {
   }
 }
 
-// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
+// Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260928-BMFE
 function parseMenuJsonc(raw) {
   var stripped = stripJsonc(raw)
   if (!stripped.trim()) return []

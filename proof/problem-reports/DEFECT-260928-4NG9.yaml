@@ -1,0 +1,90 @@
+schema_version: 1
+id: DEFECT-260928-4NG9
+title: Top-level JSON array root in menu JSONC rendered phantom rows id 0,1,...
+introduced_in: inception
+source:
+    type: manual_review
+classification:
+    surface: config_behavior
+    severity: medium
+    defect_class: missing_validation
+    security_relevant: false
+description: |
+    MenuModel.js parseMenuJsonc guarded the parsed root with a typeof check. But typeof [] is "object", so a JSON array root passed the guard. The for..in loop then iterated array indices and emitted phantom rows with numeric ids parented to root. A phantom row carries the label and action out of its array element. Activating it ran a command the user never placed in the menu with full user privileges. JSON.parse accepted the input, so no error surfaced.
+root_cause:
+    missing_requirement: true
+    missing_test_partition: true
+    missing_mcdc_variable: true
+    notes: |
+        No requirement modeled the root-type decision. Its condition (array_root_present) had no exercising test. The malformed-input partition held scalars (null, 42, "str") but no array root. 3T3F could not catch this class because the array still parsed. Reproduced on the pristine quattro baseline ce925cb1 with review/upstream-repro-jsonc-toplevel-array.js (rc=1).
+impact_analysis:
+    affected_requirements:
+    - SW-REQ-260922-3T3F
+    - SW-REQ-260922-E4J2
+    - SYS-REQ-260922-PPDW
+    affected_interfaces: []
+    affected_code:
+    - shell/plugins/menu/MenuModel.js
+disposition:
+    known_issues:
+    - KI-MENU-JSONC-STRIP-GAPS
+    - KI-MENU-ITEMS-KEY-AMBIGUITY
+    status: covered_by_requirement
+    requirements:
+    - SW-REQ-260928-BMFE
+    rationale: |-
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements, so this closure covers only its own class.
+
+        SW-REQ-260928-BMFE models the decision as a guard over array_root_present. On the pr/13968 mirror of omacom/omarchy#13968 the guard is Array.isArray(parsed) in the parseMenuJsonc root check; the witness rows in test/shell.d/menu-test.sh are replayed by test/node/menumodel-replay.test.mjs, code MC/DC of parseMenuJsonc is 100%, report #13492 exits 0, and KI-MENU-JSONC-ARRAY-ROOT is fixed. parseMenuJsonc is the single JSONC root-type gate; Menu.qml consumes only the normalized entry list.
+    evidence:
+        verified_by:
+        - test/shell.d/menu-test.sh
+        - test/node/menumodel-replay.test.mjs
+        requirement_mcdc_witnesses:
+        -   requirement: SW-REQ-260928-BMFE
+            witness: array_root_present=T, array_root_rejected=T => TRUE
+        obligation_evidence:
+        -   requirement: SW-REQ-260928-BMFE
+            obligation_class: malformed_input
+            evidence_type: negative
+        reviews:
+        - REVIEW-72
+    reviewer: agent:claude-pr-13968
+    reviewed_at: '2026-10-01T18:25:00Z'
+hardening:
+    new_requirements:
+    - SW-REQ-260928-BMFE
+    strengthened_requirements:
+    - SW-REQ-260922-3T3F
+    added_obligations:
+    -   requirement: SW-REQ-260928-BMFE
+        obligation_class: malformed_input
+    regression_tests:
+    - test/shell.d/menu-test.sh
+    - test/node/menumodel-replay.test.mjs
+    mcdc_witnesses:
+    -   requirement: SW-REQ-260928-BMFE
+        witness: array_root_present=T, array_root_rejected=T => TRUE
+    sibling_sweep:
+        scope:
+        - shell/plugins/menu/
+        - bin/
+        checked_at: '2026-10-01'
+        reviewer: agent:claude-pr-13968
+        result: 'no isomorphic site: parseMenuJsonc is the only JSON.parse root-type gate in the menu
+            plugin. The items-shape check already rejects arrays nested under "items" (MenuModel.js:84-86).
+            That check is witnessed as the negative row of SW-REQ-260928-BMFE.'
+        found: []
+affects:
+- SW-REQ-260928-BMFE
+history:
+-   at: '2026-09-27T23:29:36Z'
+    by: agent:kimi-zero-warnings
+    action: created
+-   at: '2026-09-27T23:35:00Z'
+    by: agent:kimi-zero-warnings
+    action: closed covered_by_requirement after hardening landed (BMFE + witnesses + obligation)
+-   at: '2026-10-01T18:25:00Z'
+    by: agent:claude-pr-13968
+    action: 're-applied on pr/13968 (omacom/omarchy#13968 fixes #13492); evidence re-pointed to the PR
+        scanner, KI-MENU-JSONC-ARRAY-ROOT closed as fixed'
