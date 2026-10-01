@@ -1,6 +1,6 @@
 schema_version: 1
 branch: pr-12223
-generated_at: "2026-10-01T07:54:32Z"
+generated_at: "2026-10-01T08:32:32Z"
 reviews:
     - requirement: SW-REQ-260922-4079
       artifact: shell/plugins/menu/Menu.qml
@@ -56,11 +56,11 @@ reviews:
       artifact: specs/software/requirements/SW-REQ-260922-SJ7P.req.yaml
       decision: no-formalization-change
       reviewer: agent:v2-third-party-review
-      reason: 'PR #12223 review: descriptions updated to the apps-first ranking (-100 app bias, apps pinned above direct children, single apps/menu divider); the FRETish intent (better match ranks first within a kind; a divider when matches span groups) intentionally stayed the same'
+      reason: 'PR #12223 review: SJ7P description re-split for STE100; same apps-first ranking content, FRETish intent unchanged'
       base: origin/quattro
       requirement_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
-      artifact_fingerprint: sha256:3c2d3776628a3d69ce880537969921e4de278c0af9bbaaa67ec466414d0ea6ec
-      reviewed_at: "2026-10-01T07:54:32Z"
+      artifact_fingerprint: sha256:dffc9c8376c8fe7f5d11bba1f4a1675d423481f4c81eb6e9ad7ab993718d47d1
+      reviewed_at: "2026-10-01T08:32:32Z"
     - requirement: SW-REQ-260922-TKDP
       artifact: specs/software/requirements/SW-REQ-260922-TKDP.req.yaml
       decision: no-formalization-change
