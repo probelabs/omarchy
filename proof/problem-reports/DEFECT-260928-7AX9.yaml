@@ -29,11 +29,12 @@ disposition:
     known_issues:
     - KI-MENU-JSONC-STRIP-GAPS
     - KI-MENU-ITEMS-KEY-AMBIGUITY
+    - KI-MENU-JSONC-CR-LINE-ENDINGS
     status: covered_by_requirement
     requirements:
     - SW-REQ-260928-C8W1
     rationale: |-
-        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements. This closure covers only its own class.
+        Known-issue overlap: KI-MENU-JSONC-STRIP-GAPS (block comments) and KI-MENU-ITEMS-KEY-AMBIGUITY still track live parser gaps on the same requirements. This closure covers only its own class. KI-MENU-JSONC-CR-LINE-ENDINGS (a whole-line // comment in a CR-only file runs to the end of the file) is a third live gap on SW-REQ-260922-E4J2: the scanner ends a comment only at a line feed, and PR omacom/omarchy#13968 does not change that.
 
         SW-REQ-260928-C8W1 models the decision as an equivalence over comment_in_string. On the pr/13968 mirror the PR omacom/omarchy#13968 scanner drops each // comment outside a string. Witnesses in test/shell.d/menu-test.sh cover the rows, and the node replay runs them again.
 
