@@ -1,4 +1,4 @@
-// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89
+// Verifies: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F, SW-REQ-260922-46HY, SW-REQ-260922-7NPE, SYS-REQ-260922-PPDW, SW-REQ-260922-Z680, SW-REQ-260922-EFNR, SYS-REQ-260922-0M8A, SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ, SYS-REQ-260922-R8DQ, SW-REQ-260922-XW52, SW-REQ-260922-N3RM, SW-REQ-260922-JRW1, SW-REQ-260922-DQ9P, SW-REQ-260922-SJ7P, SYS-REQ-260922-V7W6, SW-REQ-260922-TKDP, SYS-REQ-260927-WC89, SW-REQ-260927-66FW, SW-REQ-260928-BMFE, SW-REQ-260928-C8W1, SW-REQ-261001-BNZG
 // node:test adapter for the proof js MC/DC engine: replays the MenuModel.js
 // assertion body from test/shell.d/menu-test.sh under node:test so the
 // engine's Babel instrumentation can observe MenuModel.js decisions. The
@@ -72,6 +72,46 @@ const parsed = menu.parseMenuJsonc(`
 // MCDC SW-REQ-260922-E4J2: items_parsed=T, jsonc_has_comments_or_commas=T => TRUE
 // MCDC SW-REQ-260922-3T3F: empty_item_set=F, json_invalid=F, parse_error_raised=F => TRUE [no-action: the valid JSONC parses to its items -- the invalid path is not taken]
 assertEqual(parsed.length, 3, 'menu parses JSONC with comments and trailing commas')
+
+// String-aware trailing commas (#13250)
+const withCommasInStrings = menu.parseMenuJsonc('{\n  "b": { "label": "x, ]y", "action": "mv f{.bak,}" },\n}')
+assertEqual(withCommasInStrings[0].label, 'x, ]y', 'menu keeps a comma before ] inside a label')
+assertEqual(withCommasInStrings[0].action, 'mv f{.bak,}', 'menu keeps a comma before } inside an action')
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "q\\\\"},}')[0].label, 'q\\', 'menu ends a string at a quote after an escaped backslash before a trailing comma')
+
+// Array roots (#13492)
+assertEqual(menu.parseMenuJsonc('[{"label":"should-not-appear"},{"label":"ghost-2"}]').length, 0, 'menu rejects a top-level array instead of turning its indices into entries')
+assertEqual(menu.parseMenuJsonc('// note\n[{"label":"x"},]').length, 0, 'menu rejects a commented top-level array with a trailing comma')
+assertEqual(menu.parseMenuJsonc('{"obj": {"label":"kept"}}').length, 1, 'menu still parses an object root to its entries')
+assertEqual(
+  menu.parseMenuJsonc('{"items": [{"label":"x"}], "a": {"label":"A"}}').map(item => item.id).join(','),
+  'a',
+  'menu skips an items array rather than walking its indices'
+)
+
+// Inline comments (#13493) and comments between a trailing comma and its closer
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length, 1, 'menu strips an inline comment tail instead of dropping the whole file')
+assertEqual(menu.parseMenuJsonc('{ // opening note\n"a": {"label": "A"},\n} // closing note\n// final line').length, 1, 'menu strips full-line and inline comments in the same pass')
+assertEqual(menu.parseMenuJsonc('{"s": {"label": "A // B"}}')[0].label, 'A // B', 'menu preserves comment slashes inside a string literal')
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A"}} // }, "x": {"label": "X"}').length, 1, 'menu ignores JSON syntax carried inside a comment tail')
+assertEqual(menu.parseMenuJsonc('{\n  "a": {"label": "A"},\n  // "b": {"label": "B"},\n}').length, 1, 'menu drops a trailing comma when a whole-line comment sits between it and the closer')
+assertEqual(menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // note\n}').length, 1, 'menu drops a trailing comma when an inline comment follows it on the last entry')
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "aliases": ["x", // note\n]}}')[0].aliases.join(','), 'x', 'menu drops a trailing comma before ] behind a comment')
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A", "n": 1//c\n2}}').length, 0, 'menu keeps the line break after a comment so tokens on either side are not joined')
+
+// Unicode whitespace outside strings, which JSON.parse rejects
+for (const [name, space] of [['a byte order mark', '\uFEFF'], ['a no-break space', '\u00A0'], ['a line separator', '\u2028'], ['an ideographic space', '\u3000']]) {
+  assertEqual(menu.parseMenuJsonc(space + '// note\n{"a": {"label": "A"}}').length, 1, `menu reads ${name} before a leading comment as whitespace`)
+  assertEqual(menu.parseMenuJsonc('{\n' + space + '// note\n"a": {"label": "A"}}').length, 1, `menu reads ${name} indenting a comment line as whitespace`)
+  assertEqual(menu.parseMenuJsonc(space + '{"a": {"label": "A"}}').length, 1, `menu reads ${name} before the opening brace as whitespace`)
+}
+assertEqual(menu.parseMenuJsonc('{"a": {"label": "A\u00A0B\u2028C"}}')[0].label, 'A\u00A0B\u2028C', 'menu keeps Unicode spaces inside a string literal')
+const sampleExtension = fs.readFileSync(path.join(root, 'config/omarchy/extensions/omarchy-menu.jsonc'), 'utf8')
+assertEqual(
+  menu.parseMenuJsonc(sampleExtension.replace(/^  \/\/ ("personal[^"]*": \{[^\n]*)$/gm, '  $1')).map(item => item.id).join(','),
+  'personal,personal.notes,personal.files',
+  'menu loads the example rows uncommented in the sample extension'
+)
 // MCDC SW-REQ-260922-46HY: entry_shape_declared=T, kind_and_parent_inferred=T => TRUE
 assertDeepEqual(
   parsed.find(item => item.id === 'style.theme'),
@@ -105,12 +145,11 @@ assertEqual(menu.parseMenuJsonc('{\n// comment\n"items":').length, 0, 'menu pars
 // MCDC SW-REQ-260922-46HY: entry_shape_declared=F, kind_and_parent_inferred=F => TRUE [no-action: an empty item set declares zero entries -- nothing is normalized]
 assertEqual(menu.parseMenuJsonc('').length + menu.parseMenuJsonc('{"items":{}}').length, 0, 'menu parses empty input and an empty item set to zero entries')
 
-// JSONC stripping as upstream e332dc97 ships it: two string-blind regex
-// passes. The first drops every whole-line // comment together with its line
-// break; the second drops a comma whose next non-whitespace character is } or
-// ]. The assertions below pin what that order gets RIGHT (preservation) and,
-// tagged Reproduces, what it gets wrong (known issues, pinned as green
-// tripwires: each flips red when the named upstream fix lands).
+// JSONC stripping under PR omacom/omarchy#13968: one string-aware scanner
+// replaces upstream e332dc97's two string-blind regex passes. The baseline's
+// preservation assertions below must hold unchanged on the new scanner (the
+// trailing-comma-then-comment shape is the #13512 regression); the known
+// issues the regexes had are asserted fixed further down.
 // SW-REQ-260922-E4J2: a real trailing comma before a closing brace is dropped.
 assertEqual(
   menu.parseMenuJsonc('{"c": {"label": "y"},}').length,
@@ -211,23 +250,25 @@ assertEqual(
   'menu keeps all four rows of the shipped extension template with every example uncommented'
 )
 
-// Known issues, pinned as green tripwires of upstream's actual output.
+// Known issues fixed by PR omacom/omarchy#13968. On the baseline these were
+// green tripwires of upstream's wrong output; on this mirror each asserts the
+// fixed behaviour and stays as a regression guard for its (fixed) issue.
 // Reproduces: KI-MENU-JSONC-COMMA-IN-STRING
 assertEqual(
   menu.parseMenuJsonc('{"b": {"label": "x, ]y"}}')[0].label,
-  'x ]y',
-  'KI-MENU-JSONC-COMMA-IN-STRING tripwire: the comma pass rewrites a label carrying comma and closer (omacom/omarchy#13250)'
+  'x, ]y',
+  'KI-MENU-JSONC-COMMA-IN-STRING guard: a label carrying comma and closer survives (omacom/omarchy#13250)'
 )
 assertEqual(
   menu.parseMenuJsonc('{"b": {"label": "B", "action": "mv f{.bak,}"}}')[0].action,
-  'mv f{.bak}',
-  'KI-MENU-JSONC-COMMA-IN-STRING tripwire: the comma pass rewrites an action carrying comma and closer'
+  'mv f{.bak,}',
+  'KI-MENU-JSONC-COMMA-IN-STRING guard: an action carrying comma and closer survives'
 )
 // Reproduces: KI-MENU-JSONC-ARRAY-ROOT
 assertDeepEqual(
   menu.parseMenuJsonc('[{"label":"should-not-appear"},{"label":"ghost-2"}]').map(item => item.id + '=' + item.label),
-  ['0=should-not-appear', '1=ghost-2'],
-  'KI-MENU-JSONC-ARRAY-ROOT tripwire: an array root renders phantom rows keyed by index (omacom/omarchy#13492)'
+  [],
+  'KI-MENU-JSONC-ARRAY-ROOT guard: an array root renders no phantom rows (omacom/omarchy#13492)'
 )
 assertEqual(
   menu.parseMenuJsonc('{"items": [{"label":"x"}]}').length,
@@ -237,19 +278,171 @@ assertEqual(
 // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
 assertEqual(
   menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment tail empties the whole file (omacom/omarchy#13493)'
+  1,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment tail no longer empties the file (omacom/omarchy#13493)'
 )
 assertEqual(
   menu.parseMenuJsonc('{\n  "a": {"label": "A"}, // first\n  "b": {"label": "B"}\n}').length,
-  0,
-  'KI-MENU-JSONC-INLINE-COMMENT tripwire: an inline comment on an entry line empties the whole file'
+  2,
+  'KI-MENU-JSONC-INLINE-COMMENT guard: an inline comment on an entry line keeps every row'
 )
 // Reproduces: KI-MENU-JSONC-STRIP-GAPS
 assertEqual(
   menu.parseMenuJsonc('{ /* c */ "a": {"label": "A"} }').length,
   0,
   'KI-MENU-JSONC-STRIP-GAPS tripwire: a block comment is not stripped and empties the whole file'
+)
+
+// SW-REQ-260927-66FW: string-aware trailing commas. A comma outside every
+// string is dropped only when the next character that is neither whitespace
+// nor part of a // comment is } or ]. A comma inside a string is data.
+// Decision under test: trailing_comma_dropped = !comma_in_string && next_char_closes_json
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=T => FALSE -- the scanner appends the comma whenever the look-ahead stops at end of input or on a character other than } or ]; a drop there needs that append removed [reviewed: REVIEW-21]
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=F => FALSE -- a comma outside every string whose look-ahead stops on } or ] is never appended; keeping it needs the closer test broken [reviewed: REVIEW-21]
+//mcdc:ignore:defensive SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=T => FALSE -- inside a string the scanner copies every character before it tests for a comma, so an in-string comma is never dropped [reviewed: REVIEW-21]
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=F => TRUE
+// SW-REQ-260927-66FW:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"b": {"label": "x, ]y", "action": "a, }b"}}')[0].action,
+  'a, }b',
+  '66FW: the scanner keeps a comma before a closer inside a string literal'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=T, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"e": {"label": "a\\", ]b"}}')[0].label,
+  'a", ]b',
+  '66FW: the scanner keeps a comma after an escaped quote inside a string literal'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
+// SW-REQ-260927-66FW:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('{"c": {"label": "y"}, }').length,
+  1,
+  '66FW: the scanner drops a trailing comma before a closing brace'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=T, trailing_comma_dropped=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A", "aliases": ["x", // c\n  // d\n]}}')[0].aliases.join(','),
+  'x',
+  '66FW: the look-ahead skips whitespace and // comments before the closing bracket'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}, // c\n "b": {"label": "B"}}').length,
+  2,
+  '66FW: the scanner keeps a comma when the look-ahead past a comment meets another entry'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=F, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}},').length,
+  0,
+  '66FW: the scanner keeps a comma at end of input, so JSON.parse still rejects it'
+)
+// MCDC SW-REQ-260927-66FW: comma_in_string=T, next_char_closes_json=F, trailing_comma_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"o": {"label": "a, b"}}')[0].label,
+  'a, b',
+  '66FW: the scanner keeps a plain comma inside a string literal'
+)
+
+// SW-REQ-260928-BMFE: an array root is not an entry map and yields no rows,
+// like the scalar and null roots.
+// Decision under test: array_root_rejected = array_root_present
+//mcdc:ignore:defensive SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=F => FALSE -- the guard returns an empty set for any Array root unconditionally; an array yielding rows needs the Array.isArray check removed [reviewed: REVIEW-72]
+//mcdc:ignore:defensive SW-REQ-260928-BMFE: array_root_present=F, array_root_rejected=T => FALSE -- the rejection arm runs only when Array.isArray(parsed) is true; an object root taking it needs a broken condition [reviewed: REVIEW-72]
+// MCDC SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=T => TRUE
+// SW-REQ-260928-BMFE:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('// note\n[{"label": "x"}, {"label": "y"},]').length,
+  0,
+  'BMFE: a commented array root with a trailing comma yields no rows'
+)
+// MCDC SW-REQ-260928-BMFE: array_root_present=T, array_root_rejected=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('[]').length,
+  0,
+  'BMFE: an empty array root yields no rows'
+)
+// MCDC SW-REQ-260928-BMFE: array_root_present=F, array_root_rejected=F => TRUE [no-action: an object root parses to its entries -- the array rejection path is not taken]
+assertEqual(
+  menu.parseMenuJsonc('{"obj": {"label": "kept"}}').length,
+  1,
+  'BMFE: an object root still parses to its entries'
+)
+// SW-REQ-260928-BMFE:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('[1, "a", null]').length + menu.parseMenuJsonc('"x"').length + menu.parseMenuJsonc('null').length,
+  0,
+  'BMFE: an array of scalars, a string root and a null root all yield no rows'
+)
+
+// SW-REQ-260928-C8W1: a // opener outside every string starts a comment that
+// runs up to the line break, wherever it sits; the line break stays.
+// Decision under test: comment_tail_dropped = !comment_in_string
+// MCDC SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=T => TRUE
+// SW-REQ-260928-C8W1:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A"}} // note').length,
+  1,
+  'C8W1: the scanner strips an inline comment tail at end of input'
+)
+// MCDC SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=T => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{ // opening note\n"a": {"label": "A"}, // first\n} // closing note\n// final line').length,
+  1,
+  'C8W1: the scanner strips whole-line and inline comments in one pass'
+)
+// MCDC SW-REQ-260928-C8W1: comment_in_string=T, comment_tail_dropped=F => TRUE
+assertEqual(
+  menu.parseMenuJsonc('{"s": {"label": "A // B", "action": "xdg-open https://example.org"}}')[0].action,
+  'xdg-open https://example.org',
+  'C8W1: the scanner keeps // inside a string literal'
+)
+// SW-REQ-260928-C8W1:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A", "n": 1//c\n2}}').length,
+  0,
+  'C8W1: the line break after a comment stays, so the tokens on each side are not joined'
+)
+//mcdc:ignore:defensive SW-REQ-260928-C8W1: comment_in_string=F, comment_tail_dropped=F => FALSE -- a // opener outside every string always enters the comment branch; keeping its tail needs that branch removed [reviewed: REVIEW-73]
+assertEqual(
+  menu.parseMenuJsonc('{"n": {"label": "plain"}}').length,
+  1,
+  'C8W1: a comment-free object parses unchanged'
+)
+
+// SW-REQ-261001-BNZG: input domain. Outside strings every character that JS
+// \s matches (ASCII whitespace, the byte order mark, the Unicode spaces) is
+// whitespace: a line feed stays, any other one becomes one ASCII space.
+// Inside strings every character is copied unchanged.
+// Decision under test: space_passed_as_ascii = space_outside_string
+//mcdc:ignore:defensive SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=F => FALSE -- outside a string the scanner tests /\s/ on every character that is not a quote, a comment opener or a comma; a matched character skipping the rule needs that branch removed [reviewed: REVIEW-261001-ENZ2]
+//mcdc:ignore:defensive SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=T => FALSE -- the rule runs only in the outside-string branch, and the in-string branch copies each character as is; a rewrite there needs a broken string branch [reviewed: REVIEW-261001-ENZ2]
+// MCDC SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=T => TRUE
+// SW-REQ-261001-BNZG:malformed_input:nominal
+assertEqual(
+  menu.parseMenuJsonc('\uFEFF{"a": {"label": "A"}}').length,
+  1,
+  'BNZG: a leading byte order mark reads as whitespace'
+)
+// MCDC SW-REQ-261001-BNZG: space_outside_string=T, space_passed_as_ascii=T => TRUE
+assertEqual(
+  menu.stripJsonc('{\u00A0"a"\u2028:\u3000\u2003\t1,\r\n}'),
+  '{ "a" :   1 \n}',
+  'BNZG: Unicode spaces, a tab and a carriage return become one space each, the line feed stays'
+)
+// MCDC SW-REQ-261001-BNZG: space_outside_string=F, space_passed_as_ascii=F => TRUE
+// SW-REQ-261001-BNZG:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('{"a": {"label": "A\u00A0B\uFEFFC\u2029D"}}')[0].label,
+  'A\u00A0B\uFEFFC\u2029D',
+  'BNZG: Unicode spaces and a byte order mark inside a string stay unchanged'
+)
+// SW-REQ-261001-BNZG:malformed_input:negative
+assertEqual(
+  menu.parseMenuJsonc('\uFEFF{\u00A0"a": {"label": "A"},\u3000"b"}').length,
+  0,
+  'BNZG: Unicode whitespace does not make a broken document parse'
 )
 
 const user = [
@@ -1006,29 +1199,119 @@ test('jsonc preservation: seeded differential property over the documented gramm
   assertEqual(wrong, 0, 'parseMenuJsonc matches the reference model on 2000 seeded inputs of the documented grammar' + (first ? ' -- first: ' + first : ''))
 })
 // ---------------------------------------------------------------------------
+// Input domain (SW-REQ-261001-BNZG) under PR omacom/omarchy#13968: seeded
+// differential test against an independent token-level reference model. The
+// generator covers the documented grammar plus the shapes the PR fixes (a
+// comma and closer inside a string, inline comments, comments between a
+// trailing comma and its closer, array roots) and inserts every non-ASCII
+// character that JS \s matches (19 classes, incl. the byte order mark) at the
+// start of the file, between tokens and in front of comments, and inside
+// strings. The reference tokenizes with one sticky regex (string literal |
+// // comment | any character), drops comments, reads each \s character
+// outside a string as a space (a line feed stays), drops each comma whose
+// next non-space token is } or ], and treats a non-object root as no rows.
+// ---------------------------------------------------------------------------
+// Verifies: SW-REQ-261001-BNZG, SW-REQ-260927-66FW, SW-REQ-260928-C8W1, SW-REQ-260928-BMFE
+// SW-REQ-261001-BNZG:malformed_input:differential
+test('jsonc input domain: seeded differential with Unicode whitespace against a token-level reference', () => {
+  const SPACES = []
+  for (let c = 128; c < 0x10000; c++) if (/\s/.test(String.fromCharCode(c))) SPACES.push(String.fromCharCode(c))
+  assertEqual(SPACES.length, 19, 'JS \\s matches 19 non-ASCII characters')
+  let seed = 4242
+  const rnd = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return ((seed >>> 0) % 1e6) / 1e6 }
+  const pick = a => a[Math.floor(rnd() * a.length)]
+  const uni = () => rnd() < 0.35 ? pick(SPACES) : ''
+  const STR = ['a', 'A // B', 'x, ]y', 'mv f{.bak,}', 'q\\"', 'q\\\\', 'a b', '﻿', 'x y', '']
+  const str = () => JSON.stringify(pick(STR))
+  const ws = () => pick(['', ' ', '\n', '\r\n', '\t']) + uni()
+  const cm = () => rnd() < 0.35 ? uni() + pick([' // c', '\n// full line', '\n' + uni() + '// "q" , ] }', ' //']) + '\n' + uni() : ws()
+  function obj(depth) {
+    const n = Math.floor(rnd() * 3)
+    let o = '{' + cm()
+    for (let i = 0; i < n; i++) {
+      o += JSON.stringify(pick(['a', 'b', 'label', 'action', 'aliases']) + i) + ws() + ':' + ws()
+      o += depth < 1 && rnd() < 0.5 ? obj(depth + 1) : (rnd() < 0.3 ? '[' + cm() + str() + (rnd() < 0.5 ? ',' + cm() : '') + ']' : str())
+      o += i < n - 1 ? ',' + cm() : (rnd() < 0.5 ? ',' + cm() : cm())
+    }
+    return o + '}'
+  }
+  function gen() {
+    const head = (rnd() < 0.25 ? '﻿' : '') + uni() + (rnd() < 0.3 ? '// head\n' + uni() : '')
+    const body = rnd() < 0.15 ? '[' + ws() + obj(1) + (rnd() < 0.5 ? ',' : '') + ws() + ']' : obj(0)
+    return head + body + ws() + (rnd() < 0.3 ? uni() + '// tail' : '')
+  }
+  function reference(text) {
+    const tok = /"(?:[^"\\\n]|\\.)*"|\/\/[^\n]*|[\s\S]/y
+    const toks = []
+    let m
+    while ((m = tok.exec(text)) !== null) {
+      const t = m[0]
+      if (t.startsWith('//')) continue
+      toks.push(t.length === 1 && /\s/.test(t) ? (t === '\n' ? '\n' : ' ') : t)
+    }
+    const out = toks.filter((t, i) => {
+      if (t !== ',') return true
+      let j = i + 1
+      while (j < toks.length && (toks[j] === ' ' || toks[j] === '\n')) j++
+      return !(j < toks.length && (toks[j] === '}' || toks[j] === ']'))
+    }).join('')
+    let doc
+    try { doc = JSON.parse(out) } catch (e) { return '' }
+    if (typeof doc !== 'object' || doc === null || Array.isArray(doc)) return ''
+    return Object.keys(doc).filter(k => doc[k] && typeof doc[k] === 'object' && !Array.isArray(doc[k])).join(';')
+  }
+  let wrong = 0
+  let parsedOk = 0
+  let first = ''
+  for (let k = 0; k < 3000; k++) {
+    const src = gen()
+    const want = reference(src)
+    const got = menuModel.parseMenuJsonc(src).filter(r => r.parent === 'root' || r.id.indexOf('.') < 0).map(r => r.id).join(';')
+    if (want) parsedOk++
+    if (got !== want) { wrong++; if (!first) first = JSON.stringify({ src, want, got }) }
+  }
+  assert(parsedOk > 1000, 'the generator yields more than 1000 parseable documents with Unicode whitespace (' + parsedOk + ')')
+  assertEqual(wrong, 0, 'parseMenuJsonc matches the token-level reference on 3000 seeded inputs with Unicode whitespace' + (first ? ' -- first: ' + first : ''))
+})
+// ---------------------------------------------------------------------------
 // MC/DC unique-cause cases for MenuModel.js (quattro, code_mcdc target
 // menu-js-menumodel). One test block per function; every decision arm and
 // every condition outcome is driven through the exported public API with
 // plain data arguments — no getters, no private reflection.
 // ---------------------------------------------------------------------------
 
-test('mcdc stripJsonc: the two regex passes and the empty-input fallback', () => {
+test('mcdc stripJsonc: the PR #13968 string-aware scanner, every decision and condition', () => {
+  const strip = menuModel.stripJsonc
   // raw || "": a missing input strips to the empty string (both arms).
-  assertEqual(menuModel.stripJsonc(undefined), '', 'stripJsonc treats a missing input as empty')
-  assertEqual(menuModel.stripJsonc('{}'), '{}', 'stripJsonc passes comment-free, comma-free input through')
-  // Pass 1: a whole-line comment goes with its line break, indented or not.
-  assertEqual(menuModel.stripJsonc('// a\n  // b\n{}'), '{}', 'stripJsonc drops whole-line comments with their line breaks')
-  // Pass 2: a comma before } or ] across whitespace is dropped; before anything else it stays.
-  assertEqual(menuModel.stripJsonc('{"a": 1 , }'), '{"a": 1  }', 'stripJsonc drops a comma whose next non-whitespace is a brace')
-  assertEqual(menuModel.stripJsonc('["a", ]'), '["a" ]', 'stripJsonc drops a comma whose next non-whitespace is a bracket')
-  assertEqual(menuModel.stripJsonc('{"a": 1 ,"b": 2}'), '{"a": 1 ,"b": 2}', 'stripJsonc keeps a comma before another entry')
-  assertEqual(menuModel.stripJsonc('{"a": 1,'), '{"a": 1,', 'stripJsonc keeps a comma at end of input')
-  // Order: comments go first, so a comma separated from its closer only by comment lines is dropped.
-  assertEqual(menuModel.stripJsonc('[1,\n// c\n]'), '[1\n]', 'stripJsonc drops a trailing comma separated from its closer by a whole-line comment')
-  // Reproduces: KI-MENU-JSONC-INLINE-COMMENT
-  assertEqual(menuModel.stripJsonc('{"a": 1} // tail'), '{"a": 1} // tail', 'KI-MENU-JSONC-INLINE-COMMENT tripwire: stripJsonc leaves an inline comment tail in place')
-  // Reproduces: KI-MENU-JSONC-COMMA-IN-STRING
-  assertEqual(menuModel.stripJsonc('{"a": "x, ]y"}'), '{"a": "x ]y"}', 'KI-MENU-JSONC-COMMA-IN-STRING tripwire: stripJsonc drops a comma inside a string literal')
+  assertEqual(strip(undefined), '', 'stripJsonc treats a missing input as empty')
+  assertEqual(strip('{}'), '{}', 'stripJsonc passes comment-free, comma-free input through')
+  // In a string: a backslash copies the next character too, unless input ends
+  // there; a quote closes the string; any other character is copied.
+  assertEqual(strip('{"a": "x\\"y, }//z"}'), '{"a": "x\\"y, }//z"}', 'stripJsonc copies an escaped quote, a comma and // inside a string')
+  assertEqual(strip('"a\\'), '"a\\', 'stripJsonc copies a backslash that ends the input inside a string')
+  assertEqual(strip('"\u00A0\t"'), '"\u00A0\t"', 'stripJsonc copies whitespace inside a string unchanged')
+  // Outside a string: "/" opens a comment only when the next character is "/" too.
+  assertEqual(strip('[1/2]'), '[1/2]', 'stripJsonc keeps a lone slash')
+  assertEqual(strip('[1/'), '[1/', 'stripJsonc keeps a slash at end of input')
+  // A comment runs up to the line break (kept) or to end of input.
+  assertEqual(strip('[1, // a , ]\n2]'), '[1, \n2]', 'stripJsonc drops a comment up to its line break and keeps the line break')
+  assertEqual(strip('[1] // tail'), '[1] ', 'stripJsonc drops a comment that runs to end of input')
+  assertEqual(strip('[1]//'), '[1]', 'stripJsonc drops an empty comment at end of input')
+  // A comma: the look-ahead skips whitespace and // comments, then the comma
+  // is dropped only before } or ]; at end of input or before anything else it stays.
+  assertEqual(strip('{"a": 1 , }'), '{"a": 1  }', 'stripJsonc drops a comma whose look-ahead meets a brace')
+  assertEqual(strip('["a",]'), '["a"]', 'stripJsonc drops a comma whose look-ahead meets a bracket')
+  assertEqual(strip('{"a": 1,"b": 2}'), '{"a": 1,"b": 2}', 'stripJsonc keeps a comma before another entry')
+  assertEqual(strip('[1,'), '[1,', 'stripJsonc keeps a comma at end of input')
+  assertEqual(strip('[1,\n  '), '[1,\n  ', 'stripJsonc keeps a comma followed only by whitespace')
+  assertEqual(strip('[1, // c\n]'), '[1 \n]', 'stripJsonc drops a comma whose look-ahead skips a comment to a bracket')
+  assertEqual(strip('[1, // c'), '[1, ', 'stripJsonc keeps a comma whose look-ahead comment runs to end of input')
+  assertEqual(strip('[1,/2]'), '[1,/2]', 'stripJsonc keeps a comma before a lone slash')
+  assertEqual(strip('[1,/'), '[1,/', 'stripJsonc keeps a comma before a slash at end of input')
+  // Whitespace outside a string (JS \s): a line feed stays, any other one
+  // (ASCII or Unicode, incl. the byte order mark) becomes one ASCII space.
+  assertEqual(strip('\uFEFF[\n1\r\n,\u00A0\u2028\u3000]'), ' [\n1 \n   ]', 'stripJsonc reads Unicode whitespace outside strings as plain whitespace')
+  assertEqual(strip('[ 1\t]'), '[ 1 ]', 'stripJsonc passes ASCII spaces and tabs on as spaces')
 })
 
 test('mcdc normalizeAliases: array, string, empty, non-string', () => {
