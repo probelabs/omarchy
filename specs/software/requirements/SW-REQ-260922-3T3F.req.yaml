@@ -136,7 +136,7 @@ defect_review:
         emitted: 40
         verified: 21
         dismissed: 19
-verification_state: failing
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-28T00:00:20Z"
@@ -149,3 +149,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-22=present | known_issue:KI-MENU-JSONC-STRIP-GAPS=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-01T22:57:20Z"
+          from: verification=failing
+          to: verification=passing
+          reason: auto-derived [failing→passing] signals=4; review_record:REVIEW-22=present | known_issue:KI-MENU-JSONC-ARRAY-ROOT=none | known_issue:KI-MENU-JSONC-UNICODE-WHITESPACE=none | tests_pass:test_status=passing
+          changed_by: agent:claude-pr-13968
