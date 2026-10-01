@@ -19,19 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-02T16:54:43.088552Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-01T22:40:35.360402Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:childCount: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:displayRow: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:isDisabled: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:isVisible: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:labelFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:isDisabled: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:isVisible: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:labelFor: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/MenuModel.js:isDisabled: file1:8250af017593eb3a1a6ca466de07d7ee
+            shell/plugins/menu/MenuModel.js:isVisible: file1:8250af017593eb3a1a6ca466de07d7ee
+            shell/plugins/menu/MenuModel.js:labelFor: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -74,41 +70,20 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-test.sh:29
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:36.918285Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-01T22:40:35.360402Z"
+          reviewed_by: agent:claude-pr-13968
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr/13968: the PR #13968 changes only stripJsonc and parseMenuJsonc in MenuModel.js (product diff vs the upstream PR is annotation-only, review/check-clean-product-diff.py); the function this requirement links to is byte-identical to the baseline 9f3abc10, so the link turned suspect only through the shared file fingerprint. Re-read the linked function and its witnesses; menu-test.sh and the node replay are green.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:498
             - shell/plugins/menu/Menu.qml:506
-            - shell/plugins/menu/Menu.qml:513
-            - shell/plugins/menu/Menu.qml:545
-            - shell/plugins/menu/Menu.qml:563
-            - shell/plugins/menu/MenuModel.js:262
-            - shell/plugins/menu/MenuModel.js:285
-            - shell/plugins/menu/MenuModel.js:293
+            - shell/plugins/menu/MenuModel.js:307
+            - shell/plugins/menu/MenuModel.js:330
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:43.088552Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:498
-            - shell/plugins/menu/Menu.qml:506
-            - shell/plugins/menu/Menu.qml:513
-            - shell/plugins/menu/Menu.qml:545
-            - shell/plugins/menu/Menu.qml:563
-            - shell/plugins/menu/MenuModel.js:262
-            - shell/plugins/menu/MenuModel.js:285
-            - shell/plugins/menu/MenuModel.js:293
-            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
+            - test/node/menumodel-replay.test.mjs:578
+            - test/shell.d/menu-test.sh:29
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
