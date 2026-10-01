@@ -8,7 +8,7 @@ set -euo pipefail
 # the REAL setActiveMenu / goBack / rebuildDisplay / settleCursor /
 # nextSelectable / rowSelectable bodies from shell/plugins/menu/Menu.qml under
 # node vm against the real MenuModel.js and the shipped default menu.
-#mcdc:ignore:defensive SW-REQ-261001-B4CK: back_navigated=T, remembered_row_present=T, remembered_row_selected=F => FALSE -- after rebuildDisplay, setActiveMenu scans displayModel for the remembered itemId and selects the first index whose row matches and is selectable; a present, selectable remembered row left unselected needs that loop removed [reviewed: REVIEW-B4CK]
+#mcdc:ignore:defensive SW-REQ-261001-B4CK: back_navigated=T, remembered_row_present=T, remembered_row_selected=F => FALSE -- after rebuildDisplay, setActiveMenu scans displayModel for the remembered itemId and selects the first index whose row matches and is selectable; a present, selectable remembered row left unselected needs that loop removed [reviewed: REVIEW-261001-BFW5]
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
