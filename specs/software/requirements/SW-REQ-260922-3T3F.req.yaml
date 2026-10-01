@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:37.884494Z"
+    reviewed_at: "2026-10-01T20:54:35.659036021Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:parseMenuJsonc: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:item: file1:e7d0b382ee15ba3834e586da44adb708
             shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:stripJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
@@ -72,50 +72,18 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:7
-        - reviewed_at: "2026-10-02T16:44:32.391462Z"
+        - reviewed_at: "2026-10-01T20:54:35.659036021Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'PR #9056 review at head b7bd59c4 on quattro-proof 4f1a8197: the Menu.qml delta is the cancel-prior guard at the top of open() (0b4fe292), finishRequest writing each answer through Quickshell.execDetached with the resultProc Process and the requestSerial/applySerial counters removed (b7bd59c4), and Implements lines. Each link re-checked against the cited annotation lines and the diff; the removed resultProc.onExited re-close was redundant because every apply path sets opened=false itself; requirement intents outside open()/finishRequest are unaffected; the new behaviour is authored as SW-REQ-260925-XTGG and SW-REQ-261001-C19S'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/Menu.qml:268
             - shell/plugins/menu/MenuModel.js:1
             - shell/plugins/menu/MenuModel.js:44
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/node/menumodel-replay.test.mjs:1048
-            - test/node/menumodel-replay.test.mjs:120
-            - test/node/menumodel-replay.test.mjs:964
-            - test/shell.d/menu-test.sh:113
-            - test/shell.d/menu-test.sh:287
-            - test/shell.d/menu-test.sh:293
-            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:64
-            - test/shell.d/menu-test.sh:92
-            - test/shell.d/menu-test.sh:98
-        - reviewed_at: "2026-10-02T16:54:37.884494Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:259
-            - shell/plugins/menu/MenuModel.js:1
-            - shell/plugins/menu/MenuModel.js:44
-            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/node/menumodel-replay.test.mjs:1048
-            - test/node/menumodel-replay.test.mjs:120
-            - test/node/menumodel-replay.test.mjs:964
-            - test/shell.d/menu-test.sh:113
-            - test/shell.d/menu-test.sh:287
-            - test/shell.d/menu-test.sh:293
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:64
-            - test/shell.d/menu-test.sh:92
-            - test/shell.d/menu-test.sh:98
+            - test/shell.d/menu-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
