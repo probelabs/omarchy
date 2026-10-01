@@ -141,6 +141,7 @@ Item {
 
     // Each answer gets its own process: a shared Process drops a command set
     // while it is still running, which strands the caller waiting on it.
+    // Implements: SW-REQ-261001-C19S
     if (selection === null || selection === undefined) {
       Quickshell.execDetached(["bash", "-c", ": > " + Util.shellQuote(activeDoneFile)])
     } else {
