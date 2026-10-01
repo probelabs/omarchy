@@ -300,6 +300,14 @@ variables:
       type: bool
       direction: output
       description: A summon arriving while a select/input request is active first answers that prior request as cancelled (finishRequest(null), done file only) before the new open proceeds.
+    - name: prior_answer_write_running
+      type: bool
+      direction: input
+      description: The write process for an earlier answer (a cancel or a selection) has not exited yet when the menu issues the next answer.
+    - name: answer_write_started_concurrently
+      type: bool
+      direction: output
+      description: The menu starts a write process of its own for the new answer while the earlier answer write is still running, instead of waiting for it or dropping the new answer.
     - name: picker_verb_given
       type: bool
       direction: input
