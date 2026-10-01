@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-01T09:52:17.301393856Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-01T20:54:43.468520224Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:underhang: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:e7d0b382ee15ba3834e586da44adb708
+            shell/plugins/menu/Menu.qml:underhang: file1:e7d0b382ee15ba3834e586da44adb708
             shell/plugins/menu/MenuModel.js:matchesQuery: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
@@ -72,6 +72,18 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:483
             - shell/plugins/menu/Menu.qml:488
+            - shell/plugins/menu/MenuModel.js:334
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/shell.d/menu-test.sh:30
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T20:54:43.468520224Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'PR #9056 review at head b7bd59c4 on quattro-proof 4f1a8197: the Menu.qml delta is the cancel-prior guard at the top of open() (0b4fe292), finishRequest writing each answer through Quickshell.execDetached with the resultProc Process and the requestSerial/applySerial counters removed (b7bd59c4), and Implements lines. Each link re-checked against the cited annotation lines and the diff; the removed resultProc.onExited re-close was redundant because every apply path sets opened=false itself; requirement intents outside open()/finishRequest are unaffected; the new behaviour is authored as SW-REQ-260925-XTGG and SW-REQ-261001-C19S'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:492
+            - shell/plugins/menu/Menu.qml:497
             - shell/plugins/menu/MenuModel.js:334
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:30
