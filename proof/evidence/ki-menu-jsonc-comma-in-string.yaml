@@ -3,15 +3,17 @@ results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-E4J2
       command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh
-      status: fail
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-02T15:09:28Z"
+      status: pass
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-01T22:46:26Z"
+      revision: 59a30f1222f1f1bb008d71caaf6c589dbda69b9f
+      freshness_basis: revision
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMA-IN-STRING` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
-        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Make the stripJsonc comma pass string-aware (copy string-literal bytes verbatim, as the pr/13255 scanner does): the green tripwires tagged Reproduces KI-MENU-JSONC-COMMA-IN-STRING in test/shell.d/menu-test.sh and test/node/menumodel-replay.test.mjs flip red, and the red reproducer test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh starts exiting 0.'
+        - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMA-IN-STRING` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Make the stripJsonc comma pass string-aware (copy string-literal bytes verbatim, as omacom/omarchy#13968 does): the green tripwires tagged Reproduces KI-MENU-JSONC-COMMA-IN-STRING in test/shell.d/menu-test.sh and test/node/menumodel-replay.test.mjs flip red, and the red reproducer test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh starts exiting 0.'
         - test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-JSONC-COMMA-IN-STRING.yaml: ki-content-v1:sha256:01c333c0c65c9e16f219676526891cbc10c3f1faeaa9f68faf52ee7cd549c1f5
+        proof/known-issues/KI-MENU-JSONC-COMMA-IN-STRING.yaml: ki-content-v1:sha256:62211df3949d6f74cf977d187bcd09d77177b556e05efeed676f26e689b01e98
         test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh: sha256:9ea2d5938b276a0e389b562e4fc24483cb9cbb5a00fc00889bf220ac99a3a873
       known_issues:
         - KI-MENU-JSONC-COMMA-IN-STRING
