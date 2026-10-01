@@ -1,0 +1,74 @@
+id: SW-REQ-261001-BNZG
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when space_outside_string the menu_model shall always satisfy space_passed_as_ascii
+description: The JSONC stripper takes any text as input. Outside string literals, each character that JS \s matches is whitespace. This includes ASCII whitespace, a byte order mark U+FEFF at the start or anywhere else, and the Unicode spaces U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F and U+3000. The stripper keeps each line feed and emits each other such character as one ASCII space. Inside string literals it copies every character unchanged.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-PPDW
+component: menu
+rationale: 'This requirement states the input domain of stripJsonc and parseMenuJsonc. JSON.parse accepts only the four ASCII whitespace characters, but a user file can carry a byte order mark or a Unicode space from an editor or a paste. Upstream reads such a character as whitespace only before a whole-line comment, because the comment regex ^\s*// is Unicode-aware. The first PR #13968 commit (ff77cd02) lost that, so a file with a byte order mark and a leading comment had no rows. The follow-up commit efa5170b adds the \s branch to the scanner.'
+tags: []
+variables:
+    - space_outside_string
+    - space_passed_as_ascii
+traces:
+    satisfies:
+        - SYS-REQ-260922-PPDW
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-13968
+        reviewed_at: "2026-10-01T17:45:00Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-13968
+    created_at: "2026-10-01T17:41:54Z"
+    last_modified_by: agent:claude-pr-13968
+    last_modified_at: "2026-10-01T17:44:24Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'FMEA mode (a): a byte order mark or Unicode space outside a string reaches JSON.parse, which rejects the file, so every row of the user extension goes away with no error. This is the ff77cd02 regression for a file saved with a byte order mark and a leading comment. FMEA mode (b): the stripper also changes a Unicode space inside a string, so a label or action changes while the parse still succeeds. FMEA mode (c): the stripper replaces a line feed with a space, so a later // comment swallows the next line.'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-10-01T17:45:00Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_against_catalog_version: 1.10.1
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+          rationale: 'malformed_input: the input domain is any text, and each of the 19 non-ASCII characters that JS \s matches is whitespace outside strings. Witnessed rows cover a byte order mark, U+00A0, U+2028 and U+3000 before a leading comment, before an indented comment line and before the opening brace. boundary: a byte order mark as the first character and a line feed right before a comment. edge_case: Unicode spaces inside a string stay unchanged, and a carriage return becomes a space while its line feed stays.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: The \s test is a pure character class check in a single pass, so the same text always strips the same way. A seeded differential test in test/node/menumodel-replay.test.mjs inserts all 19 non-ASCII \s characters and compares the result with an independent reference model.
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags (HTTP, crypto or IPC frameworks) apply. The component parses a local user-authored config file into a menu model.
+        - category: structural
+          disposition: not_applicable
+          rationale: The code is garbage-collected JavaScript in the QML JS engine. It has no manual memory, pointer arithmetic, binary framing or format strings. It decodes no bytes, because the QML file reader supplies a JS string.
+requires_evidence:
+    - differential
+lifecycle:
+    change_history:
+        - date: "2026-10-01T17:45:00Z"
+          from: draft
+          to: review
+          reason: '[pr/13968] input-domain requirement for the PR #13968 scanner, including the follow-up commit efa5170b (Unicode whitespace outside strings read as a plain space).'
+          changed_by: agent:claude-pr-13968
