@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-09-29T23:52:19.693245998Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T07:52:20.073550024Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:underhang: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:matchesQuery: file1:083952493ac11b0d139e04ee8d9ec0f9
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:underhang: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/MenuModel.js:matchesQuery: file1:c6766ec669b1cfebf255c9552c77a449
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -63,6 +63,18 @@ traces:
             - test/shell.d/menu-test.sh:300
             - test/shell.d/menu-test.sh:302
             - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-01T07:52:20.073550024Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #12223 review: Menu.qml delta confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and MenuModel.js delta confined to the searchScore app bias (-5 -> -100); every link re-checked against the current annotation lines cited; SJ7P/TKDP descriptions updated to the new ranking, other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:483
+            - shell/plugins/menu/Menu.qml:488
+            - shell/plugins/menu/MenuModel.js:370
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/shell.d/menu-test.sh:30
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C

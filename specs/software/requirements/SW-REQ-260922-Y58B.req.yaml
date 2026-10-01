@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-09-29T23:52:19.788859843Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T07:52:33.208935515Z"
+    reviewed_by: agent:v2-third-party-review
     reviewed_fingerprint: sha256:ba0def97671b0819fd2c0220ae42864be60807c1de55ebfe4a1b1213973ad1da
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardScript: file1:083952493ac11b0d139e04ee8d9ec0f9
+            shell/plugins/menu/MenuModel.js:guardScript: file1:c6766ec669b1cfebf255c9552c77a449
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -37,6 +37,16 @@ traces:
             - shell/plugins/menu/MenuModel.js:521
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
+        - reviewed_at: "2026-10-01T07:52:33.208935515Z"
+          reviewed_by: agent:v2-third-party-review
+          method: inspection
+          rationale: 'PR #12223 review: Menu.qml delta confined to the rebuildDisplay search branch (apps pinned first, sections recomputed) and MenuModel.js delta confined to the searchScore app bias (-5 -> -100); every link re-checked against the current annotation lines cited; SJ7P/TKDP descriptions updated to the new ranking, other requirement intents unaffected'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:535
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
+            - test/shell.d/menu-guards-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

@@ -18,6 +18,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: Ranking anomalies reorder results but never hide them; the wanted entry stays on the results list
 remediation: give multi-term queries an aggregation across per-term scores; make the root/nested exact-label bands consistent; reconcile the app nudge with the documented ordering
+notes:
+    - 'PR omacom/omarchy#12223 (head b74292ac, reviewed on pr/12223 over baseline e797ba5b): F15d (app nudge contradicting the comment that app rows sort after menu items) becomes by-design - the PR rewrites the comment to apps always rank above menu entries and raises the bias to -100, beyond the whole tier range; SW-REQ-260922-SJ7P was updated to match. The pinned probe still reports F15d REAL because it tests app-first ordering, which the PR now intends. F15f (root vs nested exact label) and the multi-term collapse are unaffected by the PR.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -43,6 +45,14 @@ history:
       action: edit
       detail: set-reproducer-command
     - at: "2026-09-30T21:02:57Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-search-score-ranking.yaml
+    - at: "2026-10-01T07:54:45Z"
+      by: agent:v2-third-party-review
+      action: edit
+      detail: append-note
+    - at: "2026-10-01T07:54:45Z"
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-search-score-ranking.yaml
