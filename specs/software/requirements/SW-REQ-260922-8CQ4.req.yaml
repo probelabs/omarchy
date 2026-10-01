@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-29T14:26:57.004583373Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T22:51:05.068618Z"
+    reviewed_by: agent:claude-pr-13012
     reviewed_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml: file1:c55c0e087c499aafc84417cf7f5eef78
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:c55c0e087c499aafc84417cf7f5eef78
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -57,6 +57,17 @@ traces:
             - shell/plugins/menu/Menu.qml:864
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-compositor-test.sh
+        - reviewed_at: "2026-10-01T22:51:05.068618Z"
+          reviewed_by: agent:claude-pr-13012
+          method: inspection
+          rationale: 'PR #13012 review on quattro-proof 9f3abc10 (upstream head 7a7fb10c): the Menu.qml delta is confined to setActiveMenu/goBack (remembered row index and id on the nav stack, restored on Back) plus one annotation move inside goBack; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Each link re-checked against the cited annotation lines; the new Back behaviour is authored as SW-REQ-261001-B4CK (witnesses now in test/node/menumodel-replay.test.mjs), other requirement intents are unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:861
+            - shell/plugins/menu/Menu.qml:871
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-compositor-test.sh:21
+            - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
