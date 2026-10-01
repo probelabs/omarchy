@@ -16,8 +16,8 @@ node test/bdiff/harness.mjs <rev-worktree> <input>
 | anything else | nothing | a usage message, exit 2 |
 
 The input file is decoded the way Quickshell `FileView.text()` gives it to QML
-(`QString::fromUtf8`): invalid UTF-8 becomes U+FFFD and a leading BOM stays as
-U+FEFF. Output is deterministic. A revision that lacks `MenuModel.js`,
+(checked live under Quickshell 0.3.1): invalid UTF-8 becomes U+FFFD, a leading
+byte-order mark is dropped, and every other character is kept. Output is deterministic. A revision that lacks `MenuModel.js`,
 `Menu.qml` or one of the functions prints a `MISSING` / `MISSING-FUNCTION`
 marker and exits 0. The harness writes nothing to disk: product code runs with
 no `require`/`process`, and every process spawn (`Quickshell.execDetached`,

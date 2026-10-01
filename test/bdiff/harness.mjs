@@ -13,8 +13,9 @@
 //   .jsonc   MenuModel.js parse of one menu JSONC file:
 //              (a) parseMenuJsonc(text) rows, (b) JSON.parse(stripJsonc(text))
 //              or ERR. The file is decoded the way Quickshell FileView text()
-//              hands it to QML (QString::fromUtf8): invalid UTF-8 bytes become
-//              U+FFFD and a leading BOM is KEPT as U+FEFF content.
+//              hands it to QML: invalid UTF-8 bytes become U+FFFD and a
+//              leading byte-order mark is dropped (checked live under
+//              Quickshell 0.3.1); every other character is kept.
 //   .events  request-lifecycle simulator (#9056 / #9057 area). Replays one
 //              event sequence against the REAL bodies of the request functions
 //              of <rev>/shell/plugins/menu/Menu.qml under node:vm, and prints
@@ -64,11 +65,12 @@ function readRev(rel) {
   try { return fs.readFileSync(path.join(rev, rel), 'utf8') } catch { return null }
 }
 
-// QString::fromUtf8 semantics: replacement characters for invalid sequences,
-// the BOM is content (ignoreBOM: true keeps it as U+FEFF).
+// Quickshell FileView text() semantics (checked live under Quickshell 0.3.1):
+// replacement characters for invalid sequences, a leading BOM dropped
+// (ignoreBOM: false), a BOM anywhere else kept.
 function readInputText() {
   const bytes = fs.readFileSync(input)
-  return new TextDecoder('utf-8', { fatal: false, ignoreBOM: true }).decode(bytes)
+  return new TextDecoder('utf-8', { fatal: false, ignoreBOM: false }).decode(bytes)
 }
 
 function errName(e) {
