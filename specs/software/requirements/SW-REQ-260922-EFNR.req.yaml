@@ -19,8 +19,8 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-09-29T23:52:19.709498551Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T09:52:18.136009684Z"
+    reviewed_by: agent:claude-quattro-clean
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
@@ -29,7 +29,7 @@ traces:
             shell/plugins/menu/Menu.qml:mergeProviderRows: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:startNextProvider: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:startProviderForMenu: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:083952493ac11b0d139e04ee8d9ec0f9
+            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
@@ -64,6 +64,18 @@ traces:
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:815
             - test/shell.d/menu-test.sh:829
+        - reviewed_at: "2026-10-01T09:52:18.136009684Z"
+          reviewed_by: agent:claude-quattro-clean
+          method: inspection
+          rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:355
+            - shell/plugins/menu/Menu.qml:376
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:19
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

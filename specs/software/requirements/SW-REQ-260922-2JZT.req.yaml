@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-09-29T23:52:19.619912771Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T09:52:14.807644478Z"
+    reviewed_by: agent:claude-quattro-clean
     reviewed_fingerprint: sha256:a6db6c93dd4de43b8844bc0838374f66b8fea8928b43fdecebcbcc1b2b017a8f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:substituteGuardReaders: file1:083952493ac11b0d139e04ee8d9ec0f9
+            shell/plugins/menu/MenuModel.js:substituteGuardReaders: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -37,6 +37,16 @@ traces:
             - shell/plugins/menu/MenuModel.js:503
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
+        - reviewed_at: "2026-10-01T09:52:14.807644478Z"
+          reviewed_by: agent:claude-quattro-clean
+          method: inspection
+          rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:477
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
+            - test/shell.d/menu-guards-test.sh:9
 verification:
     assurance_level: C
     formalization_status: valid

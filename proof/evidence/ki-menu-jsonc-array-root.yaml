@@ -5,13 +5,13 @@ results:
       command: sh test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T09:39:09Z"
+      executed_at: "2026-10-01T09:52:14Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-ARRAY-ROOT` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Add Array.isArray(parsed) to the parseMenuJsonc root guard (as the pr/13511 line does): the green tripwire tagged Reproduces KI-MENU-JSONC-ARRAY-ROOT flips red and the red reproducer test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh starts exiting 0.'
         - test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-JSONC-ARRAY-ROOT.yaml: ki-content-v1:sha256:2def38c3ce2a9651e6b473d05663e2513072dd194e988ddd40eda4631ca12516
+        proof/known-issues/KI-MENU-JSONC-ARRAY-ROOT.yaml: ki-content-v1:sha256:cb07d9d2cee5ba2b2a98b02dcddfe4dacd670aa922a593de221a233659b5fc42
         test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh: sha256:31199c200a55ce3df77b042f5497d61da8f049dbce0cbf35b62c29358d7d337c
       known_issues:
         - KI-MENU-JSONC-ARRAY-ROOT

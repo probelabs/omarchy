@@ -19,15 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-09-29T23:52:19.796078158Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T09:52:21.063533346Z"
+    reviewed_by: agent:claude-quattro-clean
     reviewed_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:mergeProviderRows: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:slugify: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:mergeAppRows: file1:083952493ac11b0d139e04ee8d9ec0f9
-            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:083952493ac11b0d139e04ee8d9ec0f9
+            shell/plugins/menu/MenuModel.js:mergeAppRows: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
@@ -62,6 +62,19 @@ traces:
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:766
             - test/shell.d/menu-test.sh:794
+        - reviewed_at: "2026-10-01T09:52:21.063533346Z"
+          reviewed_by: agent:claude-quattro-clean
+          method: inspection
+          rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:305
+            - shell/plugins/menu/Menu.qml:313
+            - shell/plugins/menu/MenuModel.js:112
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-test.sh:14
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

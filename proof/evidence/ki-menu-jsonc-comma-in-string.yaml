@@ -5,13 +5,13 @@ results:
       command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T09:39:09Z"
+      executed_at: "2026-10-01T09:52:37Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMA-IN-STRING` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Make the stripJsonc comma pass string-aware (copy string-literal bytes verbatim, as the pr/13255 scanner does): the green tripwires tagged Reproduces KI-MENU-JSONC-COMMA-IN-STRING in test/shell.d/menu-test.sh and test/node/menumodel-replay.test.mjs flip red, and the red reproducer test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh starts exiting 0.'
         - test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-JSONC-COMMA-IN-STRING.yaml: ki-content-v1:sha256:592866b40443830fd3b4f2acf3b9c9693cc1f286e9aad3abd83143d854ad0d09
+        proof/known-issues/KI-MENU-JSONC-COMMA-IN-STRING.yaml: ki-content-v1:sha256:4797a00453b366330759699eb1359a32ff11bba2fe727b292bd0f23c1366e2bd
         test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh: sha256:9ea2d5938b276a0e389b562e4fc24483cb9cbb5a00fc00889bf220ac99a3a873
       known_issues:
         - KI-MENU-JSONC-COMMA-IN-STRING

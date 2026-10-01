@@ -1,5 +1,5 @@
 id: KI-MENU-OPEN-QUADRATIC
-title: 'Opening a select menu walks its rows quadratically (omacom/omarchy#10601)'
+title: Opening a select menu walks its rows quadratically (omacom/omarchy#10601)
 description: |-
     rebuildDmenuDisplay (shell/plugins/menu/Menu.qml) appends rows to displayModel one at a time. The visibleRowsHeight binding evaluates again after each append. Each pass calls foldedListHeight over the full row list.
 
@@ -16,10 +16,10 @@ risk: performance
 cve_surface: none
 affected_api: Menu.qml rebuildDmenuDisplay + visibleRowsHeight binding (omarchy-menu-select summon)
 reproducer_command: sh test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh
-tripwire_mutation: 'Build the display rows in one batch, or suspend the visibleRowsHeight binding during the rebuild. Then a summon folds the list a bounded number of times. The red reproducer test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh starts exiting 0, and the expected failure in test/node/report-reproducers.test.mjs flips red.'
+tripwire_mutation: Build the display rows in one batch, or suspend the visibleRowsHeight binding during the rebuild. Then a summon folds the list a bounded number of times. The red reproducer test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh starts exiting 0, and the expected failure in test/node/report-reproducers.test.mjs flips red.
 introduced_in: inception
 defect_class: latent
-mitigation: 'Menus of typical size (tens of rows) open without a visible delay. The cost grows only for very long select lists such as the keybindings menu'
+mitigation: Menus of typical size (tens of rows) open without a visible delay. The cost grows only for very long select lists such as the keybindings menu
 remediation: Append the rows in one model update, or defer the height binding until the rebuild ends. Also add a requirement that bounds the menu-open cost; none exists today
 owner: agent:claude-quattro-clean
 review_date: "2026-10-01"
@@ -33,6 +33,10 @@ history:
     - at: "2026-10-01T09:39:08Z"
       by: agent:claude-quattro-clean
       action: capture-evidence
+      detail: proof/evidence/ki-menu-open-quadratic.yaml
+    - at: "2026-10-01T09:52:14Z"
+      by: agent:claude-quattro-clean
+      action: refresh-evidence
       detail: proof/evidence/ki-menu-open-quadratic.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE: that one is the folded height result being too large, this one is how often the fold is computed'
 kill_domain: resource_exhaustion

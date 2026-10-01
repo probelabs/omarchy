@@ -32,6 +32,10 @@ history:
       by: agent:claude-quattro-clean
       action: capture-evidence
       detail: proof/evidence/ki-menu-jsonc-inline-comment.yaml
+    - at: "2026-10-01T09:52:14Z"
+      by: agent:claude-quattro-clean
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-inline-comment.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-ITEMS-KEY-AMBIGUITY: this one is line comments after content on the same line; those are block comments, string rewriting, array roots and the items wrapper key'
 kill_domain: parsing
 affected_file:

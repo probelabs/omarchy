@@ -19,15 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-09-29T23:52:19.718954271Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T09:52:18.536807824Z"
+    reviewed_by: agent:claude-quattro-clean
     reviewed_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/MenuModel.js:isDisabled: file1:083952493ac11b0d139e04ee8d9ec0f9
-            shell/plugins/menu/MenuModel.js:isVisible: file1:083952493ac11b0d139e04ee8d9ec0f9
-            shell/plugins/menu/MenuModel.js:labelFor: file1:083952493ac11b0d139e04ee8d9ec0f9
+            shell/plugins/menu/MenuModel.js:isDisabled: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:isVisible: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:labelFor: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -57,6 +57,19 @@ traces:
             - shell/plugins/menu/MenuModel.js:329
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-test.sh
+        - reviewed_at: "2026-10-01T09:52:18.536807824Z"
+          reviewed_by: agent:claude-quattro-clean
+          method: inspection
+          rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:498
+            - shell/plugins/menu/Menu.qml:506
+            - shell/plugins/menu/MenuModel.js:262
+            - shell/plugins/menu/MenuModel.js:285
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-test.sh:29
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

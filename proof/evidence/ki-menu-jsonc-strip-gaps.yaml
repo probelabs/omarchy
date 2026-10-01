@@ -5,13 +5,13 @@ results:
       command: sh pocs/menu-jsonc-block-comment.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T09:39:09Z"
+      executed_at: "2026-10-01T09:52:15Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-STRIP-GAPS` from the KnownIssue''s reproducer command: sh pocs/menu-jsonc-block-comment.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - pocs/menu-jsonc-block-comment.sh
       freshness_hashes:
         pocs/menu-jsonc-block-comment.sh: sha256:7ed7c3b213716419e83766431d99a75c0e45ed5e741f167e1c869f5461c3ec49
-        proof/known-issues/KI-MENU-JSONC-STRIP-GAPS.yaml: ki-content-v1:sha256:818be13c27e953e71901eff31a131f7bc8d9057f5afd12874ecae563f9ae5132
+        proof/known-issues/KI-MENU-JSONC-STRIP-GAPS.yaml: ki-content-v1:sha256:c50dd4ad3f5e8278fa1ef874b051d55c1b562251a4d9d600f18c79dc0b992d01
       known_issues:
         - KI-MENU-JSONC-STRIP-GAPS
       config:
