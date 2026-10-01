@@ -29,6 +29,7 @@ Item {
     // openDmenu/openExistingMenu below, leaving the caller that's still
     // polling for it (bin/omarchy-menu-select) blocked forever. Answer it
     // as cancelled first so every summon always resolves.
+    // Implements: SW-REQ-260925-XTGG
     if (root.requestActive) root.finishRequest(null)
 
     if (payload.fontFamily) root.fontFamily = payload.fontFamily
