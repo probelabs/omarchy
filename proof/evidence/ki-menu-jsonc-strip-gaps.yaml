@@ -1,20 +1,17 @@
 schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
-      requirements:
-        - SW-REQ-260922-E4J2
-        - SW-REQ-260922-3T3F
-      command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
-      status: pass
+      requirement: SW-REQ-260922-E4J2
+      command: sh pocs/menu-jsonc-block-comment.sh
+      status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:56Z"
+      executed_at: "2026-10-01T09:39:09Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-JSONC-STRIP-GAPS` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - ../shell/plugins/menu/MenuModel.js
-        - pocs/menu-probes.js
+        - 'Captured by `proof evidence capture KI-MENU-JSONC-STRIP-GAPS` from the KnownIssue''s reproducer command: sh pocs/menu-jsonc-block-comment.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - pocs/menu-jsonc-block-comment.sh
       freshness_hashes:
-        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-JSONC-STRIP-GAPS.yaml: ki-content-v1:sha256:dce32d92f3389fa096055612f13b9236b7c6d4ffb46942d2ad8b6c60663a38d4
+        pocs/menu-jsonc-block-comment.sh: sha256:7ed7c3b213716419e83766431d99a75c0e45ed5e741f167e1c869f5461c3ec49
+        proof/known-issues/KI-MENU-JSONC-STRIP-GAPS.yaml: ki-content-v1:sha256:818be13c27e953e71901eff31a131f7bc8d9057f5afd12874ecae563f9ae5132
       known_issues:
         - KI-MENU-JSONC-STRIP-GAPS
       config:

@@ -3,6 +3,8 @@ title: 'Opening a select menu walks its rows quadratically: the height binding r
 description: 'rebuildDmenuDisplay (shell/plugins/menu/Menu.qml) appends rows to displayModel one at a time, and the visibleRowsHeight binding re-evaluates on every append. Each pass calls foldedListHeight over the full row list, so a menu of N rows costs about N(N+1)/2 row visits: 231 rows take 232 height passes and 27,027 row visits, 462 rows 463 passes and 107,415 visits. The Super+K keybindings menu (omarchy-menu-select) is the realistic large case. Reported upstream as omacom/omarchy#10601 and validated by report intake (report cmulr8ysi0jwr1gw4fjmt9khq); upstream PR 10631 does not change the counts.'
 affected_requirements:
     - SW-REQ-260922-B757
+evidence_manifests:
+    - proof/evidence/ki-menu-open-quadratic.yaml
 severity: low
 severity_basis: risk
 risk: performance
@@ -23,6 +25,10 @@ history:
       by: agent:claude-quattro-clean
       action: created
       detail: 'clean baseline: issue-report reproducer turned regression test'
+    - at: "2026-10-01T09:39:08Z"
+      by: agent:claude-quattro-clean
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-open-quadratic.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE: that one is the folded height result being too large, this one is how often the fold is computed'
 kill_domain: resource_exhaustion
 affected_file:

@@ -1,8 +1,10 @@
 id: KI-MENU-JSONC-ARRAY-ROOT
-title: 'parseMenuJsonc walks a top-level JSON array and renders phantom rows keyed 0, 1, ... (omacom/omarchy#13492)'
+title: parseMenuJsonc walks a top-level JSON array and renders phantom rows keyed 0, 1, ... (omacom/omarchy#13492)
 description: 'parseMenuJsonc (shell/plugins/menu/MenuModel.js:44-66) rejects scalar and null roots only. typeof [] is "object", so an array root reaches the for..in loop, which iterates the array indices: every object element becomes a row with id "0", "1", ... parented to root, carrying the element''s label and action. This holds for the default file and for the user extension file, which go through the same parser and are merged by mergeMenuSources. Reported upstream as omacom/omarchy#13492 and validated by report intake (report cmulr8j7z0hy31gw4pne8v6u4).'
 affected_requirements:
     - SW-REQ-260922-3T3F
+evidence_manifests:
+    - proof/evidence/ki-menu-jsonc-array-root.yaml
 severity: low
 severity_basis: risk
 risk: correctness
@@ -23,6 +25,10 @@ history:
       by: agent:claude-quattro-clean
       action: created
       detail: 'clean baseline: upstream e332dc97 defect (fork fix f443c9e2 moved to pr/13511)'
+    - at: "2026-10-01T09:39:08Z"
+      by: agent:claude-quattro-clean
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-jsonc-array-root.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY: that one is an object-valued items key discarding sibling entries, this one is an array root walked by index into phantom rows'
 kill_domain: parsing
 affected_file:

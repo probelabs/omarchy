@@ -1,8 +1,10 @@
 id: KI-MENU-JSONC-COMMA-IN-STRING
-title: 'stripJsonc trailing-comma regex rewrites string literals that carry a comma before } or ] (omacom/omarchy#13250)'
+title: stripJsonc trailing-comma regex rewrites string literals that carry a comma before } or ] (omacom/omarchy#13250)
 description: 'stripJsonc (shell/plugins/menu/MenuModel.js:2-6) drops trailing commas with the string-blind regex /,(\s*[}\]])/g. The regex does not track string literals, so a comma inside a label or an action that is followed by optional whitespace and } or ] is deleted too. JSON.parse accepts the rewritten text, so nothing fails: the label "x, ]y" renders as "x ]y", and the action "mv f{.bak,}" runs as "mv f{.bak}" with the user''s privileges on row activation. Reported upstream as omacom/omarchy#13250 and validated by report intake (report cmulr8l6h0i461gw40vqqv64c).'
 affected_requirements:
     - SW-REQ-260922-E4J2
+evidence_manifests:
+    - proof/evidence/ki-menu-jsonc-comma-in-string.yaml
 severity: medium
 severity_basis: risk
 risk: data_integrity
@@ -23,10 +25,10 @@ history:
       by: agent:claude-quattro-clean
       action: created
       detail: 'clean baseline: upstream e332dc97 defect (fork fix 0d93b9e7 moved to pr/13255)'
-dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS: that one is block comments left in the text so the whole file fails to parse, this one is the comma pass silently rewriting string data while the parse succeeds'
-kill_domain: parsing
-affected_file:
-    - shell/plugins/menu/MenuModel.js
+    - at: "2026-10-01T09:39:08Z"
+      by: agent:claude-quattro-clean
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -52,3 +54,7 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: the user authors the config; no attacker gains anything'
         reachability_verified: 'local-behavioral defect: the trigger is the user''s own config file; there is no ingress layer to traverse'
         untrusted_attacker: 'local-behavioral defect: no untrusted party supplies the input'
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS: that one is block comments left in the text so the whole file fails to parse, this one is the comma pass silently rewriting string data while the parse succeeds'
+kill_domain: parsing
+affected_file:
+    - shell/plugins/menu/MenuModel.js

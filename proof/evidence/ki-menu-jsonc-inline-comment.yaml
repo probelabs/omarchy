@@ -1,0 +1,22 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-260922-E4J2
+      command: sh test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh
+      status: fail
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-01T09:39:09Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-MENU-JSONC-INLINE-COMMENT` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Strip // comments wherever the opener sits outside a string, while keeping the comment pass ahead of the comma pass: the green tripwires tagged Reproduces KI-MENU-JSONC-INLINE-COMMENT flip red and the red reproducer test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh starts exiting 0. The fix must keep the preservation tests green (a trailing comma, then a whole-line comment, then the closer keeps every row) - the single-pass scanner of PR 13512 / fork 500b31bd breaks that and empties the shipped extension template once its examples are uncommented.'
+        - test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh
+      freshness_hashes:
+        proof/known-issues/KI-MENU-JSONC-INLINE-COMMENT.yaml: ki-content-v1:sha256:b6c11aea85c2b34c902f1b32001312e1bf0b11d61d8fc56a3121a5daca19bb4e
+        test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh: sha256:7fd6527d188bcfbd4844e9d3959f7d5466fa0d7daec76948ce9cabb8e7511bca
+      known_issues:
+        - KI-MENU-JSONC-INLINE-COMMENT
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root
