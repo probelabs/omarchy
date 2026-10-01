@@ -89,6 +89,7 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: The code is garbage-collected JavaScript in the QML JS engine. It has no manual memory, pointer arithmetic, binary framing or format strings, so the C-family structural catalog does not apply.
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-27T19:15:02Z"
@@ -100,4 +101,9 @@ lifecycle:
           from: review
           to: review
           reason: '[pr/13968] re-applied from e797ba5b and reworded to the PR #13968 scanner: the comma look-ahead skips whitespace and // comments (next_char_closes_json redefined), so the requirement no longer encodes the next-non-whitespace rule that #13512 and #13681 shipped.'
+          changed_by: agent:claude-pr-13968
+        - date: "2026-10-01T22:57:21Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-21=present | tests_pass:test_status=passing
           changed_by: agent:claude-pr-13968
