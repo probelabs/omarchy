@@ -18,12 +18,14 @@ tripwire_mutation: 'Strip // comments wherever the opener sits outside a string,
 introduced_in: inception
 defect_class: latent
 mitigation: docs/menu.md documents the limitation, and comments on their own line work. The missing entries are visible, but nothing in the menu or the journal says why; nothing changes the user's data.
-remediation: 'Strip a // comment wherever its opener sits outside a string, without breaking the trailing-comma-then-comment-line shape, as omacom/omarchy#13968 does (requirement SW-REQ-260928-C8W1 in the proof layer). The earlier single-pass attempt (omacom/omarchy#13512, closed) broke that shape; #13968 supersedes it.'
+remediation: Fixed by omacom/omarchy#13968 (the scanner drops a // comment wherever its opener sits outside a string; SW-REQ-260928-C8W1).
+notes:
+    - 'Fixed on pr/13968 by omacom/omarchy#13968: the string-aware scanner drops a // comment wherever the opener sits outside a string and keeps the line break. Spec: SW-REQ-260928-C8W1 (DEFECT-260928-7AX9). docs/menu.md now states the rule. Report test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh exits 0 with its control; the in-suite tests tagged Reproduces now assert the fixed row counts and guard against a return.'
 customer_impact: 'One // comment after content on a line, for example after an entry, makes the whole menu file unreadable, so every entry in it disappears: all of your own additions in the extension file, or the whole menu in the default file. Nothing in the menu or the journal says why. Comments on their own line work, and no data is changed.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-10-01T09:30:00Z"
       by: agent:claude-quattro-clean
@@ -61,6 +63,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-inline-comment.yaml
+    - at: "2026-10-01T22:39:22Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-ITEMS-KEY-AMBIGUITY: this one is line comments after content on the same line; those are block comments, string rewriting, array roots and the items wrapper key'
 kill_domain: parsing
 affected_file:
