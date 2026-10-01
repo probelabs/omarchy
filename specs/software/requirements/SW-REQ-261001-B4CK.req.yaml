@@ -22,7 +22,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-01T23:26:52.015575Z"
+    reviewed_at: "2026-10-01T23:46:33.908466Z"
     reviewed_by: agent:claude-pr-13012
     reviewed_fingerprint: sha256:e7c38a84942c83e8ee4e67c78ad0a08fed2e771e76257479edd21493417823f2
     reviewed_targets:
@@ -62,6 +62,16 @@ traces:
             - shell/plugins/menu/Menu.qml:815
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/node/menumodel-replay.test.mjs:1331
+        - reviewed_at: "2026-10-01T23:46:33.908466Z"
+          reviewed_by: agent:claude-pr-13012
+          method: inspection
+          rationale: 'pr/13012 on quattro-proof 9f3abc10: the B4CK witnesses (unchanged body: the REAL setActiveMenu/goBack/rebuildDisplay/settleCursor/nextSelectable/rowSelectable under vm) now run as a second block of test/shell.d/menu-pointer-lifecycle-test.sh, whose Verifies header names B4CK; the menumodel-replay.test.mjs copy is removed (the engine did not credit its MCDC rows). Re-read the Menu.qml setActiveMenu/goBack annotations and the moved witnesses against the requirement.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:783
+            - shell/plugins/menu/Menu.qml:815
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
@@ -88,7 +98,7 @@ hazard_review:
           not_applicable:
             - input_domain
             - concurrency_scale
-          rationale: 'boundary: the remembered row disabled or gone on return - the id loop skips non-selectable rows and the saved index is settled off disabled rows by rebuildDisplay, witnessed in test/node/menumodel-replay.test.mjs (Back restores the parent selection). edge_case: a drill-in from a filtered search saves an index into the filtered list while Back clears the filter, so the fallback index can land on an unrelated parent row (pocs/pr13012-back-from-search.js reproduces it; the baseline started at row 0) - tracked as KI-MENU-BACK-FILTERED-INDEX. Provider-backed parents that load rows asynchronously follow the id only once at restore; later rebuilds keep the index. All consequences are cursor placement only, no action runs. Catalog 1.11.0 re-review: input_domain not applicable, the requirement reads no bytes; it acts on in-shell navigation state (the nav stack and row ids). concurrency_scale not applicable, each key press runs to completion on the single QML event loop, and a deep Back chain pops one record per press.'
+          rationale: 'boundary: the remembered row disabled or gone on return - the id loop skips non-selectable rows and the saved index is settled off disabled rows by rebuildDisplay, witnessed in test/shell.d/menu-pointer-lifecycle-test.sh (the PR #13012 witness block). edge_case: a drill-in from a filtered search saves an index into the filtered list while Back clears the filter, so the fallback index can land on an unrelated parent row (pocs/pr13012-back-from-search.js reproduces it; the baseline started at row 0) - tracked as KI-MENU-BACK-FILTERED-INDEX. Provider-backed parents that load rows asynchronously follow the id only once at restore; later rebuilds keep the index. All consequences are cursor placement only, no action runs. Catalog 1.11.0 re-review: input_domain not applicable, the requirement reads no bytes; it acts on in-shell navigation state (the nav stack and row ids). concurrency_scale not applicable, each key press runs to completion on the single QML event loop, and a deep Back chain pops one record per press.'
         - category: property
           disposition: reviewed
           applied:
