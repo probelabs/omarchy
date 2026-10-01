@@ -811,8 +811,8 @@ Item {
     root.loadProviderForMenu(id)
   }
 
-  // Implements: SW-REQ-260922-DE93
   function goBack() {
+    // Implements: SW-REQ-260922-DE93
     if (root.activeMenu === "root") return false
 
     if (root.navStack.length > 0) {
