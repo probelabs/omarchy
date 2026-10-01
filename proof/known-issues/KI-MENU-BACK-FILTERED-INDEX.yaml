@@ -47,5 +47,9 @@ history:
       by: agent:claude-pr-13012
       action: edit
       detail: introduced-in=a38415fa
+    - at: "2026-10-01T22:51:50Z"
+      by: agent:claude-pr-13012
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-back-filtered-index.yaml
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
