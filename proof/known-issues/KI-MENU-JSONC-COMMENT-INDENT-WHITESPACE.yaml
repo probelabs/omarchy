@@ -1,0 +1,33 @@
+id: KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE
+title: 'A comment line indented with Unicode or control whitespace empties the menu file under PR #6525'
+description: |-
+    With omacom/omarchy#6525, stripJsonc (shell/plugins/menu/MenuModel.js) drops a // comment with a scanner instead of the old line-anchored regex ^\s*\/\/. The regex removed a whole-line comment together with any JS whitespace in front of it. JS \s also matches VT, FF, U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F, U+3000 and U+FEFF. The scanner drops only the comment and keeps that character.
+
+    JSON.parse accepts only space, tab, LF and CR as whitespace. So a full-line comment indented with one of those characters now makes the whole file fail to parse. The catch returns an empty item set, and the PR's new console.warn logs the parse error. On the baseline the same file parses to all of its entries.
+
+    We checked this with the real MenuModel.js at the PR head merged onto the baseline. pocs/pr6525-comment-indent-whitespace.sh shows it for all 21 characters against an ASCII-indented control. Quickshell's FileView drops a byte-order mark at the very start of the file, so a leading BOM before a header comment does not trigger it under the shell; the same character on any later line does.
+affected_requirements:
+    - SW-REQ-260922-E4J2
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: MenuModel.parseMenuJsonc (default and user menu JSONC)
+reproducer_command: sh pocs/pr6525-comment-indent-whitespace.sh
+tripwire_mutation: 'Copy every JS whitespace character outside a string literal as a plain space in the scanner (keep line feeds), as omacom/omarchy#13968 does: the green tripwire pocs/pr6525-comment-indent-whitespace.sh starts exiting 1 and the KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
+introduced_in: dff129dc
+defect_class: new_defect
+minimization_status: minimized
+mitigation: Indent comment lines in the menu file with ASCII spaces or tabs only. The shipped default menu indents with ASCII spaces.
+remediation: In the scanner, copy any JS whitespace character outside a string as one ASCII space (keep line feeds), so the indentation the old regex removed is still accepted. omacom/omarchy#13968 does this in its second commit b2dae8db.
+owner: agent:claude-pr-6525
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-10-01T23:03:20Z"
+      by: agent:claude-pr-6525
+      action: created
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-UNICODE-WHITESPACE: that one is non-JSON whitespace BETWEEN tokens, present on the baseline and unchanged by #6525; this one is the same characters INDENTING a whole-line comment, which the baseline accepts and #6525 newly rejects. Also not KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS (inline comment tails, block comments, string rewriting, array roots, CR-only line endings).'
+kill_domain: parsing
+affected_file: shell/plugins/menu/MenuModel.js
