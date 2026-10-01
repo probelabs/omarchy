@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-29T10:09:06.071553521Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-01T23:04:54.265Z"
+    reviewed_by: agent:claude-pr-13197
     reviewed_fingerprint: sha256:5a56956df986893e2a810ef158740273f6a65cc39da4a658c4dbb4ef094db947
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-file: file1:1d81cff7249042bbe93d724ebdc4e865
+            bin/omarchy-menu-file: file1:14273929353386e725fce102beb8bf48
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -32,6 +32,15 @@ traces:
           reviewed_by: agent:kimi-zero-warnings
           method: inspection
           rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-file:9
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-file-test.sh:5
+        - reviewed_at: "2026-10-01T23:04:54.265Z"
+          reviewed_by: agent:claude-pr-13197
+          method: inspection
+          rationale: 'PR #13197 review on quattro-proof 9f3abc10 (upstream head 03e6af6a): bin/omarchy-menu-file now runs find -H (command-line symlink roots followed, interior symlinks not descended) and keys rows on device:inode so aliased roots collapse to one row, still sorted by modification time descending; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). HR29 (formats case-insensitive, dotfiles pruned, mtime-descending order, nonexistent path rejected with exit 1) still holds: re-read against the script and menu-file-test.sh; the PR test runs in the menu-node suite.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-file:9
