@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when same_file_reached_twice the file_picker shall eventually satisfy file_listed_once
-description: When two given paths reach the same file, the file picker lists that file in one row. This happens when one root is a symbolic link to another root, or when the same root is given twice. The picker identifies a file by its device and inode numbers.
+description: When two given paths reach the same file, the file picker lists that file in one row. One root can be a symbolic link to another root, or a caller can give the same root twice. The picker identifies a file by its device and inode numbers.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,9 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-6642
 component: menu
-rationale: 'Upstream PR omacom/omarchy#13197 (head 03e6af6a) adds this behaviour to bin/omarchy-menu-file. With symbolic link roots followed, a root linked to another given root (Pictures linked to Videos) or a root given twice would list each file twice, under two spellings. The PR prints the device and inode number of each file and keeps the first row for each pair, after the newest-first sort. The key is the file, not its path: two hard links to one file in the given roots also give one row. The PR states the intent for aliased roots only; the hard-link case is recorded here as what the code does.'
+rationale: 'Upstream PR omacom/omarchy#13197 (head 03e6af6a) adds this behaviour to bin/omarchy-menu-file. When find follows link roots, a root linked to another given root lists each file twice, under two paths. Pictures linked to Videos is the example in the PR.
+
+    The PR prints the device and inode number of each file. After the newest-first sort it keeps the first row for each pair. The key is the file, not its path, so two hard links to one file in the given roots also give one row. The PR states the intent for aliased roots only. This requirement records the hard-link case as the code behaves.'
 tags: []
 variables:
     - same_file_reached_twice
@@ -44,9 +46,9 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-pr-13197
+        reviewed_at: "2026-10-02T01:10:00Z"
         ai_generated: true
 history:
     created_by: agent:claude-pr-13197
@@ -72,8 +74,8 @@ hazard_review:
           disposition: reviewed
           applied:
             - determinism
-            - idempotence
-          rationale: 'determinism: for a given directory state the kept row is fixed by the sort order. idempotence: giving a root a second time adds no row.'
+            - idempotency
+          rationale: 'determinism: for a given directory state the kept row is fixed by the sort order. idempotency: giving a root a second time adds no row.'
         - category: structural
           disposition: not_applicable
           rationale: 'awk keys on the first tab-separated field (%D:%i), which find prints from metadata; a tab or newline in a file name can split a row, as at the base.'
