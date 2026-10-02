@@ -1,0 +1,10 @@
+id: REVIEW-261002-VZ1K
+kind: spec_conformance
+reviewer: agent:claude-pr-13197
+reviewed_at: "2026-10-02T01:01:11Z"
+subject: SW-REQ-261002-9H5Y
+decision: approved
+comment: 'Read bin/omarchy-menu-file on the PR #13197 tree at head 03e6af6a. find prints each match as device:inode, mtime and path; the rows are sorted newest first on the mtime field and awk keeps the first row per device:inode key before cut drops the key and the mtime. A file reached through two given paths (a link root and its target, or a root given twice) thus gets one row: same_file_reached_twice leads to file_listed_once. The violation row needs the awk filter or the key field removed; it is dispositioned defensive. The key is the file, not the path, so two hard links to one file also give one row, and of two equal rows the lexically smaller line is kept (sort falls back to a whole-line comparison). Witnesses in test/shell.d/menu-file-test.sh: a link root plus its target, and a root given twice, each list the file once; a single real root lists its file once.'
+citations:
+    - bin/omarchy-menu-file:47
+    - bin/omarchy-menu-file:55
