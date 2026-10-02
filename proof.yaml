@@ -65,6 +65,30 @@ project:
             # REQ:class:evidence tags reach the obligation corpus and join
             # the combined JUnit report (P3 observed obligation results).
             - test/node/**
+            # Files the in-scope tests reach only indirectly. The engine
+            # reads the scope literally (it does not follow `source`, the
+            # suite runners or the harness), so a change to one of these
+            # must count as in scope for review freshness:
+            # - the menu-shell catch-all runs every menu-*-test.sh
+            - test/shell.d/menu-*-test.sh
+            # - sourced by every shell test, and the fixtures the lock and
+            #   menu tests read
+            - test/shell.d/base-test.sh
+            - test/shell.d/fixtures/sudo-boundary-test.sh
+            - test/shell.d/fixtures/lock-fingerprint-indicator/**
+            - test/shell.d/fixtures/lock-password-overflow/**
+            - test/shell.d/fixtures/owe-lock/**
+            - test/shell.d/fixtures/tray-menu-activation/**
+            # - JUnit writer, merger and the live-session runner (menu-live)
+            - test/junit/*
+            - test/junit/live-session.sh
+            # - the behaviour-diff harness and its corpus
+            - test/bdiff/*
+            - test/bdiff/**
+            # - the lock-qml runner and the issue-report reproducers
+            #   (menu-reports)
+            - test/qml/lock/**
+            - test/reports/**
         completeness:
             production_include:
                 - bin/omarchy-*lock*
