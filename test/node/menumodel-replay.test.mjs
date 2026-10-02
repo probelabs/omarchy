@@ -1044,6 +1044,34 @@ test('mcdc stripJsonc: the PR #6525 string-aware comment scanner, the comma pass
   assertEqual(menuModel.stripJsonc('{\n // c\n}'), '{\n \n}', 'KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwire: stripJsonc keeps a no-break space that indents a comment line')
 })
 
+// Reproduces: KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE
+// Green tripwire of the regression omacom/omarchy#6525 introduces (proof-side,
+// not the PR's code): it passes while the defect is present. JS \s matches the
+// 21 characters below; JSON accepts only space, tab, LF and CR. The old
+// line-anchored regex ^\s*\/\/ removed such a character with a whole-line
+// comment. The PR's scanner drops the comment and keeps the character, so
+// JSON.parse rejects the file and parseMenuJsonc returns no rows. The input is
+// the text Quickshell's FileView hands to the parser: FileView drops a LEADING
+// byte-order mark (checked under Quickshell 0.3.1), so the indented comment
+// sits on the second line. Control: the same file indented with ASCII spaces
+// keeps both rows. When the defect is fixed, the tripwire assertions fail.
+test('KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwire: a comment line indented with non-JSON JS whitespace empties the menu file', () => {
+  const saved = globalThis.console
+  try {
+    globalThis.console = { warn: () => {} }
+    assertEqual(menuModel.parseMenuJsonc('{\n  // a comment line\n  "a": {"label": "A"},\n  "b": {"label": "B"}\n}\n').length, 2,
+      'KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE control: a comment line indented with ASCII spaces keeps both rows')
+    for (const cp of [0x000b, 0x000c, 0x00a0, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
+      0x2007, 0x2008, 0x2009, 0x200a, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff]) {
+      const ch = String.fromCharCode(cp)
+      assertEqual(menuModel.parseMenuJsonc('{\n' + ch + ch + '// a comment line\n  "a": {"label": "A"},\n  "b": {"label": "B"}\n}\n').length, 0,
+        'KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwire: a comment line indented with U+' + cp.toString(16).toUpperCase().padStart(4, '0') + ' empties the menu file')
+    }
+  } finally {
+    globalThis.console = saved
+  }
+})
+
 test('mcdc parseMenuJsonc: the PR #6525 parse-failure warning, with and without a console', () => {
   // typeof console !== "undefined" && console.warn: both conditions, both arms.
   const saved = globalThis.console
