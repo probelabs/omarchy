@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:39.437542Z"
+    reviewed_at: "2026-10-02T16:58:57.412842Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:3951141167e965f81efdf4d8c2b94ccc40cd74ef7cbc22fa66a6fce7603ecf1a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
             shell/plugins/menu/MenuModel.js:resolveRoute: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -61,6 +61,19 @@ traces:
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:509
+        - reviewed_at: "2026-10-02T16:58:57.412842Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:960
+            - shell/plugins/menu/MenuModel.js:183
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:42
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:511
 verification:
     assurance_level: C
     formalization_status: valid
