@@ -1,0 +1,11 @@
+id: REVIEW-261002-NS9R
+kind: spec_conformance
+reviewer: agent:claude-pr-B
+reviewed_at: "2026-10-02T12:26:14Z"
+subject: SW-REQ-261002-DK0D
+decision: approved
+comment: Read shell/plugins/menu/Menu.qml on the pr-B tree (upstream 821ae589 plus the fix). openRoute writes the route to pendingInitialMenu and calls openExistingMenu, which clears it when the requested item is the one shown. So the route stays pending only when the menu fell back to root (route_fell_back_before_load). At the end of rebuildItemsFromSources, which both FileView handlers call, the menu calls openRoute(pending) when a route is pending, the menu is open in menu mode on root with an empty filter (menu_untouched_on_root), and the route resolves to an item (pending_route_resolves). openRoute resolves aliases, follows links and runs action aliases, so pending_route_opened means the same as for any summon. The violation row (a resolved pending route left unopened on an untouched root) needs that call removed, which is the 821ae589 behaviour; it is dispositioned defensive. Witnesses in test/shell.d/menu-startup-route-test.sh run the real open, openRoute, openExistingMenu, openDmenu, cancel and rebuildItemsFromSources bodies and the FileView handlers under node vm, with both load orders; the replay rows fail on 821ae589. A route that resolves at once, a missing id, and a user who opened another menu or typed do not replay.
+citations:
+    - shell/plugins/menu/Menu.qml:287@rebuildItemsFromSources
+    - shell/plugins/menu/Menu.qml:916@openExistingMenu
+    - test/shell.d/menu-startup-route-test.sh:103
