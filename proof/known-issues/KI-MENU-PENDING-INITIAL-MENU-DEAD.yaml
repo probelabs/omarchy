@@ -1,9 +1,9 @@
 id: KI-MENU-PENDING-INITIAL-MENU-DEAD
 title: 'pendingInitialMenu is stored and never read: a route summoned before the JSONC loads opens root and stays there'
 description: |-
-    The shell queues a summon that arrives before the menu plugin loads and hands it to open() as soon as the plugin loads. Neither menu FileView has read its JSONC file then, and the user extension usually answers first. So openRoute cannot resolve the route, and openExistingMenu falls back to root.
+    The shell queues a summon that arrives before the menu plugin loads. It hands the summon to open() as soon as the plugin loads. Neither menu FileView has read its JSONC file then, and the user extension usually answers first. So openRoute cannot resolve the route, and openExistingMenu falls back to root.
 
-    On 821ae589 nothing opens the route when the files land: openRoute writes it to pendingInitialMenu, which nothing reads since the bash menu's replay went away (edfd68d4, 4cd6593b). A summon during startup (Super+Escape right after login or a shell restart) shows the main menu, and an action alias such as reminder-set never runs. Seen live on 821ae589 in every cold-start run.
+    On 821ae589 nothing opens the route when the files land. openRoute writes the route to pendingInitialMenu, but nothing reads that property. The reader went away with the bash menu's replay (edfd68d4, 4cd6593b). A summon during startup (Super+Escape right after login or a shell restart) shows the main menu. An action alias such as reminder-set never runs. Seen live on 821ae589 in every cold-start run.
 affected_requirements:
     - SW-REQ-260922-N3RM
     - SW-REQ-260922-50RE
@@ -61,6 +61,10 @@ history:
       by: agent:claude-pr-B
       action: edit
       detail: set-description,set-reproducer-command,set-tripwire-mutation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest,add-evidence-manifest
+    - at: "2026-10-02T13:08:27Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-description
 kill_domain: startup_race
 affected_file:
     - shell/plugins/menu/MenuModel.js
