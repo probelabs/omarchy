@@ -6,6 +6,7 @@ description: |-
     The dialog stays on top of the new rows and still takes every key. Enter then runs confirmDelete. It cancels the summoned request, so an omarchy-menu-select caller exits 1, and it removes the app. A live run on upstream 821ae589 (headless sway and Quickshell) confirmed it. That run lost the desktop file of the app for a select prompt, an input prompt and a route summon.
 affected_requirements:
     - SW-REQ-260922-8CQ4
+    - SW-REQ-261002-VJR1
 evidence_manifests:
     - proof/evidence/ki-menu-open-leaves-confirm.yaml
 severity: medium
@@ -74,6 +75,14 @@ history:
       by: agent:claude-pr-A
       action: edit
       detail: set-description,set-mitigation
+    - at: "2026-10-02T11:55:15Z"
+      by: agent:claude-pr-A
+      action: edit
+      detail: add-requirement
+    - at: "2026-10-02T11:55:15Z"
+      by: agent:claude-pr-A
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
