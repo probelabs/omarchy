@@ -432,6 +432,22 @@ variables:
       type: bool
       direction: output
       description: A confirmation dialog opens; confirm removes the app through the app library, cancel restores focus without removing.
+    - name: route_fell_back_before_load
+      type: bool
+      direction: input
+      description: A summon named a route that did not resolve when it arrived, because the menu files had not loaded yet, so the menu fell back to root.
+    - name: pending_route_resolves
+      type: bool
+      direction: input
+      description: A later load of a menu file defines the item that the pending route names.
+    - name: menu_untouched_on_root
+      type: bool
+      direction: input
+      description: The menu is still open in menu mode on root, and nothing has been typed into it.
+    - name: pending_route_opened
+      type: bool
+      direction: output
+      description: The menu opens the pending route as a summon would, which opens the item, follows a link or runs an action alias.
     - name: action_is_bare_summon
       type: bool
       direction: input
