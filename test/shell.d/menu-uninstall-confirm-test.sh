@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-261002-VJR1
+#mcdc:ignore:defensive SW-REQ-261002-VJR1: pending_uninstall_dismissed=F, summon_over_pending_uninstall=T => FALSE -- open() runs cancelDelete() whenever deleteConfirmOpen is set, before it dispatches to openDmenu or openRoute; a summon that leaves the confirmation up needs that guarded call removed (the 821ae589 behaviour) [reviewed: REVIEW-261002-MV7M]
+# mcdc:witness-out-of-process
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # Delete on an app row raises an uninstall confirmation that takes every key,
@@ -83,11 +87,16 @@ function menuHarness() {
   return { menu, removed, answers, press }
 }
 
+// Verifies: SW-REQ-261002-VJR1
 const prompt = mode => JSON.stringify({ mode, prompt: 'Pick', options: ['apple', 'banana'], selectionFile: 'sel', doneFile: 'done' })
 
+// Reproduces: KI-MENU-OPEN-LEAVES-CONFIRM
+// SW-REQ-261002-VJR1:edge_case:nominal
+// SW-REQ-261002-VJR1:totality:nominal
 for (const [mode, label, typed, answer] of [['select', 'a select prompt', '', 'apple'], ['input', 'an input prompt', 'kiwi', 'kiwi']]) {
   const { menu, removed, answers, press } = menuHarness()
   menu.open(prompt(mode))
+  // MCDC SW-REQ-261002-VJR1: pending_uninstall_dismissed=T, summon_over_pending_uninstall=T => TRUE
   assert(!menu.deleteConfirmOpen && menu.deleteTarget === null, `${label} summoned over an uninstall confirmation dismisses it`)
   menu.filterText = typed
   press('Key_Return')
@@ -98,6 +107,7 @@ for (const [mode, label, typed, answer] of [['select', 'a select prompt', '', 'a
 {
   const { menu, removed, press } = menuHarness()
   menu.open(JSON.stringify({ menu: 'root' }))
+  // MCDC SW-REQ-261002-VJR1: pending_uninstall_dismissed=T, summon_over_pending_uninstall=T => TRUE
   assert(!menu.deleteConfirmOpen && menu.deleteTarget === null, 'a route summoned over an uninstall confirmation dismisses it')
   press('Key_Return')
   assertDeepEqual(removed, [], 'Enter on a route summoned over an uninstall confirmation uninstalls nothing')
@@ -105,6 +115,7 @@ for (const [mode, label, typed, answer] of [['select', 'a select prompt', '', 'a
 
 {
   const { menu, removed, press } = menuHarness()
+  // MCDC SW-REQ-261002-VJR1: pending_uninstall_dismissed=F, summon_over_pending_uninstall=F => TRUE [no-action: no summon arrives, so the confirmation stays up and Enter on it removes the app as before]
   press('Key_Return')
   assert(removed.join() === 'notes.desktop' && !menu.opened, 'Enter on the uninstall confirmation itself still uninstalls the app')
 }
