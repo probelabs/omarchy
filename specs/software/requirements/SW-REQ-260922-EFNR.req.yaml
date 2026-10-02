@@ -19,16 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-01T20:54:44.930111463Z"
+    reviewed_at: "2026-10-02T16:59:00.435114Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:startNextProvider: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:e7d0b382ee15ba3834e586da44adb708
+            shell/plugins/menu/Menu.qml:invalidateVolatileProvider: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:loadProviderForMenu: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:onAppsChanged: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:onExited: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:onRead: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:startNextProvider: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
@@ -87,6 +91,26 @@ traces:
             - shell/plugins/menu/MenuModel.js:145
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:19
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:00.435114Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1004
+            - shell/plugins/menu/Menu.qml:1007
+            - shell/plugins/menu/Menu.qml:1025
+            - shell/plugins/menu/Menu.qml:364
+            - shell/plugins/menu/Menu.qml:385
+            - shell/plugins/menu/Menu.qml:431
+            - shell/plugins/menu/Menu.qml:448
+            - shell/plugins/menu/Menu.qml:455
+            - shell/plugins/menu/Menu.qml:474
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:42
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
