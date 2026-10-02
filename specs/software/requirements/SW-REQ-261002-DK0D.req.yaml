@@ -5,7 +5,12 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when route_fell_back_before_load & pending_route_resolves & menu_untouched_on_root the menu_router shall eventually satisfy pending_route_opened
-description: A summon can reach the menu while the shell starts, before the menu files have loaded. Its route then cannot resolve, and the menu falls back to root. The menu keeps that route pending. When a later load makes the route resolve, the menu opens it. This happens only while the menu still shows root and the user has typed nothing into it.
+description: |-
+    A summon can reach the menu while the shell starts, before both menu files have answered. The default file answers when it loads. The optional user file answers when it loads or when it fails to load. Until both files answer, the route cannot resolve, so the menu falls back to root and keeps the route pending.
+
+    When both files have answered, the menu tries the pending route one time. It opens the route if the route resolves and the menu is still open in menu mode. Then the menu drops the route, also when it did not open. The menu drops the route earlier if the user types into the menu or opens another menu.
+
+    A summon that arrives after both files have answered does not wait. If its route does not resolve, the menu shows root and does not open the route later.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -19,6 +24,10 @@ rationale: |-
     So openRoute cannot resolve the route, and openExistingMenu falls back to root. Nothing opens the route when the files land. Super+Escape right after login or a shell restart shows the main menu, and an action alias never runs.
 
     openRoute already writes the route to pendingInitialMenu, which nothing read since the bash menu went away (edfd68d4, 4cd6593b). The fix keeps the route pending only when the menu fell back to root. rebuildItemsFromSources opens it through openRoute once it resolves, so aliases, links and action aliases behave as for any summon.
+
+    The first version of the fix (43d787d4) opened the route as soon as it resolved. That could happen against the default file alone. So an early summon of about ran the default command when the user file overrides it. The route also stayed pending after the user opened another menu and went back to root. So a later load or a live edit could still open it.
+
+    Review of #14055 found both. The follow-up (48405669) waits for both files, tries the route once, and drops it when the user types or opens another menu. setFilter and setActiveMenu clear it, and onLoadFailed records that the user file answered.
 tags: []
 variables:
     - route_fell_back_before_load
@@ -28,13 +37,16 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T13:36:01.689519Z"
+    reviewed_at: "2026-10-02T14:49:20.613093Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:ef62225fde625d8d3de54adb9ac7d317562e170e20195b6f9da4867a5a6339cb
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:item: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:menuFilesAnswered: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:underhang: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:
@@ -75,6 +87,41 @@ traces:
             - test/shell.d/menu-startup-route-test.sh:159
             - test/shell.d/menu-startup-route-test.sh:168
             - test/shell.d/menu-startup-route-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:20.613093Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669: DK0D now states the lifetime rule (the route waits until both menu files have answered, gets one try, and is dropped on typing or opening another menu; a summon after both files answered never waits). Implemented by rebuildItemsFromSources, menuFilesAnswered, openExistingMenu, setFilter, setActiveMenu and the user FileView onLoadFailed (Implements lines on each); verified by test/shell.d/menu-startup-route-test.sh (27 checks, real Menu.qml bodies under node vm) and the behaviour-diff harness ops and inputs; satisfies SYS-REQ-260922-R8DQ'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1077
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:297
+            - shell/plugins/menu/Menu.qml:788
+            - shell/plugins/menu/Menu.qml:801
+            - shell/plugins/menu/Menu.qml:919
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-route-after-load.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-action-alias.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-only.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-then-missing-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-missing-user-then-default.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-navigate-before-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-root-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-closed.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-reload.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-then-select.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-type-before-user.events:1
+            - test/bdiff/harness.mjs:214
+            - test/bdiff/harness.mjs:226
+            - test/shell.d/menu-startup-route-test.sh:118
+            - test/shell.d/menu-startup-route-test.sh:172
+            - test/shell.d/menu-startup-route-test.sh:184
+            - test/shell.d/menu-startup-route-test.sh:194
+            - test/shell.d/menu-startup-route-test.sh:203
+            - test/shell.d/menu-startup-route-test.sh:213
+            - test/shell.d/menu-startup-route-test.sh:223
+            - test/shell.d/menu-startup-route-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
@@ -86,10 +133,10 @@ verification:
 history:
     created_by: agent:claude-code
     created_at: "2026-10-02T12:25:16Z"
-    last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-02T12:25:16Z"
+    last_modified_by: agent:claude-pr-B
+    last_modified_at: "2026-10-02T14:44:50Z"
 hazard_review:
-    reviewed_at: "2026-10-02T12:45:00Z"
+    reviewed_at: "2026-10-02T14:45:17Z"
     reviewed_by: agent:claude-pr-B
     reviewed_against_catalog_version: 1.11.0
     categories:
@@ -101,12 +148,12 @@ hazard_review:
             - boundary
             - input_domain
             - concurrency_scale
-          rationale: 'Worst case: a summon made during startup opens the main menu, or a pending route later pulls the user out of a menu they chose. edge_case: each load order is a case - the default file first, the user file first, and a menu that only the user file defines (witnessed). A route that resolves at once, a missing id, a summon with no route, a select prompt that replaced the summon, a summon closed before the files load, and a user who opened another menu or typed do not replay (witnessed). An action alias runs once when it resolves. boundary not applicable: the decision is a set of booleans, with no range or limit. input_domain not applicable: the route string goes through the same resolveRoute as any summon. concurrency_scale not applicable: both FileView handlers and the summon run one after the other on the GUI thread; only their order varies, which the edge cases cover.'
+          rationale: 'Worst case: a summon made during startup opens the main menu, runs the default command that the user file overrides, or a pending route later pulls the user out of a menu they chose. edge_case: each load order is a case - the default file first, the user file first, a missing user file, and a menu or action override that only the user file defines (witnessed). The route waits until both files answered and gets one try. A route that resolves at once, a missing id (also when a later edit adds it), a summon after both files answered, a summon with no route, a select prompt that replaced the summon, a summon closed before the files load, and a user who typed, opened another menu, or opened one and went back to root do not replay (witnessed). An action alias runs once. boundary not applicable: the decision is a set of booleans, with no range or limit. input_domain not applicable: the route string goes through the same resolveRoute as any summon. concurrency_scale not applicable: both FileView handlers and the summon run one after the other on the GUI thread; only their order varies, which the edge cases cover.'
         - category: property
           disposition: reviewed
           applied:
             - totality
-          rationale: 'Every summoned route ends in one defined state: opened at once, opened by the first load that makes it resolve while the menu still shows root untouched, or left on root. No path opens a route the user did not summon, and no path opens it twice.'
+          rationale: 'Every summoned route ends in one defined state: opened at once, opened by its one try after both menu files answered while the menu is still open in menu mode and untouched, or left on root and dropped. No path opens a route the user did not summon, opens it twice, or opens it after the user typed or opened another menu.'
         - category: structural
           disposition: not_applicable
           rationale: 'One string property and one guarded call; no memory, encoding or numeric surface.'
