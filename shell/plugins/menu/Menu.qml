@@ -18,7 +18,7 @@ Item {
   // `omarchy-shell shell summon omarchy.menu ...` and close() when hidden.
   property string pendingInitialMenu: "root"
 
-  // Implements: SW-REQ-260922-50RE
+  // Implements: SW-REQ-260922-50RE, SW-REQ-261002-VJR1
   function open(payloadJson) {
     var payload = ({})
     try { payload = JSON.parse(payloadJson || "{}") } catch (e) { payload = ({}) }
