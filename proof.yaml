@@ -85,10 +85,14 @@ project:
             # - the behaviour-diff harness and its corpus
             - test/bdiff/*
             - test/bdiff/**
-            # - the lock-qml runner and the issue-report reproducers
-            #   (menu-reports)
+            # - the lock-qml runner
             - test/qml/lock/**
-            - test/reports/**
+            # Not listed: test/reports/*.sh. The menu-reports suite runs them
+            # through test/node/report-reproducers.test.mjs (in scope above),
+            # so the JUnit report has no testcase per script. In scope, the
+            # engine counts each traced script as a test of its own with no
+            # observed outcome (test_outcome_unobserved on a change that
+            # edits one).
         completeness:
             production_include:
                 - bin/omarchy-*lock*
