@@ -1,0 +1,3 @@
+# Verifies: SW-REQ-261002-DK0D
+# A route is summoned during startup, the default file loads, then the user file is found missing.
+B D U

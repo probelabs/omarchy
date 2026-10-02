@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-02T12:41:53.959897Z"
+    reviewed_at: "2026-10-02T14:49:13.049677Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -69,6 +69,22 @@ traces:
             - shell/plugins/menu/Menu.qml:853
             - shell/plugins/menu/Menu.qml:863
             - shell/plugins/menu/Menu.qml:872
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-compositor-test.sh:399
+            - test/shell.d/menu-compositor-test.sh:417
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:13.049677Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1225
+            - shell/plugins/menu/Menu.qml:1285
+            - shell/plugins/menu/Menu.qml:1287
+            - shell/plugins/menu/Menu.qml:865
+            - shell/plugins/menu/Menu.qml:875
+            - shell/plugins/menu/Menu.qml:884
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-compositor-test.sh:399
             - test/shell.d/menu-compositor-test.sh:417
