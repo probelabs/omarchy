@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-01T22:45:49.346955Z"
-    reviewed_by: agent:claude-pr-12223
+    reviewed_at: "2026-10-02T16:59:15.728549Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:472526d002de8d982420c7fb73bfec8d
-            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:isDescendantOf: file1:072b77b2d89d9ec481a43ad4ca33e041
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:072b77b2d89d9ec481a43ad4ca33e041
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -64,6 +64,18 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/node/menumodel-replay.test.mjs:319
             - test/shell.d/menu-test.sh:33
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:15.728549Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:493
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
