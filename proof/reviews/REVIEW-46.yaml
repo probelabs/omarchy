@@ -6,4 +6,4 @@ subject: SW-REQ-260922-DE93
 decision: approved
 comment: Read setActiveMenu and the navigation code around it. Drilling in pushes the previous menu onto navStack (pushHistory && id changed), Backspace/Left pops it with a fallback to the parent menu when the stack empties, and entering a menu clears the filter. The submenu_entered condition models the push branch; the pop/retrace path is the same stack. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:783
+    - shell/plugins/menu/Menu.qml:801
