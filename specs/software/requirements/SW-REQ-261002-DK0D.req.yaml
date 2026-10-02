@@ -1,0 +1,75 @@
+id: SW-REQ-261002-DK0D
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when route_fell_back_before_load & pending_route_resolves & menu_untouched_on_root the menu_router shall eventually satisfy pending_route_opened
+description: A summon can reach the menu while the shell starts, before the menu files have loaded. Its route then cannot resolve, and the menu falls back to root. The menu keeps that route pending. When a later load makes the route resolve, the menu opens it. This happens only while the menu still shows root and nothing has been typed into it.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-R8DQ
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro 821ae589 has this defect. The shell queues a summon that arrives before the menu plugin loads. It hands the summon to open() as soon as the plugin loads (shell.qml registerPanelLoader, deliverIfLoaded). Neither FileView has read its JSONC file at that point, and the user extension usually answers first.
+
+    So openRoute cannot resolve the route, and openExistingMenu falls back to root. Nothing opens the route when the files land. Super+Escape right after login or a shell restart shows the main menu, and an action alias never runs.
+
+    openRoute already writes the route to pendingInitialMenu, which nothing read since the bash menu went away (edfd68d4, 4cd6593b). The fix keeps the route pending only when the menu fell back to root. rebuildItemsFromSources opens it through openRoute once it resolves, so aliases, links and action aliases behave as for any summon.
+tags: []
+variables:
+    - route_fell_back_before_load
+    - pending_route_resolves
+    - menu_untouched_on_root
+    - pending_route_opened
+traces:
+    satisfies:
+        - SYS-REQ-260922-R8DQ
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-B
+        reviewed_at: "2026-10-02T12:45:00Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-02T12:25:16Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-02T12:25:16Z"
+hazard_review:
+    reviewed_at: "2026-10-02T12:45:00Z"
+    reviewed_by: agent:claude-pr-B
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+          not_applicable:
+            - boundary
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a summon made during startup opens the main menu, or a pending route later pulls the user out of a menu they chose. edge_case: each load order is a case - the default file first, the user file first, and a menu that only the user file defines (witnessed). A route that resolves at once, a missing id, a summon with no route, a select prompt that replaced the summon, a summon closed before the files load, and a user who opened another menu or typed do not replay (witnessed). An action alias runs once when it resolves. boundary not applicable: the decision is a set of booleans, with no range or limit. input_domain not applicable: the route string goes through the same resolveRoute as any summon. concurrency_scale not applicable: both FileView handlers and the summon run one after the other on the GUI thread; only their order varies, which the edge cases cover.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'Every summoned route ends in one defined state: opened at once, opened by the first load that makes it resolve while the menu still shows root untouched, or left on root. No path opens a route the user did not summon, and no path opens it twice.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'One string property and one guarded call; no memory, encoding or numeric surface.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'Menu navigation state only. Action aliases run through the same runAction path as any summon, under their own requirements.'
+lifecycle:
+    change_history:
+        - date: "2026-10-02T12:45:00Z"
+          from: draft
+          to: review
+          reason: '[pr-B] upstream fix for a menu route summoned during shell startup: requirement authored for the behaviour the change adds; spec conformance REVIEW-261002-NS9R; executing witnesses in test/shell.d/menu-startup-route-test.sh'
+          changed_by: agent:claude-pr-B
