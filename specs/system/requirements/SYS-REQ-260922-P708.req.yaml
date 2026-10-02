@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-10-02T12:59:41.109187Z"
+    reviewed_at: "2026-10-02T14:49:41.331492Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
@@ -67,6 +67,21 @@ traces:
             - shell/plugins/menu/Menu.qml
             - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
             - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:41.331492Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1497
+            - shell/plugins/menu/Menu.qml:1502
+            - shell/plugins/menu/Menu.qml:1506
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:14
+            - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:333
+            - test/shell.d/menu-compositor-test.sh:347
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
