@@ -2,16 +2,17 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-261001-B4CK
-      command: node pocs/pr13012-back-from-search.js
+      command: bash test/shell.d/menu-pointer-lifecycle-test.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-02T05:18:18Z"
+      executed_at: "2026-10-02T06:46:54Z"
+      revision: 1d853edd81d57c64a0a768a75d5dd23ddeb5ebcd
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-BACK-FILTERED-INDEX` from the KnownIssue''s reproducer command: node pocs/pr13012-back-from-search.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/pr13012-back-from-search.js
+        - 'Captured by `proof evidence capture KI-MENU-BACK-FILTERED-INDEX` from the KnownIssue''s reproducer command: bash test/shell.d/menu-pointer-lifecycle-test.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - test/shell.d/menu-pointer-lifecycle-test.sh
       freshness_hashes:
-        pocs/pr13012-back-from-search.js: sha256:629425dd4dd6b873444ad1824ccfd59903678681a4f36971818edd0f4b8ed54c
-        proof/known-issues/KI-MENU-BACK-FILTERED-INDEX.yaml: ki-content-v1:sha256:ed902b27698716aa700e8369305c819c912d2b54b223f7b70d2b0e824f185fdb
+        proof/known-issues/KI-MENU-BACK-FILTERED-INDEX.yaml: ki-content-v1:sha256:9ea841fd434a17d1515895420cfa93baef268c994b4a8e1cd8bd8aff8949adab
+        test/shell.d/menu-pointer-lifecycle-test.sh: sha256:bfa0f502960e29851bdf2de26cfac09788d08144d0d1caf669b06f2f5af4bec6
       known_issues:
         - KI-MENU-BACK-FILTERED-INDEX
       config:
