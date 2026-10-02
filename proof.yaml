@@ -174,6 +174,19 @@ project:
                     set -e; . test/junit/junit.sh; junit_begin menu-node;
                     node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination="$JUNIT_PART" test/node/menumodel-replay.test.mjs || junit_fail $?;
                     junit_end
+            # Compositor-bound menu suites: the live Menu.qml interaction
+            # test (real IPC summons + wtype key events against a running
+            # quickshell) and the stakeholder acceptance test. Each script
+            # runs in its own PRIVATE headless sway started by
+            # test/junit/live-session.sh, which checks its prerequisites
+            # first (sway, quickshell, wtype, socat, jq, python3): when one is
+            # missing every script is a JUnit <skipped> naming it, never a
+            # pass; once the session is up a script that still skips is a
+            # failure (outcome not observed).
+            menu-live:
+                language: bash
+                command: >-
+                    /usr/bin/env bash test/junit/live-session.sh menu-live test/shell.d/menu-compositor-test.sh test/shell.d/menu-acceptance-test.sh
             # Issue-report reproducers (test/reports/, from the fork
             # report/<id> branches) as a regression net: expected failures
             # bound to their known issues, skipped only when a runtime the
@@ -264,7 +277,7 @@ project:
             # run executes only the commands its targets bind, so without this
             # list menu-reports (the issue-report reproducers) never reached
             # the report in a full audit.
-            commands: [lock-shell, menu-shell, menu-node, menu-reports, lock-qml]
+            commands: [lock-shell, menu-shell, menu-live, menu-node, menu-reports, lock-qml]
         slow_tests:
             enabled: true
             # A <testcase> in the combined report is a WHOLE test script or

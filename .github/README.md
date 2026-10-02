@@ -90,6 +90,11 @@ You need `bash`, Node.js 18 or later and `perl`. The #10601 reproducer also need
 bash test/shell.d/menu-test.sh
 node --test test/node/menumodel-replay.test.mjs
 
+# Live menu suites (menu-live): the menu inside a running shell, driven by real IPC calls and key
+# presses. Linux only; needs sway, quickshell, wtype and socat. Each test starts its own private
+# headless sway; without those tools the tests are recorded as skipped, with the missing tool named.
+bash test/junit/live-session.sh menu-live test/shell.d/menu-compositor-test.sh test/shell.d/menu-acceptance-test.sh
+
 # Behaviour-diff harness used for pull-request compatibility checks (see test/bdiff/README.md)
 node test/bdiff/harness.mjs . default/omarchy/omarchy-menu.jsonc
 
