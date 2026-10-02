@@ -6,7 +6,7 @@ category: functional
 req_type: guarantee
 fretish: when route_fell_back_before_load & pending_route_resolves & menu_untouched_on_root the menu_router shall eventually satisfy pending_route_opened
 description: |-
-    A summon can reach the menu while the shell starts, before both menu files have answered. The default file answers when it loads. The optional user file answers when it loads or when it fails to load. Until both files answer, the route cannot resolve, so the menu falls back to root and keeps the route pending.
+    A summon can reach the menu while the shell starts, before both menu files have answered. The default file answers when it loads. The optional user file answers when it loads or when it fails to load. If the route does not resolve against the files loaded so far, the menu falls back to root and keeps the route pending. A route that resolves at once opens at once, as at any other time.
 
     When both files have answered, the menu tries the pending route one time. It opens the route if the route resolves and the menu is still open in menu mode. Then the menu drops the route, also when it did not open. The menu drops the route earlier if the user types into the menu or opens another menu.
 
@@ -134,7 +134,7 @@ history:
     created_by: agent:claude-code
     created_at: "2026-10-02T12:25:16Z"
     last_modified_by: agent:claude-pr-B
-    last_modified_at: "2026-10-02T14:44:50Z"
+    last_modified_at: "2026-10-02T15:14:22Z"
 hazard_review:
     reviewed_at: "2026-10-02T14:45:17Z"
     reviewed_by: agent:claude-pr-B

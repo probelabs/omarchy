@@ -435,7 +435,7 @@ variables:
     - name: route_fell_back_before_load
       type: bool
       direction: input
-      description: A summon named a route that did not resolve when it arrived, because the menu files had not both answered yet, so the menu fell back to root. A summon after both files answered never sets this.
+      description: A summon arrived before both menu files had answered and named a route that the files loaded so far do not define, so the menu fell back to root. A summon after both files answered never sets this.
     - name: pending_route_resolves
       type: bool
       direction: input
