@@ -6,4 +6,4 @@ subject: SW-REQ-260922-TKDP
 decision: approved
 comment: Read the search display path (parentPathFor/isDescendantOf wiring into rebuildDisplay). Search results list current-menu matches before deeper drilldown matches and the divider section is emitted exactly when both groups are non-empty. matches_span_menus models the two-groups case; sections_divided is the divider emission. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:493
+    - shell/plugins/menu/Menu.qml:509
