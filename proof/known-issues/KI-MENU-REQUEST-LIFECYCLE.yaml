@@ -1,7 +1,7 @@
 id: KI-MENU-REQUEST-LIFECYCLE
 title: dmenu request lifecycle drops waiters on re-summon, on a busy resultProc, and for doneFile-only requests
 description: |-
-    On upstream quattro, a second open without close() replaces selectionFile/doneFile/requestActive with no write to the previous done file, so the first caller waits forever (SX26/C06/C07; openExistingMenu/openDmenu bodies). This is omacom/omarchy#9057. The behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh drives two real omarchy-menu-select callers through the real Menu.qml open/openDmenu/cancel bodies. On quattro the superseded caller never gets its done file and polls forever. Upstream e332dc97 has no cancel-prior guard; #9056 adds one, and on this mirror the reproducer exits 0.
+    On upstream quattro, a second open without close() replaces selectionFile/doneFile/requestActive and writes nothing to the previous done file. The first caller then waits forever (SX26/C06/C07; openExistingMenu/openDmenu bodies). This is omacom/omarchy#9057. The behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh drives two real omarchy-menu-select callers through the real Menu.qml open/openDmenu/cancel bodies. On quattro the superseded caller never gets its done file and polls forever. Upstream e332dc97 has no cancel-prior guard; #9056 adds one, and on this mirror the reproducer exits 0.
 
     On upstream quattro, finishRequest wipes requestActive and both paths BEFORE resultProc.running = true. Quickshell therefore ignores a command change while the previous write runs, and the new selection disappears (SX26/C14). #9056 head b7bd59c4 writes each answer through its own process, which fixes this leg on this mirror. Still open here: the empty-selectionFile redirect variant (SX26/C15 and HFY2/C36), the doneFile-only leg, and a caller whose menu process dies (omarchy-menu-select has no deadline).
 affected_requirements:
@@ -21,12 +21,12 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: 'With this change, a new summon answers a superseded caller as cancelled, and that caller exits: a burst of 20 summons leaves 0 callers waiting on head b7bd59c4, against 19 of 20 on quattro c05d9019. Nothing bounds the wait when the menu process dies, so that caller keeps polling forever. Later summons still work.'
+mitigation: With this change, a new summon answers a superseded caller as cancelled, and that caller exits. A burst of 20 summons leaves 0 callers waiting on head b7bd59c4, against 19 of 20 on quattro c05d9019. Nothing bounds the wait when the menu process dies, so that caller keeps polling forever. Later summons still work.
 remediation: 'Finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only. #9056 (head b7bd59c4) answers a superseded request and fixes the busy-writer race; a deadline in omarchy-menu-select is still needed for a dead menu process.'
 notes:
     - 'PR omacom/omarchy#9056 at head b7bd59c4 (mirrored on pr/9056 over quattro-proof 41076fd4; Menu.qml there differs from 4f1a8197 only by one annotation comment) fixes two legs. (1) Commit 0b4fe292: the guard at the top of open() answers an active request as cancelled before the new summon dispatches, which fixes the re-summon leg (SX26/C06/C07, upstream #9057; SW-REQ-260925-XTGG). (2) Commit b7bd59c4 (pushed by @omarchybot): finishRequest writes each answer through Quickshell.execDetached, one process per answer, instead of the shared resultProc, which fixes the busy-resultProc leg (SX26/C14; SW-REQ-261001-C19S). On this mirror the behavioural reproducer test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh exits 0 (its harness now runs execDetached commands too), and test/shell.d/menu-test.sh witnesses both changes; the back-to-back witness fails on the 0b4fe292 Menu.qml. Live burst of 20 concurrent omarchy-menu-select: 0 callers stuck on b7bd59c4, 7-12 on 0b4fe292, 19 on quattro. Still open on this mirror: the doneFile-only leg and the empty-selectionFile redirect variant (SX26/C15, HFY2/C36), which the PR does not touch, and the peer-death trigger (the shell dies after a summon; omarchy-menu-select has no deadline).'
     - 'On this mirror the reproducer is pocs/menu-qml-static.sh again (the green tripwire the KI used before quattro-proof), because the #9057 script no longer reproduces. That script pins Menu.qml mechanisms by static grep; it does not execute the open C15 or doneFile-only legs, so their evidence on this mirror is static only.'
-customer_impact: With this change, summoning a menu again before answering the previous one, for example by pressing Super+K several times, cancels the earlier request, and its caller exits. When the menu process dies while a caller waits, that caller still waits forever as a background process, and the action that opened it never completes. Later menus still open and work.
+customer_impact: With this change, a second summon before you answer the previous one cancels the earlier request, and its caller exits. Pressing Super+K several times is one example. If the menu process dies while a caller waits, that caller still waits forever in the background, and its action never completes. Later menus still open and work.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -132,6 +132,22 @@ history:
       action: edit
       detail: append-note
     - at: "2026-10-02T19:12:01Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T21:22:02Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-mitigation,set-customer-impact
+    - at: "2026-10-02T21:22:02Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T21:22:14Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-description
+    - at: "2026-10-02T21:22:15Z"
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
