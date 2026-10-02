@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T12:41:52.924007Z"
+    reviewed_at: "2026-10-02T14:49:12.635529Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:cce8af4897e3cc83790af34c836aa263cede8e10c78ec45686d6592f58267ea5
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:item: file1:3e39af46d52efd077ca1d461f19b0735
             shell/plugins/menu/MenuModel.js:mergeMenuSources: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
@@ -69,6 +69,18 @@ traces:
           reviewed_by: agent:claude-pr-B
           method: inspection
           rationale: 'pr-B review on quattro-proof 5d4fb9a8: rebuildItemsFromSources still merges the default and user items per key with root injected (MenuModel.mergeMenuSources unchanged); its new tail only replays a pending route through openRoute (SW-REQ-261002-DK0D) and does not change the merged items'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/MenuModel.js:69
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:12.635529Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669: rebuildItemsFromSources changes only after the merge: the pending-route replay waits for both files and runs once (SW-REQ-261002-DK0D). mergeMenuSources and the per-key override and root injection this requirement covers are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:267

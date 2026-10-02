@@ -435,19 +435,19 @@ variables:
     - name: route_fell_back_before_load
       type: bool
       direction: input
-      description: A summon named a route that did not resolve when it arrived, because the menu files had not loaded yet, so the menu fell back to root.
+      description: A summon named a route that did not resolve when it arrived, because the menu files had not both answered yet, so the menu fell back to root. A summon after both files answered never sets this.
     - name: pending_route_resolves
       type: bool
       direction: input
-      description: A later load of a menu file defines the item that the pending route names.
+      description: When both menu files have answered (the default file loaded, the user file loaded or failed), the merged items define the item that the pending route names.
     - name: menu_untouched_on_root
       type: bool
       direction: input
-      description: The menu is still open in menu mode on root, and nothing has been typed into it.
+      description: Since the summon, the menu stayed open in menu mode, and the user neither typed into it nor opened another menu.
     - name: pending_route_opened
       type: bool
       direction: output
-      description: The menu opens the pending route as a summon would, which opens the item, follows a link or runs an action alias.
+      description: The menu opens the pending route one time, as a summon would, which opens the item, follows a link or runs an action alias.
     - name: action_is_bare_summon
       type: bool
       direction: input
