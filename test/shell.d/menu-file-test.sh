@@ -117,6 +117,7 @@ pass "file picker lists a file of a root given twice once"
 # listing (HR29). The same holds for a symbolic link root whose target is gone
 # (FFTQ) and for a missing path given next to a real root, which leaves no
 # partial listing behind (9H5Y: the dedup step never sees a row).
+# Verifies: SW-REQ-260922-HR29, SW-REQ-261002-FFTQ, SW-REQ-261002-9H5Y
 refuse() {
   : >"$tmp/selected"
   status=0
