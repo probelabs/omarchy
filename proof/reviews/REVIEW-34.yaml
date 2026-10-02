@@ -6,4 +6,4 @@ subject: SW-REQ-260922-4079
 decision: approved
 comment: Read evaluateGuards and guardProc.onExited in Menu.qml plus the compositor guard-batch test. onExited returns before touching result maps on any nonzero exit (signal exits are caught via exitStatus since a signal leaves exitCode 0), so a killed batch never overwrites the last complete set; a guardsPending evaluation stands aside and is rescheduled via callLater. The batch_killed condition models the exit-status branch; live test at menu-compositor-test.sh:470-523 drives a real killed batch and confirms both conjuncts. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:1083
+    - shell/plugins/menu/Menu.qml:1104
