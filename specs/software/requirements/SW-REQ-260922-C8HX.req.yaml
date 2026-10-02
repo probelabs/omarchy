@@ -19,14 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-01T20:54:41.115240346Z"
+    reviewed_at: "2026-10-02T16:58:58.79971Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:finishRequest: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:e7d0b382ee15ba3834e586da44adb708
+            shell/plugins/menu/Menu.qml:applyDmenuSelection: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:cancel: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:finishRequest: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:onClicked: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -67,6 +68,18 @@ traces:
             - shell/plugins/menu/Menu.qml:883
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:11
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-02T16:58:58.79971Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1176
+            - shell/plugins/menu/Menu.qml:129
+            - shell/plugins/menu/Menu.qml:883
+            - shell/plugins/menu/Menu.qml:899
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
