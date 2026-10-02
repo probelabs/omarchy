@@ -226,4 +226,30 @@ function navHarness(disabledResults) {
   assertEqual(r.selectedIndex, 0, 'a forward drill-in starts on the first row')
   assert(model[r.selectedIndex].itemId !== 'style', 'a forward drill-in selects no remembered row')
 }
+{ // Reproduces: KI-MENU-BACK-FILTERED-INDEX
+  // Green tripwire of the regression omacom/omarchy#13012 introduces (proof-side,
+  // not the PR's code): it passes while the defect is present. setActiveMenu
+  // saves the index of the selected row in the FILTERED search list. goBack
+  // clears the filter and restores that index in the UNFILTERED root list. The
+  // entered row is a deeper submenu, not a root row, so the row-id loop finds
+  // no match and the cursor stays on whatever root row sits at that index. The
+  // baseline reset the cursor to row 0. When the defect is fixed (cursor on row
+  // 0 or on the entered row's root ancestor), the tripwire assertions fail.
+  const { r, model } = navHarness()
+  const rootRows = model.map(row => row.itemId)
+  r.filterText = 'font'
+  r.rebuildDisplay()
+  const filtered = model.map(row => row.itemId)
+  const pick = filtered.findIndex(id => id && id.includes('.') && menu.childCount(r.items, r.itemOrder, id) > 0)
+  assert(pick >= 1, 'KI-MENU-BACK-FILTERED-INDEX setup: the root search for font lists a deeper submenu below the first row')
+  const entered = filtered[pick]
+  const ancestor = rootRows.find(id => menu.isDescendantOf(r.items, entered, id))
+  r.selectedIndex = pick
+  r.setActiveMenu(entered, true)
+  r.goBack()
+  assertEqual(r.activeMenu, 'root', 'KI-MENU-BACK-FILTERED-INDEX setup: Back from the deeper submenu returns to the root menu')
+  assertEqual(r.selectedIndex, pick, 'KI-MENU-BACK-FILTERED-INDEX tripwire: Back restores the filtered-list index into the unfiltered root list')
+  assert(r.selectedIndex !== 0 && model[r.selectedIndex].itemId !== ancestor,
+    'KI-MENU-BACK-FILTERED-INDEX tripwire: Back parks the cursor on an unrelated root row, not on row 0 or on the root ancestor of the entered row')
+}
 JS
