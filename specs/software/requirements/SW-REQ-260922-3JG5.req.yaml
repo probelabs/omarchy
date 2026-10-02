@@ -19,12 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T14:49:10.330975Z"
-    reviewed_by: agent:claude-pr-B
+    reviewed_at: "2026-10-02T17:00:07.462919Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:5062bd7cb7c5163fe264e63ebb7db55d538c8264a921a82cec7e0860047d5b3c
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:nextSelectable: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:settleCursor: file1:2d712e4428f0311e4e9d89ae9b964869
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -72,6 +73,18 @@ traces:
           reviewed_by: agent:claude-pr-B
           method: inspection
           rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:593
+            - shell/plugins/menu/Menu.qml:611
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:383
+            - test/shell.d/menu-compositor-test.sh:386
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:07.462919Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:593
