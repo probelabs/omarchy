@@ -5,15 +5,14 @@ results:
       command: sh pocs/pr6525-comment-indent-whitespace.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T23:52:45Z"
-      revision: 9dcac45847492513a36c64ae7e0168795f6353ed
+      executed_at: "2026-10-02T05:18:21Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE` from the KnownIssue''s reproducer command: sh pocs/pr6525-comment-indent-whitespace.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire pocs/pr6525-comment-indent-whitespace.sh starts exiting 1. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
         - pocs/pr6525-comment-indent-whitespace.sh
       freshness_hashes:
         pocs/pr6525-comment-indent-whitespace.sh: sha256:58ad9e4760c3aeacbf1d59d274ac3fc852cc08b2351f7f713d1c97401d0a776d
-        proof/known-issues/KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE.yaml: ki-content-v1:sha256:4f1bc1f1daea639e9bb79aa6b2f762b526f9db8b5273b32064702103c92e1518
+        proof/known-issues/KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE.yaml: ki-content-v1:sha256:2d46d947d761f11f97891649b114a6ef96a952752f374f464486184e186c0564
       known_issues:
         - KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE
       config:
