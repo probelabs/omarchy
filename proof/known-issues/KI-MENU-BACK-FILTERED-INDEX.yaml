@@ -10,7 +10,7 @@ severity_basis: risk
 risk: correctness
 cve_surface: none
 reproducer_command: bash test/shell.d/menu-pointer-lifecycle-test.sh
-introduced_in: 68a41a7ba1c1a206093e3a892df906749e38d321
+introduced_in: a203cb73d8c9b457fc6a18c8670aba4c7f19887a
 defect_class: new_defect
 minimization_status: minimized
 mitigation: Cursor placement only; no action runs and the user can move the cursor. Enter on the wrong row would open/run that row.
@@ -63,5 +63,9 @@ history:
       by: agent:claude-pr-13012
       action: edit
       detail: set-reproducer-command
+    - at: "2026-10-02T18:10:25Z"
+      by: agent:claude-pr-13012
+      action: edit
+      detail: introduced-in=a203cb73d8c9b457fc6a18c8670aba4c7f19887a
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
