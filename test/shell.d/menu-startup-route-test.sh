@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-261002-DK0D
+#mcdc:ignore:defensive SW-REQ-261002-DK0D: menu_untouched_on_root=T, pending_route_opened=F, pending_route_resolves=T, route_fell_back_before_load=T => FALSE -- once both menu files have answered, rebuildItemsFromSources calls openRoute(pending) whenever the menu is still open in menu mode and the pending route resolves; a resolved pending route left unopened needs that call removed (the 821ae589 behaviour) [reviewed: REVIEW-261002-NS9R]
+# mcdc:witness-out-of-process
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # The shell hands a summon queued during startup to the menu as soon as the
@@ -111,6 +115,9 @@ loadDefault(menu)
 assertEqual(menu.activeMenu, 'root', 'a route summoned during startup waits for the user file as well')
 noUserFile(menu)
 assertEqual(menu.activeMenu, 'system', 'a route summoned during startup opens once the default file loads and the user file is found missing')
+// Verifies: SW-REQ-261002-DK0D
+// Reproduces: KI-MENU-PENDING-INITIAL-MENU-DEAD
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=T, pending_route_opened=T, pending_route_resolves=T, route_fell_back_before_load=T => TRUE
 menu.setActiveMenu('style', true)
 loadDefault(menu)
 assertEqual(menu.activeMenu, 'style', 'a replayed route is not replayed again by a later reload')
@@ -162,6 +169,8 @@ loadDefault(menu)
 noUserFile(menu)
 assertEqual(menu.activeMenu, 'root', 'a summon without a route opens root')
 assertEqual(menu.requestSerial, opens, 'a summon without a route is not reopened when the files load')
+// Verifies: SW-REQ-261002-DK0D
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=T, pending_route_opened=F, pending_route_resolves=T, route_fell_back_before_load=F => TRUE [no-action: root resolves as soon as it is summoned, so nothing falls back and the loads do not reopen the menu]
 
 menu = startMenu()
 summon(menu, { menu: 'no-such-menu' })
@@ -172,6 +181,8 @@ assertEqual(menu.activeMenu, 'root', 'a route to a missing menu still falls back
 assertEqual(menu.requestSerial, missingOpens, 'a route to a missing menu does not reopen root when the files load')
 loadUser(menu, '{ "no-such-menu": {"label":"Added later"} }')
 assertEqual(menu.requestSerial, missingOpens, 'a route to a missing menu is not opened by a later edit that adds it')
+// Verifies: SW-REQ-261002-DK0D
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=T, pending_route_opened=F, pending_route_resolves=F, route_fell_back_before_load=T => TRUE [no-action: the missing id does not resolve when both files have answered, so the route gets its one try, stays on root and is dropped; a later edit that adds it does not open it]
 
 menu = startMenu()
 loadDefault(menu)
@@ -180,6 +191,8 @@ summon(menu, { menu: 'personal' })
 assertEqual(menu.activeMenu, 'root', 'a summon after startup for a menu nobody defines falls back to root')
 loadUser(menu, personalJsonc)
 assertEqual(menu.activeMenu, 'root', 'a live edit that adds the menu later does not open it')
+// Verifies: SW-REQ-261002-DK0D
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=T, pending_route_opened=F, pending_route_resolves=T, route_fell_back_before_load=F => TRUE [no-action: a summon that arrives after both files have answered does not wait, so a later edit that defines its route does not open it]
 
 menu = startMenu()
 summon(menu, { menu: 'personal' })
@@ -187,6 +200,8 @@ loadDefault(menu)
 menu.setActiveMenu('style', true)
 loadUser(menu, personalJsonc)
 assertEqual(menu.activeMenu, 'style', 'a pending route does not pull the user out of a menu they opened')
+// Verifies: SW-REQ-261002-DK0D
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=F, pending_route_opened=F, pending_route_resolves=T, route_fell_back_before_load=T => TRUE [no-action: the user opened another menu before the user file loaded, which drops the pending route]
 
 menu = startMenu()
 summon(menu, { menu: 'personal' })
@@ -195,6 +210,8 @@ menu.setActiveMenu('style', true)
 menu.goBack()
 loadUser(menu, personalJsonc)
 assertEqual(menu.activeMenu, 'root', 'a pending route does not replace the root the user navigated back to')
+// Verifies: SW-REQ-261002-DK0D
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=F, pending_route_opened=F, pending_route_resolves=T, route_fell_back_before_load=T => TRUE [no-action: the user opened a menu and went back to root before the user file loaded; opening the menu dropped the pending route]
 
 menu = startMenu()
 summon(menu, { menu: 'personal' })
@@ -203,6 +220,8 @@ menu.setFilter('not')
 menu.setFilter('')
 loadUser(menu, personalJsonc)
 assertEqual(menu.activeMenu, 'root', 'a pending route does not open after the user typed into the menu')
+// Verifies: SW-REQ-261002-DK0D
+// MCDC SW-REQ-261002-DK0D: menu_untouched_on_root=F, pending_route_opened=F, pending_route_resolves=T, route_fell_back_before_load=T => TRUE [no-action: the user typed into the menu before the user file loaded, which drops the pending route]
 
 menu = startMenu()
 summon(menu, { menu: 'system' })
