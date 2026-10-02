@@ -6,7 +6,7 @@
 # omarchy:args=label paths formats [menu args...]
 # omarchy:examples=omarchy menu file "Select image" "$HOME/Pictures" "jpg png webp"|omarchy-menu-file "Select media" "$HOME/Pictures:$HOME/Videos" "jpg png mp4 mov" --width 800
 
-# Implements: SW-REQ-260922-HR29
+# Implements: SW-REQ-260922-HR29, SW-REQ-261002-FFTQ, SW-REQ-261002-9H5Y
 
 set -euo pipefail
 
