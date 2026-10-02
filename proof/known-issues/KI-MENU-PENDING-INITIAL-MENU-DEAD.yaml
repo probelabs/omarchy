@@ -1,29 +1,34 @@
 id: KI-MENU-PENDING-INITIAL-MENU-DEAD
 title: 'pendingInitialMenu is stored and never read: a route summoned before the JSONC loads opens root and stays there'
-description: 'openRoute stores the resolved id in pendingInitialMenu (Menu.qml:975) and nothing reads it (anchor PIM1: exactly two occurrences). With items still empty at summon time, resolveRoute returns the literal, item() misses, openExistingMenu rewrites to root, and after onLoaded nothing applies the stored route. A misspelled route also silently becomes root, undoing resolveRoute''s documented literal fallthrough in the same turn.'
+description: |-
+    The shell queues a summon that arrives before the menu plugin loads and hands it to open() as soon as the plugin loads. Neither menu FileView has read its JSONC file then, and the user extension usually answers first. So openRoute cannot resolve the route, and openExistingMenu falls back to root.
+
+    On 821ae589 nothing opens the route when the files land: openRoute writes it to pendingInitialMenu, which nothing reads since the bash menu's replay went away (edfd68d4, 4cd6593b). A summon during startup (Super+Escape right after login or a shell restart) shows the main menu, and an action alias such as reminder-set never runs. Seen live on 821ae589 in every cold-start run.
 affected_requirements:
     - SW-REQ-260922-N3RM
     - SW-REQ-260922-50RE
+    - SW-REQ-261002-DK0D
 evidence_manifests:
-    - pocs/menu-qml-static.sh
     - proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - test/shell.d/menu-startup-route-test.sh
 severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-qml-static.sh
+reproducer_command: bash test/shell.d/menu-startup-route-test.sh
+tripwire_mutation: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at 'a route summoned before the default menu file loads opens once it does'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: The race needs a summon landing before the JSONC loads (a sub-second window at session start); reopening lands on the intended route
-remediation: 'Apply pendingInitialMenu once both menu files have loaded, or block the first open until they load. PR #14055 does the first.'
+remediation: 'Fixed upstream on pr-B: keep the route pending when the menu fell back to root and open it once a menu file load makes it resolve (SW-REQ-261002-DK0D)'
 notes:
-    - 'Upstream: original #14053 (ours, 2026-10-02); open fix PR #14055 (ours).'
+    - 'Fixed by the upstream change on pr-B (43d787d4, "Open a menu route summoned during startup once the menu files load"): openExistingMenu keeps the route pending only when it fell back to root, and rebuildItemsFromSources opens it through openRoute once a load makes it resolve, while the menu still shows root with nothing typed (SW-REQ-261002-DK0D). Reproducer: bash test/shell.d/menu-startup-route-test.sh (red: fails on 821ae589, passes with the fix). The PIM1 anchor left pocs/menu-qml-static.sh.'
 customer_impact: A menu key pressed while the shell is starting opens the main menu instead of the menu you asked for. This happens right after login, or after omarchy-restart-shell, which omarchy update runs. An action shortcut such as Super+Ctrl+R also opens the main menu, and its action never runs. Pressing it again a second later works.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:50:22Z"
       by: human:Leonid Bugaev
@@ -72,6 +77,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-02T13:00:21Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-description,set-reproducer-command,set-tripwire-mutation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest,add-evidence-manifest
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
