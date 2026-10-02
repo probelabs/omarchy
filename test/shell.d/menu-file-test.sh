@@ -111,3 +111,31 @@ SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
 [[ $(grep -c 'clip\.webm$' "$tmp/selected") -eq 1 ]] ||
   fail "file picker lists a file of a root given twice once" "got: $(cat "$tmp/selected")"
 pass "file picker lists a file of a root given twice once"
+
+# ------------------------------------------------ missing paths are refused
+# A path that does not exist is refused on stderr with exit 1 before any
+# listing (HR29). The same holds for a symbolic link root whose target is gone
+# (FFTQ) and for a missing path given next to a real root, which leaves no
+# partial listing behind (9H5Y: the dedup step never sees a row).
+refuse() {
+  : >"$tmp/selected"
+  status=0
+  SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
+    "$ROOT/bin/omarchy-menu-file" "Pick a video" "$1" "webm" 2>"$tmp/err" || status=$?
+  [[ $status -eq 1 ]] || fail "$2 exits one" "status: $status"
+  [[ $(<"$tmp/err") == "Path not found: $3" ]] || fail "$2 names the missing path" "err: $(cat "$tmp/err")"
+  [[ ! -s $tmp/selected ]] || fail "$2 never reaches the menu" "selected: $(cat "$tmp/selected")"
+}
+
+# SW-REQ-260922-HR29:error_handling:negative
+refuse "$tmp/gone" "file picker with a missing path" "$tmp/gone"
+pass "file picker refuses a missing path before listing"
+
+ln -s "$tmp/gone" "$links/Broken"
+# SW-REQ-261002-FFTQ:error_handling:negative
+refuse "$links/Broken" "file picker with a symbolic link root whose target is gone" "$links/Broken"
+pass "file picker refuses a symbolic link root whose target is gone"
+
+# SW-REQ-261002-9H5Y:error_handling:negative
+refuse "$media:$tmp/gone" "file picker with a real root and a missing path" "$tmp/gone"
+pass "file picker refuses a missing path given next to a real root, with no partial listing"
