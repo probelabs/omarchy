@@ -19,13 +19,17 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-02T11:53:27.746599Z"
-    reviewed_by: agent:claude-pr-A
+    reviewed_at: "2026-10-02T16:59:57.409559Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:3c75b10bab8664f970969d2a86e8c0e2
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3c75b10bab8664f970969d2a86e8c0e2
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:cancelDelete: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:confirmDelete: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:onCanceled: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:onConfirmed: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3f0f23426e45d77accc5bea5e92f84c8
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -67,6 +71,22 @@ traces:
             - shell/plugins/menu/Menu.qml:859
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-compositor-test.sh:21
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:57.409559Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1208
+            - shell/plugins/menu/Menu.qml:1268
+            - shell/plugins/menu/Menu.qml:1270
+            - shell/plugins/menu/Menu.qml:849
+            - shell/plugins/menu/Menu.qml:859
+            - shell/plugins/menu/Menu.qml:868
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-compositor-test.sh:399
+            - test/shell.d/menu-compositor-test.sh:417
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
