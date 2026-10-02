@@ -1,0 +1,11 @@
+id: REVIEW-261002-MV7M
+kind: spec_conformance
+reviewer: agent:claude-pr-A
+reviewed_at: "2026-10-02T11:51:44Z"
+subject: SW-REQ-261002-VJR1
+decision: approved
+comment: 'Read shell/plugins/menu/Menu.qml on the pr-A tree (upstream 821ae589 plus the fix). open() parses the payload and, before it dispatches, runs cancelDelete() when deleteConfirmOpen is set. cancelDelete clears deleteConfirmOpen and deleteTarget and calls no removal, so summon_over_pending_uninstall leads to pending_uninstall_dismissed before openDmenu or openRoute replaces the rows and before any key arrives. open() is the only caller of openDmenu and openRoute, and openRoute is the only caller of openExistingMenu, so every summon passes the guard. The violation row (a summon that leaves the confirmation up) needs that guarded call removed, which is the 821ae589 behaviour; it is dispositioned defensive. Witnesses in test/shell.d/menu-uninstall-confirm-test.sh run the real open, openDmenu, openRoute, openExistingMenu, cancelDelete, confirmDelete and key handler bodies under node vm: select, input and route summons over a raised confirmation leave it closed and Enter answers the summoned request; they fail on 821ae589. With no summon, Enter on the confirmation still removes the app.'
+citations:
+    - shell/plugins/menu/Menu.qml:29@open
+    - shell/plugins/menu/Menu.qml:91
+    - test/shell.d/menu-uninstall-confirm-test.sh:96
