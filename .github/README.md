@@ -50,19 +50,21 @@ Each issue reproduces on upstream `821ae58` unless stated otherwise, and has a k
 
 | Upstream | Problem | Status |
 |---|---|---|
-| [#13250](https://github.com/omacom/omarchy/issues/13250) | A menu label that contains `, ]` or `, }` is silently changed. | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968) (open). |
-| [#13492](https://github.com/omacom/omarchy/issues/13492) | A menu file whose top level is an array shows extra rows named `0`, `1`, … | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
-| [#13493](https://github.com/omacom/omarchy/issues/13493) | A `//` comment after a value on the same line empties the whole menu. | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
-| — | A no-break space or another non-ASCII space between tokens empties the whole menu file (`KI-MENU-JSONC-UNICODE-WHITESPACE`). | Reproduces, found by stating the parser's input domain. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
+| [#13250](https://github.com/omacom/omarchy/issues/13250) | A menu label or action that contains `, ]` or `, }` is silently changed: the comma is dropped. | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968) (open). |
+| [#13492](https://github.com/omacom/omarchy/issues/13492) | A menu file whose top level is an array is read as entries with ids `0`, `1`, …; elements with an `action` show up in the menu, label-only ones stay hidden. | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
+| [#13493](https://github.com/omacom/omarchy/issues/13493) | A `//` comment after a value on the same line empties every entry in that menu file (the whole menu, for the default file). | Reproduces. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
+| — | A no-break space or another non-ASCII space between tokens empties every entry in that menu file (`KI-MENU-JSONC-UNICODE-WHITESPACE`). | Reproduces, found by stating the parser's input domain. Fixed by [#13968](https://github.com/omacom/omarchy/pull/13968). |
 | — | In a file with CR-only line endings, a whole-line comment swallows the rest of the file (`KI-MENU-JSONC-CR-LINE-ENDINGS`). | Reproduces. Not changed by #13968. |
 | [#10601](https://github.com/omacom/omarchy/issues/10601) | Opening the menu takes time quadratic in its row count (232 layout passes and 27,027 row visits for 231 rows). | Reproduces. [#10631](https://github.com/omacom/omarchy/pull/10631) does not change the counts. |
-| [#9057](https://github.com/omacom/omarchy/issues/9057) | Opening a picker menu again before the first one is answered leaves the first caller waiting forever. | Reproduces. [#9056](https://github.com/omacom/omarchy/pull/9056) fixes it. |
+| [#9057](https://github.com/omacom/omarchy/issues/9057) | Opening a picker menu again before the first one is answered leaves the first caller waiting forever. | Reproduces. [#9056](https://github.com/omacom/omarchy/pull/9056) fixes the re-summon trigger; if the menu process dies mid-request the caller still waits forever (see the comment on [#9057](https://github.com/omacom/omarchy/issues/9057)). |
 | [#13012](https://github.com/omacom/omarchy/pull/13012) (PR) | Restores the selected row when you go back from a submenu. | The PR has one regression. Search, open a deeper submenu from the results, then go back: the cursor lands on an unrelated row (`Learn`). |
 
 [#13255](https://github.com/omacom/omarchy/pull/13255), [#13511](https://github.com/omacom/omarchy/pull/13511) and
 [#13512](https://github.com/omacom/omarchy/pull/13512) were closed in favour of #13968.
 [#10340](https://github.com/omacom/omarchy/issues/10340) (search ranks a menu action above an installed app) was
-checked too. The ranking follows the documented rule, so it is a feature request rather than a defect.
+checked too. It reproduces (typing `chro` and pressing Enter changes the default browser instead of
+launching Chrome), but the ranking follows the documented rule, so changing it is a ranking-policy decision
+(a feature request) rather than a defect fix. [#12223](https://github.com/omacom/omarchy/pull/12223) implements it.
 
 ## How to verify
 
