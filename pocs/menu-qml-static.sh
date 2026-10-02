@@ -46,7 +46,7 @@ N=$(grep -cF 'onLoadFailed' "$F")
 if [[ $N == 1 ]] && grep -qF 'id: defaultMenuFile' "$F"; then st=0; else st=1; fi
 yes_no FV1 "only the user FileView has onLoadFailed; default file has none" $st
 
-grep -qF 'onLoadFailed: { root.userMenuItems = [];' "$F"; yes_no FV2 "user-file failure wipes the last good items" $?
+grep -qE 'onLoadFailed: \{[^}]*root\.userMenuItems = \[\];' "$F"; yes_no FV2 "user-file failure wipes the last good items" $?
 
 sed -n '/function openExistingMenu/,/^  }/p' "$F" | grep -qF 'deleteConfirmOpen'; st=$?
 [[ $st == 1 ]]; st=$?; yes_no CNF1 "openExistingMenu resets no uninstall-confirm state" $st
