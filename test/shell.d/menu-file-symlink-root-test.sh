@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-261002-FFTQ, SW-REQ-261002-9H5Y
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # omarchy-menu-file uses GNU find -printf (Arch packaging). Skip on BSD find.
