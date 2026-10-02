@@ -37,16 +37,17 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T14:49:20.613093Z"
-    reviewed_by: agent:claude-pr-B
+    reviewed_at: "2026-10-02T17:00:17.620972Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:ef62225fde625d8d3de54adb9ac7d317562e170e20195b6f9da4867a5a6339cb
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:3e39af46d52efd077ca1d461f19b0735
-            shell/plugins/menu/Menu.qml:item: file1:3e39af46d52efd077ca1d461f19b0735
-            shell/plugins/menu/Menu.qml:menuFilesAnswered: file1:3e39af46d52efd077ca1d461f19b0735
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3e39af46d52efd077ca1d461f19b0735
-            shell/plugins/menu/Menu.qml:underhang: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:menuFilesAnswered: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:onLoadFailed: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:openExistingMenu: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:rebuildItemsFromSources: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:setActiveMenu: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:setFilter: file1:2d712e4428f0311e4e9d89ae9b964869
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:
@@ -94,6 +95,41 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1077
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:297
+            - shell/plugins/menu/Menu.qml:788
+            - shell/plugins/menu/Menu.qml:801
+            - shell/plugins/menu/Menu.qml:919
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-route-after-load.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-action-alias.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-only.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-then-missing-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-missing-user-then-default.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-navigate-before-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-root-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-closed.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-reload.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-then-select.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-type-before-user.events:1
+            - test/bdiff/harness.mjs:214
+            - test/bdiff/harness.mjs:226
+            - test/shell.d/menu-startup-route-test.sh:118
+            - test/shell.d/menu-startup-route-test.sh:172
+            - test/shell.d/menu-startup-route-test.sh:184
+            - test/shell.d/menu-startup-route-test.sh:194
+            - test/shell.d/menu-startup-route-test.sh:203
+            - test/shell.d/menu-startup-route-test.sh:213
+            - test/shell.d/menu-startup-route-test.sh:223
+            - test/shell.d/menu-startup-route-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:17.620972Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1078
             - shell/plugins/menu/Menu.qml:267
             - shell/plugins/menu/Menu.qml:297
             - shell/plugins/menu/Menu.qml:788
