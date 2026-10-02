@@ -203,6 +203,25 @@ function commandText(cmd) {
   return String(cmd)
 }
 
+// Verifies: SW-REQ-261002-DK0D
+// The menu item state a replay starts from. A sequence that uses F starts like
+// a shell that is still starting: no items loaded and no rows yet, so a route
+// summoned before the first F cannot resolve.
+function startupItems(startup) {
+  return {
+    items: startup ? {} : ITEMS, itemOrder: startup ? [] : Object.keys(ITEMS), rowsLoaded: !startup,
+    defaultMenuItems: [], userMenuItems: [], providerRevision: 0, providersLoaded: {}, providerQueue: [],
+  }
+}
+
+// Verifies: SW-REQ-261002-DK0D
+// The startup ops: B summons a submenu route; F loads the menu files through
+// the revision's own rebuildItemsFromSources over the model items.
+function runStartupOp(op, r) {
+  if (op === 'B') r.open(JSON.stringify({ menu: 'sub' }))
+  else if (op === 'F') { r.defaultMenuItems = Object.values(ITEMS); r.rebuildItemsFromSources() }
+}
+
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())
@@ -245,9 +264,8 @@ function runEvents() {
     activeMenu: 'root', navStack: [], filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '',
     pendingInitialMenu: 'root', deleteConfirmOpen: false, deleteTarget: null, shell: null,
     appLibrary: { launch(id) { S.apps.push(id) }, refreshIcons() {}, remove() {} },
-    items: startup ? {} : ITEMS, itemOrder: startup ? [] : Object.keys(ITEMS),
+    ...startupItems(startup),
     item(id) { return Object.prototype.hasOwnProperty.call(r.items, id) ? r.items[id] : null },
-    defaultMenuItems: [], userMenuItems: [], providerRevision: 0, providersLoaded: {}, providerQueue: [], rowsLoaded: !startup,
     loadProvidersForSearch() {},
     resolveRoute(x) { return x },
     disarmPointer() {}, evaluateGuards() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
@@ -315,8 +333,7 @@ function runEvents() {
         case 'P': r.activateIndex(0); break
         case 'R': r.activateIndex(1); break
         case 'C': r.close(); break
-        case 'B': r.open(JSON.stringify({ menu: 'sub' })); break
-        case 'F': r.defaultMenuItems = Object.values(ITEMS); r.rebuildItemsFromSources(); break
+        case 'B': case 'F': runStartupOp(op, r); break
         case 'X': exitProc(); break
       }
       deliver()
