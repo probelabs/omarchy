@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T12:41:56.990045Z"
+    reviewed_at: "2026-10-02T14:49:14.17328Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:underhang: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:underhang: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -68,6 +68,19 @@ traces:
             - shell/plugins/menu/Menu.qml:1213
             - shell/plugins/menu/Menu.qml:790
             - shell/plugins/menu/Menu.qml:806
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:352
+            - test/shell.d/menu-compositor-test.sh:362
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:14.17328Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669: setActiveMenu gains one line that clears pendingInitialMenu (opening another menu drops a startup route still waiting, SW-REQ-261002-DK0D, named on the same Implements line). The navigation stack, back fallback and filter clear this requirement covers are unchanged, and goBack is byte-identical'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1225
+            - shell/plugins/menu/Menu.qml:801
+            - shell/plugins/menu/Menu.qml:818
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-compositor-test.sh:352
             - test/shell.d/menu-compositor-test.sh:362
