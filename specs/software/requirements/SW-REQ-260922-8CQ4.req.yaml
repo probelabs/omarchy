@@ -19,17 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-02T16:54:40.077894Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-02T12:41:53.959897Z"
+    reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:cancelDelete: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:confirmDelete: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onCanceled: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onConfirmed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -61,34 +57,18 @@ traces:
             - shell/plugins/menu/Menu.qml:864
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-compositor-test.sh
-        - reviewed_at: "2026-10-02T16:44:34.361971Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T12:41:53.959897Z"
+          reviewed_by: agent:claude-pr-B
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1204
-            - shell/plugins/menu/Menu.qml:1264
-            - shell/plugins/menu/Menu.qml:1266
-            - shell/plugins/menu/Menu.qml:846
-            - shell/plugins/menu/Menu.qml:856
-            - shell/plugins/menu/Menu.qml:865
-            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
-            - test/shell.d/menu-compositor-test.sh:399
-            - test/shell.d/menu-compositor-test.sh:417
-            - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:40.077894Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1205
-            - shell/plugins/menu/Menu.qml:1265
-            - shell/plugins/menu/Menu.qml:1267
-            - shell/plugins/menu/Menu.qml:846
-            - shell/plugins/menu/Menu.qml:856
-            - shell/plugins/menu/Menu.qml:865
+            - shell/plugins/menu/Menu.qml:1213
+            - shell/plugins/menu/Menu.qml:1273
+            - shell/plugins/menu/Menu.qml:1275
+            - shell/plugins/menu/Menu.qml:853
+            - shell/plugins/menu/Menu.qml:863
+            - shell/plugins/menu/Menu.qml:872
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-compositor-test.sh:399
             - test/shell.d/menu-compositor-test.sh:417
