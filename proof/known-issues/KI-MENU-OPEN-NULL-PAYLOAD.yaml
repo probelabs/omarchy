@@ -52,6 +52,10 @@ history:
       by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-null-payload.yaml
+    - at: "2026-10-02T14:52:30Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-null-payload.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-DMENU-NAN-GEOMETRY (dmenu geometry coercion, not payload parsing) and not of KI-MENU-NORMALIZE-EDGE-CASES (item field normalization, not the summon payload): this defect is open() dereferencing a JSON null payload so the catch never runs and the property read throws before mode dispatch'
 kill_domain: input_validation
 affected_file:

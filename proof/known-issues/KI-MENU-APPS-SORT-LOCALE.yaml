@@ -44,6 +44,10 @@ history:
       by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-apps-sort-locale.yaml
+    - at: "2026-10-02T14:52:29Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-apps-sort-locale.yaml
 kill_domain: sorting
 affected_file:
     - shell/plugins/menu/MenuModel.js
