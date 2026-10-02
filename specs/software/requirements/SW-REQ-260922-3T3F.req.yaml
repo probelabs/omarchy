@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-01T22:40:30.74036Z"
-    reviewed_by: agent:claude-pr-13968
+    reviewed_at: "2026-10-02T16:58:48.601018Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:parseMenuJsonc: file1:bddf782ed3ac81606c0c53a1106414c4
             shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
             shell/plugins/menu/MenuModel.js:stripJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
@@ -86,6 +86,28 @@ traces:
             - test/node/menumodel-replay.test.mjs:73
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:7
+        - reviewed_at: "2026-10-02T16:58:48.601018Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:86
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:1240
+            - test/node/menumodel-replay.test.mjs:1339
+            - test/node/menumodel-replay.test.mjs:159
+            - test/shell.d/menu-test.sh:132
+            - test/shell.d/menu-test.sh:138
+            - test/shell.d/menu-test.sh:152
+            - test/shell.d/menu-test.sh:330
+            - test/shell.d/menu-test.sh:338
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:64
 verification:
     assurance_level: C
     formalization_status: valid
