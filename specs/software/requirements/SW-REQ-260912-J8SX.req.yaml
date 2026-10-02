@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-30T13:58:19.481694754Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T16:44:30.809333Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:b8a4369841cdad3aea39dc8dca4da0b43beb8c41a757fc4067ebbfc732f193d4
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:beginLock: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:lock: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
             SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
@@ -68,6 +68,16 @@ traces:
           reviewed_by: human:Leonid Bugaev
           method: inspection
           rationale: 're-stamped after MC/DC annotation campaign line drift: Implements markers moved 164->168 (beginLock guard) and 712->725 (ShellIpc lock verb) by inserted mcdc:ignore lines; both still name J8SX with missing-pam semantics unchanged; parent T0XP lifecycle-active; verified_by header at lock-missing-pam-test.sh:7 intact'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:168
+            - shell/plugins/lock/Service.qml:725
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-missing-pam-test.sh:7
+        - reviewed_at: "2026-10-02T16:44:30.809333Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
             - shell/plugins/lock/Service.qml:168

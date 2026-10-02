@@ -19,13 +19,17 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-29T23:51:35.844317598Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T16:44:40.625944Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:09b910367c950a5d23bb4b015ae116f9d9ca20931b96302f52194bdc3b41cc38
     reviewed_targets:
         implemented_by:
             bin/omarchy-hyprland-session-locked: file1:29c131c6b9f0363e3de279c1859e3bdb
             shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:hidePreview: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:isLocked: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:preview: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:status: file1:fd48ab150687078d0ba561d327da9800
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -64,6 +68,21 @@ traces:
           reviewed_by: human:Leonid Bugaev
           method: inspection
           rationale: 're-stamped after MC/DC annotation campaign line drift: FRG0 Implements markers in Service.qml moved 718->732 (isLocked), 723->737 (status), 740->754 (preview), 748->762 (hidePreview) by inserted mcdc:ignore lines; header at Service.qml:8 and session-locked script header at line 6 unchanged and still name FRG0; session-lock state semantics unchanged; parent STK-REQ-260912-XJ5D lifecycle-active'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-hyprland-session-locked:6
+            - shell/plugins/lock/Service.qml:732
+            - shell/plugins/lock/Service.qml:737
+            - shell/plugins/lock/Service.qml:754
+            - shell/plugins/lock/Service.qml:762
+            - shell/plugins/lock/Service.qml:8
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/hyprland-session-locked-test.sh:7
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-10-02T16:44:40.625944Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-hyprland-session-locked:6

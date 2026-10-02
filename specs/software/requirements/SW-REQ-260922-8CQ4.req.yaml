@@ -19,12 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-29T14:26:57.004583373Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T16:44:34.361971Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:cancelDelete: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:confirmDelete: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:onCanceled: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:onConfirmed: file1:2a1cd5072d179950126df6cdf893eb47
             shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
@@ -57,6 +61,22 @@ traces:
             - shell/plugins/menu/Menu.qml:864
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-compositor-test.sh
+        - reviewed_at: "2026-10-02T16:44:34.361971Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1204
+            - shell/plugins/menu/Menu.qml:1264
+            - shell/plugins/menu/Menu.qml:1266
+            - shell/plugins/menu/Menu.qml:846
+            - shell/plugins/menu/Menu.qml:856
+            - shell/plugins/menu/Menu.qml:865
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-compositor-test.sh:399
+            - test/shell.d/menu-compositor-test.sh:417
+            - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
