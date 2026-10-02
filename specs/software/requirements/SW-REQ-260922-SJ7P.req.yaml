@@ -19,12 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T11:53:13.255614Z"
-    reviewed_by: agent:claude-pr-A
+    reviewed_at: "2026-10-02T17:00:01.856118Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:3c75b10bab8664f970969d2a86e8c0e2
+            shell/plugins/menu/Menu.qml:depthFor: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:searchScore: file1:3f0f23426e45d77accc5bea5e92f84c8
             shell/plugins/menu/MenuModel.js:searchScore: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
@@ -80,6 +81,20 @@ traces:
             - test/node/menumodel-replay.test.mjs:337
             - test/node/report-reproducers.test.mjs:1
             - test/shell.d/menu-test.sh:31
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:01.856118Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:481
+            - shell/plugins/menu/Menu.qml:561
+            - shell/plugins/menu/MenuModel.js:353
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/report-reproducers.test.mjs:1
+            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C

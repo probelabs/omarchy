@@ -19,13 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-02T11:53:14.654232Z"
-    reviewed_by: agent:claude-pr-A
+    reviewed_at: "2026-10-02T17:00:03.147883Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:3c75b10bab8664f970969d2a86e8c0e2
-            shell/plugins/menu/Menu.qml:slugify: file1:3c75b10bab8664f970969d2a86e8c0e2
+            shell/plugins/menu/Menu.qml:mergeAppRows: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:slugify: file1:3f0f23426e45d77accc5bea5e92f84c8
             shell/plugins/menu/MenuModel.js:mergeAppRows: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
@@ -90,6 +91,23 @@ traces:
             - test/node/menumodel-replay.test.mjs:799
             - test/shell.d/menu-test.sh:14
             - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:03.147883Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:308
+            - shell/plugins/menu/Menu.qml:316
+            - shell/plugins/menu/Menu.qml:379
+            - shell/plugins/menu/MenuModel.js:112
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:911
+            - test/shell.d/menu-test.sh:921
 verification:
     assurance_level: C
     formalization_status: valid
