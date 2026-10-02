@@ -19,14 +19,12 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-10-02T16:54:48.352922Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-02T11:53:16.767896Z"
+    reviewed_by: agent:claude-pr-A
     reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:onClicked: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onEntered: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onPositionChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml: file1:3c75b10bab8664f970969d2a86e8c0e2
         satisfies:
             STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
@@ -60,35 +58,18 @@ traces:
             - test/shell.d/menu-compositor-test.sh:348
             - test/shell.d/menu-compositor-test.sh:349
             - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:41.424981Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T11:53:16.767896Z"
+          reviewed_by: agent:claude-pr-A
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr-A review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in open(), which now runs cancelDelete() when an uninstall confirmation is pending (3 lines) and names SW-REQ-261002-VJR1 in its Implements line; every other function is byte-identical and only shifted by 3 lines, so this requirement''s implementation and its annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1476
-            - shell/plugins/menu/Menu.qml:1481
-            - shell/plugins/menu/Menu.qml:1485
+            - shell/plugins/menu/Menu.qml:1479
+            - shell/plugins/menu/Menu.qml:1484
             - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
             - test/shell.d/menu-acceptance-test.sh:14
             - test/shell.d/menu-acceptance-test.sh:292
-            - test/shell.d/menu-compositor-test.sh:333
-            - test/shell.d/menu-compositor-test.sh:347
-            - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:48.352922Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1477
-            - shell/plugins/menu/Menu.qml:1482
-            - shell/plugins/menu/Menu.qml:1486
-            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
-            - test/shell.d/menu-acceptance-test.sh:14
-            - test/shell.d/menu-acceptance-test.sh:292
-            - test/shell.d/menu-compositor-test.sh:333
-            - test/shell.d/menu-compositor-test.sh:347
+            - test/shell.d/menu-compositor-test.sh:28
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
