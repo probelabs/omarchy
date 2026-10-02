@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when route_fell_back_before_load & pending_route_resolves & menu_untouched_on_root the menu_router shall eventually satisfy pending_route_opened
-description: A summon can reach the menu while the shell starts, before the menu files have loaded. Its route then cannot resolve, and the menu falls back to root. The menu keeps that route pending. When a later load makes the route resolve, the menu opens it. This happens only while the menu still shows root and nothing has been typed into it.
+description: A summon can reach the menu while the shell starts, before the menu files have loaded. Its route then cannot resolve, and the menu falls back to root. The menu keeps that route pending. When a later load makes the route resolve, the menu opens it. This happens only while the menu still shows root and the user has typed nothing into it.
 formalization_strategy: fretish
 informal_verification:
     method: ""
