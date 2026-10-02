@@ -281,13 +281,21 @@ Item {
         else root.loadProviderForMenu(root.activeMenu)
       }
     }
-    // A route that fell back to root because the menu files had not loaded
-    // yet opens once it resolves, while the menu still shows root and nothing
-    // has been typed into it.
+    // A route that fell back to root before both menu files had answered
+    // gets one more try once they have, so it sees the user's overrides too.
     var pending = root.pendingInitialMenu
-    var onRoot = root.opened && !root.dmenuActive && root.activeMenu === "root" && !root.filterText
-    if (pending && onRoot && root.item(root.resolveRoute(pending)))
-      root.openRoute(pending)
+    if (pending && root.menuFilesAnswered()) {
+      root.pendingInitialMenu = ""
+      if (root.opened && !root.dmenuActive && root.item(root.resolveRoute(pending))) root.openRoute(pending)
+    }
+  }
+
+  // Both menu files have answered once each has loaded or, for the optional
+  // user file, failed to load. FileView.loaded is false until the first read
+  // lands; userMenuFailed stays set, as only that first answer matters.
+  property bool userMenuFailed: false
+  function menuFilesAnswered() {
+    return defaultMenuFile.loaded && (userMenuFile.loaded || root.userMenuFailed)
   }
 
   // Each known provider is a tiny bash one-liner that enumerates a list and
@@ -783,6 +791,8 @@ Item {
     root.selectedIndex = 0
     root.cursorActive = root.mode !== "input"
     root.disarmPointer()
+    // Typing or moving to another menu drops a route still waiting to open.
+    root.pendingInitialMenu = ""
     if (!root.dmenuActive && root.filterText.trim()) root.loadProvidersForSearch()
     root.rebuildDisplay()
   }
@@ -790,6 +800,7 @@ Item {
   // Implements: SW-REQ-260922-DE93
   function setActiveMenu(id, pushHistory, fromPointer) {
     panel.freezeCardTop()
+    root.pendingInitialMenu = ""
     if (!root.item(id)) id = "root"
     if (pushHistory && id !== root.activeMenu) root.navStack = root.navStack.concat([root.activeMenu])
     root.activeMenu = id
@@ -912,8 +923,8 @@ Item {
     selectionFile = ""
     doneFile = ""
     activeMenu = root.item(initialMenu) ? initialMenu : "root"
-    // Only a route that fell back to root stays pending.
-    if (activeMenu === initialMenu) pendingInitialMenu = ""
+    // Only a route that fell back to root while the menu files load waits.
+    if (activeMenu === initialMenu || root.menuFilesAnswered()) pendingInitialMenu = ""
     navStack = []
     filterText = ""
     selectedIndex = 0
@@ -1064,7 +1075,7 @@ Item {
     // Implements: SW-REQ-260922-50RE
     onLoaded: { root.userMenuItems = root.parseMenuJsonc(text()); root.rebuildItemsFromSources() }
     // Implements: SW-REQ-260922-50RE
-    onLoadFailed: { root.userMenuItems = []; root.rebuildItemsFromSources() }
+    onLoadFailed: { root.userMenuFailed = true; root.userMenuItems = []; root.rebuildItemsFromSources() }
     // Implements: SW-REQ-260922-50RE
     onFileChanged: reload()
   }
