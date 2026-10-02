@@ -59,6 +59,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-01T22:39:22Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
     - at: "2026-10-02T15:04:04Z"
       by: agent:claude-baseline-pass
       action: edit
@@ -67,10 +71,6 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
-    - at: "2026-10-01T22:39:22Z"
-      by: agent:claude-pr-13968
-      action: edit
-      detail: set-remediation,append-note,set-status=fixed
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
