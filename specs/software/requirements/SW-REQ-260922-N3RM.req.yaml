@@ -20,14 +20,14 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-10-01T22:54:04.284426Z"
-    reviewed_by: agent:claude-pr-10631
+    reviewed_at: "2026-10-02T16:59:40.271511Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:e0ef806c9646500306c01ffe1ef54b7e
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:e0ef806c9646500306c01ffe1ef54b7e
-            shell/plugins/menu/Menu.qml:runAction: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:applySelected: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:openRoute: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:runAction: file1:d2a94fae8c0b37f76d8caccb6a794ef5
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
             SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
@@ -73,6 +73,20 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/node/menumodel-replay.test.mjs:340
             - test/shell.d/menu-test.sh:26
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:40.271511Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:146
+            - shell/plugins/menu/Menu.qml:892
+            - shell/plugins/menu/Menu.qml:970
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C

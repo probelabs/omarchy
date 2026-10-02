@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-01T22:54:17.41865Z"
-    reviewed_by: agent:claude-pr-10631
+    reviewed_at: "2026-10-02T16:59:43.035319Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:runAction: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:runAction: file1:d2a94fae8c0b37f76d8caccb6a794ef5
             shell/plugins/menu/MenuModel.js:summonAction: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -81,6 +81,19 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:6
+        - reviewed_at: "2026-10-02T16:59:43.035319Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:146
+            - shell/plugins/menu/MenuModel.js:515
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-test.sh:1015
+            - test/shell.d/menu-test.sh:1039
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

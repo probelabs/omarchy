@@ -19,13 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-01T22:53:49.247112Z"
-    reviewed_by: agent:claude-pr-10631
+    reviewed_at: "2026-10-02T16:59:37.165069Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:fc27f2279de1e5cd4ee33a70334305734f2c20198f543b39a6f9ffc758a8390f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:e0ef806c9646500306c01ffe1ef54b7e
-            shell/plugins/menu/Menu.qml:runAction: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:availableRowsHeight: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:foldedListHeight: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:rowHeightForDetail: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:rowListHeight: file1:d2a94fae8c0b37f76d8caccb6a794ef5
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -67,6 +70,21 @@ traces:
             - shell/plugins/menu/Menu.qml:168
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh:22
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:37.165069Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:159
+            - shell/plugins/menu/Menu.qml:168
+            - shell/plugins/menu/Menu.qml:182
+            - shell/plugins/menu/Menu.qml:198
+            - shell/plugins/menu/Menu.qml:218
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:328
+            - test/shell.d/menu-compositor-test.sh:466
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
