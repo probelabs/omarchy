@@ -5,14 +5,15 @@ results:
       command: bash test/shell.d/menu-uninstall-confirm-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-02T11:55:16Z"
+      executed_at: "2026-10-02T12:04:40Z"
+      revision: 0f4cc1cfa12b7d1a58b02c09129bab9a9336ab30
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-OPEN-LEAVES-CONFIRM` from the KnownIssue''s reproducer command: bash test/shell.d/menu-uninstall-confirm-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Remove the guarded root.cancelDelete() call at the top of open() in shell/plugins/menu/Menu.qml (the 821ae589 behaviour): the red reproducer test/shell.d/menu-uninstall-confirm-test.sh fails at ''a select prompt summoned over an uninstall confirmation dismisses it''.'
         - test/shell.d/menu-uninstall-confirm-test.sh
       freshness_hashes:
         proof/known-issues/KI-MENU-OPEN-LEAVES-CONFIRM.yaml: ki-content-v1:sha256:9a630619588b79cef4e73ca61fea495c6c376d319c936d396034e2e86c71bb46
-        test/shell.d/menu-uninstall-confirm-test.sh: sha256:4a781c12de2c451b31157d3ed99cbef6018d1b1d5e3df65ac0c2c528f44c7094
+        test/shell.d/menu-uninstall-confirm-test.sh: sha256:a49e7e886d776b46080fb1bd8024867a51568b88506f48f303e83b8566a61cbf
       known_issues:
         - KI-MENU-OPEN-LEAVES-CONFIRM
       config:
