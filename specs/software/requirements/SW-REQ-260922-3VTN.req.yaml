@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T14:26:56.962693722Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T12:41:48.842418Z"
+    reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:finishRequest: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:finishRequest: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -54,6 +54,17 @@ traces:
             - test/shell.d/menu-dmenu-test.sh:5
             - test/shell.d/menu-dmenu-test.sh:84
             - test/shell.d/menu-dmenu-test.sh:96
+        - reviewed_at: "2026-10-02T12:41:48.842418Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1189
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:900
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

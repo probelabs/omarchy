@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-09-29T14:26:57.106923853Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T12:42:06.642554Z"
+    reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:dc5df4c3ace8f81fd0a45980dab604a9
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -50,6 +50,18 @@ traces:
             - test/shell.d/menu-test.sh:286
             - test/shell.d/menu-test.sh:309
             - test/shell.d/menu-test.sh:33
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T12:42:06.642554Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:500
+            - shell/plugins/menu/Menu.qml:662
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
