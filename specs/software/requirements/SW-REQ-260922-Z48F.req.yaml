@@ -19,15 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-01T22:54:13.857902Z"
-    reviewed_by: agent:claude-pr-10631
+    reviewed_at: "2026-10-02T16:59:42.364141Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:e0ef806c9646500306c01ffe1ef54b7e
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:e0ef806c9646500306c01ffe1ef54b7e
-            shell/plugins/menu/Menu.qml:revealCursor: file1:e0ef806c9646500306c01ffe1ef54b7e
-            shell/plugins/menu/Menu.qml:underhang: file1:e0ef806c9646500306c01ffe1ef54b7e
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:nextSelectable: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:revealCursor: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:rowSelectable: file1:d2a94fae8c0b37f76d8caccb6a794ef5
+            shell/plugins/menu/Menu.qml:select: file1:d2a94fae8c0b37f76d8caccb6a794ef5
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -77,6 +78,22 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-acceptance-test.sh:291
             - test/shell.d/menu-compositor-test.sh:27
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:42.364141Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1214
+            - shell/plugins/menu/Menu.qml:572
+            - shell/plugins/menu/Menu.qml:581
+            - shell/plugins/menu/Menu.qml:747
+            - shell/plugins/menu/Menu.qml:767
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:291
+            - test/shell.d/menu-compositor-test.sh:367
+            - test/shell.d/menu-compositor-test.sh:375
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
