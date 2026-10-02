@@ -28,7 +28,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T12:59:15.790751Z"
+    reviewed_at: "2026-10-02T13:36:01.689519Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:ef62225fde625d8d3de54adb9ac7d317562e170e20195b6f9da4867a5a6339cb
     reviewed_targets:
@@ -47,6 +47,29 @@ traces:
             - shell/plugins/menu/Menu.qml:267
             - shell/plugins/menu/Menu.qml:907
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-startup-route-test.sh:101
+            - test/shell.d/menu-startup-route-test.sh:148
+            - test/shell.d/menu-startup-route-test.sh:159
+            - test/shell.d/menu-startup-route-test.sh:168
+            - test/shell.d/menu-startup-route-test.sh:5
+        - reviewed_at: "2026-10-02T13:36:01.689519Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B: new requirement. Implemented by the replay at the end of rebuildItemsFromSources and the clear in openExistingMenu (Implements lines on both); verified by test/shell.d/menu-startup-route-test.sh, which runs the real open/openRoute/openExistingMenu/rebuildItemsFromSources bodies and FileView handlers under node vm; satisfies SYS-REQ-260922-R8DQ (a route opens the item it denotes). Spec conformance REVIEW-261002-NS9R'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:907
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-route-after-load.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-action-alias.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-root-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-closed.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-reload.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-then-select.events:1
+            - test/bdiff/harness.mjs:206
+            - test/bdiff/harness.mjs:217
             - test/shell.d/menu-startup-route-test.sh:101
             - test/shell.d/menu-startup-route-test.sh:148
             - test/shell.d/menu-startup-route-test.sh:159
