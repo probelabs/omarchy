@@ -91,8 +91,6 @@ function menuHarness() {
 const prompt = mode => JSON.stringify({ mode, prompt: 'Pick', options: ['apple', 'banana'], selectionFile: 'sel', doneFile: 'done' })
 
 // Reproduces: KI-MENU-OPEN-LEAVES-CONFIRM
-// SW-REQ-261002-VJR1:edge_case:nominal
-// SW-REQ-261002-VJR1:totality:nominal
 for (const [mode, label, typed, answer] of [['select', 'a select prompt', '', 'apple'], ['input', 'an input prompt', 'kiwi', 'kiwi']]) {
   const { menu, removed, answers, press } = menuHarness()
   menu.open(prompt(mode))
