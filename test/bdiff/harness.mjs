@@ -148,16 +148,20 @@ function runJsonc() {
 //   R  activate row 1 (dmenu: pick beta; menu: run the action row)
 //   C  close
 //   X  the shared answer Process exits (fires the revision's onExited)
+//   B  route summon ({"menu":"sub"}, a submenu)
+//   F  the menu files load (the revision's rebuildItemsFromSources over the
+//      model items). An event file that uses F starts like a shell that is
+//      still starting: no items are loaded until the first F.
 //
 // Model (method: review notes for #9056, harness bdiff-9056.js): the shared
 // QML `Process { id: resultProc }` ignores `running = true` while it is still
 // running (verified live: 19/20 stranded callers on quattro), and stays busy
 // until an explicit X. Quickshell.execDetached / Util.execDetached run
 // immediately. After the last event every still-running write is drained.
-const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected']
+const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected', 'rebuildItemsFromSources']
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
-const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X'])
+const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'B', 'F'])
 
 function parseEvents(text) {
   const ops = []
@@ -202,6 +206,7 @@ function commandText(cmd) {
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())
+  const startup = ops.includes('F')
   emit(`events ${ops.join('') || '-'}${slow ? ' @slow' : ''}`)
   if (bad.length) emit(`ignored-tokens ${bad.join(' ')}`)
   const rel = 'shell/plugins/menu/Menu.qml'
@@ -240,8 +245,10 @@ function runEvents() {
     activeMenu: 'root', navStack: [], filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '',
     pendingInitialMenu: 'root', deleteConfirmOpen: false, deleteTarget: null, shell: null,
     appLibrary: { launch(id) { S.apps.push(id) }, refreshIcons() {}, remove() {} },
-    items: ITEMS, itemOrder: Object.keys(ITEMS),
-    item(id) { return ITEMS[id] || null },
+    items: startup ? {} : ITEMS, itemOrder: startup ? [] : Object.keys(ITEMS),
+    item(id) { return Object.prototype.hasOwnProperty.call(r.items, id) ? r.items[id] : null },
+    defaultMenuItems: [], userMenuItems: [], providerRevision: 0, providersLoaded: {}, providerQueue: [], rowsLoaded: !startup,
+    loadProvidersForSearch() {},
     resolveRoute(x) { return x },
     disarmPointer() {}, evaluateGuards() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
     setActiveMenu(id) { this.activeMenu = id; this.rebuildDisplay() },
@@ -308,6 +315,8 @@ function runEvents() {
         case 'P': r.activateIndex(0); break
         case 'R': r.activateIndex(1); break
         case 'C': r.close(); break
+        case 'B': r.open(JSON.stringify({ menu: 'sub' })); break
+        case 'F': r.defaultMenuItems = Object.values(ITEMS); r.rebuildItemsFromSources(); break
         case 'X': exitProc(); break
       }
       deliver()
@@ -328,6 +337,7 @@ function runEvents() {
   emit(`final opened=${r.opened} mode=${r.mode} requestActive=${r.requestActive} doneFileOwner=${owner}`)
   emit(`actions ${S.actions.join(',') || '-'}`)
   emit(`apps ${S.apps.join(',') || '-'}`)
+  if (startup || ops.includes('B')) emit(`menu active=${r.activeMenu}`)
   emit(`stray-writes ${stray.join(' | ') || '-'}`)
 }
 
