@@ -264,7 +264,7 @@ Item {
   // Merge defaults + user extension. Later entries override earlier ones
   // on a per-key basis (so the user can tweak label/icon/action without
   // re-declaring the whole row).
-  // Implements: SW-REQ-260922-7NPE
+  // Implements: SW-REQ-260922-7NPE, SW-REQ-261002-DK0D
   function rebuildItemsFromSources() {
     var mergedMenu = MenuModel.mergeMenuSources(root.defaultMenuItems, root.userMenuItems)
     root.providerRevision += 1
@@ -904,7 +904,7 @@ Item {
     filterText = ""
   }
 
-  // Implements: SW-REQ-260922-50RE
+  // Implements: SW-REQ-260922-50RE, SW-REQ-261002-DK0D
   function openExistingMenu(initialMenu) {
     requestSerial += 1
     mode = "menu"
