@@ -159,6 +159,9 @@ project:
                     for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do junit_run "$B" "test/shell.d/$t-test.sh"; done;
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then junit_run "$B" test/shell.d/update-lock-test.sh; else junit_skip test/shell.d/update-lock-test.sh "requires Linux flock and /proc"; fi;
                     junit_end
+            # menu-shell also runs every other test/shell.d/menu-*-test.sh,
+            # so a menu test that a pull request adds runs in the audit of its
+            # mirror without a proof.yaml change (mirrors never touch it).
             menu-shell:
                 language: bash
                 command: >-
@@ -167,6 +170,7 @@ project:
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then junit_run "$B" test/shell.d/menu-images-test.sh; else junit_skip test/shell.d/menu-images-test.sh "requires Linux flock and /proc"; fi;
                     if command -v lua >/dev/null 2>&1; then junit_run "$B" test/shell.d/keybindings-menu-test.sh; else junit_skip test/shell.d/keybindings-menu-test.sh "requires lua"; fi;
                     if find /dev/null -printf '' >/dev/null 2>&1; then junit_run "$B" test/shell.d/menu-file-test.sh; else junit_skip test/shell.d/menu-file-test.sh "requires GNU find (-printf)"; fi;
+                    for t in test/shell.d/menu-*-test.sh; do case "${t##*/}" in menu-test.sh|menu-pointer-lifecycle-test.sh|menu-plugin-test.sh|menu-dispatcher-test.sh|menu-dmenu-test.sh|menu-timezone-test.sh|menu-share-test.sh|menu-guards-test.sh|menu-images-test.sh|menu-file-test.sh|menu-compositor-test.sh|menu-acceptance-test.sh) ;; *) junit_run "$B" "$t" ;; esac; done;
                     junit_end
             menu-node:
                 language: js
