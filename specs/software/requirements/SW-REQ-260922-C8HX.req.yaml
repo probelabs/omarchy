@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T14:26:57.022009017Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T11:53:09.660784Z"
+    reviewed_by: agent:claude-pr-A
     reviewed_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:finishRequest: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:finishRequest: file1:3c75b10bab8664f970969d2a86e8c0e2
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:3c75b10bab8664f970969d2a86e8c0e2
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3c75b10bab8664f970969d2a86e8c0e2
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -57,6 +57,17 @@ traces:
             - test/shell.d/menu-dmenu-test.sh:85
             - test/shell.d/menu-dmenu-test.sh:98
             - test/shell.d/menu-dmenu-test.sh:99
+        - reviewed_at: "2026-10-02T11:53:09.660784Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in open(), which now runs cancelDelete() when an uninstall confirmation is pending (3 lines) and names SW-REQ-261002-VJR1 in its Implements line; every other function is byte-identical and only shifted by 3 lines, so this requirement''s implementation and its annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:125
+            - shell/plugins/menu/Menu.qml:878
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:11
+            - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
