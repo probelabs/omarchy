@@ -19,26 +19,24 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:47.269065Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-02T11:53:15.421797Z"
+    reviewed_by: agent:claude-pr-A
     reviewed_fingerprint: sha256:0faebab064ec5dad24c320b57dcfc96c16ca0857948daaa09a46ed81d3778693
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:item: file1:3c75b10bab8664f970969d2a86e8c0e2
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
-        - reviewed_at: "2026-10-02T16:54:47.269065Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T11:53:15.421797Z"
+          reviewed_by: agent:claude-pr-A
           method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          rationale: 'pr-A review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in open(), which now runs cancelDelete() when an uninstall confirmation is pending (3 lines) and names SW-REQ-261002-VJR1 in its Implements line; every other function is byte-identical and only shifted by 3 lines, so this requirement''s implementation and its annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:233
+            - shell/plugins/menu/Menu.qml:236
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/shell.d/menu-pointer-lifecycle-test.sh:42
-            - test/shell.d/menu-pointer-lifecycle-test.sh:46
-            - test/shell.d/menu-pointer-lifecycle-test.sh:49
+            - test/shell.d/menu-pointer-lifecycle-test.sh:19
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C
