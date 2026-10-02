@@ -207,6 +207,35 @@ function commandText(cmd) {
   return String(cmd)
 }
 
+// Verifies: SW-REQ-261002-VJR1
+// Reads the revision's own uninstall-confirmation code for the D/K/Q/L ops:
+// requestDeleteSelected, cancelDelete and confirmDelete into `found`, plus the
+// menu's Keys.onPressed body and ConfirmDialog.handleKey.
+function extractKeyHandling(qml, found) {
+  for (const n of DELETE_NAMES) {
+    const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
+    if (m) found[n] = m[0]
+  }
+  const k = qml.match(/Keys\.onPressed: (function\(event\) \{[\s\S]*?\n        \})/)
+  const dialog = readRev('shell/Ui/ConfirmDialog.qml')
+  const h = dialog && dialog.match(/\n  function handleKey\(event\) \{[\s\S]*?\n  \}\n/)
+  return { keySrc: k ? k[1] : null, confirmKeySrc: h ? h[0] : null }
+}
+
+// Verifies: SW-REQ-261002-VJR1
+// Compiles that code in the replay's scope and returns press(key): a key goes
+// through the revision's Keys.onPressed, which hands it to the uninstall
+// confirmation while one is open. Throws when the code does not compile.
+function bindKeyHandling({ ctx, scope, sandbox, r, found, keySrc, confirmKeySrc }) {
+  const deleteConfirm = { selectedIndex: 1, get opened() { return r.deleteConfirmOpen }, canceled() { r.cancelDelete() }, confirmed() { r.confirmDelete() } }
+  sandbox.deleteConfirm = deleteConfirm
+  sandbox.Util.editsFilter = () => false
+  const del = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${DELETE_NAMES.map(n => found[n]).join('\n')}; return { ${DELETE_NAMES.join(', ')}, key: ${keySrc} } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
+  for (const n of DELETE_NAMES) r[n] = del[n]
+  deleteConfirm.handleKey = vm.runInContext(`(function(root) { ${confirmKeySrc}; return handleKey })`, ctx, { timeout: VM_TIMEOUT_MS })(deleteConfirm)
+  return key => del.key({ key: sandbox.Qt[key], modifiers: 0, text: '' })
+}
+
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())
@@ -217,18 +246,7 @@ function runEvents() {
   if (qml === null) { emit(`lifecycle: MISSING ${rel}`); return }
   const { found, onExited } = extractFunctions(qml)
   const keyed = ops.some(op => KEY_OPS.has(op))
-  let keySrc = null, confirmKeySrc = null
-  if (keyed) {
-    for (const n of DELETE_NAMES) {
-      const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
-      if (m) found[n] = m[0]
-    }
-    const k = qml.match(/Keys\.onPressed: (function\(event\) \{[\s\S]*?\n        \})/)
-    keySrc = k ? k[1] : null
-    const dialog = readRev('shell/Ui/ConfirmDialog.qml')
-    const h = dialog && dialog.match(/\n  function handleKey\(event\) \{[\s\S]*?\n  \}\n/)
-    confirmKeySrc = h ? h[0] : null
-  }
+  const { keySrc, confirmKeySrc } = keyed ? extractKeyHandling(qml, found) : { keySrc: null, confirmKeySrc: null }
   const missing = NAMES.concat(keyed ? DELETE_NAMES : []).filter(n => !found[n])
     .concat(keyed && !keySrc ? ['Keys.onPressed'] : [], keyed && !confirmKeySrc ? ['ConfirmDialog.handleKey'] : [])
   if (missing.length) {
@@ -303,14 +321,8 @@ function runEvents() {
   for (const n of NAMES) r[n] = fns[n]
   let press = null
   if (keyed) {
-    const deleteConfirm = { selectedIndex: 1, get opened() { return r.deleteConfirmOpen }, canceled() { r.cancelDelete() }, confirmed() { r.confirmDelete() } }
-    sandbox.deleteConfirm = deleteConfirm
-    sandbox.Util.editsFilter = () => false
     try {
-      const del = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${DELETE_NAMES.map(n => found[n]).join('\n')}; return { ${DELETE_NAMES.join(', ')}, key: ${keySrc} } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
-      for (const n of DELETE_NAMES) r[n] = del[n]
-      deleteConfirm.handleKey = vm.runInContext(`(function(root) { ${confirmKeySrc}; return handleKey })`, ctx, { timeout: VM_TIMEOUT_MS })(deleteConfirm)
-      press = key => del.key({ key: sandbox.Qt[key], modifiers: 0, text: '' })
+      press = bindKeyHandling({ ctx, scope, sandbox, r, found, keySrc, confirmKeySrc })
     } catch (e) {
       emit(`lifecycle: COMPILE-ERROR ${errName(e)}`)
       return
