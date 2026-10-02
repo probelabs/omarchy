@@ -294,6 +294,7 @@ Item {
   // user file, failed to load. FileView.loaded is false until the first read
   // lands; userMenuFailed stays set, as only that first answer matters.
   property bool userMenuFailed: false
+  // Implements: SW-REQ-261002-DK0D
   function menuFilesAnswered() {
     return defaultMenuFile.loaded && (userMenuFile.loaded || root.userMenuFailed)
   }
@@ -784,7 +785,7 @@ Item {
     revealCursor()
   }
 
-  // Implements: SW-REQ-260922-DQ9P
+  // Implements: SW-REQ-260922-DQ9P, SW-REQ-261002-DK0D
   function setFilter(nextFilter) {
     panel.freezeCardTop()
     root.filterText = nextFilter
@@ -797,7 +798,7 @@ Item {
     root.rebuildDisplay()
   }
 
-  // Implements: SW-REQ-260922-DE93
+  // Implements: SW-REQ-260922-DE93, SW-REQ-261002-DK0D
   function setActiveMenu(id, pushHistory, fromPointer) {
     panel.freezeCardTop()
     root.pendingInitialMenu = ""
@@ -1074,7 +1075,7 @@ Item {
     printErrors: false
     // Implements: SW-REQ-260922-50RE
     onLoaded: { root.userMenuItems = root.parseMenuJsonc(text()); root.rebuildItemsFromSources() }
-    // Implements: SW-REQ-260922-50RE
+    // Implements: SW-REQ-260922-50RE, SW-REQ-261002-DK0D
     onLoadFailed: { root.userMenuFailed = true; root.userMenuItems = []; root.rebuildItemsFromSources() }
     // Implements: SW-REQ-260922-50RE
     onFileChanged: reload()
