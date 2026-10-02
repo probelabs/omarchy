@@ -18,7 +18,8 @@ tripwire_mutation: 'Make the stripJsonc comma pass string-aware (copy string-lit
 introduced_in: inception
 defect_class: latent
 mitigation: The defect needs a user or extension string with a comma directly before } or ]. The shipped default menu has no such string. An author can drop the comma or put a character between the comma and the closer
-remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim, as omacom/omarchy#13968 does (SW-REQ-260927-66FW on its proof mirror). The pass must still drop a trailing comma when comment lines and the closer come after it. The preservation tests pin that shape.
+remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim, as omacom/omarchy#13968 does (requirement SW-REQ-260927-66FW in the proof layer). The pass must still drop a trailing comma when comment lines and the closer come after it. The preservation tests pin that shape.
+customer_impact: 'A menu label or action whose text has a comma directly before } or ] is silently changed: the comma is removed. The label "x, ]y" shows as "x ]y", and the action mv f{.bak,} runs as mv f{.bak}, a different command. No error is shown. The shipped menu has no such text; only entries you write yourself can hit this.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -53,6 +54,14 @@ history:
       action: edit
       detail: set-remediation
     - at: "2026-10-01T21:46:17Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-02T15:04:04Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-remediation,set-customer-impact
+    - at: "2026-10-02T15:09:27Z"
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml

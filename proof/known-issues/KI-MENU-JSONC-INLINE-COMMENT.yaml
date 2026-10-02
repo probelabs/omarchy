@@ -17,8 +17,9 @@ reproducer_command: sh test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh
 tripwire_mutation: 'Strip // comments wherever the opener sits outside a string, while keeping a trailing comma that is followed by comment lines and the closer droppable: the green tripwires tagged Reproduces KI-MENU-JSONC-INLINE-COMMENT flip red and the red reproducer test/reports/report-cmulr8j7w0hy01gw4menggvbx.sh starts exiting 0. The fix must keep the preservation tests green (a trailing comma, then a whole-line comment, then the closer keeps every row); the single-pass scanner of the closed omacom/omarchy#13512 broke that and emptied the shipped extension template once its examples were uncommented.'
 introduced_in: inception
 defect_class: latent
-mitigation: 'docs/menu.md documents the limitation, and comments on their own line work. The failure is visible: the user entries disappear. It does not corrupt data silently'
-remediation: 'Strip a // comment wherever its opener sits outside a string, without breaking the trailing-comma-then-comment-line shape, as omacom/omarchy#13968 does (SW-REQ-260928-C8W1 on its proof mirror). The earlier single-pass attempt (omacom/omarchy#13512, closed) broke that shape; #13968 supersedes it.'
+mitigation: docs/menu.md documents the limitation, and comments on their own line work. The missing entries are visible, but nothing in the menu or the journal says why; no data is changed.
+remediation: 'Strip a // comment wherever its opener sits outside a string, without breaking the trailing-comma-then-comment-line shape, as omacom/omarchy#13968 does (requirement SW-REQ-260928-C8W1 in the proof layer). The earlier single-pass attempt (omacom/omarchy#13512, closed) broke that shape; #13968 supersedes it.'
+customer_impact: 'One // comment after content on a line, for example after an entry, makes the whole menu file unreadable, so every entry in it disappears: all of your own additions in the extension file, or the whole menu in the default file. Nothing in the menu or the journal says why. Comments on their own line work, and no data is changed.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -41,6 +42,14 @@ history:
       action: edit
       detail: set-tripwire-mutation,set-remediation,set-review-date
     - at: "2026-10-01T21:33:55Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-inline-comment.yaml
+    - at: "2026-10-02T15:04:04Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-mitigation,set-remediation,set-customer-impact
+    - at: "2026-10-02T15:09:27Z"
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-inline-comment.yaml
