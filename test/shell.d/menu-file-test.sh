@@ -2,7 +2,9 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-HR29
+# Verifies: SW-REQ-260922-HR29, SW-REQ-261002-FFTQ, SW-REQ-261002-9H5Y
+#mcdc:ignore:defensive SW-REQ-261002-FFTQ: symlink_root_given=T, symlink_root_listed=F => FALSE -- every start point goes to find -H, which follows a start point that is a symbolic link; listing nothing under a link root needs -H removed (the base behaviour), and a loop below the root can only fail the run if -H is widened to -L [reviewed: REVIEW-261002-6P46]
+#mcdc:ignore:defensive SW-REQ-261002-9H5Y: same_file_reached_twice=T, file_listed_once=F => FALSE -- find prints %D:%i first on every row and awk keeps only the first row per key, so a second row for one file needs the awk filter or the %D:%i field removed [reviewed: REVIEW-261002-VZ1K]
 #mcdc:ignore:defensive SW-REQ-260922-HR29: listing_shape=F, paths_given=T => FALSE -- the find pipeline (prune dotdirs, drop dotfiles, match formats, print mtime+path, sort newest first, cut to the path) is built unconditionally once the paths validate; a misshapen listing from valid paths needs a broken find arg build [reviewed: REVIEW-M7]
 # mcdc:witness-out-of-process
 
@@ -61,3 +63,51 @@ SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
   fail "file picker without formats never reaches the menu" "selected: $(cat "$tmp/selected")"
 # MCDC SW-REQ-260922-HR29: listing_shape=F, paths_given=F => TRUE [no-action: the omarchy-menu-select spy captured nothing -- no listing is produced for a missing-arguments call]
 pass "file picker rejects missing arguments before listing"
+
+# ------------------------------------------------ symbolic link roots (PR #13197)
+# omacom/omarchy#13197: a given path that is a symbolic link to a directory is
+# followed (find -H), a link below a root is not descended, and a file reached
+# through two given paths is listed once (device:inode). The PR's own test is
+# test/shell.d/menu-file-symlink-root-test.sh; these rows add the MC/DC
+# witnesses and fail on the base, where find skips a link start point and a
+# file reached twice is listed twice.
+media="$tmp/media"
+links="$tmp/links"
+mkdir -p "$media/sub" "$links"
+printf 'v' >"$media/clip.webm"
+ln -s "$media" "$links/Videos"
+ln -s "$media" "$media/sub/loop"
+
+: >"$tmp/selected"
+status=0
+SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
+  "$ROOT/bin/omarchy-menu-file" "Pick a video" "$links/Videos" "webm" || status=$?
+[[ $status -eq 0 ]] || fail "file picker follows a symbolic link root and keeps exit 0 with a link loop below it" "status: $status"
+[[ $(<"$tmp/selected") == "$links/Videos/clip.webm" ]] ||
+  fail "file picker lists the files under a symbolic link root, not the loop below it" "got: $(cat "$tmp/selected")"
+# MCDC SW-REQ-261002-FFTQ: symlink_root_given=T, symlink_root_listed=T => TRUE
+pass "file picker lists the files under a symbolic link root and does not descend a link below it"
+
+: >"$tmp/selected"
+SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
+  "$ROOT/bin/omarchy-menu-file" "Pick a video" "$media" "webm"
+[[ $(<"$tmp/selected") == "$media/clip.webm" ]] ||
+  fail "file picker lists a real directory root without link handling" "got: $(cat "$tmp/selected")"
+# MCDC SW-REQ-261002-FFTQ: symlink_root_given=F, symlink_root_listed=F => TRUE [no-action: the only root is a real directory, so there is no link start point to follow; its one file is listed as at the base]
+# MCDC SW-REQ-261002-9H5Y: same_file_reached_twice=F, file_listed_once=F => TRUE [no-action: one root and one file, so no file is reached through two paths and the dedup removes no row]
+pass "file picker lists a real directory root as before"
+
+: >"$tmp/selected"
+SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
+  "$ROOT/bin/omarchy-menu-file" "Pick a video" "$links/Videos:$media" "webm"
+[[ $(grep -c 'clip\.webm$' "$tmp/selected") -eq 1 ]] ||
+  fail "file picker lists a file reached through a link root and its target once" "got: $(cat "$tmp/selected")"
+# MCDC SW-REQ-261002-9H5Y: same_file_reached_twice=T, file_listed_once=T => TRUE
+pass "file picker lists a file reached through a link root and its target once"
+
+: >"$tmp/selected"
+SELECT_LOG="$tmp/selected" PATH="$stub_bin:$PATH" \
+  "$ROOT/bin/omarchy-menu-file" "Pick a video" "$media:$media" "webm"
+[[ $(grep -c 'clip\.webm$' "$tmp/selected") -eq 1 ]] ||
+  fail "file picker lists a file of a root given twice once" "got: $(cat "$tmp/selected")"
+pass "file picker lists a file of a root given twice once"
