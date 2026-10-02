@@ -106,7 +106,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Pure UI dialog state machine; the package removal and its privilege escalation live in the shared app library behind appLibrary.remove, owned by that component's requirements - nothing here crosses a privilege boundary, touches a file, or reaches the network.
-verification_state: failing
+verification_state: not_started
 lifecycle:
     change_history:
         - date: "2026-09-27T20:41:27Z"
@@ -118,4 +118,9 @@ lifecycle:
           from: verification=not_started
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-27=present | known_issue:KI-MENU-OPEN-LEAVES-CONFIRM=failing
+          changed_by: agent:auto-derive
+        - date: "2026-10-02T12:04:26Z"
+          from: verification=failing
+          to: verification=not_started
+          reason: auto-derived [failing→not_started] signals=2; review_record:REVIEW-27=present | known_issue:KI-MENU-OPEN-LEAVES-CONFIRM=none
           changed_by: agent:auto-derive
