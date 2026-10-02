@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-01T20:54:47.813803775Z"
+    reviewed_at: "2026-10-02T16:59:01.719354Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:e7d0b382ee15ba3834e586da44adb708
-            shell/plugins/menu/Menu.qml:underhang: file1:e7d0b382ee15ba3834e586da44adb708
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:activateIndex: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
+            shell/plugins/menu/Menu.qml:rebuildDmenuDisplay: file1:275b185b0eaf8ff1b7a5d96587d7dfa0
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -73,6 +73,19 @@ traces:
             - shell/plugins/menu/Menu.qml:824
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-compositor-test.sh:24
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:01.719354Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1200
+            - shell/plugins/menu/Menu.qml:611
+            - shell/plugins/menu/Menu.qml:824
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:432
+            - test/shell.d/menu-compositor-test.sh:445
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C
