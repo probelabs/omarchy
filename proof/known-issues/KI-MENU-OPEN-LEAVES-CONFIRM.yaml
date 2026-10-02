@@ -1,25 +1,30 @@
 id: KI-MENU-OPEN-LEAVES-CONFIRM
-title: A new menu summon re-opens with the stale uninstall confirmation still up
-description: openExistingMenu resets mode/paths/filters but never clears deleteConfirmOpen/deleteTarget (anchor CNF1), and cancel() does not either. The confirm dialog then renders over the fresh item set, targeting an app row that the uninstall can already have removed.
+title: A summon over an open uninstall confirmation leaves it up, and Enter meant for the new prompt uninstalls the app
+description: |-
+    Delete on an app row opens the uninstall confirmation. Uninstall is the preselected button (shell/Ui/ConfirmDialog.qml selectedIndex 1). Only onOpenedChanged clears the confirmation state, when the menu closes. A summon goes through open() into openDmenu, or into openRoute and openExistingMenu. These replace the rows while opened stays true, and they never clear deleteConfirmOpen or deleteTarget.
+
+    The dialog stays on top of the new rows and still takes every key. Enter then runs confirmDelete. It cancels the summoned request, so an omarchy-menu-select caller exits 1, and it removes the app. A live run on upstream 821ae589 (headless sway and Quickshell) confirmed it. That run lost the desktop file of the app for a select prompt, an input prompt and a route summon.
 affected_requirements:
     - SW-REQ-260922-8CQ4
 evidence_manifests:
-    - pocs/menu-qml-static.sh
     - proof/evidence/ki-menu-open-leaves-confirm.yaml
-severity: low
+severity: medium
 severity_basis: risk
-risk: correctness
+risk: data_integrity
 cve_surface: none
-reproducer_command: pocs/menu-qml-static.sh
+reproducer_command: bash test/shell.d/menu-uninstall-confirm-test.sh
+tripwire_mutation: 'Remove the guarded root.cancelDelete() call at the top of open() in shell/plugins/menu/Menu.qml (the 821ae589 behaviour): the red reproducer test/shell.d/menu-uninstall-confirm-test.sh fails at ''a select prompt summoned over an uninstall confirmation dismisses it''.'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: The stale confirm only appears after a prior uninstall attempt; cancelling it once returns the menu to a clean state
-remediation: cancelDelete() in openExistingMenu (or on opened transitions)
+mitigation: Only a summon that arrives while the confirmation shows triggers it, for example an omarchy-menu-select caller such as the Super+K keybindings list. Escape or Cancel on the confirmation before the summon avoids it. Menu keybinds that toggle close the menu, and that clears the confirmation.
+remediation: Fixed by the upstream change that makes a summon cancel a pending confirmation in open() (SW-REQ-261002-VJR1); mirror pr-A.
+notes:
+    - 'Fixed on mirror pr-A by the upstream change (open() runs cancelDelete() when a confirmation is pending). Spec: SW-REQ-261002-VJR1, spec conformance REVIEW-261002-MV7M. The reproducer is now the bound in-suite test test/shell.d/menu-uninstall-confirm-test.sh (Reproduces marker); it fails on 821ae589 and passes with the fix. The earlier mitigation understated the impact: Enter defaults to Uninstall, so the first Enter removes the app.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:50:22Z"
       by: human:Leonid Bugaev
@@ -40,6 +45,14 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-02T11:52:17Z"
+      by: agent:claude-pr-A
+      action: edit
+      detail: 'set-title,set-description,set-severity=medium,set-risk,set-reproducer-command,set-tripwire-mutation,set-mitigation,set-remediation,append-note,set-status=fixed,remove-evidence-manifest,severity-justification=severity: the impact axis moved. The old grading assumed one cancel cleans the state. The live run on 821ae589 shows the stale dialog defaults to Uninstall, so the Enter meant for the new prompt deletes the app''s desktop file (user data) and cancels the prompt.'
+    - at: "2026-10-02T11:54:07Z"
+      by: agent:claude-pr-A
+      action: edit
+      detail: set-description,set-mitigation
 kill_domain: dialog_lifecycle
 affected_file:
     - shell/plugins/menu/MenuModel.js

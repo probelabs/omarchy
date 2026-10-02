@@ -11,7 +11,6 @@
 #   SRT1 search sorts localeCompare, apps sort code-unit <
 #   FV1  only the user FileView has onLoadFailed (default has none)
 #   FV2  user-file failure wipes the last good items
-#   CNF1 openExistingMenu leaves the uninstall confirm state set
 #   PIM1 pendingInitialMenu is written but never read
 # Each assertion greps the LIVE shell/plugins/menu/Menu.qml; a fix flips the
 # corresponding assertion and this script exits 1.
@@ -49,9 +48,6 @@ yes_no FV1 "only the user FileView has onLoadFailed; default file has none" $st
 
 grep -qF 'onLoadFailed: { root.userMenuItems = [];' "$F"; yes_no FV2 "user-file failure wipes the last good items" $?
 
-sed -n '/function openExistingMenu/,/^  }/p' "$F" | grep -qF 'deleteConfirmOpen'; st=$?
-[[ $st == 1 ]]; st=$?; yes_no CNF1 "openExistingMenu resets no uninstall-confirm state" $st
-
 N=$(grep -cF 'pendingInitialMenu' "$F")
 if [[ $N == 2 ]]; then st=0; else st=1; fi
 yes_no PIM1 "pendingInitialMenu appears exactly twice (decl + write), never read" $st
@@ -60,5 +56,5 @@ if (( fail )); then
   echo "ANCHORED-EVIDENCE: a mechanism no longer matches - claims possibly fixed"
   exit 1
 fi
-echo "ANCHORED-EVIDENCE: all 13 Menu.qml mechanisms match the live code"
+echo "ANCHORED-EVIDENCE: all 12 Menu.qml mechanisms match the live code"
 exit 0
