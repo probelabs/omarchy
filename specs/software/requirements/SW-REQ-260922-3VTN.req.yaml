@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-01T22:50:56.567201Z"
-    reviewed_by: agent:claude-pr-13012
+    reviewed_at: "2026-10-02T16:59:21.861005Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:finishRequest: file1:c55c0e087c499aafc84417cf7f5eef78
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:c55c0e087c499aafc84417cf7f5eef78
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:c55c0e087c499aafc84417cf7f5eef78
+            shell/plugins/menu/Menu.qml:cancel: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:finishRequest: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:onClicked: file1:241f397160d002951c42573e1f1178e6
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -64,6 +64,17 @@ traces:
             - shell/plugins/menu/Menu.qml:908
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:10
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:21.861005Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1196
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:908
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
 verification:
     assurance_level: C
