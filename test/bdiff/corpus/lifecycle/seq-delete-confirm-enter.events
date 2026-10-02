@@ -1,2 +1,3 @@
+# Verifies: SW-REQ-261002-VJR1
 # Control: Delete, then Enter on the confirmation itself (Uninstall preselected).
 M D K
