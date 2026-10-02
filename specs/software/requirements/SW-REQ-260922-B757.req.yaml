@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T12:41:54.949716Z"
+    reviewed_at: "2026-10-02T14:49:13.39746Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:fc27f2279de1e5cd4ee33a70334305734f2c20198f543b39a6f9ffc758a8390f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:runAction: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:runAction: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -61,6 +61,21 @@ traces:
           reviewed_by: agent:claude-pr-B
           method: inspection
           rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:156
+            - shell/plugins/menu/Menu.qml:165
+            - shell/plugins/menu/Menu.qml:179
+            - shell/plugins/menu/Menu.qml:194
+            - shell/plugins/menu/Menu.qml:214
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:328
+            - test/shell.d/menu-compositor-test.sh:466
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:13.39746Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:156

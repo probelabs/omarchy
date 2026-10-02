@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T12:59:12.809359Z"
+    reviewed_at: "2026-10-02T14:49:19.796447Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:47e688c32dde592847708eb624fd5d8fbd0e6a76ab3a8335db42c6a8642f9e03
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -36,6 +36,16 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:1170
             - shell/plugins/menu/Menu.qml:1178
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
+        - reviewed_at: "2026-10-02T14:49:19.796447Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1182
+            - shell/plugins/menu/Menu.qml:1190
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
