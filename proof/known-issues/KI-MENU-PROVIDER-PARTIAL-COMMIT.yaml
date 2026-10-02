@@ -55,6 +55,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-provider-partial-commit.yaml
+    - at: "2026-10-02T13:00:46Z"
+      by: agent:claude-pr-B
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-provider-partial-commit.yaml
 kill_domain: provider_lifecycle
 affected_file:
     - shell/plugins/menu/MenuModel.js
