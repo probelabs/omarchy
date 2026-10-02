@@ -63,22 +63,6 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T15:04:04Z"
-      by: agent:claude-baseline-pass
-      action: edit
-      detail: set-mitigation,set-remediation,set-customer-impact
-    - at: "2026-10-02T15:09:28Z"
-      by: agent:claude-baseline-pass
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T15:21:35Z"
-      by: agent:claude-baseline-pass
-      action: edit
-      detail: set-mitigation
-    - at: "2026-10-02T15:24:53Z"
-      by: agent:claude-baseline-pass
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-01T11:07:23Z"
       by: agent:claude-quattro-proof
       action: edit
@@ -93,6 +77,22 @@ history:
       detail: append-note
     - at: "2026-10-01T11:09:01Z"
       by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T15:04:04Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-mitigation,set-remediation,set-customer-impact
+    - at: "2026-10-02T15:09:28Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T15:21:35Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-mitigation
+    - at: "2026-10-02T15:24:53Z"
+      by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-02T17:01:02Z"
