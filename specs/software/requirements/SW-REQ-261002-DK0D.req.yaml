@@ -28,6 +28,30 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
+    reviewed_at: "2026-10-02T12:59:15.790751Z"
+    reviewed_by: agent:claude-pr-B
+    reviewed_fingerprint: sha256:ef62225fde625d8d3de54adb9ac7d317562e170e20195b6f9da4867a5a6339cb
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:item: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
+        satisfies:
+            SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
+    review_history:
+        - reviewed_at: "2026-10-02T12:59:15.790751Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B: new requirement. Implemented by the replay at the end of rebuildItemsFromSources and the clear in openExistingMenu (Implements lines on both); verified by test/shell.d/menu-startup-route-test.sh, which runs the real open/openRoute/openExistingMenu/rebuildItemsFromSources bodies and FileView handlers under node vm; satisfies SYS-REQ-260922-R8DQ (a route opens the item it denotes). Spec conformance REVIEW-261002-NS9R'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:907
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-startup-route-test.sh:101
+            - test/shell.d/menu-startup-route-test.sh:148
+            - test/shell.d/menu-startup-route-test.sh:159
+            - test/shell.d/menu-startup-route-test.sh:168
+            - test/shell.d/menu-startup-route-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
