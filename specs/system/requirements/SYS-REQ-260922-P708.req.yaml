@@ -19,12 +19,14 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-10-01T22:51:39.602771Z"
-    reviewed_by: agent:claude-pr-13012
+    reviewed_at: "2026-10-02T16:59:31.834827Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:c55c0e087c499aafc84417cf7f5eef78
+            shell/plugins/menu/Menu.qml:onClicked: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:onEntered: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:onPositionChanged: file1:241f397160d002951c42573e1f1178e6
         satisfies:
             STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
@@ -70,6 +72,21 @@ traces:
             - test/shell.d/menu-acceptance-test.sh:14
             - test/shell.d/menu-acceptance-test.sh:292
             - test/shell.d/menu-compositor-test.sh:28
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:31.834827Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1492
+            - shell/plugins/menu/Menu.qml:1497
+            - shell/plugins/menu/Menu.qml:1501
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:14
+            - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:333
+            - test/shell.d/menu-compositor-test.sh:347
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C

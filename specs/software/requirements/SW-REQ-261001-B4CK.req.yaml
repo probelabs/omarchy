@@ -22,13 +22,13 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-01T23:46:33.908466Z"
-    reviewed_by: agent:claude-pr-13012
+    reviewed_at: "2026-10-02T16:59:31.51755Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:e7c38a84942c83e8ee4e67c78ad0a08fed2e771e76257479edd21493417823f2
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:goBack: file1:c55c0e087c499aafc84417cf7f5eef78
-            shell/plugins/menu/Menu.qml:underhang: file1:c55c0e087c499aafc84417cf7f5eef78
+            shell/plugins/menu/Menu.qml:goBack: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:setActiveMenu: file1:241f397160d002951c42573e1f1178e6
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -71,6 +71,19 @@ traces:
             - shell/plugins/menu/Menu.qml:783
             - shell/plugins/menu/Menu.qml:815
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
+        - reviewed_at: "2026-10-02T16:59:31.51755Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:783
+            - shell/plugins/menu/Menu.qml:815
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:197
+            - test/shell.d/menu-pointer-lifecycle-test.sh:211
+            - test/shell.d/menu-pointer-lifecycle-test.sh:220
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C
