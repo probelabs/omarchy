@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when symlink_root_given the file_picker shall eventually satisfy symlink_root_listed
-description: The file picker follows each given path that is a symbolic link to a directory. It lists the matching files under the link target, filtered and sorted as for any other root. Inside a root it does not descend into a symbolic link to a directory, so a link loop below a root does not make the listing fail.
+description: The file picker follows each given path that is a symbolic link to a directory. It lists the matching files under the link target as for any other root. Inside a root the picker does not follow a symbolic link to a directory. A link loop below a root thus cannot make the listing fail.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,9 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-6642
 component: menu
-rationale: 'Upstream PR omacom/omarchy#13197 (head 03e6af6a, issue #12665) adds this behaviour to bin/omarchy-menu-file. GNU find, given a symbolic link as a start point, does not follow it by default, so a picker over ~/Videos linked to another disk offered no file and omarchy transcode had nothing to pick. The PR runs find -H: start points are followed, and a symbolic link met inside a root stays a link (find -L would descend it, and a link loop would make find exit 1, which fails the picker under pipefail). SW-REQ-260922-HR29 states format matching, dotfile pruning, order and missing-path rejection, and still holds for every root.'
+rationale: 'Upstream PR omacom/omarchy#13197 (head 03e6af6a, issue #12665) adds this behaviour to bin/omarchy-menu-file. By default GNU find does not follow a symbolic link that it gets as a start point. A picker over a linked ~/Videos thus offered no file, and omarchy transcode had nothing to pick.
+
+    The PR runs find -H. With -H, find follows each start point that is a link and keeps each link inside a root as a link. With -L, find would follow every link, and a link loop would make find exit 1, which fails the picker under pipefail. SW-REQ-260922-HR29 still states format matching, dotfile pruning, order and missing-path rejection for every root.'
 tags: []
 variables:
     - symlink_root_given
@@ -44,9 +46,9 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-pr-13197
+        reviewed_at: "2026-10-02T01:10:00Z"
         ai_generated: true
 history:
     created_by: agent:claude-pr-13197
