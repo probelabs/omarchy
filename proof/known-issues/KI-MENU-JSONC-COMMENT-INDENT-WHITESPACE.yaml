@@ -5,7 +5,7 @@ description: |-
 
     JSON.parse accepts only space, tab, LF and CR as whitespace. So a full-line comment indented with one of those characters now makes the whole file fail to parse. The catch returns an empty item set, and the PR's new console.warn logs the parse error. On the baseline the same file parses to all of its entries.
 
-    We checked this with the real MenuModel.js at the PR head merged onto the baseline. pocs/pr6525-comment-indent-whitespace.sh shows it for all 21 characters against an ASCII-indented control. Quickshell's FileView drops a byte-order mark at the very start of the file. So under the shell a leading BOM before a header comment does not trigger it. The same character on any later line does.
+    We checked this with the real MenuModel.js at the PR head merged onto the baseline. The green tripwire test in test/node/menumodel-replay.test.mjs (menu-node suite) shows it for all 21 characters against an ASCII-indented control. Quickshell's FileView drops a byte-order mark at the very start of the file. So under the shell a leading BOM before a header comment does not trigger it. The same character on any later line does.
 affected_requirements:
     - SW-REQ-260922-E4J2
 evidence_manifests:
@@ -15,8 +15,8 @@ severity_basis: risk
 risk: correctness
 cve_surface: none
 affected_api: MenuModel.parseMenuJsonc (default and user menu JSONC)
-reproducer_command: sh pocs/pr6525-comment-indent-whitespace.sh
-tripwire_mutation: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire pocs/pr6525-comment-indent-whitespace.sh starts exiting 1. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.
+reproducer_command: node --test --test-reporter=spec test/node/menumodel-replay.test.mjs
+tripwire_mutation: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire test in test/node/menumodel-replay.test.mjs fails. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.
 introduced_in: c0f4600e275f49f3107dc5e4fe063f1fccfeda7f
 defect_class: new_defect
 minimization_status: minimized
@@ -46,6 +46,14 @@ history:
       by: agent:claude-pr-6525
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
+    - at: "2026-10-02T06:45:17Z"
+      by: agent:claude-pr-6525
+      action: edit
+      detail: set-description,set-reproducer-command,set-tripwire-mutation
+    - at: "2026-10-02T06:45:23Z"
+      by: agent:claude-pr-6525
+      action: edit
+      detail: set-reproducer-command
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-UNICODE-WHITESPACE. That one is non-JSON whitespace between tokens, on the baseline and unchanged by #6525. This one is the same characters indenting a whole-line comment, which the baseline accepts and #6525 newly rejects. Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY either: that one is the items wrapper key in parseMenuJsonc, not comment stripping. Also not KI-MENU-JSONC-INLINE-COMMENT, KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-CR-LINE-ENDINGS.'
 kill_domain: parsing
 affected_file: shell/plugins/menu/MenuModel.js
