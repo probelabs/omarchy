@@ -69,6 +69,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-02T13:00:46Z"
+      by: agent:claude-pr-B
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
