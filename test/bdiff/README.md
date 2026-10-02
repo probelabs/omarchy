@@ -37,6 +37,8 @@ the next event).
 | `P` / `R` | activate row 0 / row 1 |
 | `C` | close |
 | `X` | the shared answer `Process` exits (fires the revision's `onExited`) |
+| `B` | route summon of a submenu (`{"menu":"sub"}`) |
+| `F` | the menu files load: the revision's `rebuildItemsFromSources` runs over the model items. A sequence that uses `F` starts with no items loaded, like a shell that is still starting, and prints the final active menu |
 
 The shared QML `Process` is modelled as it behaves live: `running = true` while
 it is still running is ignored, and it stays busy until an `X`. After the last
