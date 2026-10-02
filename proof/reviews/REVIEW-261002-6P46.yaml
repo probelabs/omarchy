@@ -1,0 +1,10 @@
+id: REVIEW-261002-6P46
+kind: spec_conformance
+reviewer: agent:claude-pr-13197
+reviewed_at: "2026-10-02T01:01:11Z"
+subject: SW-REQ-261002-FFTQ
+decision: approved
+comment: 'Read bin/omarchy-menu-file on the PR #13197 tree at head 03e6af6a. Every given path is checked with [[ -e ]], which follows a link, so a link to a missing target is rejected with Path not found and exit 1 before any listing. The listing runs find -H over all given paths: a start point that is a symbolic link is followed, and a link met inside a root is not descended (it stays -type l and matches neither branch), so symlink_root_given leads to symlink_root_listed and a link loop below a root cannot make find exit 1. The violation row needs -H removed (the base behaviour: find skips a link start point) or widened to -L; it is dispositioned defensive. Witnesses in test/shell.d/menu-file-test.sh run the real script on a scratch tree with a stub selector: a link root with a loop below it lists the one file and exits 0, and a real root lists as before; the link-root row fails on the base. Not covered here: an unreadable directory below a followed root makes find exit 1 under pipefail after a pick, as for a real root at the base.'
+citations:
+    - bin/omarchy-menu-file:54
+    - bin/omarchy-menu-file:32
