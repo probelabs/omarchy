@@ -4,16 +4,20 @@ results:
       requirements:
         - SW-REQ-260922-N3RM
         - SW-REQ-260922-50RE
-      command: pocs/menu-qml-static.sh
+        - SW-REQ-261002-DK0D
+      command: bash test/shell.d/menu-startup-route-test.sh
       status: pass
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-02T22:06:30Z"
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-02T13:00:46Z"
+      revision: a9b8e6ab87ce9744ceabae283ae51a46c9457af3
+      freshness_basis: revision
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-PENDING-INITIAL-MENU-DEAD` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/menu-qml-static.sh
+        - 'Captured by `proof evidence capture KI-MENU-PENDING-INITIAL-MENU-DEAD` from the KnownIssue''s reproducer command: bash test/shell.d/menu-startup-route-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at ''a route summoned before the default menu file loads opens once it does'''
+        - test/shell.d/menu-startup-route-test.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-PENDING-INITIAL-MENU-DEAD.yaml: ki-content-v1:sha256:9d1c6b5054df6aa98d26e5fec404b50a71c51f8959c4cb391f8caf640e1a8887
+        proof/known-issues/KI-MENU-PENDING-INITIAL-MENU-DEAD.yaml: ki-content-v1:sha256:5794a296b3ca572fce46b9d5e43657766da926545983419a2bb93f69d4cdeb2a
+        test/shell.d/menu-startup-route-test.sh: sha256:d51429962a93e07c4a2517e6189ce31b6d51db017d4de25b28a594be4b0cd34f
       known_issues:
         - KI-MENU-PENDING-INITIAL-MENU-DEAD
       config:
