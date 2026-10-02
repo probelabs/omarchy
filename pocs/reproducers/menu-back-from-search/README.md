@@ -20,4 +20,5 @@ Scope: this is the common case, where the search result is a direct child of the
 #13012 restores the cursor correctly. The PR regresses a different case: when the search result sits
 deeper than the menu being left (at root, search "font", open Install > Style > Font, then Back), the
 #13012 head lands on an unrelated row (`learn`) where upstream lands on row 0 (`apps`). That case is
-reproduced on the `pr/13012` mirror branch (`pocs/pr13012-back-from-search.js`).
+reproduced on the `pr/13012` mirror branch by the `KI-MENU-BACK-FILTERED-INDEX` green tripwire in
+`test/shell.d/menu-pointer-lifecycle-test.sh`.
