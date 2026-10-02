@@ -7,13 +7,13 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-02T22:06:30Z"
+      executed_at: "2026-10-02T11:55:02Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-PENDING-INITIAL-MENU-DEAD` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-PENDING-INITIAL-MENU-DEAD.yaml: ki-content-v1:sha256:9d1c6b5054df6aa98d26e5fec404b50a71c51f8959c4cb391f8caf640e1a8887
+        pocs/menu-qml-static.sh: sha256:dae86e411b23794dff0e230761a2c85548b28f7f6c1b52084aa736d8f7af16d8
+        proof/known-issues/KI-MENU-PENDING-INITIAL-MENU-DEAD.yaml: ki-content-v1:sha256:602e29d46163b724677b22fd8104c74a7e37a2e9ed72f8af6f3e30c06677064d
       known_issues:
         - KI-MENU-PENDING-INITIAL-MENU-DEAD
       config:
