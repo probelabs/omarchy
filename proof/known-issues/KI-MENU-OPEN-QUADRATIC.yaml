@@ -22,7 +22,7 @@ defect_class: latent
 mitigation: Menus of typical size (tens of rows) open without a visible delay. The cost grows only for very long select lists such as the keybindings menu
 remediation: Append the rows in one model update, or defer the height binding until the rebuild ends. Also add a requirement that bounds the menu-open cost; none exists today
 notes:
-    - 'Checked on pr/10631 (omacom/omarchy#10631 at a78528c9 merged onto quattro-proof 9f3abc10): the PR binds visibleRowsHeight to layoutSerial only, but a QML binding also tracks every property read inside the functions it calls, and rowListHeight / dmenuRowListHeight still read displayModel.count and every row. A 231-row open still takes 232 height passes over 27,027 row visits, the same as the base (behaviour diff with the real qml6 engine; the report reproducer keeps its expected failure). Heights are identical at base and head, so the PR is compatible but does not fix this issue.'
+    - 'Checked on pr/10631 (omacom/omarchy#10631 at a78528c9 merged onto quattro-proof 41076fd4): the PR binds visibleRowsHeight to layoutSerial only, but a QML binding also tracks every property read inside the functions it calls, and rowListHeight / dmenuRowListHeight still read displayModel.count and every row. A 231-row open still takes 232 height passes over 27,027 row visits, the same as the base (behaviour diff with the real qml6 engine; the report reproducer keeps its expected failure). Heights are identical at base and head, so the PR is compatible but does not fix this issue.'
 customer_impact: Opening a long select menu does work that grows with the square of its length, because the menu measures the whole list again after each row is added. Menus of tens of rows open without a visible delay, but the 231-row keybindings menu (Super+K) costs 27,027 row visits each time it opens. Nothing breaks; the menu only opens more slowly.
 owner: agent:claude-quattro-clean
 review_date: "2026-10-01"
@@ -58,6 +58,14 @@ history:
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-quadratic.yaml
     - at: "2026-10-02T17:01:02Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-quadratic.yaml
+    - at: "2026-10-02T19:12:25Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: note
+    - at: "2026-10-02T19:12:25Z"
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-quadratic.yaml
