@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-02T16:54:42.7385Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-02T12:42:01.258693Z"
+    reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:e5cd1637075404ff13de781446af96ad3b83f7190faabcf8df6367a23954f089
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:applyDmenuSelection: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:finishRequest: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onExited: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:finishRequest: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -53,26 +53,15 @@ traces:
             - test/shell.d/menu-dmenu-test.sh:118
             - test/shell.d/menu-dmenu-test.sh:5
             - test/shell.d/menu-dmenu-test.sh:82
-        - reviewed_at: "2026-10-02T16:44:36.603336Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T12:42:01.258693Z"
+          reviewed_by: agent:claude-pr-B
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1014
+            - shell/plugins/menu/Menu.qml:1023
             - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:875
-            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
-            - test/shell.d/menu-dmenu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:42.7385Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1015
-            - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:875
+            - shell/plugins/menu/Menu.qml:882
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
 verification:
