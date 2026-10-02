@@ -2,17 +2,18 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-E4J2
-      command: sh pocs/pr6525-comment-indent-whitespace.sh
+      command: node --test --test-reporter=spec test/node/menumodel-replay.test.mjs
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-02T05:18:21Z"
+      executed_at: "2026-10-02T06:45:32Z"
+      revision: e838a12a8972ff897124724b7e10e19aee9c715b
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE` from the KnownIssue''s reproducer command: sh pocs/pr6525-comment-indent-whitespace.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire pocs/pr6525-comment-indent-whitespace.sh starts exiting 1. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
-        - pocs/pr6525-comment-indent-whitespace.sh
+        - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE` from the KnownIssue''s reproducer command: node --test --test-reporter=spec test/node/menumodel-replay.test.mjs. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire test in test/node/menumodel-replay.test.mjs fails. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
+        - test/node/menumodel-replay.test.mjs
       freshness_hashes:
-        pocs/pr6525-comment-indent-whitespace.sh: sha256:58ad9e4760c3aeacbf1d59d274ac3fc852cc08b2351f7f713d1c97401d0a776d
-        proof/known-issues/KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE.yaml: ki-content-v1:sha256:2d46d947d761f11f97891649b114a6ef96a952752f374f464486184e186c0564
+        proof/known-issues/KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE.yaml: ki-content-v1:sha256:55d547ae67209741983d136e8a730b746588d18b0fd5ca2bda15fdbd63285a9c
+        test/node/menumodel-replay.test.mjs: sha256:d6acf7d561f469348abca1f94a5073a3d65100cc6a5650735d31e5f6c18f65e9
       known_issues:
         - KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE
       config:
