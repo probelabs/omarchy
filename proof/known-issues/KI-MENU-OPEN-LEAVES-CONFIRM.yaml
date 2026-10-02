@@ -1,6 +1,6 @@
 id: KI-MENU-OPEN-LEAVES-CONFIRM
-title: A new menu summon re-opens with the stale uninstall confirmation still up
-description: openExistingMenu resets mode/paths/filters but never clears deleteConfirmOpen/deleteTarget (anchor CNF1), and cancel() does not either. The confirm dialog then renders over the fresh item set, targeting an app row that the uninstall can already have removed.
+title: A menu summon leaves a pending uninstall question on top of the new prompt
+description: 'Every summon enters through open(), which calls openDmenu(), or openRoute() and then openExistingMenu(). These replace the mode, rows and request files while opened stays true, and none of them clears deleteConfirmOpen or deleteTarget (anchor CNF1). Only onOpenedChanged clears them, when the menu closes. The keyCatcher still sends every key to the dialog, which preselects Uninstall. Enter then runs confirmDelete(): cancel() finishes the new request with no selection, and appLibrary.remove() uninstalls the app.'
 affected_requirements:
     - SW-REQ-260922-8CQ4
 evidence_manifests:
@@ -14,8 +14,9 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: The stale confirm only appears after a prior uninstall attempt; cancelling it once returns the menu to a clean state
-remediation: cancelDelete() in openExistingMenu (or on opened transitions)
+mitigation: It takes an unanswered uninstall question plus a summon, such as a script prompt that appears while you are in the Apps menu. Answering the question with Escape or Cancel, or closing the menu, clears it.
+remediation: 'Call cancelDelete() in open(), where every summon enters, when a question is pending. PR #14054 does this.'
+customer_impact: If something summons the menu while an uninstall question is open, the question stays on top of the new prompt. The dialog preselects Uninstall, so the Enter you meant for the prompt uninstalls the app. Omarchy deletes your own, web-app and TUI launchers with no further prompt; for a package, it opens the uninstall terminal. The prompt's caller gets a cancel, so the action behind it never runs.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -38,6 +39,14 @@ history:
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
     - at: "2026-09-30T21:02:56Z"
       by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-02T22:05:48Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-title,set-description,set-mitigation,set-remediation,set-customer-impact
+    - at: "2026-10-02T22:06:29Z"
+      by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
 kill_domain: dialog_lifecycle
