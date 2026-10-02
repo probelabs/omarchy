@@ -6,4 +6,4 @@ subject: SW-REQ-260922-NM45
 decision: approved
 comment: Read rebuildDmenuDisplay and the dmenu activation path. Options are parsed as glyph TAB label [TAB subtext]; the display model shows the glyph, and activateIndex builds the returned selection from picked.label and picked.detail only — the glyph never reaches the result, and a subtext-bearing pick returns 'label TAB subtext' as the stable key. Both conjuncts map to that string build. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:602
+    - shell/plugins/menu/Menu.qml:618
