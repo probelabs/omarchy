@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:44.066935Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-02T12:42:04.290869Z"
+    reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:activateIndex: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rebuildDmenuDisplay: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:underhang: file1:dc5df4c3ace8f81fd0a45980dab604a9
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -63,28 +63,15 @@ traces:
             - test/shell.d/menu-compositor-test.sh:446
             - test/shell.d/menu-compositor-test.sh:447
             - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:37.687054Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T12:42:04.290869Z"
+          reviewed_by: agent:claude-pr-B
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1204
-            - shell/plugins/menu/Menu.qml:602
-            - shell/plugins/menu/Menu.qml:815
-            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
-            - test/shell.d/menu-compositor-test.sh:432
-            - test/shell.d/menu-compositor-test.sh:445
-            - test/shell.d/menu-compositor-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:44.066935Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1205
-            - shell/plugins/menu/Menu.qml:602
-            - shell/plugins/menu/Menu.qml:815
+            - shell/plugins/menu/Menu.qml:1213
+            - shell/plugins/menu/Menu.qml:609
+            - shell/plugins/menu/Menu.qml:822
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-compositor-test.sh:432
             - test/shell.d/menu-compositor-test.sh:445
