@@ -8,16 +8,15 @@ results:
       command: bash test/shell.d/menu-startup-route-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-02T13:00:46Z"
-      revision: a9b8e6ab87ce9744ceabae283ae51a46c9457af3
-      freshness_basis: revision
+      executed_at: "2026-10-02T14:51:46Z"
+      revision: 24183647791a9faea8a40f83b122e7e1072d7b14
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-PENDING-INITIAL-MENU-DEAD` from the KnownIssue''s reproducer command: bash test/shell.d/menu-startup-route-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
-        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at ''a route summoned before the default menu file loads opens once it does'''
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at ''a route summoned during startup opens once the default file loads and the user file is found missing'''
         - test/shell.d/menu-startup-route-test.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-PENDING-INITIAL-MENU-DEAD.yaml: ki-content-v1:sha256:5794a296b3ca572fce46b9d5e43657766da926545983419a2bb93f69d4cdeb2a
-        test/shell.d/menu-startup-route-test.sh: sha256:d51429962a93e07c4a2517e6189ce31b6d51db017d4de25b28a594be4b0cd34f
+        proof/known-issues/KI-MENU-PENDING-INITIAL-MENU-DEAD.yaml: ki-content-v1:sha256:75b47ed2be51443d1750cfa0a09fef84867502849dbd2f1d5b9deb8661a3f25e
+        test/shell.d/menu-startup-route-test.sh: sha256:3afb5d1642ce536f08de3d04bd3cb59e27f03897accf60a5c825dd444dfb58b4
       known_issues:
         - KI-MENU-PENDING-INITIAL-MENU-DEAD
       config:
