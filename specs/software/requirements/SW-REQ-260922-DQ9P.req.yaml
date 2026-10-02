@@ -19,13 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-01T22:51:10.956948Z"
-    reviewed_by: agent:claude-pr-13012
+    reviewed_at: "2026-10-02T16:59:25.733481Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:c55c0e087c499aafc84417cf7f5eef78
-            shell/plugins/menu/Menu.qml:underhang: file1:c55c0e087c499aafc84417cf7f5eef78
+            shell/plugins/menu/Menu.qml:descriptionTextMatches: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:leafIdFor: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:matchesQuery: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:nameSearchText: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:parentPathFor: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:pathFor: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:searchableToken: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:setFilter: file1:241f397160d002951c42573e1f1178e6
+            shell/plugins/menu/Menu.qml:termInSearchWords: file1:241f397160d002951c42573e1f1178e6
             shell/plugins/menu/MenuModel.js:matchesQuery: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
@@ -89,6 +96,26 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/node/menumodel-replay.test.mjs:317
             - test/shell.d/menu-test.sh:30
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:25.733481Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:483
+            - shell/plugins/menu/Menu.qml:488
+            - shell/plugins/menu/Menu.qml:518
+            - shell/plugins/menu/Menu.qml:523
+            - shell/plugins/menu/Menu.qml:528
+            - shell/plugins/menu/Menu.qml:533
+            - shell/plugins/menu/Menu.qml:538
+            - shell/plugins/menu/Menu.qml:553
+            - shell/plugins/menu/Menu.qml:772
+            - shell/plugins/menu/MenuModel.js:334
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
