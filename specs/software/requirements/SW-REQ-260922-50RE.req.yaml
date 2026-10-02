@@ -19,16 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T12:41:51.871202Z"
+    reviewed_at: "2026-10-02T14:49:12.248262Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:open: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:openDmenu: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:open: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:openDmenu: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -102,6 +102,28 @@ traces:
             - shell/plugins/menu/Menu.qml:87
             - shell/plugins/menu/Menu.qml:907
             - shell/plugins/menu/Menu.qml:934
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:304
+            - test/shell.d/menu-compositor-test.sh:313
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:12.248262Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669: openExistingMenu keeps a fallen-back route pending only before both menu files answered, and the user FileView onLoadFailed also sets userMenuFailed (both for SW-REQ-261002-DK0D, named on the same Implements lines). open() dispatch on mode, close(), refresh() and ping() are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1064
+            - shell/plugins/menu/Menu.qml:1066
+            - shell/plugins/menu/Menu.qml:1075
+            - shell/plugins/menu/Menu.qml:1077
+            - shell/plugins/menu/Menu.qml:1079
+            - shell/plugins/menu/Menu.qml:21
+            - shell/plugins/menu/Menu.qml:35
+            - shell/plugins/menu/Menu.qml:40
+            - shell/plugins/menu/Menu.qml:47
+            - shell/plugins/menu/Menu.qml:87
+            - shell/plugins/menu/Menu.qml:919
+            - shell/plugins/menu/Menu.qml:946
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh:304
             - test/shell.d/menu-compositor-test.sh:313

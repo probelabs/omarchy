@@ -1,0 +1,3 @@
+# Verifies: SW-REQ-261002-DK0D
+# A route is summoned during startup and only the default menu file has loaded so far.
+B D

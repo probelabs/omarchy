@@ -1,0 +1,3 @@
+# Verifies: SW-REQ-261002-DK0D
+# A route is summoned during startup; the user opens the submenu before the user file answers.
+B D G U

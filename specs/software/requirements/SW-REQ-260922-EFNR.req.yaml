@@ -19,16 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-02T12:42:00.217218Z"
+    reviewed_at: "2026-10-02T14:49:15.386809Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:startNextProvider: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:startNextProvider: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:3e39af46d52efd077ca1d461f19b0735
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
@@ -91,6 +91,26 @@ traces:
             - shell/plugins/menu/Menu.qml:446
             - shell/plugins/menu/Menu.qml:453
             - shell/plugins/menu/Menu.qml:472
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:15.386809Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1020
+            - shell/plugins/menu/Menu.qml:1023
+            - shell/plugins/menu/Menu.qml:1050
+            - shell/plugins/menu/Menu.qml:371
+            - shell/plugins/menu/Menu.qml:392
+            - shell/plugins/menu/Menu.qml:438
+            - shell/plugins/menu/Menu.qml:455
+            - shell/plugins/menu/Menu.qml:462
+            - shell/plugins/menu/Menu.qml:481
             - shell/plugins/menu/MenuModel.js:145
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/node/menumodel-replay.test.mjs:1

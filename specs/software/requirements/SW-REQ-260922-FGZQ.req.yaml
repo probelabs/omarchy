@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-02T12:42:01.258693Z"
+    reviewed_at: "2026-10-02T14:49:15.861855Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:e5cd1637075404ff13de781446af96ad3b83f7190faabcf8df6367a23954f089
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:finishRequest: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:finishRequest: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -62,6 +62,17 @@ traces:
             - shell/plugins/menu/Menu.qml:1023
             - shell/plugins/menu/Menu.qml:122
             - shell/plugins/menu/Menu.qml:882
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:15.861855Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1035
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:894
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
 verification:
