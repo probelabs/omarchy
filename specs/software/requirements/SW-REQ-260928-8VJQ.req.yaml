@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T12:42:11.381218Z"
+    reviewed_at: "2026-10-02T14:49:19.06608Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:runAction: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml:runAction: file1:3e39af46d52efd077ca1d461f19b0735
             shell/plugins/menu/MenuModel.js:summonAction: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -74,6 +74,17 @@ traces:
           reviewed_by: agent:claude-pr-B
           method: inspection
           rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/MenuModel.js:515
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:19.06608Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:143

@@ -19,15 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T12:59:40.849821Z"
+    reviewed_at: "2026-10-02T14:49:40.953803Z"
     reviewed_by: agent:claude-pr-B
     reviewed_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:revealCursor: file1:dc5df4c3ace8f81fd0a45980dab604a9
-            shell/plugins/menu/Menu.qml:underhang: file1:dc5df4c3ace8f81fd0a45980dab604a9
+            shell/plugins/menu/Menu.qml: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:revealCursor: file1:3e39af46d52efd077ca1d461f19b0735
+            shell/plugins/menu/Menu.qml:underhang: file1:3e39af46d52efd077ca1d461f19b0735
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -75,6 +75,22 @@ traces:
             - shell/plugins/menu/Menu.qml
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-acceptance-test.sh:291
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:40.953803Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1225
+            - shell/plugins/menu/Menu.qml:584
+            - shell/plugins/menu/Menu.qml:593
+            - shell/plugins/menu/Menu.qml:754
+            - shell/plugins/menu/Menu.qml:774
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:291
+            - test/shell.d/menu-compositor-test.sh:367
+            - test/shell.d/menu-compositor-test.sh:375
             - test/shell.d/menu-compositor-test.sh:5
 verification:
     assurance_level: C

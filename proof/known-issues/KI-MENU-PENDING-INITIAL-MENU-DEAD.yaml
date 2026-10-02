@@ -16,14 +16,15 @@ severity_basis: risk
 risk: correctness
 cve_surface: none
 reproducer_command: bash test/shell.d/menu-startup-route-test.sh
-tripwire_mutation: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at 'a route summoned before the default menu file loads opens once it does'
+tripwire_mutation: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at 'a route summoned during startup opens once the default file loads and the user file is found missing'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: The race needs a summon landing before the JSONC loads (a sub-second window at session start); reopening lands on the intended route
-remediation: Fixed upstream on pr-B (SW-REQ-261002-DK0D). A route that fell back to root stays pending. A later menu file load that makes it resolve opens it.
+remediation: 'Fixed upstream on #14055 (SW-REQ-261002-DK0D). A route that fell back to root stays pending until both menu files have answered. Then the menu tries it one time and drops it. Typing or opening another menu drops it earlier.'
 notes:
     - 'Fixed by the upstream change on pr-B (43d787d4, "Open a menu route summoned during startup once the menu files load"): openExistingMenu keeps the route pending only when it fell back to root, and rebuildItemsFromSources opens it through openRoute once a load makes it resolve, while the menu still shows root with nothing typed (SW-REQ-261002-DK0D). Reproducer: bash test/shell.d/menu-startup-route-test.sh (red: fails on 821ae589, passes with the fix). The PIM1 anchor left pocs/menu-qml-static.sh.'
+    - 'Follow-up 48405669 ("Wait for both menu files before opening a route summoned during startup"), after review of #14055: the replay now waits until the default file has loaded and the user file has loaded or failed, so it sees the user overrides; it tries the route once and clears pendingInitialMenu whatever the outcome; setFilter and setActiveMenu clear it; a summon after both files answered never waits. The reproducer stays bash test/shell.d/menu-startup-route-test.sh (27 checks; red on 821ae589, all pass on 48405669).'
 customer_impact: A menu key pressed while the shell is starting opens the main menu instead of the menu you asked for. This happens right after login, or after omarchy-restart-shell, which omarchy update runs. An action shortcut such as Super+Ctrl+R also opens the main menu, and its action never runs. Pressing it again a second later works.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -69,6 +70,10 @@ history:
       by: agent:claude-pr-B
       action: edit
       detail: set-remediation
+    - at: "2026-10-02T14:48:19Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-tripwire-mutation,set-remediation,append-note
 kill_domain: startup_race
 affected_file:
     - shell/plugins/menu/MenuModel.js
