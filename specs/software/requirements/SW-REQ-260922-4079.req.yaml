@@ -19,13 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T22:45:39.800717Z"
-    reviewed_by: agent:claude-pr-12223
+    reviewed_at: "2026-10-02T16:59:09.20403Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:4814738158a95da982e78ab3f4d297048bb9913f4c966238f96477828341c213
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml: file1:472526d002de8d982420c7fb73bfec8d
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:472526d002de8d982420c7fb73bfec8d
+            shell/plugins/menu/Menu.qml:evaluateGuards: file1:072b77b2d89d9ec481a43ad4ca33e041
+            shell/plugins/menu/Menu.qml:onExited: file1:072b77b2d89d9ec481a43ad4ca33e041
+            shell/plugins/menu/Menu.qml:onRead: file1:072b77b2d89d9ec481a43ad4ca33e041
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -63,6 +64,19 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-compositor-test.sh:17
             - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-02T16:59:09.20403Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1089
+            - shell/plugins/menu/Menu.qml:1119
+            - shell/plugins/menu/Menu.qml:1122
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-compositor-test.sh:475
+            - test/shell.d/menu-compositor-test.sh:5
+            - test/shell.d/menu-compositor-test.sh:528
 verification:
     assurance_level: C
     formalization_status: valid
