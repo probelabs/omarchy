@@ -19,14 +19,27 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-09-29T14:26:57.150110286Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-02T16:54:47.269065Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:0faebab064ec5dad24c320b57dcfc96c16ca0857948daaa09a46ed81d3778693
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:item: file1:bddf782ed3ac81606c0c53a1106414c4
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
+    review_history:
+        - reviewed_at: "2026-10-02T16:54:47.269065Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:233
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:42
+            - test/shell.d/menu-pointer-lifecycle-test.sh:46
+            - test/shell.d/menu-pointer-lifecycle-test.sh:49
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

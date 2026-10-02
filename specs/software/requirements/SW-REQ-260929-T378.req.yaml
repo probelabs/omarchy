@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:44:40.286404Z"
+    reviewed_at: "2026-10-02T16:54:47.955351Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:413029f242abcbaa1b9c23f34ba4d0e5dc696bc1b3453bde32c0f0cc39a66742
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:disarmPointer: file1:2a1cd5072d179950126df6cdf893eb47
-            shell/plugins/menu/Menu.qml:selectFromPointer: file1:2a1cd5072d179950126df6cdf893eb47
+            shell/plugins/menu/Menu.qml:disarmPointer: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:selectFromPointer: file1:bddf782ed3ac81606c0c53a1106414c4
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -37,6 +37,18 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:979
             - shell/plugins/menu/Menu.qml:984
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:109
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
+            - test/shell.d/menu-pointer-lifecycle-test.sh:96
+        - reviewed_at: "2026-10-02T16:54:47.955351Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:980
+            - shell/plugins/menu/Menu.qml:985
             - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
             - test/shell.d/menu-pointer-lifecycle-test.sh:109
             - test/shell.d/menu-pointer-lifecycle-test.sh:7

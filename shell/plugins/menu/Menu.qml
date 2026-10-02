@@ -953,6 +953,7 @@ Item {
   // Callers may pass a real id (`system`, `setup.power`) or an alias declared
   // in JSONC (`power`, `reminder-set`). Unknown strings fall through to the
   // id-as-route behavior so misspellings still attempt to open the literal id.
+  // Implements: SW-REQ-260922-PRNV, SW-REQ-260922-CYB9, SW-REQ-260922-74BZ
   function resolveRoute(input) {
     return MenuModel.resolveRoute(root.items, root.itemOrder, input)
   }
