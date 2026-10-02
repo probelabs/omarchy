@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-01T23:04:54.265Z"
+    reviewed_at: "2026-10-02T01:01:53.052845Z"
     reviewed_by: agent:claude-pr-13197
     reviewed_fingerprint: sha256:5a56956df986893e2a810ef158740273f6a65cc39da4a658c4dbb4ef094db947
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-file: file1:14273929353386e725fce102beb8bf48
+            bin/omarchy-menu-file: file1:9da2decdc89036ef664148c6a66263e3
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -41,6 +41,15 @@ traces:
           reviewed_by: agent:claude-pr-13197
           method: inspection
           rationale: 'PR #13197 review on quattro-proof 9f3abc10 (upstream head 03e6af6a): bin/omarchy-menu-file now runs find -H (command-line symlink roots followed, interior symlinks not descended) and keys rows on device:inode so aliased roots collapse to one row, still sorted by modification time descending; product diff vs the PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). HR29 (formats case-insensitive, dotfiles pruned, mtime-descending order, nonexistent path rejected with exit 1) still holds: re-read against the script and menu-file-test.sh; the PR test runs in the menu-node suite.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-file:9
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-file-test.sh:5
+        - reviewed_at: "2026-10-02T01:01:53.052845Z"
+          reviewed_by: agent:claude-pr-13197
+          method: inspection
+          rationale: 'PR #13197 review at head 03e6af6a on quattro-proof: bin/omarchy-menu-file runs find -H (link start points followed, links inside a root not descended) and keeps one row per device:inode across roots, still newest first. HR29 (formats case-insensitive, dotfiles pruned, mtime-descending order, nonexistent path rejected with exit 1) still holds; the new behaviour is authored as SW-REQ-261002-FFTQ (link roots) and SW-REQ-261002-9H5Y (one row per file), implemented in bin/omarchy-menu-file and witnessed in test/shell.d/menu-file-test.sh and the PR''s own test/shell.d/menu-file-symlink-root-test.sh (run by the menu-shell suite).'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-file:9

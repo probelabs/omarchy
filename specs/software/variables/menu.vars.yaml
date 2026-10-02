@@ -396,6 +396,22 @@ variables:
       type: bool
       direction: output
       description: Files match the formats, dotfiles and dot-directories are pruned, and rows sort by mtime descending.
+    - name: symlink_root_given
+      type: bool
+      direction: input
+      description: A path given to omarchy-menu-file is a symbolic link to a directory.
+    - name: symlink_root_listed
+      type: bool
+      direction: output
+      description: The matching files under the link target are listed like those of any other root, and no symbolic link to a directory inside a root is descended, so a link loop below a root does not fail the listing.
+    - name: same_file_reached_twice
+      type: bool
+      direction: input
+      description: Two paths given to omarchy-menu-file reach the same file, because one root is a symbolic link to another root (or to a directory above it) or the same root is given twice.
+    - name: file_listed_once
+      type: bool
+      direction: output
+      description: The file has one row in the listing.
     - name: prompt_dismissed
       type: bool
       direction: input
