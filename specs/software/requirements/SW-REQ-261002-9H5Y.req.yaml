@@ -15,6 +15,7 @@ parent: SYS-REQ-260922-6642
 component: menu
 rationale: 'Upstream PR omacom/omarchy#13197 (head 03e6af6a) adds this behaviour to bin/omarchy-menu-file. When find follows link roots, a root linked to another given root lists each file twice, under two paths. Pictures linked to Videos is the example in the PR.
 
+
     The PR prints the device and inode number of each file. After the newest-first sort it keeps the first row for each pair. The key is the file, not its path, so two hard links to one file in the given roots also give one row. The PR states the intent for aliased roots only. This requirement records the hard-link case as the code behaves.'
 tags: []
 variables:
