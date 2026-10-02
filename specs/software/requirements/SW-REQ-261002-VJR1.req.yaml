@@ -26,12 +26,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-02T12:26:05.455297Z"
-    reviewed_by: agent:claude-pr-A
+    reviewed_at: "2026-10-02T17:00:04.794983Z"
+    reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:1657d387c6f3694db3d78cf46c22e739d9be177a0d4757c94b92b90a865d96bf
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:open: file1:3c75b10bab8664f970969d2a86e8c0e2
+            shell/plugins/menu/Menu.qml:open: file1:3f0f23426e45d77accc5bea5e92f84c8
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -59,6 +59,24 @@ traces:
           reviewed_by: agent:claude-pr-A
           method: inspection
           rationale: 'pr-A: VJR1 is now also verified by the behaviour-diff lifecycle harness: test/bdiff/harness.mjs extractKeyHandling/bindKeyHandling run each revision''s real requestDeleteSelected/cancelDelete/confirmDelete, Keys.onPressed and ConfirmDialog.handleKey, and the six seq-delete-*.events inputs drive a select, input and route summon over a raised uninstall confirmation (pending_uninstall_dismissed=T at the head, F at 5d4fb9a8) plus Enter/Escape/Cancel controls with no summon. Implemented by the guarded root.cancelDelete() in open(); satisfies SYS-REQ-260922-6642. Spec conformance REVIEW-261002-MV7M'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-cancel-button.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-escape.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-input-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-menu-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-select-enter.events:1
+            - test/bdiff/harness.mjs:210
+            - test/bdiff/harness.mjs:225
+            - test/shell.d/menu-uninstall-confirm-test.sh:5
+            - test/shell.d/menu-uninstall-confirm-test.sh:90
+        - reviewed_at: "2026-10-02T17:00:04.794983Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:21
