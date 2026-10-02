@@ -1,0 +1,74 @@
+schema_version: 1
+branch: pr-b
+generated_at: "2026-10-02T13:00:03Z"
+reviews:
+    - requirement: SW-REQ-260922-4079
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:4814738158a95da982e78ab3f4d297048bb9913f4c966238f96477828341c213
+      approval_fingerprint: sha256:8d2c60a33a0b947458d733ce0fa039a926f3ecc06c2c2f89c4115bf100a6ef70
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
+    - requirement: SW-REQ-260922-50RE
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
+      approval_fingerprint: sha256:9b3760ea0f61daf59f617ee723d431118f12c185fd771ff8540cf02bcd1b8e66
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
+    - requirement: SW-REQ-260922-8CQ4
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
+      approval_fingerprint: sha256:3e2dd931a01dfbad6dec41878ec7b2fc704223409bd52517037bf8bc62d64bdb
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
+    - requirement: SW-REQ-260922-DE93
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
+      approval_fingerprint: sha256:e9eaac850eaf43e3a74208f52f0f1c2b300f3dda5da745e3fc8856bf7896daf3
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
+    - requirement: SW-REQ-260922-NM45
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
+      approval_fingerprint: sha256:c059ef3c650c5846fbabe90231e81760da0c3af1a43a60d00839208fc8ac8411
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
+    - requirement: SW-REQ-260922-Z48F
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:3ce4f3415d09c2c6a552ddb5af9fbd271db5b33e86222501b6ebdb7cca60b811
+      approval_fingerprint: sha256:9d40a025a18084200d9eaef984ea54f0bfaee5fec654040096a7e9d8687e4b6a
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
+    - requirement: SYS-REQ-260922-P708
+      artifact: shell/plugins/menu/Menu.qml
+      decision: no-authored-change
+      reviewer: agent:claude-pr-B
+      reason: 'pr-B: Menu.qml changed only in rebuildItemsFromSources() (pending-route replay) and openExistingMenu() (clear when the requested item is shown); the new behaviour is SW-REQ-261002-DK0D. The shared-ownership requirements'' intent, FRETish and design text are unchanged; every other function is byte-identical.'
+      base: 5d4fb9a8
+      requirement_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
+      approval_fingerprint: sha256:02b9a962df3d25cc0c660ce4f657b4d99e20b35774ad4ed84b088fab62f44276
+      artifact_fingerprint: sha256:dd522281697b5d1d51e09c778710f2aca87918c655d9944682cad7aa53a59d11
+      reviewed_at: "2026-10-02T13:00:03Z"
