@@ -21,7 +21,7 @@ reproducer_command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: 'Nothing bounds the wait: a caller whose request is superseded, or whose menu process dies, keeps polling forever (19 of 20 in a burst on quattro c05d9019). Later summons still work.'
+mitigation: 'Nothing bounds the wait. A superseded caller, or one whose menu process dies, keeps polling forever: 19 of 20 in a burst on quattro c05d9019. Later summons still work.'
 remediation: 'Finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only. #9056 (head b7bd59c4) answers a superseded request and fixes the busy-writer race; a deadline in omarchy-menu-select is still needed for a dead menu process.'
 customer_impact: Summoning a menu again before answering the previous one, for example by pressing Super+K several times, leaves the earlier caller waiting forever. Each one stays behind as a background process, and the action that opened it never completes. The same happens when the menu process dies while a caller waits. Later menus still open and work.
 owner: agent:opencode-quattro
@@ -65,6 +65,14 @@ history:
       action: edit
       detail: set-mitigation,set-remediation,set-customer-impact
     - at: "2026-10-02T15:09:28Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T15:21:35Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-mitigation
+    - at: "2026-10-02T15:24:53Z"
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
