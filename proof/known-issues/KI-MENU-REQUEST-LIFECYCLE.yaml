@@ -60,6 +60,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T13:00:46Z"
+      by: agent:claude-pr-B
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-02T15:04:04Z"
       by: agent:claude-baseline-pass
       action: edit
@@ -74,10 +78,6 @@ history:
       detail: set-mitigation
     - at: "2026-10-02T15:24:53Z"
       by: agent:claude-baseline-pass
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T13:00:46Z"
-      by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-02T17:01:03Z"
