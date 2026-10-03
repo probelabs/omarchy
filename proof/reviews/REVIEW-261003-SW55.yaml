@@ -1,0 +1,21 @@
+id: REVIEW-261003-SW55
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-03T22:00:33Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Re-review after the three helpers of EmojiSearch.js joined the trace (the audit flagged them as code with no requirement once the file entered the scope). parseEmojis reads emojis.json and returns the parsed array, or an empty list when the text does not parse or is not an array; the description now says so, and the witness test checks the real file and three texts that are not arrays. normalizedQuery trims and lowercases the search text and keywordText lowercases the keywords: that is the ''trims the search text and ignores case'' clause. filterEmojis is unchanged from REVIEW-261003-NYQY: whole-word, keyword-start and inside lists in file order, joined and cut at the limit; it stops early only when the whole-word list holds the limit, which only an empty search text reaches. The guarantee-violation row stays structurally unreachable.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:2@parseEmojis
+    - shell/plugins/emojis/EmojiSearch.js:12@normalizedQuery
+    - shell/plugins/emojis/EmojiSearch.js:17@keywordText
+    - shell/plugins/emojis/EmojiSearch.js:22@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:43
+    - shell/plugins/emojis/EmojiSearch.js:46
+    - shell/plugins/emojis/EmojiSearch.js:48
+    - shell/plugins/emojis/EmojiSearch.js:52
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:37
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:135
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:141
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:145
+    - test/bdiff/harness.mjs:389@runEmojis
