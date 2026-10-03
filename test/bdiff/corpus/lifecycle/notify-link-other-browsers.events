@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# The same message from other Chromium-based browsers, found by app name or by icon.
+@notify {"app": "Brave Browser", "appIcon": "", "body": "<a href=\"https://web.whatsapp.com/\">web.whatsapp.com</a>\n\ngithub.com/omacom/omarchy can you review?"}
+@notify {"app": "Google Chrome", "appIcon": "", "body": "<a href=\"https://web.whatsapp.com/\">web.whatsapp.com</a>\n\nNode.js 24 is out"}
+@notify {"app": "", "appIcon": "microsoft-edge", "body": "<a href=\"https://outlook.office.com/\">outlook.office.com</a>\n\nteams.microsoft.com link inside"}

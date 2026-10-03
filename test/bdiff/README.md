@@ -13,6 +13,7 @@ node test/bdiff/harness.mjs <rev-worktree> <input>
 |---|---|---|
 | `*.jsonc` (also `*.json`) | `<rev>/shell/plugins/menu/MenuModel.js`, loaded in a `node:vm` context like the repo's tests load it (CommonJS `module.exports`) | `summary rows=<n> strip_parse=<kind>`, then `parseMenuJsonc(text)` rows and `JSON.parse(stripJsonc(text))` (or `ERR`) as JSON in insertion order |
 | `*.events` | the real bodies of `open`, `close`, `cancel`, `finishRequest`, `openDmenu`, `openExistingMenu`, `openRoute`, `activateIndex`, `applyDmenuSelection`, `applySelected` and the `resultProc` `onExited` handler, extracted from `<rev>/shell/plugins/menu/Menu.qml` and run under `node:vm` | each caller's outcome (`STRANDED`, `<cancel>` or the value written), the final `opened` / `mode` / `requestActive` / done-file owner, actions run, apps launched, stray writes |
+| `*.events` with `@notify` lines | `<rev>/shell/plugins/notifications/NotificationLogic.js`, loaded in a `node:vm` context like the repo's tests load it; `sanitizeBody` and `styledBody` called the way `NotificationCard.qml` calls them | per notification: whether the card shows a body line (`sanitizeBody(...)` not empty), the card text (`styledBody(...)`), and the `sanitizeBody` result |
 | anything else | nothing | a usage message, exit 2 |
 
 The input file is decoded the way Quickshell `FileView.text()` gives it to QML
@@ -42,6 +43,19 @@ The shared QML `Process` is modelled as it behaves live: `running = true` while
 it is still running is ignored, and it stays busy until an `X`. After the last
 event every still-running write is drained. The method is the one used for the
 #9056 review.
+
+## Notification inputs (`corpus/lifecycle/notify-*.events`)
+
+A line `@notify {"app": …, "appIcon": …, "body": …}` is one notification as the
+notification server hands it to the card; the JSON keeps the body's exact
+newlines and markup. An `.events` file with at least one `@notify` line runs
+the notification mode, not the request-lifecycle simulator, so the menu inputs
+print the same output as before. The inputs use the body that a real Chromium
+148 sends for a web notification to a server that takes hyperlinks: the origin
+link, a blank line, then the message. The output does not depend on the locale
+or the time zone (checked under C, C.UTF-8, en_US, tr_TR, et_EE and th_TH).
+`test/bdiff/notifications-card-test.sh` asserts the card lines of every
+notification input against this checkout; no audit test command runs it.
 
 ## Partitions
 

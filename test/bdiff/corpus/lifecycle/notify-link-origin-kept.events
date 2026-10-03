@@ -1,0 +1,7 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# Control: an origin link whose text the cleanup does not take for a host name
+# with a dot: localhost, an IP address, a host name with non-ASCII letters.
+# The body is kept, link and all, before and after the fix.
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://localhost:8123/\">localhost:8123</a>\n\ngithub.com/omacom/omarchy can you review?"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://127.0.0.1:8123/\">127.0.0.1:8123</a>\n\nNode.js 24 is out"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"https://xn--bcher-kva.de/\">bücher.de</a>\n\nNode.js 24 is out"}

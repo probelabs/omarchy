@@ -1,0 +1,8 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# A web notification from Chromium whose message starts with a web address.
+# Chromium 148 sends the origin as a link, a blank line, then the message,
+# because the shell's notification server takes hyperlinks (the first body is
+# the exact Notify body Chromium sent to the shell).
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\ngithub.com/omacom/omarchy can you review?"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\nhttps://github.com/omacom/omarchy/pull/1 is ready"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\nwww.example.com is down again"}

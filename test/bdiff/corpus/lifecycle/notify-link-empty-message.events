@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# Control: a web notification with an empty message. Only the origin link is
+# left, so the card shows no body line, before and after the fix.
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\n"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\n   "}
