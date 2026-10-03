@@ -3,24 +3,27 @@ title: A menu summon leaves a pending uninstall question on top of the new promp
 description: 'Every summon enters through open(), which calls openDmenu(), or openRoute() and then openExistingMenu(). These replace the mode, rows and request files while opened stays true, and none of them clears deleteConfirmOpen or deleteTarget (anchor CNF1). Only onOpenedChanged clears them, when the menu closes. The keyCatcher still sends every key to the dialog, which preselects Uninstall. Enter then runs confirmDelete(): cancel() finishes the new request with no selection, and appLibrary.remove() uninstalls the app.'
 affected_requirements:
     - SW-REQ-260922-8CQ4
+    - SW-REQ-261002-VJR1
 evidence_manifests:
-    - pocs/menu-qml-static.sh
     - proof/evidence/ki-menu-open-leaves-confirm.yaml
 severity: medium
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-qml-static.sh
+reproducer_command: bash test/shell.d/menu-uninstall-confirm-test.sh
+tripwire_mutation: 'Remove the guarded root.cancelDelete() call at the top of open() in shell/plugins/menu/Menu.qml (the baseline behaviour): the red reproducer test/shell.d/menu-uninstall-confirm-test.sh fails at ''a select prompt summoned over an uninstall confirmation dismisses it''.'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: It takes an unanswered uninstall question plus a summon, such as a script prompt that appears while you are in the Apps menu. Answering the question with Escape or Cancel, or closing the menu, clears it.
-remediation: 'Call cancelDelete() in open(), where every summon enters, when a question is pending. PR #14054 does this.'
+remediation: 'Fixed by PR #14054: open() calls cancelDelete() when a confirmation is pending, so a summon dismisses it (SW-REQ-261002-VJR1).'
+notes:
+    - 'Fixed by PR #14054 (open() runs cancelDelete() when a confirmation is pending). Spec: SW-REQ-261002-VJR1, spec conformance REVIEW-261002-MV7M. The reproducer is now the bound in-suite test test/shell.d/menu-uninstall-confirm-test.sh (Reproduces marker). It fails on the baseline Menu.qml and passes with the fix. The static check CNF1 left pocs/menu-qml-static.sh, because the fix removes the state it pinned.'
 customer_impact: If something summons the menu while an uninstall question is open, the question stays on top of the new prompt. The dialog preselects Uninstall, so the Enter you meant for the prompt uninstalls the app. Omarchy deletes your own, web-app and TUI launchers with no further prompt; for a package, it opens the uninstall terminal. The prompt's caller gets a cancel, so the action behind it never runs.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:50:22Z"
       by: human:Leonid Bugaev
@@ -69,18 +72,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-02T12:04:39Z"
-      by: agent:claude-pr-A
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-03T06:49:25Z"
-      by: agent:claude-pr-A
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-03T13:02:37Z"
-      by: agent:claude-pr-A
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-03T21:06:14Z"
+      by: agent:claude-pr-14054
+      action: edit
+      detail: set-reproducer-command,set-tripwire-mutation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -94,10 +89,10 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: the reproducer for omacom/omarchy#14052 (test/reports/report-cmur1322h0040rfw45yjijlzu.sh on its report branch) runs the real Menu.qml open, delete and key functions and ConfirmDialog.qml handleKey in node, with a real omarchy-menu-select caller. Only omarchy-shell is stubbed, and the uninstall removes a throwaway launcher in a temporary directory. pocs/menu-qml-static.sh pins the CNF1 mechanism in the live Menu.qml.
+        real_infrastructure: the reproducer for omacom/omarchy#14052 (test/reports/report-cmur1322h0040rfw45yjijlzu.sh on its report branch) runs the real Menu.qml open, delete and key functions and ConfirmDialog.qml handleKey in node, with a real omarchy-menu-select caller. Only omarchy-shell is stubbed, and the uninstall removes a throwaway launcher in a temporary directory. On the baseline, pocs/menu-qml-static.sh pinned the CNF1 mechanism. This change removes that anchor, because open() now clears the state.
         quantitative_impact: one Enter removes one launcher file, and the prompt's caller exits 1 with no value instead of the picked row.
         control_test: Escape on the confirmation keeps the launcher. A select prompt with no confirmation open returns the picked value with exit 0. With PR #14054 merged, the summon dismisses the confirmation and the launcher stays.
-        current_deployment_relevance: on this baseline (upstream quattro product code, whose Menu.qml has not changed since 821ae589), open(), openDmenu(), openRoute() and openExistingMenu() clear neither deleteConfirmOpen nor deleteTarget (anchor CNF1).
+        current_deployment_relevance: on the baseline (upstream quattro product code, whose Menu.qml has not changed since 821ae589), open(), openDmenu(), openRoute() and openExistingMenu() clear neither deleteConfirmOpen nor deleteTarget (anchor CNF1). With this change, open() calls cancelDelete() when a confirmation is pending.
         honest_severity: medium. The impact is an unwanted uninstall that deletes user, web-app and TUI launchers with no further prompt. It needs a summon that arrives while an uninstall question is open.
         reproducible: one deterministic command, under one second, node and perl only. The live run was repeated for a select prompt, an input prompt and a route summon.
         no_inflation: the claims are limited to the demonstrated uninstall and the cancelled prompt. No privilege or remote claim is made.
