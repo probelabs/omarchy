@@ -37,17 +37,17 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-03T22:48:18.110423Z"
+    reviewed_at: "2026-10-03T22:53:41.872092Z"
     reviewed_by: agent:claude-pr-new-F
     reviewed_fingerprint: sha256:b0b9d48e26362a2722623efff0d3737783b3fc424db83729deae3c105b0827a1
     reviewed_targets:
         implemented_by:
-            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:c55ad77f1e0a3f79cdb24f4e1d4827fc
-            shell/plugins/emojis/EmojiSearch.js:isWordChar: file1:c55ad77f1e0a3f79cdb24f4e1d4827fc
-            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:c55ad77f1e0a3f79cdb24f4e1d4827fc
-            shell/plugins/emojis/EmojiSearch.js:matchRank: file1:c55ad77f1e0a3f79cdb24f4e1d4827fc
-            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:c55ad77f1e0a3f79cdb24f4e1d4827fc
-            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:c55ad77f1e0a3f79cdb24f4e1d4827fc
+            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:9d30a02b4d119ff679499a006def3b18
+            shell/plugins/emojis/EmojiSearch.js:isWordChar: file1:9d30a02b4d119ff679499a006def3b18
+            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:9d30a02b4d119ff679499a006def3b18
+            shell/plugins/emojis/EmojiSearch.js:matchRank: file1:9d30a02b4d119ff679499a006def3b18
+            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:9d30a02b4d119ff679499a006def3b18
+            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:9d30a02b4d119ff679499a006def3b18
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -205,6 +205,37 @@ traces:
             - shell/plugins/emojis/EmojiSearch.js:26
             - shell/plugins/emojis/EmojiSearch.js:33
             - shell/plugins/emojis/EmojiSearch.js:46
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-emoji-car.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-case.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-cat.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-empty.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-fr.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-key.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-letter.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-man.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-none.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-ok.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-pen.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-phrase.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-red.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-rex.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-steps.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-tea.events:1
+            - test/bdiff/harness.mjs:388
+            - test/shell.d/menu-emoji-search-bdiff-test.sh:11
+        - reviewed_at: "2026-10-03T22:53:41.872092Z"
+          reviewed_by: agent:claude-pr-new-F
+          method: inspection
+          rationale: 'pr-new-F, upstream dbbfa62c (final): implemented by filterEmojis (ranks each match into whole-word, keyword-start or inside groups in file order, cut at the limit, a fractional limit rounded up), matchRank (an empty search text is whole; otherwise the best place the search text shows decides the group), isWordChar (letters with a case, digits and apostrophes form words; anything else, curly quotes included, ends one) and the helpers parseEmojis, normalizedQuery and keywordText, each with an Implements line. Verified by test/shell.d/menu-emoji-search-bdiff-test.sh: all sixteen seq-emoji inputs through test/bdiff/harness.mjs runEmojis, an oracle check of every listed state, and direct checks of separators, quotes, apostrophes, accents, digits, a later whole word and the fractional limit. Satisfies SYS-REQ-260922-6642: the emoji that Enter picks is the argument of omarchy-menu-emoji-insert.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/emojis/EmojiSearch.js:1
+            - shell/plugins/emojis/EmojiSearch.js:11
+            - shell/plugins/emojis/EmojiSearch.js:16
+            - shell/plugins/emojis/EmojiSearch.js:26
+            - shell/plugins/emojis/EmojiSearch.js:34
+            - shell/plugins/emojis/EmojiSearch.js:48
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/bdiff/corpus/lifecycle/seq-emoji-car.events:1
             - test/bdiff/corpus/lifecycle/seq-emoji-case.events:1

@@ -9,7 +9,7 @@
 # node:vm, and records the emoji that Enter hands to omarchy-menu-emoji-insert.
 
 # Verifies: SW-REQ-261004-H41S
-#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-KMT9]
+#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-6GBP]
 # mcdc:witness-out-of-process
 
 set -euo pipefail
