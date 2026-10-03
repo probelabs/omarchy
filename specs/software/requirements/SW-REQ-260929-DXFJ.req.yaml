@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:54:47.596134Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T07:51:50.226745Z"
+    reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:47e688c32dde592847708eb624fd5d8fbd0e6a76ab3a8335db42c6a8642f9e03
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onShownChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:de2a1d682d8b03346dca5c0a81c1edf9
+            shell/plugins/menu/Menu.qml:onShownChanged: file1:de2a1d682d8b03346dca5c0a81c1edf9
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -51,6 +51,17 @@ traces:
             - shell/plugins/menu/Menu.qml:1170
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-pointer-lifecycle-test.sh:66
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
+            - test/shell.d/menu-pointer-lifecycle-test.sh:72
+        - reviewed_at: "2026-10-03T07:51:50.226745Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D on quattro-proof 39746e65: shell/plugins/menu/Menu.qml changed only inside rebuildDisplay, where the Apps comparator now orders the lowercased names with localeCompare instead of < and > (2 lines replaced by 2), and in the Implements line above rebuildDisplay, which now also names SW-REQ-261003-B7ZA. Every other function is byte-identical at the same lines, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1162
+            - shell/plugins/menu/Menu.qml:1170
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
             - test/shell.d/menu-pointer-lifecycle-test.sh:72
 verification:
