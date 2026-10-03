@@ -8,6 +8,8 @@ affected_requirements:
     - SW-REQ-261004-H41S
 commands:
     - bash test/shell.d/emojis-test.sh
+evidence_manifests:
+    - proof/evidence/ki-menu-emoji-search-inside-word.yaml
 severity: low
 severity_basis: risk
 risk: correctness
@@ -57,5 +59,9 @@ history:
       by: agent:claude-pr-new-F
       action: edit
       detail: note
+    - at: "2026-10-03T23:07:00Z"
+      by: agent:claude-pr-new-F
+      action: capture-evidence
+      detail: proof/evidence/ki-menu-emoji-search-inside-word.yaml
 kill_domain: search_ranking
 affected_file: shell/plugins/emojis/EmojiSearch.js
