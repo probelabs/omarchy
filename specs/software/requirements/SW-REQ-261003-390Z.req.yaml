@@ -14,7 +14,7 @@ informal_verification:
 parent: SYS-REQ-260922-47T8
 component: menu
 rationale: |-
-    Upstream omacom/omarchy quattro a85e29ab has this defect. The remove.theme row runs omarchy-theme-remove with no terminal and has no when: guard. The script lists the theme directories that are not symlinks. With none, it prints "No extra themes installed." and exits 1, and nothing shows that line.
+    Upstream omacom/omarchy quattro 393a43d4 (and a85e29ab before it) has this defect. The remove.theme row runs omarchy-theme-remove with no terminal and has no when: guard. The script lists the theme directories that are not symlinks. With none, it prints "No extra themes installed." and exits 1, and nothing shows that line.
 
     A stock install has only the bundled themes, so the row only closes the menu for most users. Commit 5bc151f9 moved the remover to the menu picker and dropped the floating terminal that showed the line.
 
