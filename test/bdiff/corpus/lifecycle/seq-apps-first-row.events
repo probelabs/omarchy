@@ -1,0 +1,6 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Enter on the first row of the Apps menu: an accented name that belongs first.
+@app firefox Firefox
+@app zed Zed
+@app screens Écrans
+O P
