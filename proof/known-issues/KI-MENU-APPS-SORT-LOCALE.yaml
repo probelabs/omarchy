@@ -19,12 +19,12 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: Every app stays in the list, and search finds an app by its name in any order. Only the place of names that start outside a to z is wrong. That covers names with an accented Latin first letter, and on a Russian, Greek or Chinese desktop the names in that script. On an English desktop most names are plain ASCII.
-remediation: Fixed by the upstream change that makes the Apps comparator and AppSearch.sortedEntries order the names with localeCompare (SW-REQ-261003-B7ZA); mirror pr/new-D.
+remediation: 'Fixed by PR #<PR>, which makes the Apps comparator and AppSearch.sortedEntries order the names with localeCompare (SW-REQ-261003-B7ZA).'
 notes:
     - |-
-      Fixed on mirror pr/new-D by the upstream change. The Apps comparator in rebuildDisplay and AppSearch.sortedEntries now order the names with localeCompare; the id tie-break is unchanged. Spec: SW-REQ-261003-B7ZA. The reproducer is the in-suite test test/shell.d/menu-apps-order-test.sh. It fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.
+      Fixed by PR #<PR>. The Apps comparator in rebuildDisplay and AppSearch.sortedEntries now order the names with localeCompare; the id tie-break is unchanged. Spec: SW-REQ-261003-B7ZA. The reproducer is the in-suite test test/shell.d/menu-apps-order-test.sh. It fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.
 
-      Scope, checked in the real shell: under ru_RU, el_GR and zh_CN the script of the language now comes first, before the Latin names. Under en_US and fr_FR other scripts still follow the Latin names. Under C and C.UTF-8 Qt keeps code-point order, so the fix changes nothing there.
+      Scope, checked in the real shell: under ru_RU, el_GR and zh_CN the script of the language now comes first, before the Latin names. Under en_US and fr_FR other scripts still follow the Latin names. Under C and C.UTF-8 Qt keeps UTF-16 code-unit order, the same as before the fix, so the fix changes nothing there.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -93,6 +93,10 @@ history:
       by: agent:claude-pr-new-D
       action: edit
       detail: set-mitigation
+    - at: "2026-10-03T12:44:49Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: set-remediation,note
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker

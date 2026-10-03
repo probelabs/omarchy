@@ -20,7 +20,8 @@ HARNESS="$ROOT/test/bdiff/harness.mjs"
 CORPUS="$ROOT/test/bdiff/corpus/lifecycle"
 
 # Each case: description, input, the exact lines the harness prints for the
-# shown rows (and the plugin list, when the input asks for it).
+# shown rows, the plugin list when the input asks for it, and the app an
+# Enter launched, if any.
 CASES=(
   # MCDC SW-REQ-261003-B7ZA: apps_rows_in_letter_order=T, apps_rows_rebuilt=T => TRUE
   'an Apps summon lists French names that start with an accent under their letter'
@@ -68,6 +69,22 @@ CASES=(
   'shown menu=apps sorts=1 rows=["Calculatrice","Écrans","Éditeur de texte","Fichiers","Übersetzer","Zed"]
 plugin-list rows=["Calculatrice","Écrans","Éditeur de texte","Fichiers","Übersetzer","Zed"]'
 
+  # The expected line holds a no-break space, a BOM inside "Zoomer" and two
+  # U+FFFD, exactly as the harness prints them.
+  'odd encodings sort by the collation; U+FFFD names stay last'
+  seq-apps-encoding.events
+  'shown menu=apps sorts=1 rows=[""," Notes","🎵 Musik","2048","alpha","İnternet","Straße","Ｚｅｄ","Zoom﻿er","��Broken"]'
+
+  'plain ASCII names keep their order, and Enter launches the first row'
+  seq-apps-ascii.events
+  'shown menu=apps sorts=1 rows=["Alacritty","Btop","Firefox","Obsidian","zed"]
+apps alacritty'
+
+  'Enter on the first Apps row launches the accented name that now sorts first'
+  seq-apps-first-row.events
+  'shown menu=apps sorts=1 rows=["Écrans","Firefox","Zed"]
+apps screens'
+
   # MCDC SW-REQ-261003-B7ZA: apps_rows_in_letter_order=F, apps_rows_rebuilt=F => TRUE [no-action: the same apps are installed but the root menu is summoned; the sort spy shows sorts=0, so the Apps comparator never runs and the root rows keep their item order]
   'a root summon does not run the Apps sort'
   seq-apps-root-control.events
@@ -77,7 +94,7 @@ plugin-list rows=["Calculatrice","Écrans","Éditeur de texte","Fichiers","Über
 for ((i = 0; i < ${#CASES[@]}; i += 3)); do
   description=${CASES[i]}
   expected=${CASES[i + 2]}
-  got=$(node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" | grep -E '^(shown|plugin-list) ')
+  got=$(node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" | grep -E '^(shown|plugin-list) |^apps [^-]')
   if [[ $got == "$expected" ]]; then
     pass "$description"
   else
