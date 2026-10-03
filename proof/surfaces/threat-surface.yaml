@@ -148,7 +148,7 @@ surfaces:
         - "absent payload defaults to '{}' on both paths"
     oracle_families_armed:
       - edge battery (L6) — 10/10 grammar cases + trailing-whitespace and empty-quotes probes, 2026-09-28
-      - shared-handler convergence (L5) — bash/socket path terminates in the same shell.summon (shell.qml:1840)
+      - shared-handler convergence (L5) — bash/socket path terminates in the same shell.summon (shell.qml:1841)
       - shape assertion (L7 metamorphic anchor) — menu-test.sh regex pins runAction's fast-path/fall-through structure
     oracle_families_blocked:
       - live process differential — the two paths differ BY DESIGN in spawn mechanics; equivalence is defined on delivered argv, not on process trees
@@ -159,7 +159,7 @@ surfaces:
       - {q: L2, tag: universal, answer: "match -> dispatch, one-way; no feedback into the model"}
       - {q: L3, tag: universal, answer: "conservation: non-matching actions are byte-preserved into the bash path; the fast path never rewrites the action string"}
       - {q: L4, tag: universal, answer: "equivalence_contract v1 above, defined before the battery ran"}
-      - {q: L5, tag: domain_parameterized, answer: "convergence oracle: both paths end in shell.summon, so post-entry behavior is shared code (shell.qml:1840 -> 1143)"}
+      - {q: L5, tag: domain_parameterized, answer: "convergence oracle: both paths end in shell.summon, so post-entry behavior is shared code (shell.qml:1841 -> 1144)"}
       - {q: L6, tag: domain_parameterized, answer: "grammar battery: compound commands, substitutions, unbalanced quotes, empty/trailing-space payloads, foreign verbs - 10/10 + 2 probes take the expected path"}
       - {q: L7, tag: domain_parameterized, answer: "metamorphic: adding characters outside the grammar flips dispatch to bash and nowhere else"}
       - {q: L8, tag: na, na_reason: "dispatch decision is stateless per activation"}

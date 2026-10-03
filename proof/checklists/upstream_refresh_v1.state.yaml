@@ -1,102 +1,95 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-09-28T15:02:01Z"
+updated_at: "2026-10-03T09:05:46Z"
 steps:
     ac-sweep:
         status: confirmed
-        confirmed_at: "2026-09-28T14:37:12Z"
-        confirmed_by: agent
-        note: 'No new/changed STKs (skeleton-patch: none). No requirement''s acceptance blocks affected - the delta adds no spec changes. proof validate at merge 7771c14e: 85 requirements valid, 4 variable files valid, 0 errors/0 warnings. The executed parse verification (344 rows, new entry normalized) stands as the behavioral witness for the data-row addition under the existing test suite.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: No new or changed STKs; no acceptance block affected. proof validate clean at the merge.
         scope_key: menu
     annotations-heavy:
         status: confirmed
-        confirmed_at: "2026-09-28T14:53:35Z"
-        confirmed_by: agent
-        note: 'No annotation-bearing code moved this delta (only omarchy-menu.jsonc data). Verified green post-merge: annotation_validity clean, suspect_clean 0 links, obligation_evidence_complete 50/50 covered. menu-test.sh suite green locally (JS/node portions incl. the 8VJQ differential corpus at the heredoc tail). The new menu row needs no annotation - it is witnessed by the existing parse+dispatch tests. Remaining local failures are environmental only (lock bash suite needs Linux /usr/bin/bash, lua for keybindings) - box phase next.'
+        confirmed_at: "2026-10-03T09:05:46Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: No annotation-bearing code moved (shell.qml carries no Implements markers and is out of scope). MC/DC and obligation annotations unchanged; the full uncached audit confirms.
         scope_key: menu
     config-migrate:
         status: confirmed
-        confirmed_at: "2026-09-28T14:08:53Z"
-        confirmed_by: agent
-        note: 'No config migration needed: the delta''s only in-scope file (default/omarchy/omarchy-menu.jsonc) is already pinned individually in verification_scope (production include). New upstream files (bin/omarchy-toggle-animations, bin/omarchy-cmd-browser-handoff, toggles/no-animations.lua, browser-handoff/launch-browser tests) all fall outside the lock+menu dogfood universe per the completeness disposition. proof.yaml byte-identical across the merge (git diff empty); check enablement, code_mcdc floors, surface packages unchanged.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'No config migration: proof.yaml byte-identical across the merge; the new upstream files (agent usage, OpenClaw, agents panel, their tests) fall outside the lock+menu scope and are not run by the audit''s named lock/menu test commands.'
     coverage:
-        status: confirmed
-        confirmed_at: "2026-09-28T15:01:01Z"
-        confirmed_by: buger
-        note: 'Box re-measurement at 968148ae (post upstream/quattro b18ab495 sync): full proof audit --no-cache on Linux proof box with probe-code 0.6.0. mcdc_coverage: 83 requirements, 307 witness rows, 0 uncovered. code_mcdc_coverage: aggregate decisions 41.2% / conditions 47.3%, thresholds met. tests_pass: full suite green incl. keybindings (real lua) and the merged update-lock fixture; no new in-scope test logic this delta - the parse verification of the new menu row executed on mac (344 rows). build_passes green.'
-        scope_key: menu
+        status: pending
     defect-review:
         status: confirmed
-        confirmed_at: "2026-09-28T14:41:25Z"
-        confirmed_by: agent
-        note: 'No claims session warranted this delta: no spec''s implementation changed - the only in-scope change is one config data row. The KI hunt''s 4 suspicions were dismissed at research level with evidence (row mis-parse: EXECUTED refutation via node replay to 344 rows; fast-path grammar mismatch: code reading against the 8VJQ regex; summon inventory drift: executed re-count = 4 unchanged; toggle inversion: documented intent, out of scope). defect_review_current gate re-verified green post-merge (severity info posture for pre-existing baseline debt unchanged; scoped specs 66FW/3T3F/E4J2/8VJQ/0W96 stamps untouched by a data-only delta).'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'No claims session warranted: no in-scope implementation changed; the only edited spec text is a line-number citation.'
         scope_key: menu
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-09-28T14:41:25Z"
+              at: "2026-10-03T09:05:13Z"
     delta-intake:
         status: confirmed
-        confirmed_at: "2026-09-28T14:04:29Z"
-        confirmed_by: agent
-        note: 'Delta de63134b..b18ab495 (2 commits, both DHH): #13550 no-animations mode (45 files: shell/Ui/* + panels animation gating, bin/omarchy-toggle-animations, default/hypr/toggles/no-animations.lua, vm-no-animations.sh installer) + #13530 browser handoff (5 files: bin/omarchy-cmd-browser-handoff, launch-browser, launch-webapp, 2 tests). IN-SCOPE contact: exactly one file - default/omarchy/omarchy-menu.jsonc (+1 row: trigger.toggle.animations -> omarchy-toggle-animations, plain exec action). No shell/plugins/menu/** or lock files touched. Merged as 7771c14e, zero conflicts. proof 0.1.0-dev+g66be0edddc8c, builtin catalog 1.10.0, no pin, unchanged. State-file baseline de63134b matches merge parent. Post-merge parse verified: our string-aware scanner reads the merged menu.jsonc to 344 rows with the new entry normalized correctly; menu-test.sh green locally.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Delta 821ae589..a85e29ab (19 commits; upstream merges #11925 third-party plugin __sourceDir, #13296 OpenClaw self-updating install, #14049 agent usage). 31 files, none in the verification scope; omarchy-menu.jsonc, shell/plugins/{menu,lock}/**, bin/omarchy-menu* and bin/omarchy-*lock* byte-identical. Merged with no conflicts. Engine 0.1.0-dev+g8cac9cff8c34, builtin catalog unchanged, no pin.'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-09-28T14:04:29Z"
+            at: "2026-10-03T09:05:13Z"
     hazard:
         status: confirmed
-        confirmed_at: "2026-09-28T14:39:22Z"
-        confirmed_by: agent
-        note: 'Catalog unchanged (1.10.0, no pin) - no hazard_review went stale. Existing reviews re-checked against the delta: 8VJQ''s summon-grammar FMEA unaffected (the new action omarchy-toggle-animations does not match the summon grammar - verified by reading; summon inventory re-counted at 4, unchanged); 0W96''s bind_commands review unaffected (keybindings path untouched). New candidates assessed: the added menu row introduces NO new decision point - it is config data parsed by the witnessed scanner and dispatched by the witnessed exec path; its FMEA worst case (toggle script fails) is identical in class to every other action row and bounded by the documented error_handling posture. No new hazard_review blocks warranted.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Catalog unchanged, so no hazard_review went stale. 8VJQ''s summon-dispatch review re-checked: the convergence anchor moved one line, the behaviour did not. No new decision point in the audited surface.'
         scope_key: menu
     refresh-complete:
-        status: confirmed
-        confirmed_at: "2026-09-28T15:02:01Z"
-        confirmed_by: buger
-        note: 'Upstream refresh campaign COMPLETE for delta de63134b..b18ab495 (2 commits, DHH: #13550 no-animations mode + #13530 browser handoff; merge 7771c14e). Audited surface touched via default/omarchy/omarchy-menu.jsonc only (+1 row trigger.toggle.animations). All 15 steps confirmed. Final full proof audit --no-cache on Linux box at 968148ae: 0 errors / 0 warnings. MC/DC: 307 witness rows, 0 uncovered; code-level 41.2% decisions / 47.3% conditions in thresholds. KI sweep: KI-MENU-SELECT-POLL-DEADLOCK re-executed at merged head - still present, evidence re-stamped 2026-09-28T14:14:16Z; no new confirmed defects (4 suspicions dismissed, parse replay executed). PRs #13255/#13511/#13512 + issues #13250/#13492/#13493 all still open. Pre-existing dispositions intact (P708, CRS-0004/5/6 at info, XJ5D AC-001).'
+        status: pending
     research-delta:
         status: confirmed
-        confirmed_at: "2026-09-28T14:19:35Z"
-        confirmed_by: agent
-        note: 'Research doc: review/upstream-b18ab495-research-delta.md. In-surface contact is exactly one menu.jsonc row (trigger.toggle.animations -> omarchy-toggle-animations, plain exec). Executed parse verification: merged file -> 344 rows via our string-aware scanner, entry normalized correctly; menu-test.sh green. Summon inventory re-counted: 4, unchanged (CRS-0021/C03 stays accurate). KI hunt: 4 suspicions dismissed (row mis-parse - executed refutation; fast-path grammar mismatch - reading; summon inventory drift - re-count; toggle on/off inversion - intentional, documented, out of scope). No menu/lock invariant invalidated by #13550''s animation gating (menu+lock plugins not among gated files) or #13530''s launcher handoff. KI-MENU-SELECT-POLL-DEADLOCK re-executed at 7771c14e: still present, evidence re-stamped 2026-09-28T14:14:16Z.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Research doc review/upstream-a85e29ab-research-delta.md. Contact points: shell.qml publicPluginManifest keeps __sourceDir for third-party plugins only (first-party menu/lock manifests returned before the copy); omarchy-default-agent comment-only (menu setup.default.agent.* rows call it unchanged); OpenClaw scripts and agents panel not reached from menu or lock. No KI names a changed file; no new suspicion survived.'
         scope_key: menu
     residual:
         status: confirmed
-        confirmed_at: "2026-09-28T14:49:20Z"
-        confirmed_by: agent
-        note: 'No NEW residual: the delta is a data row; nothing investigated was deferred - all 4 suspicions were DISMISSED with evidence (parse replay executed, grammar reading, inventory re-count, documented intent), not parked. Fix-sibling sweep: the trigger.toggle.* rows are homogeneous (all plain exec actions); the new row matches the established shape exactly - no isomorphic variant needing the same treatment. L-MENU-JSONC-001 closure re-verified accurate (scanner untouched; the new row parses correctly through it - executed). Vector campaign unchanged (no new vector). residual_kill_hygiene + vector_campaign_hygiene green in box-phase audit.'
+        confirmed_at: "2026-10-03T09:05:14Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'No new residual: nothing deferred; the delta does not touch any residual''s code.'
         scope_key: menu
     skeleton-patch:
         status: confirmed
-        confirmed_at: "2026-09-28T14:22:30Z"
-        confirmed_by: agent
-        note: 'No skeleton adds/retires. The in-surface delta is a single data row in omarchy-menu.jsonc, fully governed by existing specs: parse+normalize by SW-REQ-260922-3T3F/E4J2/46HY (verified executed: 344 rows), dispatch by N3RM/WC89/8VJQ lineage (plain exec action -> bash path). The animations toggle feature itself lives outside the lock+menu dogfood universe (UI gating + hyprland toggle); the menu''s obligation ends at correctly parsing and dispatching the row, both already specified. Out-of-surface additions (omarchy-toggle-animations, browser handoff, vm-no-animations) intentionally not skeletoned per the completeness disposition.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'No skeleton adds or retires: the delta adds no menu or lock behaviour.'
         scope_key: menu
     spec-review-delta:
         status: confirmed
-        confirmed_at: "2026-09-28T14:32:24Z"
-        confirmed_by: agent
-        note: 'No spec files changed and no annotated code changed this delta - the only in-scope change is data (one menu.jsonc row). Changed/suspect review: SYS-REQ-260927-WC89''s interface citation (menu.jsonc:38 Lock row) verified byte-identical in the merged file (insertion at :101); SW-REQ-260922-3T3F/E4J2/46HY parse pipeline re-witnessed by execution (344 rows, correct normalization of the new entry); 8VJQ unaffected (new action is not a summon). Impact review recorded for default/omarchy/omarchy-menu.jsonc. No new spec_conformance review warranted - no requirement''s text, variables, or truth table is touched by a data-row addition.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'No requirement text, variables or truth table changed. SW-REQ-260928-8VJQ domain-obligation rationale: line citation 1840 -> 1841 only; its convergence claim (both dispatch paths end in shell.summon) re-read in the merged shell.qml and still holds. proof validate and proof lint clean.'
         scope_key: menu
     surface-matrix:
         status: confirmed
-        confirmed_at: "2026-09-28T14:34:44Z"
-        confirmed_by: agent
-        note: 'Surface re-extraction against merged tree: zero new GAPs. The delta''s only in-scope change is a data row inside omarchy-menu.jsonc, already modeled by surface menu-jsonc-config (parser posture: our string-aware scanner ahead of upstream, unchanged). The row''s action dispatches via the bash path modeled by menu-action-dispatch (the summon fast path cannot match it - verified by grammar reading). No new entrypoint, boundary, or trust change: the toggle script runs with user privileges like every other action row. Existing surfaces (menu-jsonc-config, menu-action-dispatch, menu-keybindings-dispatch, lock-wallpaper-poster) re-verified unchanged in posture.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Surface re-extraction: zero new GAPs. No new entrypoint, boundary or trust change in the menu or lock surfaces; the __sourceDir change is on the third-party plugin manifest path, which the first-party menu/lock plugins never take. menu-action-dispatch citations refreshed (shell.qml:1841 -> 1144).'
         scope_key: menu
     threat_surface_synthesis:
         status: confirmed
-        confirmed_at: "2026-09-28T14:47:33Z"
-        confirmed_by: agent
-        note: 'No new surfaces this delta (surface-matrix: 0 GAPs). Refresh block added to proof/surfaces/threat-surface.yaml documenting the de63134b..b18ab495 review: the data-row addition rides the already-modeled menu-jsonc-config (parse) and menu-action-dispatch (bash exec) surfaces; all 4 existing surfaces re-verified unchanged in posture. spec_lint_threat_surface_present verified via validate (85 reqs clean).'
+        confirmed_at: "2026-10-03T09:05:14Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: No new surfaces. threat-surface.yaml menu-action-dispatch convergence citations updated to the merged shell.qml (1841 -> 1144); all existing surfaces unchanged in posture.
         scope_key: menu
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-09-28T14:47:33Z"
+              at: "2026-10-03T09:05:14Z"
     traces-light:
         status: confirmed
-        confirmed_at: "2026-09-28T14:30:15Z"
-        confirmed_by: agent
-        note: 'proof trace suspect: 0 links post-merge. The delta''s only in-scope file (omarchy-menu.jsonc) is cited by line in exactly two places - SYS-REQ-260927-WC89 rationale and REVIEW-28, both pointing at :38 (the Lock row). Verified in the merged file: line 38 still carries system.lock -> omarchy-system-lock verbatim; the new trigger.toggle.animations row landed at line 101, below every cited line. No Implements/Documents re-linking needed; no annotation-bearing file changed.'
+        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'proof trace suspect: 0 links post-merge; no annotated file changed. The shell.qml insertion moves the cited summon lines by one: threat-surface.yaml and SW-REQ-260928-8VJQ now cite shell.qml:1841 (IPC summon handler) and :1144 (shell.summon), verified in the merged file.'
         scope_key: menu

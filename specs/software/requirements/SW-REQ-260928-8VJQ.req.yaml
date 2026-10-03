@@ -121,7 +121,7 @@ hazard_review:
           rationale: 'summonAction is a pure regex match over the action string: same input always takes the same path (10/10 battery + replay determinism). The in-process call is synchronous on the UI thread where the bash path was async-detached; ordering of the summon relative to menu close is now deterministic (summon completes before execAction returns), which removes rather than adds a race.'
         - category: domain
           disposition: not_applicable
-          rationale: 'No domain workload tags. The fast path crosses no new trust boundary: the action string was already user-config data executed with user privileges; in-process dispatch reaches the same shell.summon IPC handler the bash path reaches over the socket (shell.qml:1840).'
+          rationale: 'No domain workload tags. The fast path crosses no new trust boundary: the action string was already user-config data executed with user privileges; in-process dispatch reaches the same shell.summon IPC handler the bash path reaches over the socket (shell.qml:1841).'
         - category: structural
           disposition: not_applicable
           rationale: GC'd JavaScript (QML JS engine); no manual memory, pointers, binary framing, or format strings.
