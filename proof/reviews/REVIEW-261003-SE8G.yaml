@@ -1,0 +1,13 @@
+id: REVIEW-261003-SE8G
+kind: spec_conformance
+reviewer: agent:claude-pr-new-E
+reviewed_at: "2026-10-03T21:42:43Z"
+subject: SW-REQ-261004-DHZ3
+decision: approved
+comment: 'The formula matches sanitizeBody. For a Chromium-based sender (isChromiumDerived on the app name or the app icon), the link replacement runs first on the image-stripped body. When it removed text, sanitizeBody returns that result at once (the early return at line 103). So the rest of the body after the origin link and the white space around it stays with no other change: message_after_link_kept. The plain-text replacement runs only when the link replacement removed nothing, the no-link side of the antecedent (origin_link_at_start=F). A sender that is not a Chromium-based browser gets the image-stripped body whole (chromium_sender=F). The violation row (Chromium sender, origin link, changed message) needs that early return removed, so it is a defensive row. The positive row and both no-action rows are witnessed by test/bdiff/notifications-card-test.sh through the behaviour-diff harness, which loads the real NotificationLogic.js. The violation row of SYS-REQ-261004-74P8 rests on the same early return: the card either drops only the origin link or keeps the body whole.'
+citations:
+    - shell/plugins/notifications/NotificationLogic.js:94@sanitizeBody
+    - shell/plugins/notifications/NotificationLogic.js:103
+    - test/bdiff/notifications-card-test.sh:32
+    - test/bdiff/notifications-card-test.sh:71
+    - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1

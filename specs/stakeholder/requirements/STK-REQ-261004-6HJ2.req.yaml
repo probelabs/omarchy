@@ -1,0 +1,94 @@
+id: STK-REQ-261004-6HJ2
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: Users see the notifications that applications and web pages send. The shell shows each notification as a card with its title and its message, and it keeps a history of them. For a web notification, the card shows the message of the page. It does not show the address of the page that the browser adds before the message.
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+component: notifications
+rationale: "A notification tells the user about a new message or event. A card that drops the start of a message gives the user wrong information. A card that repeats the address of the page adds noise to every web notification."
+tags: []
+variables: []
+traces:
+    reviewed_at: "2026-10-03T21:40:14.769075Z"
+    reviewed_by: agent:claude-pr-new-E
+    reviewed_fingerprint: sha256:4ae47b3c4cd9ee688a4f21288a59425603775058d3966ad656768bbf3b0c7620
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/notifications/NotificationLogic.js:isChromiumDerived: file1:8aa013aac4714892a7b55a8d43c75936
+    review_history:
+        - reviewed_at: "2026-10-03T21:40:14.769075Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'NotificationLogic.js is the logic of the notification cards and their history in the shell: body cleanup, glyphs, Do Not Disturb, popups and history rows. Its file-level Implements line (line 1) assigns the module to the notifications story; the functions that carry the web-notification rule trace to SW-REQ-261004-DHZ3. The acceptance criterion is witnessed by demonstration ME-261004-E1CR.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:1
+            - shell/plugins/notifications/NotificationLogic.js:2
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-E
+        reviewed_at: "2026-10-03T21:39:40Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-E
+    created_at: "2026-10-03T21:29:04Z"
+    last_modified_by: agent:claude-pr-new-E
+    last_modified_at: "2026-10-03T21:42:31Z"
+obligation_checklist:
+    - nominal
+hazard_review:
+    reviewed_at: "2026-10-03T21:37:13Z"
+    reviewed_by: agent:claude-pr-new-E
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - nominal
+            - edge_case
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Story-level partitions that decompose through SYS-REQ-261004-74P8: nominal (a web notification shows the whole message of the page, without the origin link) and edge_case (a message that starts with a web address or a dotted word, and an origin without a dot, such as localhost). input_domain not applicable at this level: the body forms are stated on SW-REQ-261004-DHZ3. concurrency_scale not applicable: each card cleans its own body, and no notification changes another.'
+        - category: property
+          disposition: not_applicable
+          rationale: Story-level intent; no algebraic property is stated at this level. The body cleanup is a pure function of one notification, and its rules are on SW-REQ-261004-DHZ3.
+        - category: structural
+          disposition: not_applicable
+          rationale: Stakeholder story with no implementation at this level; the string handling of the body is recorded on SW-REQ-261004-DHZ3.
+        - category: domain
+          disposition: not_applicable
+          rationale: Notifications reach the shell over the session D-Bus from programs of the same user; the card only shows text. No privilege boundary, network call or credential is involved.
+acceptance_review:
+    reviewed_at: "2026-10-03T21:37:13Z"
+    reviewed_by: agent:claude-pr-new-E
+    disposition: reviewed
+    notes: 'One AC: the whole message of a web notification from Chromium, from its first word, without the origin link. It is observable on the card. It is witnessed by demonstration ME-261004-E1CR: a real Chromium 148 sent the notification over D-Bus to the real shell, and a screenshot recorded each card. No audit test command can start a browser, so no automated acceptance test runs this path. SYS-REQ-261004-74P8 and SW-REQ-261004-DHZ3 carry the automated witnesses.'
+stakeholder:
+    persona: Omarchy user
+    story: As an Omarchy user, I want to read the notifications that apps and web pages send. A web notification must show the whole message that the page sent.
+    acceptance_criteria:
+        - id: AC-001
+          text: A Chromium web notification from a page on a named host, such as web.whatsapp.com, shows the whole message. The message keeps its first word. The card does not show the origin link that Chromium puts before the message.
+          verification_method: demonstration
+          verification_evidence:
+            demonstration_ref: ME-261004-E1CR
+          derived_reqs:
+            - SYS-REQ-261004-74P8
+lifecycle:
+    change_history:
+        - date: "2026-10-03T21:39:35Z"
+          from: draft
+          to: review
+          reason: '[pr-new-E] upstream fix for the first word of a Chromium web notification: requirement authored for the behaviour the shell has with the change; spec conformance REVIEW-261003-SE8G; witnesses in test/bdiff/notifications-card-test.sh and the behaviour-diff notification inputs'
+          changed_by: agent:claude-pr-new-E
