@@ -492,6 +492,14 @@ variables:
       type: bool
       direction: input
       description: Every term of the query matches the entry's name, id, generic name, comment or keywords, or a term of five characters or fewer matches its acronym. An empty query matches every entry.
+    - name: emoji_query_typed
+      type: bool
+      direction: input
+      description: The search text of the emoji picker is not empty after the picker trims it.
+    - name: emoji_results_ranked
+      type: bool
+      direction: output
+      description: 'The emoji picker lists the emojis whose keywords hold the search text in three groups: the search text as whole words, then as the start of a keyword, then inside a keyword. Each group keeps the order of emojis.json, and the list holds at most the limit of the picker.'
     - name: emoji_listed
       type: bool
       direction: output

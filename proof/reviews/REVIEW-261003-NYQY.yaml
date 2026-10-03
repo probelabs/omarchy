@@ -1,0 +1,18 @@
+id: REVIEW-261003-NYQY
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-03T21:25:05Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'The formula says: when the search text is not empty, the picker lists its matches ranked. filterEmojis matches the description. It trims and lowercases the search text, wraps the keywords in spaces, and puts each match in the whole-word list when the search text has a space on each side, else in the keyword-start list when it follows a space, else in the inside list. It returns the three lists joined, cut at the limit, so each group keeps the file order. It stops early only when the whole-word list holds the limit, which only an empty search text reaches. With an empty search text every emoji goes to the whole-word list, so the picker lists emojis.json in file order up to 1000: the no-action row. The match test is the same as before, so the same emojis match; with more than 1000 matches, as for e, the shown 1000 come from the ranked list. The witness test asserts every emoji input and checks the full list of each step against an oracle written from the description. The guarantee-violation row is structurally unreachable: a non-empty search text has only the ranked path.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:19@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:40
+    - shell/plugins/emojis/EmojiSearch.js:43
+    - shell/plugins/emojis/EmojiSearch.js:45
+    - shell/plugins/emojis/EmojiSearch.js:49
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:37
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:135
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:139
+    - test/bdiff/harness.mjs:389@runEmojis
+    - test/bdiff/corpus/lifecycle/seq-emoji-letter.events:1
