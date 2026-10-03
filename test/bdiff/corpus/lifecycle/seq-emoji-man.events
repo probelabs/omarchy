@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: man; a colon or an underscore ends a keyword (man: beard, red_haired_man).
+@emojis
+@type man
+@enter
