@@ -93,7 +93,7 @@ hazard_review:
           rationale: 'determinism: for a given directory state the kept row is fixed by the sort order. idempotency: giving a root a second time adds no row.'
         - category: structural
           disposition: not_applicable
-          rationale: 'awk keys on the first tab-separated field (%D:%i), which find prints from metadata; a tab or newline in a file name can split a row, as at the base.'
+          rationale: 'awk keys on the first tab-separated field (%D:%i, printed by find from metadata) plus the base name it takes after the first two fields, so a tab in a file name stays in the name. A newline in a file name splits a row, as at the base.'
         - category: domain
           disposition: not_applicable
           rationale: 'Local filesystem reads only; no network, crypto, secrets or privilege surface.'
