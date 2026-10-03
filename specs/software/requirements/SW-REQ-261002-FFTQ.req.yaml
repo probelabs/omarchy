@@ -24,12 +24,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-02T01:02:01.675958Z"
-    reviewed_by: agent:claude-pr-13197
+    reviewed_at: "2026-10-03T09:10:21.631046Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:5e6160b06f8b1e0475211cbb316c36069ad7bab3fa205445eb8d6c9839825c6a
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-file: file1:9da2decdc89036ef664148c6a66263e3
+            bin/omarchy-menu-file: file1:80a36041d5fcbfcdd4051634eacb8b33
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -42,6 +42,18 @@ traces:
             - bin/omarchy-menu-file:9
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-file-symlink-root-test.sh:5
+            - test/shell.d/menu-file-test.sh:5
+        - reviewed_at: "2026-10-03T09:10:21.631046Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #13197 head cc710e11 on quattro-proof: bin/omarchy-menu-file now keys the dedup on device:inode plus the file name (awk derives the base name from the printed path), so hard links under different names stay separate rows and a file reached through aliased roots still gives one row; find -H root handling, format matching, dotfile pruning, newest-first order and the nonexistent-path refusal are unchanged. Recorded under the owner''s delegation for this change.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-file:9
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-file-symlink-root-test.sh:5
+            - test/shell.d/menu-file-test.sh:120
+            - test/shell.d/menu-file-test.sh:136
             - test/shell.d/menu-file-test.sh:5
 verification:
     assurance_level: C
