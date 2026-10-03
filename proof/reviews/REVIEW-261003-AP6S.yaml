@@ -1,0 +1,12 @@
+id: REVIEW-261003-AP6S
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T09:19:57Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: Re-review after the restatement on quattro-proof 87c3ca68. The comparator in rebuildDisplay orders the lowercased names with localeCompare and falls back to the id only on a tie, so the rows follow the collation of the locale, not a promise that every name sorts under a Latin letter. Accented Latin names sort under their base letter (seq-apps-french, seq-apps-german, seq-apps-decomposed). Greek, Cyrillic, Arabic and Han names sort after the Latin names, at base and at head (seq-apps-nonlatin). Symbol-led names now sort before digits and letters (seq-apps-symbols), the same order the real shell shows under en_US.UTF-8. Qt supplies the collation in the shell; under C or C.UTF-8 it keeps code-point order, so the change is a no-op there (real shell). The node witnesses pin the comparator, not Qt's collation. The formula and the defensive violation row (REVIEW-261003-JTMM) are unchanged.
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - shell/plugins/menu/Menu.qml:714
+    - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+    - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
