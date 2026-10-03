@@ -1,0 +1,12 @@
+id: REVIEW-261003-39RH
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T16:11:30Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: 'Re-review for the second upstream commit c4a14aa9 of PR #14155. AppSearch.sortedEntries now orders by localeCompare of the lowercased key and then by the desktop id, the same tie-break as the Apps comparator in rebuildDisplay (localeCompare of the lowercased labels, then the item id). So two names that collate equal come out in id order whatever order they arrive in; this supersedes the input-order wording of REVIEW-261003-JH9B and REVIEW-261003-721N. The PR test now runs node under LC_ALL=C.UTF-8, so its expectations use the root collation on any test machine, and it asserts id order for a composed and a decomposed É in both arrival orders. seq-apps-plugin-tie shows the menu and the plugin list agree on that order. B7ZA states that ties keep a fixed order by desktop id, the same as the Apps menu. The formula and the defensive violation row (REVIEW-261003-JTMM) are unchanged.'
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - shell/services/AppSearch.js:109@sortedEntries
+    - test/shell.d/menu-apps-order-test.sh:69
+    - test/bdiff/corpus/lifecycle/seq-apps-plugin-tie.events:1
