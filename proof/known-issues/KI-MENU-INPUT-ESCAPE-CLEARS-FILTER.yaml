@@ -44,6 +44,10 @@ history:
       by: agent:claude-pr-new-D
       action: refresh-evidence
       detail: proof/evidence/ki-menu-input-escape-clears-filter.yaml
+    - at: "2026-10-03T15:30:02Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-input-escape-clears-filter.yaml
 kill_domain: key_handling
 affected_file:
     - shell/plugins/menu/MenuModel.js

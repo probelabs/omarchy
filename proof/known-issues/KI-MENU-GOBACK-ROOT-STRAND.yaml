@@ -44,6 +44,10 @@ history:
       by: agent:claude-pr-new-D
       action: refresh-evidence
       detail: proof/evidence/ki-menu-goback-root-strand.yaml
+    - at: "2026-10-03T15:30:02Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-goback-root-strand.yaml
 kill_domain: navigation
 affected_file:
     - shell/plugins/menu/MenuModel.js

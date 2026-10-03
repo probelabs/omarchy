@@ -5,7 +5,7 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-03T15:15:17Z"
+      executed_at: "2026-10-03T15:30:03Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-OPEN-NULL-PAYLOAD` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
