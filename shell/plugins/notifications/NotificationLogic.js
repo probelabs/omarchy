@@ -93,9 +93,14 @@ function sanitizeBody(body, app, appIcon) {
   var text = stripImageTags(String(body || ""))
   if (!isChromiumDerived(app, appIcon)) return text
 
-  return text
-    .replace(/^\s*<a\b[^>]*>\s*(?:https?:\/\/|www\.)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:\/[^<\s]*)?\s*<\/a>\s*/i, "")
-    .replace(/^\s*(?:https?:\/\/|www\.)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:\/\S*)?\s+/i, "")
+  // Chromium starts the body with the sending origin: a link when the server
+  // takes hyperlinks, plain text when it does not, never both. Drop only that.
+  // Once the link is gone the rest is the message, even when it starts with a
+  // URL or a dotted word of its own.
+  var withoutLink = text.replace(/^\s*<a\b[^>]*>\s*(?:https?:\/\/|www\.)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:\/[^<\s]*)?\s*<\/a>\s*/i, "")
+  if (withoutLink !== text) return withoutLink
+
+  return text.replace(/^\s*(?:https?:\/\/|www\.)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:\/\S*)?\s+/i, "")
 }
 
 function summaryStartsWithGlyph(summary) {
