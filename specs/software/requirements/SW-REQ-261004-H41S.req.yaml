@@ -1,0 +1,116 @@
+id: SW-REQ-261004-H41S
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when emoji_query_typed the emoji_picker shall immediately satisfy emoji_results_ranked
+description: |-
+    The emoji picker lists the emojis whose keywords hold the search text, and Enter picks the first emoji of the list. The picker trims the search text and ignores case. The list has three groups in this order.
+
+    First come the emojis that hold the search text as whole words, with a space or the end of the keywords on each side. Next come the emojis with a keyword that starts with the search text. Last come the emojis that hold the search text inside a keyword. Each group keeps the order of emojis.json.
+
+    The picker shows at most 1000 emojis, from the start of this list. When more emojis match, as for a single letter such as e, the picker shows the first 1000 of the ranked list. With an empty search text the picker lists emojis.json in file order, up to 1000.
+
+    An emoji matches the search text when it matched before the fix. The fix changes the order of the list, and so it also changes which 1000 emojis show when more than 1000 match.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro 393a43d4 has this defect. filterEmojis in shell/plugins/emojis/EmojiSearch.js keeps every emoji whose keywords contain the search text anywhere, in the order of emojis.json. The picker selects the first result, and Enter hands it to the insert helper. So a match inside an unrelated word can come first.
+
+    In the real shell on 393a43d4, Enter picks the broken heart for ok (from broken). It picks the face with tears of joy for tea (from tears) and the cold face for fr (from freezing). With the fix, Enter picks the OK hand, the teacup and the flag of France.
+
+    The fix sorts the matches into three lists while it reads emojis.json, and joins them at the end. It stops early only when the whole-word list holds the limit. Only an empty search text puts every emoji in that list.
+
+    The behaviour-diff harness runs the picker functions of Emojis.qml with the real filterEmojis and the real emojis.json of each revision. The witness test test/shell.d/menu-emoji-search-bdiff-test.sh checks its output for each input. The upstream test test/shell.d/emojis-test.sh checks the three groups, the limit after the ranking and the OK hand for ok.
+tags: []
+variables:
+    - emoji_query_typed
+    - emoji_results_ranked
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+    reviewed_at: "2026-10-03T21:26:58.683973Z"
+    reviewed_by: agent:claude-pr-new-F
+    reviewed_fingerprint: sha256:b0b9d48e26362a2722623efff0d3737783b3fc424db83729deae3c105b0827a1
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:6221fe0ee768f4efc85b8165a4c7c3f3
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
+    review_history:
+        - reviewed_at: "2026-10-03T21:26:58.683973Z"
+          reviewed_by: agent:claude-pr-new-F
+          method: inspection
+          rationale: 'pr-new-F: new requirement. Implemented by filterEmojis in shell/plugins/emojis/EmojiSearch.js (Implements line above it): it puts each match in a whole-word, keyword-start or inside list as it reads emojis.json and returns the three lists joined, cut at the limit. Verified by test/shell.d/menu-emoji-search-bdiff-test.sh, which replays the thirteen seq-emoji-*.events inputs through test/bdiff/harness.mjs (runEmojis runs the real picker functions of Emojis.qml with this filterEmojis and the real emojis.json) and checks every list against an oracle written from the description. Satisfies SYS-REQ-260922-6642: the menu Trigger > Emoji row opens the picker, and the emoji that Enter picks is the argument of omarchy-menu-emoji-insert, an action script that parent names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/emojis/EmojiSearch.js:18
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-emoji-car.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-case.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-cat.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-empty.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-fr.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-letter.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-none.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-ok.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-pen.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-phrase.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-red.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-steps.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-tea.events:1
+            - test/bdiff/harness.mjs:388
+            - test/shell.d/menu-emoji-search-bdiff-test.sh:11
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-F
+        reviewed_at: "2026-10-03T21:26:34Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-F
+    created_at: "2026-10-03T21:19:50Z"
+    last_modified_by: agent:claude-pr-new-F
+    last_modified_at: "2026-10-03T21:26:34Z"
+hazard_review:
+    reviewed_at: "2026-10-03T21:25:28Z"
+    reviewed_by: agent:claude-pr-new-F
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+            - empty_input
+            - boundary
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: Enter hands the insert helper an emoji the user did not ask for, such as the broken heart for ok. edge_case: a search text that is a whole keyword, the start of a keyword, or only inside a keyword; a phrase of several words; capitals and a leading space; a search text that matches nothing (all witnessed). empty_input: with no search text the picker lists emojis.json in file order up to the limit (witnessed, no-action row). boundary: more matches than the limit of 1000, as for the letter e; the picker keeps the first 1000 of the ranked list (witnessed). input_domain is not applicable: the search text is plain typed text, and filterEmojis only trims it, lowercases it and looks for it in the keywords. concurrency_scale is not applicable: one picker runs filterEmojis synchronously on each key, over one fixed list of 1870 emojis.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: the same search text and the same emojis.json give the same list, because each group keeps the file order and nothing else decides the order. totality: every search text gives a list, maybe empty; an emoji with no keywords matches only the empty search text.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Three arrays and substring checks on strings that are already decoded. No memory, numeric or encoding transform beyond lowercasing, which the code also did before the fix.
+        - category: domain
+          disposition: not_applicable
+          rationale: The order of the emojis inside the picker window only. No trust boundary, privilege, network, crypto or process surface; the insert helper and its clipboard use are outside this requirement.
+lifecycle:
+    change_history:
+        - date: "2026-10-03T21:25:29Z"
+          from: draft
+          to: review
+          reason: '[pr-new-F] upstream fix for the emoji search order: requirement authored for the behaviour the change adds; spec conformance REVIEW-261003-NYQY; executing witnesses in test/shell.d/menu-emoji-search-bdiff-test.sh'
+          changed_by: agent:claude-pr-new-F
