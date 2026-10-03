@@ -1,17 +1,21 @@
 schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
-      requirement: SYS-REQ-260922-47T8
-      command: bash pocs/menu-remove-theme-guard.sh
-      status: fail
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-03T09:19:02Z"
+      requirements:
+        - SYS-REQ-260922-47T8
+        - SW-REQ-261003-390Z
+      command: bash test/shell.d/menu-guards-test.sh
+      status: pass
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-03T12:07:39Z"
+      revision: 9c97c82f02221db39aa5574abf581968058f9cbd
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-REMOVE-THEME-NO-THEMES` from the KnownIssue''s reproducer command: bash pocs/menu-remove-theme-guard.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
-        - pocs/menu-remove-theme-guard.sh
+        - 'Captured by `proof evidence capture KI-MENU-REMOVE-THEME-NO-THEMES` from the KnownIssue''s reproducer command: bash test/shell.d/menu-guards-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Drop the when: from the remove.theme row in default/omarchy/omarchy-menu.jsonc (the a85e29ab row): the red reproducer test/shell.d/menu-guards-test.sh fails at ''Remove > Theme shows exactly when omarchy-theme-remove has a theme to offer'' (missing, empty and symlink-only homes: guard=0 expected=1).'
+        - test/shell.d/menu-guards-test.sh
       freshness_hashes:
-        pocs/menu-remove-theme-guard.sh: sha256:3ab889c4dc0889a96dac8365fdd2d092b14bd85187188fc982eb9afe75789daf
-        proof/known-issues/KI-MENU-REMOVE-THEME-NO-THEMES.yaml: ki-content-v1:sha256:d6339940f575847e3db0b530f047a53629adad680de092851c3eec3bbc6ea0e9
+        proof/known-issues/KI-MENU-REMOVE-THEME-NO-THEMES.yaml: ki-content-v1:sha256:b103d29acf2d0aa895dc871871f050a650bc0e8f147828ad18e338cf9727066c
+        test/shell.d/menu-guards-test.sh: sha256:fa3864edfc7dfb80167ac28981f113ba1dedd0d864dacb89f3417ae7e41a64ad
       known_issues:
         - KI-MENU-REMOVE-THEME-NO-THEMES
       config:
