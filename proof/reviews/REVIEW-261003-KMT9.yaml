@@ -1,0 +1,22 @@
+id: REVIEW-261003-KMT9
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-03T22:48:05Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: Re-review for the upstream commit 5582883a, the final revision. Its EmojiSearch.js differs from 241f3191 only in a comment line above isWordChar (the shipped keywords are English), so every cited line moves down by one and no behaviour changes; the upstream test only tightens names and fixtures. isWordChar counts digits, the apostrophes ' and U+2019 and every character with a case as part of a word; matchRank keeps the best place the search text shows; filterEmojis ranks into the whole-word, keyword-start and inside groups in file order, cuts at the limit and rounds a fractional limit up; parseEmojis and normalizedQuery are as stated. The description matches this, and the witness test (all sixteen emoji inputs, an oracle check of 34 listed states, direct checks of separators, quotes, apostrophes, accents, digits, a later whole word and the fractional limit) passes. The guarantee-violation row stays structurally unreachable.
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:27@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:28
+    - shell/plugins/emojis/EmojiSearch.js:34@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:47@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:52
+    - shell/plugins/emojis/EmojiSearch.js:65
+    - shell/plugins/emojis/EmojiSearch.js:69
+    - shell/plugins/emojis/EmojiSearch.js:2@parseEmojis
+    - shell/plugins/emojis/EmojiSearch.js:12@normalizedQuery
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:65
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:157
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:171
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:177
+    - test/bdiff/corpus/lifecycle/seq-emoji-steps.events:1
