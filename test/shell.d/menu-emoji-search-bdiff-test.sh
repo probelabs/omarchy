@@ -9,7 +9,7 @@
 # node:vm, and records the emoji that Enter hands to omarchy-menu-emoji-insert.
 
 # Verifies: SW-REQ-261004-H41S
-#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-HBN4]
+#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-APYX]
 # mcdc:witness-out-of-process
 
 set -euo pipefail
@@ -71,8 +71,8 @@ const cases = [
     'top 👌 👍 🙆 🙆‍♂️ 🙆‍♀️ 🆗 💔 👀 🧑‍🍳 👨‍🍳 👩‍🍳 🍳',
     insert('👌')]],
   ['the list ranks again after each key, and after Escape clears the search', 'seq-emoji-steps.events', [
-    'shown query="o" count=1000 first=🎃 cursor=0',
-    'top 🎃 ⭕ 🅾️ 🤣 😂 😛 😜 😝 🤗 🤭 🫢 😵',
+    'shown query="o" count=1000 first=🕛 cursor=0',
+    'top 🕛 🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚',
     'shown query="ok" count=36 first=👌 cursor=0',
     'top 👌 👍 🙆 🙆‍♂️ 🙆‍♀️ 🆗 💔 👀 🧑‍🍳 👨‍🍳 👩‍🍳 🍳',
     'shown query="" count=1000 first=😀 cursor=0',
@@ -119,20 +119,24 @@ assertDeepEqual(inputs, Object.keys(outputs).sort(), 'every emoji input of the c
 // and its digests must match the harness output.
 const data = JSON.parse(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8'))
 const digest = list => crypto.createHash('sha256').update(list.join('\n')).digest('hex').slice(0, 12)
-// A keyword ends at any character that is not a to z, 0 to 9 or a character
-// above U+007F; the best place the search text appears decides its group.
-const word = '[a-z0-9\\u0080-\\uffff]'
+// A word is a run of digits and letters, a letter being a character with a
+// case; any other character ends it. The best place the search text shows in
+// the keywords decides its group: 0 whole word, 1 start of a word, 2 inside.
+const inWord = c => c !== undefined && (/[0-9]/.test(c) || c.toLowerCase() !== c.toUpperCase())
+const group = (text, needle) => {
+  let best = -1
+  for (let at = text.indexOf(needle); at >= 0; at = text.indexOf(needle, at + 1)) {
+    const g = inWord(text[at - 1]) ? 2 : (inWord(text[at + needle.length]) ? 1 : 0)
+    if (best < 0 || g < best) best = g
+  }
+  return best
+}
 const ranked = query => {
   const needle = query.trim().toLowerCase()
   const groups = [[], [], []]
-  const esc = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const whole = new RegExp(`(^|(?!${word})[\\s\\S])${esc}($|(?!${word})[\\s\\S])`)
-  const start = new RegExp(`(^|(?!${word})[\\s\\S])${esc}`)
   for (const item of data) {
-    const text = String(item.k || '').toLowerCase()
-    if (!needle || whole.test(text)) groups[0].push(item.e)
-    else if (start.test(text)) groups[1].push(item.e)
-    else if (text.includes(needle)) groups[2].push(item.e)
+    const g = needle ? group(String(item.k || '').toLowerCase(), needle) : 0
+    if (g >= 0) groups[g].push(item.e)
   }
   return groups[0].concat(groups[1], groups[2]).slice(0, 1000)
 }
@@ -162,6 +166,8 @@ assertDeepEqual([search.parseEmojis('{'), search.parseEmojis('{"e":"x"}'), searc
 // fractional limit, which rounds up as before the fix.
 assertDeepEqual(search.filterEmojis([{ e: 'in', k: 'woman' }, { e: 'colon', k: 'man: beard' }, { e: 'under', k: 'red_haired_man' }, { e: 'dash', k: 't-man' }], 'man').map(item => item.e), ['colon', 'under', 'dash', 'in'], 'a colon, an underscore or a hyphen ends a keyword; a letter does not')
 assertEqual(search.filterEmojis(data, '', 1.5).length, 2, 'a fractional limit rounds up')
+assertDeepEqual(search.filterEmojis([{ e: 'inside', k: 'nowhere' }, { e: 'quoted', k: 'japanese “here” button' }, { e: 'apostrophe', k: 'o’clock' }], 'here').map(item => item.e), ['quoted', 'inside'], 'curly quotes end a word')
+assertDeepEqual(search.filterEmojis([{ e: 'accent', k: 'café' }, { e: 'whole', k: 'caf' }], 'caf').map(item => item.e), ['whole', 'accent'], 'an accented letter stays inside its word')
 assertDeepEqual(search.filterEmojis([{ e: 'start', k: 'okay' }, { e: 'later', k: 'broken ok' }], 'ok').map(item => item.e), ['later', 'start'], 'a whole word later in the keywords beats a match inside an earlier word')
 assertDeepEqual(search.filterEmojis([{ e: 'inside', k: 'x100' }, { e: 'start', k: '100 points' }, { e: 'whole', k: 'number 10' }], '10').map(item => item.e), ['whole', 'start', 'inside'], 'digits are part of a word')
 
