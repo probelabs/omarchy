@@ -1,0 +1,32 @@
+id: KI-MENU-REMOVE-THEME-NO-THEMES
+title: Remove > Theme shows on a stock install, where the remover has no theme to offer and the row only closes the menu
+description: 'Remove > Theme runs omarchy-theme-remove with no terminal (default/omarchy/omarchy-menu.jsonc:295). With no theme directory under ~/.config/omarchy/themes that is not a symlink, the script prints "No extra themes installed." and exits 1. Nothing shows that line, so the row only closes the menu. A stock install has only the bundled themes, so most users get this row. Its Remove siblings hide behind a when: guard until there is something to remove; this row has no guard. Commit 5bc151f9 moved the remover to the menu picker and dropped the floating terminal that showed the line.'
+affected_requirements:
+    - SYS-REQ-260922-47T8
+evidence_manifests:
+    - pocs/menu-remove-theme-guard.sh
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: 'omarchy menu: Remove > Theme (remove.theme row)'
+reproducer_command: bash pocs/menu-remove-theme-guard.sh
+introduced_in: 5bc151f99420bac724e33534b20c4f4169e0712d
+defect_class: new_defect
+disclosure: public
+minimization_status: minimized
+mitigation: 'Nothing breaks and no data changes: the row closes the menu and removes nothing. A user who has installed an extra theme gets the picker as before. omarchy theme remove in a terminal prints the message.'
+remediation: 'Give the remove.theme row a when: guard that asks the question the script asks: is there a directory under ~/.config/omarchy/themes that is not a symlink. The menu then hides the row until the remover has a theme to offer.'
+owner: agent:claude-pr-new-C
+review_date: "2026-12-31"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-10-03T07:54:21Z"
+      by: agent:claude-pr-new-C
+      action: created
+dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS or any guard-batch KI such as those on SYS-REQ-260922-47T8: those are parser and batch faults; this one is a shipped row with no when: guard, which the batch never evaluates'
+kill_domain: stale_state
+affected_file:
+    - default/omarchy/omarchy-menu.jsonc
+    - bin/omarchy-theme-remove
