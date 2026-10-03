@@ -1,0 +1,11 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Apps menu on a French desktop (names from the live run on the box).
+@app calc Calculatrice
+@app files Fichiers
+@app screens Écrans
+@app editor Éditeur de texte
+@app terminal Terminal
+@app xournal Xournal++
+@app zed Zed
+@app zellij Zellij
+O
