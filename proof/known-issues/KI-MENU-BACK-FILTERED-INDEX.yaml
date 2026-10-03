@@ -99,5 +99,9 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: introduced-in=eb8099aae8e1072be96b7e97cddaffc20240fe21
+    - at: "2026-10-03T21:05:55Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-back-filtered-index.yaml
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
