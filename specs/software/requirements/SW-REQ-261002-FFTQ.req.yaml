@@ -13,10 +13,10 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-6642
 component: menu
-rationale: 'Upstream PR omacom/omarchy#13197 (head 03e6af6a, issue #12665) adds this behaviour to bin/omarchy-menu-file. By default GNU find does not follow a symbolic link that it gets as a start point. A picker over a linked ~/Videos thus offered no file, and omarchy transcode had nothing to pick.
+rationale: |-
+    Upstream PR omacom/omarchy#13197 (head cc710e11, issue #12665) adds this behaviour to bin/omarchy-menu-file. By default GNU find does not follow a symbolic link that it gets as a start point. A picker over a linked ~/Videos thus offered no file, and omarchy transcode had nothing to pick.
 
-
-    The PR runs find -H. With -H, find follows each start point that is a link and keeps each link inside a root as a link. With -L, find would follow every link, and a link loop would make find exit 1, which fails the picker under pipefail. SW-REQ-260922-HR29 still states format matching, dotfile pruning, order and missing-path rejection for every root.'
+    The PR runs find -H. With -H, find follows each start point that is a link and keeps each link inside a root as a link. With -L, find would follow every link, and a link loop would make find exit 1, which fails the picker under pipefail. SW-REQ-260922-HR29 still states format matching, dotfile pruning, order and missing-path rejection for every root.
 tags: []
 variables:
     - symlink_root_given
@@ -66,8 +66,8 @@ verification:
 history:
     created_by: agent:claude-pr-13197
     created_at: "2026-10-02T00:58:48Z"
-    last_modified_by: agent:claude-pr-13197
-    last_modified_at: "2026-10-02T01:01:17Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-03T11:01:38Z"
 hazard_review:
     reviewed_at: "2026-10-02T01:10:00Z"
     reviewed_by: agent:claude-pr-13197
