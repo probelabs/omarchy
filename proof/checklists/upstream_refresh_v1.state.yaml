@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-10-03T09:05:46Z"
+updated_at: "2026-10-03T09:13:17Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -19,7 +19,11 @@ steps:
         confirmed_by: agent:claude-quattro-proof
         note: 'No config migration: proof.yaml byte-identical across the merge; the new upstream files (agent usage, OpenClaw, agents panel, their tests) fall outside the lock+menu scope and are not run by the audit''s named lock/menu test commands.'
     coverage:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-10-03T09:13:17Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Full proof audit --no-cache (engine 8cac9cff) at 5cc17bbd, the merge of upstream a85e29ab plus the refresh commits: 0 errors / 0 warnings / 1 info, 204 passed (run-b419c288). tests_pass green; mcdc_coverage 85 requirements, 311 witness rows, 0 uncovered; code-level MC/DC thresholds met (0 incomplete functions); obligation_evidence_complete 62 on 35 parents; 0 suspect links. No in-scope test or code changed in the delta.'
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-10-03T09:05:13Z"
@@ -46,7 +50,10 @@ steps:
         note: 'Catalog unchanged, so no hazard_review went stale. 8VJQ''s summon-dispatch review re-checked: the convergence anchor moved one line, the behaviour did not. No new decision point in the audited surface.'
         scope_key: menu
     refresh-complete:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-10-03T09:13:17Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Upstream refresh COMPLETE for delta 821ae589..a85e29ab (19 commits: #11925 third-party plugin __sourceDir, #13296 OpenClaw self-updating install, #14049 agent usage). No menu or lock file changed; the shell.qml insertion moved two cited summon lines (threat surface and SW-REQ-260928-8VJQ updated to :1841 / :1144). Full uncached audit 0/0 (run-b419c288). No new known issue; existing known issues unaffected.'
     research-delta:
         status: confirmed
         confirmed_at: "2026-10-03T09:05:13Z"
