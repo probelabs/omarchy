@@ -1,0 +1,7 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Control (no Apps rebuild): the French apps are installed but the root menu is summoned.
+@app calc Calculatrice
+@app screens Écrans
+@app editor Éditeur de texte
+@app zed Zed
+M
