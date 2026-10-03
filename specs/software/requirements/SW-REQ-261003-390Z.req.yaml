@@ -29,7 +29,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-03T09:21:36.218818Z"
+    reviewed_at: "2026-10-03T11:36:20.748126Z"
     reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:a279d710f62520498f724f2ba6afee62b4a585608a3edd7422431c5e41c33b81
     reviewed_targets:
@@ -84,6 +84,28 @@ traces:
             - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
             - test/bdiff/harness.mjs:225
             - test/bdiff/harness.mjs:258
+            - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-03T11:36:20.748126Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C round 3 (product db7d7127, the omarchy-theme-removable shape): once the guard batch for an open has answered, the Remove menu lists Theme exactly when omarchy-theme-remove has a theme it can remove. The row''s when: is omarchy-theme-removable, the helper the remover reads its list from. The engine reads annotations from neither the .jsonc row nor the helper (outside the verification scope), so 390Z traces to isVisible, which applies the row''s answer. Verified by test/shell.d/menu-guards-test.sh: the eleven-home loop witnesses both sides, the helper and picker lists are checked for the mixed home, and the mirror-only pre-answer block witnesses the no-action row; and by the behaviour-diff harness with its eleven guard-remove-theme-*.events inputs. Satisfies SYS-REQ-260922-47T8. Spec conformance REVIEW-261003-C7RT'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:262
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dashed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dotted.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-empty.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-filed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-hidden.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-linked.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-missing.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-mixed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
+            - test/bdiff/harness.mjs:227
+            - test/bdiff/harness.mjs:262
             - test/shell.d/menu-guards-test.sh:6
 verification:
     assurance_level: C
