@@ -77,8 +77,13 @@ history:
       by: agent:claude-pr-new-D
       action: edit
       detail: set-remediation,note
+    - at: "2026-10-03T13:02:08Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: add-affected-file
 kill_domain: sorting
 affected_file:
     - shell/plugins/menu/MenuModel.js
     - shell/plugins/menu/Menu.qml
+    - shell/services/AppSearch.js
 source_claim: CRS-260930-HFY2/C11
