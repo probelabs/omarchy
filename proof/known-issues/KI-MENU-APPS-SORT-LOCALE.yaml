@@ -1,9 +1,9 @@
 id: KI-MENU-APPS-SORT-LOCALE
 title: The Apps menu lists names that start with an accented letter after Z
 description: |-
-    The Apps menu sorts its rows in rebuildDisplay with its own comparator, because DesktopEntries can reorder the apps. On upstream a85e29ab the comparator compares the lowercased names with < and >, that is by UTF-16 code unit. So every name that starts with a letter above U+007A sorts after z. The search sort in the same function uses localeCompare.
+    The Apps menu sorts its rows in rebuildDisplay with its own comparator, because DesktopEntries can reorder the apps. On upstream a85e29ab the comparator compares the lowercased names with < and >, that is by UTF-16 code unit. So every name that starts with a letter above U+007A sorts after z. The search sort in the same function uses localeCompare. AppSearch.sortedEntries, which gives the same list to plugins, compares the names in the same way.
 
-    App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed and Zellij at the end of the list. A live run on the box (Quickshell, LANG=fr_FR.UTF-8) on a85e29ab showed this order. Every app stays in the list and search still finds it.
+    App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed at the end of the list. A check in the real shell with LANG=fr_FR.UTF-8 on a85e29ab showed this order. On a Russian, Greek or Chinese desktop, the names in that script also show after Z, where the locale puts them first. Every app stays in the list and search still finds it.
 affected_requirements:
     - SW-REQ-260922-Z680
     - SW-REQ-261003-B7ZA
@@ -18,11 +18,13 @@ tripwire_mutation: 'Put the code-unit comparison back in the Apps comparator of 
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Every app stays in the list, and search finds an app by its name in any order. Only the place of names that start with an accented Latin letter is wrong. Names in other scripts already sort after the Latin names, where the locale collation also puts them. On an English desktop most names are plain ASCII.
-remediation: Fixed by the upstream change that makes the Apps comparator order the names with localeCompare (SW-REQ-261003-B7ZA); mirror pr/new-D.
+mitigation: Every app stays in the list, and search finds an app by its name in any order. Only the place of names that start outside a to z is wrong. That covers names with an accented Latin first letter, and on a Russian, Greek or Chinese desktop the names in that script. On an English desktop most names are plain ASCII.
+remediation: Fixed by the upstream change that makes the Apps comparator and AppSearch.sortedEntries order the names with localeCompare (SW-REQ-261003-B7ZA); mirror pr/new-D.
 notes:
-    - 'Fixed on mirror pr/new-D by the upstream change (the Apps comparator in rebuildDisplay orders the lowercased names with localeCompare; the id tie-break is unchanged). Spec: SW-REQ-261003-B7ZA, spec conformance REVIEW-261003-JTMM. The reproducer is now the bound in-suite test test/shell.d/menu-apps-order-test.sh (Reproduces marker); it fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.'
-    - 'Scope (round 2): the defect and the fix concern accented Latin letters. Names in Greek, Cyrillic, Arabic or Han script sort after the Latin names both before and after the fix, as the locale collation orders them. Under C or C.UTF-8 Qt keeps code-point order, so the fix changes nothing there (real shell, newpr/D/evidence/real-shell-c-utf8.txt).'
+    - |-
+      Fixed on mirror pr/new-D by the upstream change. The Apps comparator in rebuildDisplay and AppSearch.sortedEntries now order the names with localeCompare; the id tie-break is unchanged. Spec: SW-REQ-261003-B7ZA. The reproducer is the in-suite test test/shell.d/menu-apps-order-test.sh. It fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.
+
+      Scope, checked in the real shell: under ru_RU, el_GR and zh_CN the script of the language now comes first, before the Latin names. Under en_US and fr_FR other scripts still follow the Latin names. Under C and C.UTF-8 Qt keeps code-point order, so the fix changes nothing there.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -56,6 +58,18 @@ history:
       action: edit
       detail: set-mitigation,append-note
     - at: "2026-10-03T09:35:11Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: set-mitigation
+    - at: "2026-10-03T10:45:01Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: set-description,set-mitigation,set-remediation,note
+    - at: "2026-10-03T10:45:08Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: set-mitigation
+    - at: "2026-10-03T10:45:12Z"
       by: agent:claude-pr-new-D
       action: edit
       detail: set-mitigation
