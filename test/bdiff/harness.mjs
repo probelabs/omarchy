@@ -159,7 +159,7 @@ function runJsonc() {
 //      (MenuModel guardScript, run by bash) and isVisible, against the
 //      revision's bin/omarchy-theme-remove with a stub picker, in a HOME of
 //      the shape set by the directive `@home:<shape>` (missing, empty,
-//      copied, cloned, linked, worktree; default empty). Prints one `guard`
+//      copied, cloned, linked, worktree, dotted; default empty). Prints one `guard`
 //      line: whether the row shows, what the remover offers, and whether
 //      the two agree (a shown row with nothing to offer only closes the menu).
 //
@@ -172,7 +172,7 @@ const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExi
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
 const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'G'])
-const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree'])
+const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree', 'dotted'])
 
 function parseEvents(text) {
   const ops = []
@@ -219,7 +219,8 @@ function commandText(cmd) {
 // Builds a throwaway HOME of one shape (the shapes of the Remove > Theme
 // guard test in test/shell.d/menu-guards-test.sh): no themes directory, an
 // empty one, a copied theme, a cloned theme (.git directory), only a
-// symlinked working copy, and a worktree (.git file).
+// symlinked working copy, a worktree (.git file), and only a dot-directory
+// (.git), whose name omarchy-theme-remove lists but refuses to remove.
 // Verifies: SW-REQ-261003-390Z
 function makeThemesHome(shape) {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'omarchy-bdiff-home-'))
@@ -233,6 +234,7 @@ function makeThemesHome(shape) {
     fs.mkdirSync(path.join(base, 'checkout', '.git'), { recursive: true })
     fs.symlinkSync(path.join(base, 'checkout'), path.join(themes, 'in-progress'))
   }
+  if (shape === 'dotted') fs.mkdirSync(path.join(themes, '.git'))
   if (shape === 'worktree') {
     fs.mkdirSync(path.join(themes, 'branch'))
     fs.writeFileSync(path.join(themes, 'branch', '.git'), 'gitdir: /elsewhere\n')
@@ -285,7 +287,10 @@ function runRemoveThemeGuard(mm, shape) {
     // remover offers. Whether the row declares a when: is how, not what, so a
     // control where both revisions show the row prints the same line.
     if (batch === 'NONE') return emit(`${tag} BATCH-NO-ANSWER`)
-    emit(`${tag} shown=${shown} remover=${offers} agree=${shown === (offered.length > 0) ? 'yes' : 'NO'}`)
+    // The remover refuses a name with a leading dot, so only other names are
+    // a theme it can remove.
+    const removable = offered.some(n => !n.startsWith('.'))
+    emit(`${tag} shown=${shown} remover=${offers} agree=${shown === removable ? 'yes' : 'NO'}`)
   } finally {
     fs.rmSync(fx.base, { recursive: true, force: true })
   }
