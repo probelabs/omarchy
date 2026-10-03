@@ -499,7 +499,7 @@ variables:
     - name: apps_rows_in_letter_order
       type: bool
       direction: output
-      description: The Apps rows are in localeCompare order of their lowercased names under the collation of the locale. A name that starts with an accented Latin letter sorts under its base letter, names in other scripts sort where the collation puts them, and equal names keep their id order.
+      description: 'The Apps rows are in localeCompare order of their lowercased names under the collation of the locale. A name that starts with an accented Latin letter sorts under its base letter. Names in other scripts sort where the collation puts them: first for the script of the locale, otherwise after the Latin names. Equal names keep their id order.'
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'
