@@ -6,6 +6,7 @@ results:
       status: pass
       observed_result: known_issue_reproduced
       executed_at: "2026-10-03T15:18:46Z"
+      revision: 9dabeac165c6f2c9dc4a027fbb89bf4f705256b1
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-BACK-FILTERED-INDEX` from the KnownIssue''s reproducer command: bash test/shell.d/menu-pointer-lifecycle-test.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - test/shell.d/menu-pointer-lifecycle-test.sh
