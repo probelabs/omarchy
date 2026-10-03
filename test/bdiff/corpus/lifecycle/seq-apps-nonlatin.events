@@ -1,0 +1,9 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Non-Latin scripts next to Latin names.
+@app term Терминал
+@app calc Αριθμομηχανή
+@app cjk 计算器
+@app arabic الآلة الحاسبة
+@app zed Zed
+@app alacritty Alacritty
+O
