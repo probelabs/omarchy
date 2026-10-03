@@ -354,7 +354,7 @@ function runEvents() {
 function notifyLines(text) {
   const out = []
   for (const line of text.split(/\r\n|\r|\n/)) {
-    const m = /^@notify[ \t]+([\s\S]*)$/.exec(line)
+    const m = /^@notify\b[ \t]*([\s\S]*)$/.exec(line)
     if (m) out.push(m[1])
   }
   return out
@@ -386,7 +386,7 @@ function runNotify(lines) {
   }
   lines.forEach((raw, i) => {
     let n
-    try { n = JSON.parse(raw) } catch { emit(`notification ${i + 1}: BAD-INPUT`); return }
+    try { n = JSON.parse(raw) } catch { emit(`notification ${i + 1}: BAD-INPUT`); process.stderr.write(`bad @notify line ${i + 1}: not one JSON object\n`); process.exitCode = 2; return }
     const app = String(n.app ?? ''), appIcon = String(n.appIcon ?? ''), body = String(n.body ?? '')
     let sanitized, styled
     try { sanitized = nl.api.sanitizeBody(body, app, appIcon) } catch (e) { sanitized = `THROW ${errName(e)}` }

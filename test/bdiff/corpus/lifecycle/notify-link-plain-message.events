@@ -1,5 +1,8 @@
 # Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
-# Control: the message starts with a plain word. Only the origin link goes, before and after the fix.
+# Control: the message starts with a plain word. Only the origin link goes, with
+# all the white space after it (also white space the message starts with),
+# before and after the fix.
 @notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\nSee you at 5"}
 @notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\ne.g. bring the slides"}
 @notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "  <a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\nTwo lines\nof message"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\n\n  indented reply"}
