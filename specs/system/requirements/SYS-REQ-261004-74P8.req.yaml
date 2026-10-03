@@ -1,0 +1,106 @@
+id: SYS-REQ-261004-74P8
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when web_notification_received the notification_card shall immediately satisfy page_message_shown
+description: When a Chromium-based browser sends a web notification with the origin link before the message, the card shows the whole message, from its first word. The card knows the browser by the app name or the app icon. When the origin is a host name with a dot, such as web.whatsapp.com, the card removes the origin link. Any other origin stays before the message, such as localhost, an IP address or a host name with non-ASCII letters.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: STK-REQ-261004-6HJ2
+component: notifications
+rationale: "Chromium starts the body of a web notification with the origin of the page. It sends the origin as a link when the notification server takes hyperlinks, and the notification server of the shell takes them. A real Chromium 148 sent the body as the origin link, a blank line and then the message (ME-261004-E1CR). The message can start with a web address or with a dotted word, such as Node.js. The card must keep that first word."
+tags: []
+variables:
+    - web_notification_received
+    - page_message_shown
+traces:
+    satisfies:
+        - STK-REQ-261004-6HJ2
+    reviewed_at: "2026-10-03T21:40:14.520467Z"
+    reviewed_by: agent:claude-pr-new-E
+    reviewed_fingerprint: sha256:faf61e225d73f4359de1543bc12ad6b0af3b493a4228f38f93650b81a6ec8821
+    reviewed_targets:
+        satisfies:
+            STK-REQ-261004-6HJ2: req1:aa393fb7c6d7ea3a201d970330e71f5e
+    review_history:
+        - reviewed_at: "2026-10-03T21:40:14.520467Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'SYS-REQ-261004-74P8 states the system clause of the STK-REQ-261004-6HJ2 story for web notifications: the card shows the whole message from its first word, and removes an origin link whose text is a host name with a dot. The witnesses replay real notification bodies, including the exact Chromium 148 body, through the real NotificationLogic.js as NotificationCard.qml calls it.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-261004-6HJ2.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-E
+        reviewed_at: "2026-10-03T21:39:40Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-E
+    created_at: "2026-10-03T21:29:16Z"
+    last_modified_by: agent:claude-pr-new-E
+    last_modified_at: "2026-10-03T21:42:31Z"
+hazard_review:
+    reviewed_at: "2026-10-03T21:38:10Z"
+    reviewed_by: agent:claude-pr-new-E
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - nominal
+            - edge_case
+            - empty_input
+          not_applicable:
+            - boundary
+            - input_domain
+            - concurrency_scale
+          rationale: 'nominal: a web notification from Chromium with the origin link shows the whole message without that link. edge_case: the message starts with a web address (with or without a scheme, or with www.) or with a dotted word such as Node.js or README.md; Brave, Chrome and Edge send the same form; an origin without a dot, an IP address or a non-ASCII host name stays. empty_input: an empty message leaves no body line on the card. boundary not applicable: no numeric limit or size threshold is involved. input_domain not applicable at this level: the forms of the link and of the body are stated on SW-REQ-261004-DHZ3. concurrency_scale not applicable: each card cleans its own body once, with no shared state.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: 'determinism: the same app name, app icon and body give the same card text on every machine. The cleanup uses only regular expressions without the u flag, toLowerCase and string slicing, so the locale and the time zone do not change it (checked under C, C.UTF-8, en_US, tr_TR, et_EE and th_TH).'
+        - category: structural
+          disposition: not_applicable
+          rationale: String replacement with fixed regular expressions on the body text that the D-Bus server hands to the card; no memory, numeric, format-string or encoding surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: The card shows text from a program of the same user on the session bus; no trust boundary, privilege, network call or credential is involved, and the cleanup removes text only.
+interface:
+    caller: chromium
+    callee: notifications
+    type: dbus
+    signature: org.freedesktop.Notifications.Notify(app_name, replaces_id, app_icon, summary, body, actions, hints, expire_timeout) -> id
+    protocol: D-Bus method call on the session bus. The shell's notification server lists body, body-markup and body-hyperlinks in GetCapabilities.
+    assumptions: For a web notification, Chromium sends its own name (or the name of another Chromium-based browser) as app_name, and a body made of the origin link, a blank line and the message.
+    guarantees: The card shows the whole message, from its first word. It drops an origin link whose text is a host name with a dot, and it keeps any other origin link.
+    external_parties:
+        - chromium
+lifecycle:
+    change_history:
+        - date: "2026-10-03T21:39:35Z"
+          from: draft
+          to: review
+          reason: '[pr-new-E] upstream fix for the first word of a Chromium web notification: requirement authored for the behaviour the shell has with the change; spec conformance REVIEW-261003-SE8G; witnesses in test/bdiff/notifications-card-test.sh and the behaviour-diff notification inputs'
+          changed_by: agent:claude-pr-new-E

@@ -1,0 +1,115 @@
+id: SW-REQ-261004-DHZ3
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when chromium_sender & origin_link_at_start the notification_card shall immediately satisfy message_after_link_kept
+description: |-
+    For a notification from a Chromium-based browser, sanitizeBody removes the origin that the browser puts at the start of the body. The app name or the app icon must contain chrom, brave, vivaldi, microsoft-edge or opera; case does not matter. When the body starts with an origin link, sanitizeBody removes only that link and the white space around it. It keeps the rest of the body, which is the message. This holds also when the message starts with a web address or a dotted word, such as Node.js.
+
+    A link is an origin link when its text is a host name with a dot. The host name has ASCII letters, digits and hyphens, and it can have a scheme, a port and a path.
+
+    A body without an origin link loses a leading web address and the white space after it. That is the origin when the browser sends it as plain text. sanitizeBody removes image tags from every body first, and the card shows the result through styledBody.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-261004-74P8
+component: notifications
+rationale: |-
+    Upstream omacom/omarchy quattro 393a43d4 has this defect, and so does 8e02fc84. In shell/plugins/notifications/NotificationLogic.js, sanitizeBody chains two replacements for a Chromium-based app. The first removes a leading origin link. The second removes a leading web address and the white space after it. The second replacement runs on what the first one leaves, and after the link that is the message.
+
+    A real Chromium 148 sent the body as the origin link, a blank line and then the message (ME-261004-E1CR). So the message "github.com/omacom/omarchy can you review?" showed as "can you review?", and "Node.js 24 is out, upgrade today" showed as "24 is out, upgrade today".
+
+    The fix returns the body as soon as the link replacement removed text. The plain-text replacement runs only when the body has no origin link. Chromium sends the origin either as a link or as plain text, never as both.
+
+    The PR test test/shell.d/notifications-test.sh asserts both messages, but no audit test command runs it. The behaviour-diff harness runs the real NotificationLogic.js of each revision on the notification inputs, and test/bdiff/notifications-card-test.sh asserts the card lines it prints.
+
+    This requirement does not change the body without an origin link. There the cleanup cannot tell a plain-text origin from a web address at the start of a message.
+tags: []
+variables:
+    - chromium_sender
+    - origin_link_at_start
+    - message_after_link_kept
+traces:
+    satisfies:
+        - SYS-REQ-261004-74P8
+    reviewed_at: "2026-10-03T21:40:14.24185Z"
+    reviewed_by: agent:claude-pr-new-E
+    reviewed_fingerprint: sha256:830ca0d149bfa2fd949b5a7f021becb693cb7e4b5e798177d80e589ff2179db5
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/notifications/NotificationLogic.js:sanitizeBody: file1:8aa013aac4714892a7b55a8d43c75936
+        satisfies:
+            SYS-REQ-261004-74P8: req1:77d90ed430dd638cc51a81e165ce6500
+    review_history:
+        - reviewed_at: "2026-10-03T21:40:14.24185Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'sanitizeBody is the function the card calls for its body text and carries the rule: for a Chromium-based sender, once the origin link replacement removed text, the rest of the body is returned with no other change; the plain-text replacement runs only without a link. It satisfies SYS-REQ-261004-74P8 (the whole message, from its first word, for a web notification with the origin link). The witnesses run the real NotificationLogic.js through the behaviour-diff harness on the notify inputs, and notifications-card-test.sh asserts the card lines.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:103
+            - shell/plugins/notifications/NotificationLogic.js:93
+            - specs/system/requirements/SYS-REQ-261004-74P8.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-E
+        reviewed_at: "2026-10-03T21:39:40Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-E
+    created_at: "2026-10-03T21:29:19Z"
+    last_modified_by: agent:claude-pr-new-E
+    last_modified_at: "2026-10-03T21:42:31Z"
+hazard_review:
+    reviewed_at: "2026-10-03T21:38:12Z"
+    reviewed_by: agent:claude-pr-new-E
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+            - empty_input
+            - input_domain
+          not_applicable:
+            - boundary
+            - concurrency_scale
+          rationale: 'edge_case: the message after the origin link starts with a bare host and path, a scheme URL, www., or a dotted word (Node.js, README.md); the message is plain text or has two lines; white space comes before the link; the app is Brave or Chrome by name, or Edge by icon; the app is not a browser (Slack, notify-send). empty_input: the message is empty or only white space, so the body is empty and the card shows no body line. input_domain: the link text is a host name with a dot (removed), or localhost, an IP address or a non-ASCII host name (kept); the body without a link starts with a plain-text origin or a web address, which the second replacement removes as before. boundary not applicable: no length or count limit. concurrency_scale not applicable: one pure call per card.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: sanitizeBody is a pure function of the body, the app name and the app icon; it uses regular expressions without the u flag, toLowerCase and string slicing, so no locale or time zone changes the result (the behaviour-diff inputs give the same output under C, C.UTF-8, en_US, tr_TR, et_EE and th_TH, and in three time zones). totality: every string body gives a defined result, including an empty body and a body that is only an origin link.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Two fixed regular-expression replacements and a string comparison on the body text; no memory, numeric, format-string or encoding transform. The body is already a JavaScript string when it reaches the card.
+        - category: domain
+          disposition: not_applicable
+          rationale: Display text inside the shell only; no trust boundary, privilege, network call or process. The cleanup only removes a leading origin, and image tags go before it as for every body.
+lifecycle:
+    change_history:
+        - date: "2026-10-03T21:39:35Z"
+          from: draft
+          to: review
+          reason: '[pr-new-E] upstream fix for the first word of a Chromium web notification: requirement authored for the behaviour the shell has with the change; spec conformance REVIEW-261003-SE8G; witnesses in test/bdiff/notifications-card-test.sh and the behaviour-diff notification inputs'
+          changed_by: agent:claude-pr-new-E

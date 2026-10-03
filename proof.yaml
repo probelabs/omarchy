@@ -64,6 +64,9 @@ project:
             # sorts (AppSearch.sortedEntries).
             - bin/omarchy-theme-remov*
             - shell/services/AppSearch.js
+            # The notification body cleanup (sanitizeBody: the origin that
+            # Chromium puts before a web notification's message).
+            - shell/plugins/notifications/NotificationLogic.js
             - test/shell.d/*menu*-test.sh
             - test/shell.d/keybindings-menu-test.sh
             # Node suites (menu-node, menu-reports): in scope so their

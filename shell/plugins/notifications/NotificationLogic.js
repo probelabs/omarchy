@@ -1,3 +1,4 @@
+// Implements: STK-REQ-261004-6HJ2
 function isChromiumDerived(app, appIcon) {
   var source = (String(app || "") + "\n" + String(appIcon || "")).toLowerCase()
   return source.indexOf("chrom") >= 0 || source.indexOf("brave") >= 0 ||
@@ -89,6 +90,7 @@ function styledBody(body, app, appIcon) {
   return stripImageTags(sanitizeBody(body, app, appIcon).replace(/\r\n|\r|\n/g, "<br/>"))
 }
 
+// Implements: SW-REQ-261004-DHZ3
 function sanitizeBody(body, app, appIcon) {
   var text = stripImageTags(String(body || ""))
   if (!isChromiumDerived(app, appIcon)) return text

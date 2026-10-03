@@ -1,0 +1,14 @@
+component: notifications
+variables:
+    - name: chromium_sender
+      type: bool
+      direction: input
+      description: The app name or the app icon of the notification contains chrom, brave, vivaldi, microsoft-edge or opera (case is ignored).
+    - name: origin_link_at_start
+      type: bool
+      direction: input
+      description: After optional white space, the body starts with a link whose text is a host name with a dot (ASCII letters, digits and hyphens), with an optional scheme, port and path.
+    - name: message_after_link_kept
+      type: bool
+      direction: output
+      description: sanitizeBody returns the rest of the image-stripped body after that link and the white space after it, with no other change.

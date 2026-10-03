@@ -1,0 +1,18 @@
+id: ME-261004-E1CR
+kind: manual_qa
+affected_requirements:
+    - STK-REQ-261004-6HJ2
+    - SYS-REQ-261004-74P8
+    - SW-REQ-261004-DHZ3
+signed_by: agent:claude-pr-new-E
+at: "2026-10-03T21:00:00Z"
+description: |-
+    A real Chromium 148.0.7778.96 (Arch Linux) sent web notifications to the real shell (Quickshell 0.3.1). The run used a private D-Bus session with a headless sway, the shell from the tree under test, and a local test page at http://chat.example.com:8123.
+
+    The page posted a web notification with the title Alice. dbus-monitor recorded the Notify call: app Chromium, and a body with only three parts. They are the origin link <a href="http://chat.example.com:8123/">chat.example.com:8123</a>, a blank line and the message. A screenshot recorded each card.
+
+    Message "github.com/omacom/omarchy can you review?": the code before the fix showed "can you review?". With the fix, the card showed the whole message.
+
+    Message "Node.js 24 is out, upgrade today": before the fix the card showed "24 is out, upgrade today". With the fix, it showed the whole message.
+
+    Message "See you at 5": both showed "See you at 5". No card showed the origin link.
