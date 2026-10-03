@@ -1,0 +1,12 @@
+id: REVIEW-261003-GFB2
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-03T09:10:02Z"
+subject: SW-REQ-261002-9H5Y
+decision: approved
+comment: 'Recorded by agent:claude-code under the repository owner''s explicit delegation for this change (2026-10-03). This is not a personal human review. WHAT CHANGED: PR #13197 head cc710e11 adds the file name to the dedup key, so the requirement now reads: one row per file reached twice under the same name, and hard links under different names stay separate rows. The maintainers'' bot pushed cc710e11 and the PR author agreed, so the requirement follows that intent. The same-name hard-link case (one row, one path not pickable) is recorded in the rationale as the PR''s known limitation. CHECKED AGAINST: bin/omarchy-menu-file at cc710e11. find prints device:inode, mtime and path; after the newest-first sort, awk derives the base name from the path and keeps the first row per device:inode plus name; cut drops the key and the mtime. A file reached through a link root and its target, or a root given twice, keeps its name, so it gets one row: same_file_reached_twice leads to file_listed_once. The violation row needs the awk filter or the key removed, and stays dispositioned defensive. The PR''s own test adds a hard-link pair under two names and expects two rows.'
+citations:
+    - bin/omarchy-menu-file:47
+    - bin/omarchy-menu-file:55
+    - test/shell.d/menu-file-symlink-root-test.sh:128
+    - test/shell.d/menu-file-test.sh:5
