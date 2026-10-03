@@ -8,8 +8,8 @@ results:
       command: bash test/shell.d/menu-startup-route-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-03T13:02:41Z"
-      revision: 8f4815e7fe0e50b569c278a2eec588990e168ece
+      executed_at: "2026-10-03T15:18:59Z"
+      revision: fd88b34ef6a75cf57b0ded2d508429b6a6a73dd2
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-PENDING-INITIAL-MENU-DEAD` from the KnownIssue''s reproducer command: bash test/shell.d/menu-startup-route-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at ''a route summoned during startup opens once the default file loads and the user file is found missing'''
