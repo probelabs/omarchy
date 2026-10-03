@@ -7,14 +7,14 @@ results:
       command: bash test/shell.d/menu-guards-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-03T15:54:08Z"
+      executed_at: "2026-10-03T18:54:24Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-REMOVE-THEME-NO-THEMES` from the KnownIssue''s reproducer command: bash test/shell.d/menu-guards-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Drop the when: from the remove.theme row in default/omarchy/omarchy-menu.jsonc (the a85e29ab row): the red reproducer test/shell.d/menu-guards-test.sh fails at ''Remove > Theme shows exactly when omarchy-theme-remove has a theme to offer'' (missing, empty and symlink-only homes: guard=0 expected=1).'
         - test/shell.d/menu-guards-test.sh
       freshness_hashes:
         proof/known-issues/KI-MENU-REMOVE-THEME-NO-THEMES.yaml: ki-content-v1:sha256:944f276f142af7a1f1e0a0813eb6004c566bf164f43bef7866e202c80cbe3408
-        test/shell.d/menu-guards-test.sh: sha256:d546c8ade9bdab95fec73b4b67ad04d7a9aeffcf1c903020f5cdd6dcc2d0f539
+        test/shell.d/menu-guards-test.sh: sha256:4677482848a297c12f764f33f1dfc16bcc697a61f30fbf24735a2c21d3093219
       known_issues:
         - KI-MENU-REMOVE-THEME-NO-THEMES
       config:
