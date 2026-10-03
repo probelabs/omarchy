@@ -10,7 +10,7 @@ severity_basis: risk
 risk: correctness
 cve_surface: none
 reproducer_command: bash test/shell.d/menu-pointer-lifecycle-test.sh
-introduced_in: 3b9e515376cf75ddb48aa60f2f0f79ed0984e444
+introduced_in: eb8099aae8e1072be96b7e97cddaffc20240fe21
 defect_class: new_defect
 minimization_status: minimized
 mitigation: Cursor placement only; no action runs and the user can move the cursor. Enter on the wrong row would open/run that row.
@@ -95,5 +95,9 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-back-filtered-index.yaml
+    - at: "2026-10-03T21:05:55Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: introduced-in=eb8099aae8e1072be96b7e97cddaffc20240fe21
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
