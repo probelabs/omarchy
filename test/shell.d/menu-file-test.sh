@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Verifies: SW-REQ-260922-HR29, SW-REQ-261002-FFTQ, SW-REQ-261002-9H5Y
 #mcdc:ignore:defensive SW-REQ-261002-FFTQ: symlink_root_given=T, symlink_root_listed=F => FALSE -- every start point goes to find -H, which follows a start point that is a symbolic link; listing nothing under a link root needs -H removed (the base behaviour), and a loop below the root can only fail the run if -H is widened to -L [reviewed: REVIEW-261002-6P46]
-#mcdc:ignore:defensive SW-REQ-261002-9H5Y: same_file_reached_twice=T, file_listed_once=F => FALSE -- find prints %D:%i first on every row and awk keeps only the first row per key, so a second row for one file needs the awk filter or the %D:%i field removed [reviewed: REVIEW-261002-VZ1K]
+#mcdc:ignore:defensive SW-REQ-261002-9H5Y: same_file_reached_twice=T, file_listed_once=F => FALSE -- find prints %D:%i first on every row and awk keeps only the first row per device:inode and file name, so a second row for one file under one name needs the awk filter or that key removed [reviewed: REVIEW-261003-GFB2]
 #mcdc:ignore:defensive SW-REQ-260922-HR29: listing_shape=F, paths_given=T => FALSE -- the find pipeline (prune dotdirs, drop dotfiles, match formats, print mtime+path, sort newest first, cut to the path) is built unconditionally once the paths validate; a misshapen listing from valid paths needs a broken find arg build [reviewed: REVIEW-M7]
 # mcdc:witness-out-of-process
 
@@ -67,7 +67,7 @@ pass "file picker rejects missing arguments before listing"
 # ------------------------------------------------ symbolic link roots (PR #13197)
 # omacom/omarchy#13197: a given path that is a symbolic link to a directory is
 # followed (find -H), a link below a root is not descended, and a file reached
-# through two given paths is listed once (device:inode). The PR's own test is
+# through two given paths is listed once (device:inode plus name). The PR's own test is
 # test/shell.d/menu-file-symlink-root-test.sh; these rows add the MC/DC
 # witnesses and fail on the base, where find skips a link start point and a
 # file reached twice is listed twice.

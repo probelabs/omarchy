@@ -407,7 +407,7 @@ variables:
     - name: same_file_reached_twice
       type: bool
       direction: input
-      description: Two paths given to omarchy-menu-file reach the same file, because one root is a symbolic link to another root (or to a directory above it) or the same root is given twice.
+      description: Two paths given to omarchy-menu-file reach the same file under the same file name, because one root is a symbolic link to another root (or to a directory above it) or the same root is given twice. Hard links to one file under different names are not the same file here.
     - name: file_listed_once
       type: bool
       direction: output
