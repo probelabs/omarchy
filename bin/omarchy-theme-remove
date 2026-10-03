@@ -4,6 +4,7 @@
 # omarchy:args=[theme-name]
 # omarchy:examples=omarchy theme remove "Tokyo Night"
 
+# Implements: SW-REQ-261003-390Z
 if [[ -z $1 ]]; then
   mapfile -t extra_themes < <(omarchy-theme-removable)
 

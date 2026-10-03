@@ -492,6 +492,18 @@ variables:
       type: bool
       direction: input
       description: Every term of the query matches the entry's name, id, generic name, comment or keywords, or a term of five characters or fewer matches its acronym. An empty query matches every entry.
+    - name: remove_menu_guards_applied
+      type: bool
+      direction: input
+      description: The guard batch has answered the Remove menu rows, and the menu applies those answers.
+    - name: remover_has_removable_theme
+      type: bool
+      direction: input
+      description: "omarchy-theme-removable lists at least one theme: a directory under ~/.config/omarchy/themes that is not a symlink and has no leading dot, in a themes folder that is not itself a symlink. That is what the remover's picker offers."
+    - name: remove_theme_row_shown
+      type: bool
+      direction: output
+      description: The Remove menu lists Theme.
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'
