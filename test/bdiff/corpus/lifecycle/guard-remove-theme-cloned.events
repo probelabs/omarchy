@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with one theme cloned there with git (control: the row shows):
+# does the row show, and does omarchy-theme-remove offer a theme?
+@home:cloned G
