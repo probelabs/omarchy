@@ -134,6 +134,12 @@ for (const input of inputs) {
 }
 assert(states === 28, 'the picker lists every match in the ranked order, for every search text the inputs show', `states checked: ${states}`)
 
+// The list starts from emojis.json as parseEmojis reads it: the real file
+// gives every entry, and text that is not a JSON array gives no emoji.
+const search = requireFromRoot('shell/plugins/emojis/EmojiSearch.js')
+assertEqual(search.parseEmojis(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8')).length, data.length, 'the picker reads every entry of emojis.json')
+assertDeepEqual([search.parseEmojis('{'), search.parseEmojis('{"e":"x"}'), search.parseEmojis('')], [[], [], []], 'text that is not a JSON array gives an empty list')
+
 const fileOrder = data.filter(item => item && item.e).slice(0, 1000).map(item => item.e)
 const opened = outputs['seq-emoji-empty.events'].split('\n')
 assertEqual(opened[4], `digest order=${digest(fileOrder)} set=${digest(fileOrder.slice().sort())}`, 'with no search text the list is the first 1000 emojis of emojis.json, in file order')
