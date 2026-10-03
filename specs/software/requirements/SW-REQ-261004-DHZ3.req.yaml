@@ -36,7 +36,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-261004-74P8
-    reviewed_at: "2026-10-03T21:44:00.449166Z"
+    reviewed_at: "2026-10-03T21:51:28.427358Z"
     reviewed_by: agent:claude-pr-new-E
     reviewed_fingerprint: sha256:830ca0d149bfa2fd949b5a7f021becb693cb7e4b5e798177d80e589ff2179db5
     reviewed_targets:
@@ -80,6 +80,28 @@ traces:
             - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
             - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
             - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
+        - reviewed_at: "2026-10-03T21:51:28.427358Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'sanitizeBody is the function the card calls for its body text and carries the rule: for a Chromium-based sender, once the origin link replacement removed text, the rest of the body is returned with no other change; the plain-text replacement runs only without a link. It satisfies SYS-REQ-261004-74P8 (the whole message, from its first word, for a web notification with the origin link). The witnesses run the real NotificationLogic.js through the behaviour-diff harness on the notify inputs, and notifications-card-test.sh asserts the card lines.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:103
+            - shell/plugins/notifications/NotificationLogic.js:93
+            - specs/system/requirements/SYS-REQ-261004-74P8.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-space-anchor.events:1
             - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
             - test/bdiff/corpus/lifecycle/notify-other-app.events:1
             - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1

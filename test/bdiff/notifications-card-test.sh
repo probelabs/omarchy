@@ -62,6 +62,17 @@ notification 3 app="Chromium" body-line-shown=true card-text="Two lines<br/>of m
 notification 2 app="Chromium" body-line-shown=true card-text="github.com/omacom/omarchy can you review?"
 notification 3 app="Chromium" body-line-shown=true card-text="Message body"'
 
+  # The two cleanup expressions keep what they match: Unicode white space
+  # around the link and after a plain-text origin, a link only at the start,
+  # and <a\b not matching a longer tag name.
+  'Unicode white space, a link inside the text and an abbr tag clean as before'
+  notify-link-space-anchor.events
+  'notification 1 app="Chromium" body-line-shown=true card-text="See you at 5"
+notification 2 app="Chromium" body-line-shown=true card-text="See you at 5"
+notification 3 app="Chromium" body-line-shown=true card-text="See you at 5"
+notification 4 app="Chromium" body-line-shown=true card-text="Reply to <a href=\"https://app.slack.com/\">app.slack.com</a> today"
+notification 5 app="Chromium" body-line-shown=true card-text="<abbr title=\"x\">chat.example.com</abbr><br/><br/>See you at 5"'
+
   # MCDC SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=F => TRUE [no-action: the link text localhost:8123, 127.0.0.1:8123 or bücher.de is not a host name with a dot to the cleanup, so nothing is removed; the card text still starts with the link]
   'an origin link to localhost, an IP address or a non-ASCII host stays in the card'
   notify-link-origin-kept.events

@@ -1,0 +1,10 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# Control: what the two cleanup expressions match stays the same. JS \s takes
+# every Unicode white space (no-break space, byte-order mark, line separator,
+# ideographic space) around the origin link and after a plain-text origin; the
+# link must open the body (^ anchor); <a\b does not match a longer tag name.
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "\u00a0<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\u2028\u2028See you at 5"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "\ufeff<a href=\"http://chat.example.com:8123/\">chat.example.com:8123</a>\u3000See you at 5"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "chat.example.com:8123\u00a0See you at 5"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "Reply to <a href=\"https://app.slack.com/\">app.slack.com</a> today"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "<abbr title=\"x\">chat.example.com</abbr>\n\nSee you at 5"}
