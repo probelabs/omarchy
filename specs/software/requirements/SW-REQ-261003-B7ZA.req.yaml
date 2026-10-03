@@ -26,6 +26,25 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
+    reviewed_at: "2026-10-03T07:51:50.959294Z"
+    reviewed_by: agent:claude-pr-new-D
+    reviewed_fingerprint: sha256:98b20d51d7a5393e07170f3db9935ce29e784885f887dab9508a829bc705cebc
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:de2a1d682d8b03346dca5c0a81c1edf9
+        satisfies:
+            SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
+    review_history:
+        - reviewed_at: "2026-10-03T07:51:50.959294Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D: new requirement. Implemented by the Apps comparator in rebuildDisplay (Implements line on rebuildDisplay), which orders the lowercased names with localeCompare and falls back to the id only on a tie; verified by test/shell.d/menu-apps-order-test.sh, which extracts that comparator from Menu.qml and runs it on French and German names and a case tie; satisfies SYS-REQ-260922-0M8A (dynamic rows such as apps). Spec conformance REVIEW-261003-JTMM'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
