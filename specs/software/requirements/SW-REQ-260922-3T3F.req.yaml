@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:37.884494Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T08:00:00.87078Z"
+    reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:parseMenuJsonc: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:stripJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4646148b2f50db0b9c90b218accbb160
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:4646148b2f50db0b9c90b218accbb160
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
@@ -98,6 +98,28 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:44
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:1048
+            - test/node/menumodel-replay.test.mjs:120
+            - test/node/menumodel-replay.test.mjs:964
+            - test/shell.d/menu-test.sh:113
+            - test/shell.d/menu-test.sh:287
+            - test/shell.d/menu-test.sh:293
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:64
+            - test/shell.d/menu-test.sh:92
+            - test/shell.d/menu-test.sh:98
+        - reviewed_at: "2026-10-03T08:00:00.87078Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C (upstream-style fix 638c6474 on quattro-proof 39746e65): shell/plugins/menu/MenuModel.js changed only in one comment line, the Implements line above isVisible, which now also names SW-REQ-261003-390Z. No code line changed and no line moved, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:259

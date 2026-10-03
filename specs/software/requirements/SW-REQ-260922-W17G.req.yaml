@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:20.371786138Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-03T08:00:05.637104Z"
+    reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:b91978261365965ea5975ff28c9d069b1c5ef1fe4db20e794b9a371e0bc51a96
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardPrelude: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:guardPrelude: file1:4646148b2f50db0b9c90b218accbb160
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -47,6 +47,15 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
             - test/shell.d/menu-guards-test.sh:8
+        - reviewed_at: "2026-10-03T08:00:05.637104Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C (upstream-style fix 638c6474 on quattro-proof 39746e65): shell/plugins/menu/MenuModel.js changed only in one comment line, the Implements line above isVisible, which now also names SW-REQ-261003-390Z. No code line changed and no line moved, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:457
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

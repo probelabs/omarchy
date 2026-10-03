@@ -6,6 +6,7 @@
 # Exits nonzero when there are none, so a caller can ask whether any exist
 # without reading the list. A symlinked theme is someone's working copy, and a
 # dot-directory is never a theme, so neither is offered for removal.
+# Implements: SW-REQ-261003-390Z
 status=1
 
 for theme in ~/.config/omarchy/themes/*; do
