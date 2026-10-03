@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: one letter matches more emojis than the limit of the picker.
+@emojis
+@type e
+@enter

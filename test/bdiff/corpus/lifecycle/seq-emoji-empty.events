@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: Enter with no search text (control).
+@emojis
+@enter

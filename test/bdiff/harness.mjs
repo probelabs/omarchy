@@ -20,6 +20,10 @@
 //              event sequence against the REAL bodies of the request functions
 //              of <rev>/shell/plugins/menu/Menu.qml under node:vm, and prints
 //              each summoning caller's outcome and the final menu state.
+//            An .events input with an `@emojis` line drives the emoji picker
+//              instead: the REAL picker functions of
+//              <rev>/shell/plugins/emojis/Emojis.qml, with <rev>'s EmojiSearch.js
+//              and emojis.json, print what the picker lists and what Enter picks.
 //   other    a usage message on stderr, exit 2.
 //
 // Output is deterministic (no times, no paths, no pids), so any base/head
@@ -40,6 +44,7 @@
 // head stay comparable. The harness writes NOTHING to disk: product code runs
 // in a vm context with no require/process, and every process spawn it would
 // make (Quickshell.execDetached, Process.running) is recorded, not executed.
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
@@ -200,8 +205,10 @@ function commandText(cmd) {
 }
 
 function runEvents() {
+  const text = readInputText()
+  if (/^[ \t]*@emojis[ \t]*$/m.test(text)) return runEmojis(text)
   emit(`# ${HARNESS} lifecycle`)
-  const { ops, slow, bad } = parseEvents(readInputText())
+  const { ops, slow, bad } = parseEvents(text)
   emit(`events ${ops.join('') || '-'}${slow ? ' @slow' : ''}`)
   if (bad.length) emit(`ignored-tokens ${bad.join(' ')}`)
   const rel = 'shell/plugins/menu/Menu.qml'
@@ -329,6 +336,142 @@ function runEvents() {
   emit(`actions ${S.actions.join(',') || '-'}`)
   emit(`apps ${S.apps.join(',') || '-'}`)
   emit(`stray-writes ${stray.join(' | ') || '-'}`)
+}
+
+// ------------------------------------------------------- .events: emojis
+//
+// An .events input with an `@emojis` line opens the emoji picker the way
+// Super+Ctrl+E does (omarchy-shell shell toggle omarchy.emojis). The other
+// lines are steps, one per line; `#` starts a comment line:
+//   @type <text>  types <text> (everything after the one space), one
+//                 character at a time, as the picker's key handler does for
+//                 a printable key: setFilter(filterText + character)
+//   @clear        Escape with a search text: setFilter("")
+//   @enter        Return: activateIndex(selectedIndex) while the cursor is on
+//
+// The picker functions open, dismiss, loadEmojis, rebuildDisplay, setFilter,
+// activateIndex and applySelected run as written in <rev>'s Emojis.qml, with
+// <rev>'s EmojiSearch.js and the emojis.json that the picker's FileView
+// loads. rebuildDisplay passes its own limit to filterEmojis. After each step
+// the harness prints what the picker lists, and the emoji Enter hands to
+// bin/omarchy-menu-emoji-insert. Nothing runs: the spawn is recorded.
+const EMOJI_NAMES = ['open', 'dismiss', 'loadEmojis', 'rebuildDisplay', 'setFilter', 'activateIndex', 'applySelected']
+
+function loadScript(rel) {
+  const src = readRev(rel)
+  if (src === null) return { error: `MISSING ${rel}` }
+  const sandbox = { module: { exports: {} }, console: { log() {}, warn() {}, error() {} } }
+  sandbox.exports = sandbox.module.exports
+  const ctx = vm.createContext(sandbox)
+  try {
+    new vm.Script(src, { filename: rel }).runInContext(ctx, { timeout: VM_TIMEOUT_MS })
+  } catch (e) {
+    return { error: `LOAD-ERROR ${errName(e)}` }
+  }
+  return { api: Object.assign({}, ctx, ctx.module && ctx.module.exports) }
+}
+
+function parseEmojiSteps(text) {
+  const steps = []
+  const bad = []
+  for (const line of text.split(/\r\n|\r|\n/)) {
+    if (/^[ \t]*(#.*)?$/.test(line)) continue
+    const m = /^@(emojis|type|clear|enter)(?: (.*))?$/.exec(line)
+    if (!m) { bad.push(line.trim()); continue }
+    if (m[1] !== 'emojis') steps.push({ op: m[1], text: m[2] === undefined ? '' : m[2] })
+  }
+  return { steps, bad }
+}
+
+const digest = list => crypto.createHash('sha256').update(list.join('\n')).digest('hex').slice(0, 12)
+
+// Verifies: SW-REQ-261004-H41S
+function runEmojis(text) {
+  emit(`# ${HARNESS} emojis`)
+  const { steps, bad } = parseEmojiSteps(text)
+  if (bad.length) emit(`ignored-lines ${JSON.stringify(bad)}`)
+  const rel = 'shell/plugins/emojis/Emojis.qml'
+  const qml = readRev(rel)
+  if (qml === null) { emit(`emojis: MISSING ${rel}`); return }
+  const found = {}
+  for (const n of EMOJI_NAMES) {
+    const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
+    if (m) found[n] = m[0]
+  }
+  const missing = EMOJI_NAMES.filter(n => !found[n])
+  if (missing.length) { emit(`emojis: MISSING-FUNCTION ${missing.join(' ')}`); return }
+  const search = loadScript('shell/plugins/emojis/EmojiSearch.js')
+  if (search.error) { emit(`emojis: ${search.error}`); return }
+  const raw = readRev('shell/plugins/emojis/emojis.json')
+  if (raw === null) { emit('emojis: MISSING shell/plugins/emojis/emojis.json'); return }
+
+  const spawns = []
+  const rows = []
+  const sandbox = {
+    EmojiSearch: search.api,
+    Quickshell: { execDetached(cmd) { spawns.push(commandText(cmd)) }, env: () => '' },
+    Qt: { callLater() {} },
+    GridView: { Contain: 0 },
+    resultGrid: { positionViewAtIndex() {} },
+    keyCatcher: { forceActiveFocus() {} },
+    console: { log() {}, warn() {}, error() {} },
+  }
+  const ctx = vm.createContext(sandbox)
+  const r = {
+    omarchyPath: '$OMARCHY_PATH', shell: null, manifest: null,
+    opened: false, filterText: '', selectedIndex: 0, cursorActive: false, emojis: [], filteredEmojis: [],
+    __dm: {
+      clear() { rows.length = 0 },
+      append(row) { rows.push(Object.assign({}, row)) },
+      get count() { return rows.length },
+      get(i) { return rows[i] },
+    },
+  }
+  const scope = new Proxy(r, {
+    has(t, k) {
+      if (typeof k !== 'string' || OUTER.has(k)) return false
+      return k in t || (!(k in sandbox) && !(k in globalThis))
+    },
+  })
+  const src = EMOJI_NAMES.map(n => found[n]).join('\n')
+  let fns
+  try {
+    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${EMOJI_NAMES.join(', ')} } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
+  } catch (e) {
+    emit(`emojis: COMPILE-ERROR ${errName(e)}`)
+    return
+  }
+  for (const n of EMOJI_NAMES) r[n] = fns[n]
+
+  const shown = () => {
+    const list = rows.map(row => row.emoji)
+    emit(`shown query=${JSON.stringify(r.filterText)} count=${list.length} first=${list[0] || '-'} cursor=${r.cursorActive ? r.selectedIndex : '-'}`)
+    emit(`top ${list.slice(0, 12).join(' ') || '-'}`)
+    emit(`digest order=${digest(list)} set=${digest(list.slice().sort())}`)
+  }
+  try {
+    r.loadEmojis(raw)
+    r.open('{}')
+    emit(`opened loaded=${r.emojis.length}`)
+    shown()
+    for (const step of steps) {
+      if (step.op === 'type') {
+        for (const ch of step.text) r.setFilter(r.filterText + ch)
+        shown()
+      } else if (step.op === 'clear') {
+        r.setFilter('')
+        shown()
+      } else {
+        const before = spawns.length
+        if (r.cursorActive) r.activateIndex(r.selectedIndex)
+        else if (rows.length > 0) r.cursorActive = true
+        const sent = spawns.slice(before)
+        emit(`enter ${sent.length ? sent.join(' | ') : '-'} opened=${r.opened}`)
+      }
+    }
+  } catch (e) {
+    emit(`emojis: THROW ${errName(e)}`)
+  }
 }
 
 try {
