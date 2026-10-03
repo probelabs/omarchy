@@ -1,102 +1,95 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-10-03T09:13:17Z"
+updated_at: "2026-10-03T12:46:35Z"
 steps:
     ac-sweep:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: No new or changed STKs; no acceptance block affected. proof validate clean at the merge.
+        note: No new or changed STKs; no acceptance block affected.
         scope_key: menu
     annotations-heavy:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:46Z"
+        confirmed_at: "2026-10-03T12:46:35Z"
         confirmed_by: agent:claude-quattro-proof
-        note: No annotation-bearing code moved (shell.qml carries no Implements markers and is out of scope). MC/DC and obligation annotations unchanged; the full uncached audit confirms.
+        note: No annotation-bearing code moved in the delta; the full uncached audit confirms.
         scope_key: menu
     config-migrate:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'No config migration: proof.yaml byte-identical across the merge; the new upstream files (agent usage, OpenClaw, agents panel, their tests) fall outside the lock+menu scope and are not run by the audit''s named lock/menu test commands.'
+        note: No config migration for the delta. The same baseline move adds bin/omarchy-theme-remov* and shell/services/AppSearch.js to the verification scope (separate commit); the delta's files stay out of scope.
     coverage:
-        status: confirmed
-        confirmed_at: "2026-10-03T09:13:17Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'Full proof audit --no-cache (engine 8cac9cff) at 5cc17bbd, the merge of upstream a85e29ab plus the refresh commits: 0 errors / 0 warnings / 1 info, 204 passed (run-b419c288). tests_pass green; mcdc_coverage 85 requirements, 311 witness rows, 0 uncovered; code-level MC/DC thresholds met (0 incomplete functions); obligation_evidence_complete 62 on 35 parents; 0 suspect links. No in-scope test or code changed in the delta.'
-        scope_key: menu
+        status: pending
     defect-review:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:35Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'No claims session warranted: no in-scope implementation changed; the only edited spec text is a line-number citation.'
+        note: 'No claims session warranted: no in-scope implementation changed.'
         scope_key: menu
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-10-03T09:05:13Z"
+              at: "2026-10-03T12:46:35Z"
     delta-intake:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'Delta 821ae589..a85e29ab (19 commits; upstream merges #11925 third-party plugin __sourceDir, #13296 OpenClaw self-updating install, #14049 agent usage). 31 files, none in the verification scope; omarchy-menu.jsonc, shell/plugins/{menu,lock}/**, bin/omarchy-menu* and bin/omarchy-*lock* byte-identical. Merged with no conflicts. Engine 0.1.0-dev+g8cac9cff8c34, builtin catalog unchanged, no pin.'
+        note: 'Delta a85e29ab..393a43d4 (1 commit, #6951: pin root= earlier in omarchy-upgrade-to-quattro). Files: bin/omarchy-upgrade-to-quattro and its test; neither in the verification scope; menu and lock code byte-identical. Merged with no conflicts. Engine 0.1.0-dev+g8cac9cff8c34, catalog unchanged, no pin.'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-10-03T09:05:13Z"
+            at: "2026-10-03T12:46:34Z"
     hazard:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'Catalog unchanged, so no hazard_review went stale. 8VJQ''s summon-dispatch review re-checked: the convergence anchor moved one line, the behaviour did not. No new decision point in the audited surface.'
+        note: Catalog unchanged; no hazard_review went stale; no new decision point in the audited surface.
         scope_key: menu
     refresh-complete:
-        status: confirmed
-        confirmed_at: "2026-10-03T09:13:17Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'Upstream refresh COMPLETE for delta 821ae589..a85e29ab (19 commits: #11925 third-party plugin __sourceDir, #13296 OpenClaw self-updating install, #14049 agent usage). No menu or lock file changed; the shell.qml insertion moved two cited summon lines (threat surface and SW-REQ-260928-8VJQ updated to :1841 / :1144). Full uncached audit 0/0 (run-b419c288). No new known issue; existing known issues unaffected.'
+        status: pending
     research-delta:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'Research doc review/upstream-a85e29ab-research-delta.md. Contact points: shell.qml publicPluginManifest keeps __sourceDir for third-party plugins only (first-party menu/lock manifests returned before the copy); omarchy-default-agent comment-only (menu setup.default.agent.* rows call it unchanged); OpenClaw scripts and agents panel not reached from menu or lock. No KI names a changed file; no new suspicion survived.'
+        note: Research doc review/upstream-393a43d4-research-delta.md. The upgrade script still calls configure_lock_authentication unchanged; no menu or lock contact; no known issue names a changed file.
         scope_key: menu
     residual:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:14Z"
+        confirmed_at: "2026-10-03T12:46:35Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'No new residual: nothing deferred; the delta does not touch any residual''s code.'
+        note: 'No new residual: the delta does not touch any residual''s code.'
         scope_key: menu
     skeleton-patch:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'No skeleton adds or retires: the delta adds no menu or lock behaviour.'
+        note: No skeleton adds or retires for the delta.
         scope_key: menu
     spec-review-delta:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'No requirement text, variables or truth table changed. SW-REQ-260928-8VJQ domain-obligation rationale: line citation 1840 -> 1841 only; its convergence claim (both dispatch paths end in shell.summon) re-read in the merged shell.qml and still holds. proof validate and proof lint clean.'
+        note: No requirement text changed by the delta. proof validate and proof lint clean after the merge.
         scope_key: menu
     surface-matrix:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'Surface re-extraction: zero new GAPs. No new entrypoint, boundary or trust change in the menu or lock surfaces; the __sourceDir change is on the third-party plugin manifest path, which the first-party menu/lock plugins never take. menu-action-dispatch citations refreshed (shell.qml:1841 -> 1144).'
+        note: 'Zero new GAPs: the delta touches no menu or lock entrypoint or boundary.'
         scope_key: menu
     threat_surface_synthesis:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:14Z"
+        confirmed_at: "2026-10-03T12:46:35Z"
         confirmed_by: agent:claude-quattro-proof
-        note: No new surfaces. threat-surface.yaml menu-action-dispatch convergence citations updated to the merged shell.qml (1841 -> 1144); all existing surfaces unchanged in posture.
+        note: No new surfaces; existing surfaces unchanged in posture.
         scope_key: menu
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-10-03T09:05:14Z"
+              at: "2026-10-03T12:46:35Z"
     traces-light:
         status: confirmed
-        confirmed_at: "2026-10-03T09:05:13Z"
+        confirmed_at: "2026-10-03T12:46:34Z"
         confirmed_by: agent:claude-quattro-proof
-        note: 'proof trace suspect: 0 links post-merge; no annotated file changed. The shell.qml insertion moves the cited summon lines by one: threat-surface.yaml and SW-REQ-260928-8VJQ now cite shell.qml:1841 (IPC summon handler) and :1144 (shell.summon), verified in the merged file.'
+        note: 'proof trace suspect: 0 links after the merge; no annotated file changed in the delta.'
         scope_key: menu
