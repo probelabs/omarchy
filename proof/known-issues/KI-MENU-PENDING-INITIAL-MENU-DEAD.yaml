@@ -50,6 +50,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-03T09:20:20Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
 kill_domain: startup_race
 affected_file:
     - shell/plugins/menu/MenuModel.js

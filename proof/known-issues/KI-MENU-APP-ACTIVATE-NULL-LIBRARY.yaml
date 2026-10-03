@@ -40,6 +40,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-app-activate-null-library.yaml
+    - at: "2026-10-03T09:20:19Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-app-activate-null-library.yaml
 kill_domain: activation
 affected_file:
     - shell/plugins/menu/MenuModel.js
