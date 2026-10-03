@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-261003-B7ZA
+#mcdc:ignore:defensive SW-REQ-261003-B7ZA: apps_rows_in_letter_order=F, apps_rows_rebuilt=T => FALSE -- rebuildDisplay sorts every rebuilt Apps list with the comparator that orders by localeCompare of the lowercased names and falls back to the id only on a tie; an Apps list out of that order needs the comparator to go back to the code-unit < and > of a85e29ab [reviewed: REVIEW-261003-JTMM]
+# mcdc:witness-out-of-process
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 # localeCompare follows the process locale, so pin one: the expectations below
@@ -16,10 +20,13 @@ const match = menuQml.match(/if \(active === "apps"\) \{\s*rows\.sort\((function
 assert(match, 'apps menu sorts its rows with an inline comparator')
 const compare = new Function(`return (${match[1]})`)()
 const order = rows => rows.slice().sort(compare).map(row => row.label)
+// Verifies: SW-REQ-261003-B7ZA
 
 // App names come from each desktop entry's Name for the user's language, so
 // a French or German desktop has names that start with É or Ü. Comparing
 // UTF-16 code units put every one of them after Z.
+// Reproduces: KI-MENU-APPS-SORT-LOCALE
+// MCDC SW-REQ-261003-B7ZA: apps_rows_in_letter_order=T, apps_rows_rebuilt=T => TRUE
 assertDeepEqual(
   order([
     { label: 'Zed', itemId: 'apps.zed' },
@@ -33,6 +40,7 @@ assertDeepEqual(
   'apps menu files an accented name under its letter, not after Z'
 )
 
+// MCDC SW-REQ-261003-B7ZA: apps_rows_in_letter_order=T, apps_rows_rebuilt=T => TRUE
 assertDeepEqual(
   order([
     { label: 'zed', itemId: 'apps.b' },
