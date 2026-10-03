@@ -167,7 +167,18 @@ history:
     created_by: agent:claude-pr-new-C
     created_at: "2026-10-03T07:58:16Z"
     last_modified_by: agent:claude-pr-new-C
-    last_modified_at: "2026-10-03T07:59:40Z"
+    last_modified_at: "2026-10-03T13:29:05Z"
+obligation_suppressions:
+    - id: error_handling
+      reason: '390Z states when the Remove > Theme row shows; it does not own the remover''s error handling. bin/omarchy-theme-remove has no set -e upstream and handles its failures explicitly (no themes: message and exit 1; no pick or a refused name: exit 1). This change only moves where its list comes from.'
+      suppressed_by: agent:claude-pr-new-C
+      suppressed_at: "2026-10-03T13:29:05Z"
+    - id: parameter_boundary_safe
+      reason: The only unquoted expansion flagged in bin/omarchy-theme-removable is exit status, set in the script to the literal 0 or 1; no word splitting or globbing can change it, and theme names are printed quoted.
+      suppressed_by: agent:claude-pr-new-C
+      suppressed_at: "2026-10-03T13:29:05Z"
+      framework_refs:
+        - CWE CWE-1284,CWE-733
 hazard_review:
     reviewed_at: "2026-10-03T09:40:00Z"
     reviewed_by: agent:claude-pr-new-C
