@@ -175,6 +175,26 @@ assertEqual(
   'notifications strip chromium leading origin text'
 )
 
+// Chromium writes the origin link, a blank line, then the message, and the
+// message can start with a URL or a dotted word of its own.
+assertEqual(
+  notifications.sanitizeBody('<a href="https://web.whatsapp.com/">web.whatsapp.com</a>\n\ngithub.com/omacom/omarchy can you review?', 'Chromium', ''),
+  'github.com/omacom/omarchy can you review?',
+  'notifications strip only the chromium origin link, not a URL that starts the message'
+)
+
+assertEqual(
+  notifications.sanitizeBody('<a href="https://app.slack.com/">app.slack.com</a>\n\nNode.js 24 is out', 'Chromium', ''),
+  'Node.js 24 is out',
+  'notifications keep a dotted first word after the chromium origin link'
+)
+
+assertEqual(
+  notifications.sanitizeBody('web.whatsapp.com\n\ngithub.com/omacom/omarchy can you review?', 'Chromium', ''),
+  'github.com/omacom/omarchy can you review?',
+  'notifications strip only the chromium origin text, not a URL that starts the message'
+)
+
 assertEqual(
   notifications.sanitizeBody('https://example.com/path Message body', 'Slack', ''),
   'https://example.com/path Message body',
