@@ -1,0 +1,21 @@
+id: REVIEW-261003-APYX
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-03T22:31:17Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Re-review for the revised upstream commit ad8ecc2b. isWordChar now counts digits and every character that has a case (toLowerCase differs from toUpperCase) as part of a word. So a space, an underscore, a hyphen, a colon, a curly quote or apostrophe and the end of the keywords end a word, while an accented letter such as é stays inside it; the description states exactly this rule and its examples (man: beard, red_haired_man, t-man, o’clock, café). matchRank, filterEmojis, the rounding of a fractional limit and the helpers are unchanged from REVIEW-261003-HBN4. The witness test''s oracle implements the stated rule (digit, or a character with a case) and agrees with the harness on all 34 listed states; it also checks curly quotes and an accented letter directly. With the a1e56f38 rule put back, the witness fails at the o step (o’clock) and the upstream test fails at its quotes case. The guarantee-violation row stays structurally unreachable.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:25@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:26
+    - shell/plugins/emojis/EmojiSearch.js:32@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:45@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:50
+    - shell/plugins/emojis/EmojiSearch.js:63
+    - shell/plugins/emojis/EmojiSearch.js:67
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:65
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:157
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:169
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:170
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:176
+    - test/bdiff/corpus/lifecycle/seq-emoji-steps.events:1
