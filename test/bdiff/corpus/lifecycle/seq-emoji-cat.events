@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: whole words already come first in file order (control).
+@emojis
+@type cat
+@enter

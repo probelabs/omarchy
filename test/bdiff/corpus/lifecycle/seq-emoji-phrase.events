@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: a phrase of several words (control).
+@emojis
+@type face with tears
+@enter

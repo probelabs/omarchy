@@ -1,0 +1,8 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: o, then k, Escape clears, then ok again, then Enter.
+@emojis
+@type o
+@type k
+@clear
+@type ok
+@enter

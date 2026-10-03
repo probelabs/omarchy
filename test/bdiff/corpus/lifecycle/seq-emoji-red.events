@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: type red, then Enter.
+@emojis
+@type red
+@enter
