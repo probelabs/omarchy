@@ -21,14 +21,33 @@ variables:
 traces:
     satisfies:
         - STK-REQ-261004-6HJ2
-    reviewed_at: "2026-10-03T21:40:14.520467Z"
+    reviewed_at: "2026-10-03T21:44:00.726822Z"
     reviewed_by: agent:claude-pr-new-E
-    reviewed_fingerprint: sha256:faf61e225d73f4359de1543bc12ad6b0af3b493a4228f38f93650b81a6ec8821
+    reviewed_fingerprint: sha256:a2a8d5634de7aa60b2733b721aa4f79eb49566024c70e5ba2dfa79070fec7364
     reviewed_targets:
         satisfies:
-            STK-REQ-261004-6HJ2: req1:aa393fb7c6d7ea3a201d970330e71f5e
+            STK-REQ-261004-6HJ2: req1:8b462e5b317a8968e197944d7f75e10b
     review_history:
         - reviewed_at: "2026-10-03T21:40:14.520467Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'SYS-REQ-261004-74P8 states the system clause of the STK-REQ-261004-6HJ2 story for web notifications: the card shows the whole message from its first word, and removes an origin link whose text is a host name with a dot. The witnesses replay real notification bodies, including the exact Chromium 148 body, through the real NotificationLogic.js as NotificationCard.qml calls it.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-261004-6HJ2.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
+        - reviewed_at: "2026-10-03T21:44:00.726822Z"
           reviewed_by: agent:claude-pr-new-E
           method: inspection
           rationale: 'SYS-REQ-261004-74P8 states the system clause of the STK-REQ-261004-6HJ2 story for web notifications: the card shows the whole message from its first word, and removes an origin link whose text is a host name with a dot. The witnesses replay real notification bodies, including the exact Chromium 148 body, through the real NotificationLogic.js as NotificationCard.qml calls it.'

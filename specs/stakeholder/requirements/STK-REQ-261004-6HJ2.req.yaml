@@ -16,9 +16,9 @@ rationale: "A notification tells the user about a new message or event. A card t
 tags: []
 variables: []
 traces:
-    reviewed_at: "2026-10-03T21:40:14.769075Z"
+    reviewed_at: "2026-10-03T21:44:09.37856Z"
     reviewed_by: agent:claude-pr-new-E
-    reviewed_fingerprint: sha256:4ae47b3c4cd9ee688a4f21288a59425603775058d3966ad656768bbf3b0c7620
+    reviewed_fingerprint: sha256:019932a1f926fa681c9691660bd06a6e2f9306e2ee02a8e9182f49149354be58
     reviewed_targets:
         implemented_by:
             shell/plugins/notifications/NotificationLogic.js:isChromiumDerived: file1:8aa013aac4714892a7b55a8d43c75936
@@ -31,6 +31,15 @@ traces:
           citations:
             - shell/plugins/notifications/NotificationLogic.js:1
             - shell/plugins/notifications/NotificationLogic.js:2
+        - reviewed_at: "2026-10-03T21:44:09.37856Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'NotificationLogic.js is the logic of the notification cards and their history in the shell: body cleanup, glyphs, Do Not Disturb, popups and history rows. Its file-level Implements line (line 1) assigns the module to the notifications story; the functions that carry the web-notification rule trace to SW-REQ-261004-DHZ3. The acceptance criterion is witnessed by demonstration ME-261004-E1CR; notifications-card-test.sh carries the nominal evidence (a web notification keeps the whole message).'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:1
+            - shell/plugins/notifications/NotificationLogic.js:2
+            - test/bdiff/notifications-card-test.sh:34
 verification:
     assurance_level: C
     formalization_status: none
