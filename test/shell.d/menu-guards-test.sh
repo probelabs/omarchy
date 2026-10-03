@@ -376,6 +376,7 @@ chmod +x "$stub_dir/omarchy-menu-select"
 
 # Run the guard as the menu does, through the whole generated batch, and ask
 # whether the remover then offered a theme it would actually remove.
+# Verifies: SW-REQ-261003-390Z
 assert_remove_theme_guard_agrees() {
   local description="$1" home="$2" expected="$3"
   local guarded=0 offered=1 opened=1 calls answer name
