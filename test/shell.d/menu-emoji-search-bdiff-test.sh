@@ -9,7 +9,7 @@
 # node:vm, and records the emoji that Enter hands to omarchy-menu-emoji-insert.
 
 # Verifies: SW-REQ-261004-H41S
-#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: it puts every match in the whole-word, keyword-start or inside list as it reads emojis.json and returns the three lists joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-NYQY]
+#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-HBN4]
 # mcdc:witness-out-of-process
 
 set -euo pipefail
@@ -46,25 +46,33 @@ const cases = [
     'shown query="fr" count=32 first=🇫🇷 cursor=0',
     'top 🇫🇷 🥶 🙁 ☹️ 😦 😤 🙍 🙍‍♂️ 🙍‍♀️ 🐥 🐸 🍌',
     insert('🇫🇷')]],
+  ['key lists the locks and keys first, not the pile of poo (hankey)', 'seq-emoji-key.events', [
+    'shown query="key" count=29 first=🔐 cursor=0',
+    'top 🔐 🔑 🗝️ 🎹 ⌨️ #️⃣ *️⃣ 0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣',
+    insert('🔐')]],
   ['car lists cars first, not the fearful face', 'seq-emoji-car.events', [
     'shown query="car" count=30 first=🚃 cursor=0',
-    'top 🚃 🚋 🚓 🚔 🚗 🏎️ 🚨 🤸 🤸‍♂️ 🤸‍♀️ 🥕 🎠',
+    'top 🚃 🚋 🚓 🚔 🚗 🚙 🏎️ 🚨 💅 🤸 🤸‍♂️ 🤸‍♀️',
     insert('🚃')]],
   ['pen lists pens first, then keywords that start with pen', 'seq-emoji-pen.events', [
     'shown query="pen" count=20 first=🖋️ cursor=0',
     'top 🖋️ 🖊️ 🔏 😔 🐧 ✏️ 📝 🤗 🫢 😮 😦 👐',
     insert('🖋️')]],
-  ['red lists the red heart first, not the tired face', 'seq-emoji-red.events', [
+  ['red lists the red heart first, not the sleepy face', 'seq-emoji-red.events', [
     'shown query="red" count=34 first=❤️ cursor=0',
-    'top ❤️ 👨‍🦰 👩‍🦰 🧑‍🦰 🍎 🧧 🀄 🏮 ❓ ❗ ⭕ 🔴',
+    'top ❤️ 👨‍🦰 👩‍🦰 🧑‍🦰 🍎 🚗 🧧 🀄 🏮 ❓ ❗ ⭕',
     insert('❤️')]],
+  ['a colon or an underscore ends a keyword: man: beard and red_haired_man rank as whole words', 'seq-emoji-man.events', [
+    'shown query="man" count=205 first=👨 cursor=0',
+    'top 👨 🧔‍♂️ 👨‍🦰 👨‍🦱 👨‍🦳 👨‍🦲 👱‍♂️ 👴 🙍‍♂️ 🙎‍♂️ 🙅‍♂️ 🙆‍♂️',
+    insert('👨')]],
   ['a leading space and capitals rank as ok', 'seq-emoji-case.events', [
     'shown query=" OK" count=36 first=👌 cursor=0',
     'top 👌 👍 🙆 🙆‍♂️ 🙆‍♀️ 🆗 💔 👀 🧑‍🍳 👨‍🍳 👩‍🍳 🍳',
     insert('👌')]],
   ['the list ranks again after each key, and after Escape clears the search', 'seq-emoji-steps.events', [
-    'shown query="o" count=1000 first=⭕ cursor=0',
-    'top ⭕ 🅾️ 🤣 😂 🤗 🤭 🫢 😮 😦 😨 🤬 💩',
+    'shown query="o" count=1000 first=🎃 cursor=0',
+    'top 🎃 ⭕ 🅾️ 🤣 😂 😛 😜 😝 🤗 🤭 🫢 😵',
     'shown query="ok" count=36 first=👌 cursor=0',
     'top 👌 👍 🙆 🙆‍♂️ 🙆‍♀️ 🆗 💔 👀 🧑‍🍳 👨‍🍳 👩‍🍳 🍳',
     'shown query="" count=1000 first=😀 cursor=0',
@@ -73,9 +81,9 @@ const cases = [
     'top 👌 👍 🙆 🙆‍♂️ 🙆‍♀️ 🆗 💔 👀 🧑‍🍳 👨‍🍳 👩‍🍳 🍳',
     insert('👌')]],
   ['one letter that matches more than 1000 emojis shows the first 1000 of the ranked list', 'seq-emoji-letter.events', [
-    'shown query="e" count=1000 first=😃 cursor=0',
-    'top 😃 😄 😁 😊 🤩 😚 😙 🫢 🫣 🤨 😑 🙄',
-    insert('😃')]],
+    'shown query="e" count=1000 first=📧 cursor=0',
+    'top 📧 😃 😄 😁 😊 😍 🤩 😚 😙 😜 😝 🫢',
+    insert('📧')]],
   ['a phrase of several words still finds its emoji', 'seq-emoji-phrase.events', [
     'shown query="face with tears" count=1 first=😂 cursor=0',
     'top 😂',
@@ -88,6 +96,10 @@ const cases = [
     'shown query="cat" count=20 first=😺 cursor=0',
     'top 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🐱 🐈 🐈‍⬛',
     insert('😺')]],
+  ['a hyphen ends a keyword: rex finds the T-Rex', 'seq-emoji-rex.events', [
+    'shown query="rex" count=1 first=🦖 cursor=0',
+    'top 🦖',
+    insert('🦖')]],
   // MCDC SW-REQ-261004-H41S: emoji_query_typed=F, emoji_results_ranked=F => TRUE [no-action: with no search text the picker lists the first 1000 emojis of emojis.json in file order; the check below compares the whole list, by its order digest, with the file]
   ['with no search text the picker lists emojis.json in file order, and Enter picks the first', 'seq-emoji-empty.events', [
     insert('😀')]],
@@ -107,13 +119,19 @@ assertDeepEqual(inputs, Object.keys(outputs).sort(), 'every emoji input of the c
 // and its digests must match the harness output.
 const data = JSON.parse(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8'))
 const digest = list => crypto.createHash('sha256').update(list.join('\n')).digest('hex').slice(0, 12)
+// A keyword ends at any character that is not a to z, 0 to 9 or a character
+// above U+007F; the best place the search text appears decides its group.
+const word = '[a-z0-9\\u0080-\\uffff]'
 const ranked = query => {
   const needle = query.trim().toLowerCase()
   const groups = [[], [], []]
+  const esc = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const whole = new RegExp(`(^|(?!${word})[\\s\\S])${esc}($|(?!${word})[\\s\\S])`)
+  const start = new RegExp(`(^|(?!${word})[\\s\\S])${esc}`)
   for (const item of data) {
-    const text = ' ' + String(item.k || '').toLowerCase() + ' '
-    if (!needle || text.includes(' ' + needle + ' ')) groups[0].push(item.e)
-    else if (text.includes(' ' + needle)) groups[1].push(item.e)
+    const text = String(item.k || '').toLowerCase()
+    if (!needle || whole.test(text)) groups[0].push(item.e)
+    else if (start.test(text)) groups[1].push(item.e)
     else if (text.includes(needle)) groups[2].push(item.e)
   }
   return groups[0].concat(groups[1], groups[2]).slice(0, 1000)
@@ -132,13 +150,20 @@ for (const input of inputs) {
     states++
   }
 }
-assert(states === 28, 'the picker lists every match in the ranked order, for every search text the inputs show', `states checked: ${states}`)
+assert(states === 34, 'the picker lists every match in the ranked order, for every search text the inputs show', `states checked: ${states}`)
 
 // The list starts from emojis.json as parseEmojis reads it: the real file
 // gives every entry, and text that is not a JSON array gives no emoji.
 const search = requireFromRoot('shell/plugins/emojis/EmojiSearch.js')
 assertEqual(search.parseEmojis(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8')).length, data.length, 'the picker reads every entry of emojis.json')
 assertDeepEqual([search.parseEmojis('{'), search.parseEmojis('{"e":"x"}'), search.parseEmojis('')], [[], [], []], 'text that is not a JSON array gives an empty list')
+
+// filterEmojis on its own: the separators of the upstream test, and a
+// fractional limit, which rounds up as before the fix.
+assertDeepEqual(search.filterEmojis([{ e: 'in', k: 'woman' }, { e: 'colon', k: 'man: beard' }, { e: 'under', k: 'red_haired_man' }, { e: 'dash', k: 't-man' }], 'man').map(item => item.e), ['colon', 'under', 'dash', 'in'], 'a colon, an underscore or a hyphen ends a keyword; a letter does not')
+assertEqual(search.filterEmojis(data, '', 1.5).length, 2, 'a fractional limit rounds up')
+assertDeepEqual(search.filterEmojis([{ e: 'start', k: 'okay' }, { e: 'later', k: 'broken ok' }], 'ok').map(item => item.e), ['later', 'start'], 'a whole word later in the keywords beats a match inside an earlier word')
+assertDeepEqual(search.filterEmojis([{ e: 'inside', k: 'x100' }, { e: 'start', k: '100 points' }, { e: 'whole', k: 'number 10' }], '10').map(item => item.e), ['whole', 'start', 'inside'], 'digits are part of a word')
 
 const fileOrder = data.filter(item => item && item.e).slice(0, 1000).map(item => item.e)
 const opened = outputs['seq-emoji-empty.events'].split('\n')
