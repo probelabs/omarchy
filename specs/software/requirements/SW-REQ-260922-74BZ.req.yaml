@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:39.437542Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T08:00:01.597589Z"
+    reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:3951141167e965f81efdf4d8c2b94ccc40cd74ef7cbc22fa66a6fce7603ecf1a
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:resolveRoute: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:resolveRoute: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:resolveRoute: file1:4646148b2f50db0b9c90b218accbb160
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:
@@ -52,6 +52,19 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:956
+            - shell/plugins/menu/MenuModel.js:183
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:509
+        - reviewed_at: "2026-10-03T08:00:01.597589Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C (upstream-style fix 638c6474 on quattro-proof 39746e65): shell/plugins/menu/MenuModel.js changed only in one comment line, the Implements line above isVisible, which now also names SW-REQ-261003-390Z. No code line changed and no line moved, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:956

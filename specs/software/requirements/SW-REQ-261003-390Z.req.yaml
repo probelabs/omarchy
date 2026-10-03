@@ -1,0 +1,91 @@
+id: SW-REQ-261003-390Z
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when remover_has_no_theme the menu_view shall immediately satisfy remove_theme_row_hidden
+description: 'The Remove menu lists Theme only when omarchy-theme-remove has a theme it can remove. That is a directory under ~/.config/omarchy/themes that is not a symlink and has no leading dot. With none, the guard batch answers the row''s when as false and the menu hides the row. So the row never runs a remover that has nothing to offer and closes the menu with no answer.'
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-47T8
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro a85e29ab has this defect, as does 821ae589, which this baseline carries. The remove.theme row runs omarchy-theme-remove with no terminal and has no when: guard. The script lists the directories under ~/.config/omarchy/themes that are not symlinks. With none, it prints "No extra themes installed." and exits 1, and nothing shows that line.
+
+    A stock install has only the bundled themes, so the row only closes the menu for most users. Commit 5bc151f9 moved the remover to the menu picker and dropped the floating terminal that showed the line.
+
+    The fix gives the row a when: that asks what the remover can act on. It lists only non-symlink directories, and it refuses a name with a leading dot. The guard batch then hides the row until the remover has a theme it can remove. The engine does not scan .jsonc annotations, so the Implements line on the row is inert. The requirement traces to isVisible, which applies the answer. A live run on the box hid the row with no themes and with a symlink-only theme, and showed it after a theme install.
+tags: []
+variables:
+    - remover_has_no_theme
+    - remove_theme_row_hidden
+traces:
+    satisfies:
+        - SYS-REQ-260922-47T8
+    reviewed_at: "2026-10-03T08:00:15.228093Z"
+    reviewed_by: agent:claude-pr-new-C
+    reviewed_fingerprint: sha256:6777f9a7018db59b4796270e392887801689ef319580f192912738058d305ec5
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:isVisible: file1:4646148b2f50db0b9c90b218accbb160
+        satisfies:
+            SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
+    review_history:
+        - reviewed_at: "2026-10-03T08:00:15.228093Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C: new requirement for the remove.theme when: guard (fix 638c6474). The row''s when: in default/omarchy/omarchy-menu.jsonc is the remover''s own find predicate; the engine does not scan .jsonc annotations, so the requirement traces to MenuModel.js isVisible, which hides a row whose when: the guard batch answered false. Verified by test/shell.d/menu-guards-test.sh, which parses the shipped row, runs its guard as the batch does and runs the real omarchy-theme-remove with a stub picker over six HOME shapes; satisfies SYS-REQ-260922-47T8 (rows reflect system state). Spec conformance REVIEW-261003-C7RT'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:262
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:6
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-C
+        reviewed_at: "2026-10-03T08:05:00Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-C
+    created_at: "2026-10-03T07:58:16Z"
+    last_modified_by: agent:claude-pr-new-C
+    last_modified_at: "2026-10-03T07:59:40Z"
+hazard_review:
+    reviewed_at: "2026-10-03T08:05:00Z"
+    reviewed_by: agent:claude-pr-new-C
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+            - boundary
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: the row shows with nothing to remove, runs the remover, and closes the menu with no answer. edge_case: each shape of the themes directory is a case - missing, empty, a symlinked working copy only, only a dot-directory (hidden), a copied theme, a cloned theme, a worktree with a .git file (shown); all seven are witnessed, including a themes directory that holds only a .git directory (hidden: the remover would refuse that name). boundary: zero versus one non-symlink directory is the only boundary; the empty and copied shapes witness both sides. input_domain not applicable: the decision reads only whether one entry exists; theme names and contents do not change it. concurrency_scale not applicable: the batch runs again on each evaluation, so a theme added or removed shows at the next one, as for every sibling guard.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'Every HOME shape gives one defined answer, row shown or row hidden, and that answer equals whether the remover asks the picker. No shape shows the row with nothing to offer or hides it with a theme to offer.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'One JSONC string and one find predicate; no memory, encoding or numeric surface. The escaped quotes in the JSONC string are covered by the witness, which parses the shipped row.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'The guard reads the user''s own HOME with user privileges and removes nothing. The removal is the remover script''s own, unchanged.'
+lifecycle:
+    change_history:
+        - date: "2026-10-03T07:59:40Z"
+          from: draft
+          to: review
+          reason: '[pr-new-C] upstream-style fix 638c6474 gives the remove.theme row a when: guard: requirement authored for the behaviour the change adds; spec conformance REVIEW-261003-C7RT; executing witnesses in test/shell.d/menu-guards-test.sh'
+          changed_by: agent:claude-pr-new-C
