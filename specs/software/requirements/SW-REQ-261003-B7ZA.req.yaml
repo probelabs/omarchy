@@ -26,7 +26,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-03T07:51:50.959294Z"
+    reviewed_at: "2026-10-03T07:57:54.126381Z"
     reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:98b20d51d7a5393e07170f3db9935ce29e784885f887dab9508a829bc705cebc
     reviewed_targets:
@@ -43,6 +43,30 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:655
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T07:57:54.126381Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D: B7ZA is now also verified by the behaviour-diff harness and a proof-side witness test. test/bdiff/harness.mjs (appDirective, appsItems, bindAppsDisplay) runs each revision''s real rebuildDisplay, displayRow and isVisible for an Apps summon, with a sort spy; the ten seq-apps-*.events inputs cover French, German, decomposed accents, non-Latin scripts, case ties, encodings (U+FFFD, BOM, astral, NBSP, full-width), a reordered hand-over, Enter on the first row and a root-menu control. test/shell.d/menu-apps-order-bdiff-test.sh asserts four of those outputs in the menu-shell suite (T,T rows and the F,F no-action row: sorts=0 on a root summon). Implemented by the Apps comparator in rebuildDisplay (Implements line on rebuildDisplay), which orders the lowercased names with localeCompare and falls back to the id only on a tie; verified by test/shell.d/menu-apps-order-test.sh, which extracts that comparator from Menu.qml and runs it on French and German names and a case tie; satisfies SYS-REQ-260922-0M8A (dynamic rows such as apps). Spec conformance REVIEW-261003-JTMM'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/harness.mjs:172
+            - test/bdiff/harness.mjs:178
+            - test/bdiff/harness.mjs:188
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
             - test/shell.d/menu-apps-order-test.sh:21
             - test/shell.d/menu-apps-order-test.sh:5
 verification:

@@ -1,0 +1,11 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Apps menu on a German desktop: umlauts at the start of a name.
+@app files Dateien
+@app settings Einstellungen
+@app public Öffentliche Ordner
+@app clock Uhr
+@app translator Übersetzer
+@app videos Videos
+@app draw Zeichnen
+@app doctors Ärztefinder
+O
