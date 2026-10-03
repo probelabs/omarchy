@@ -1,5 +1,5 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-10-03T12:46:35Z"
+updated_at: "2026-10-03T13:00:13Z"
 steps:
     ac-sweep:
         status: confirmed
@@ -19,7 +19,11 @@ steps:
         confirmed_by: agent:claude-quattro-proof
         note: No config migration for the delta. The same baseline move adds bin/omarchy-theme-remov* and shell/services/AppSearch.js to the verification scope (separate commit); the delta's files stay out of scope.
     coverage:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-10-03T13:00:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Full proof audit --no-cache (engine 8cac9cff) at cfe4da99, the merge of upstream 393a43d4 plus the scope and known-issue changes: 0 errors / 0 warnings / 1 info, 204 passed (run-08acca45). tests_pass green (the new menu-app-library test ran); mcdc_coverage 86 requirements, 316 witness rows, 0 uncovered; code-level MC/DC thresholds met; 243/243 code functions traced; 0 suspect links.'
+        scope_key: menu
     defect-review:
         status: confirmed
         confirmed_at: "2026-10-03T12:46:35Z"
@@ -46,7 +50,10 @@ steps:
         note: Catalog unchanged; no hazard_review went stale; no new decision point in the audited surface.
         scope_key: menu
     refresh-complete:
-        status: pending
+        status: confirmed
+        confirmed_at: "2026-10-03T13:00:13Z"
+        confirmed_by: agent:claude-quattro-proof
+        note: 'Upstream refresh COMPLETE for delta a85e29ab..393a43d4 (1 commit, #6951, bin/omarchy-upgrade-to-quattro and its test; no menu or lock file changed). Same baseline move: KI-MENU-REMOVE-THEME-NO-THEMES landed; bin/omarchy-theme-remov* and shell/services/AppSearch.js entered the verification scope with SW-REQ-261003-C9GM for the app library list. Full uncached audit 0/0 (run-08acca45).'
     research-delta:
         status: confirmed
         confirmed_at: "2026-10-03T12:46:34Z"
