@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with an empty themes directory (a stock install: only the bundled themes):
+# does the row show, and does omarchy-theme-remove offer a theme?
+@home:empty G

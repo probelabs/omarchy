@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with only a symlinked working copy, which omarchy-theme-remove never lists:
+# does the row show, and does omarchy-theme-remove offer a theme?
+@home:linked G

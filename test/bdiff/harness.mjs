@@ -37,10 +37,16 @@
 //
 // Robustness: a revision that lacks MenuModel.js / Menu.qml / one of the
 // functions prints a MISSING marker instead of crashing (exit 0), so base and
-// head stay comparable. The harness writes NOTHING to disk: product code runs
-// in a vm context with no require/process, and every process spawn it would
-// make (Quickshell.execDetached, Process.running) is recorded, not executed.
+// head stay comparable. Product code runs in a vm context with no
+// require/process, and every process spawn it would make
+// (Quickshell.execDetached, Process.running) is recorded, not executed. The
+// one exception is the `G` event (Remove > Theme guard, see the .events
+// section): it runs the revision's guard and bin/omarchy-theme-remove under
+// bash in a throwaway HOME below the system temp directory, which it removes
+// again. Nothing in the repository or the real HOME is written.
+import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import vm from 'node:vm'
 
@@ -148,6 +154,14 @@ function runJsonc() {
 //   R  activate row 1 (dmenu: pick beta; menu: run the action row)
 //   C  close
 //   X  the shared answer Process exits (fires the revision's onExited)
+//   G  Remove > Theme guard: the revision's remove.theme row (parsed from its
+//      default/omarchy/omarchy-menu.jsonc) through its guard batch
+//      (MenuModel guardScript, run by bash) and isVisible, against the
+//      revision's bin/omarchy-theme-remove with a stub picker, in a HOME of
+//      the shape set by the directive `@home:<shape>` (missing, empty,
+//      copied, cloned, linked, worktree, dotted, hidden, mixed, filed, dashed; default empty). Prints one `guard`
+//      line: whether the row shows, what the remover offers, and whether
+//      the two agree (a shown row with nothing to offer only closes the menu).
 //
 // Model (method: review notes for #9056, harness bdiff-9056.js): the shared
 // QML `Process { id: resultProc }` ignores `running = true` while it is still
@@ -157,7 +171,8 @@ function runJsonc() {
 const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected']
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
-const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X'])
+const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'G'])
+const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree', 'dotted', 'hidden', 'mixed', 'filed', 'dashed'])
 
 function parseEvents(text) {
   const ops = []
@@ -167,6 +182,8 @@ function parseEvents(text) {
     const line = rawLine.replace(/#.*/, '')
     for (const tok of line.split(/[ \t,]+/).filter(Boolean)) {
       if (tok === '@slow') { slow = true; continue }
+      const home = /^@home:([a-z]+)$/.exec(tok)
+      if (home && HOME_SHAPES.has(home[1])) { ops.push('H:' + home[1]); continue }
       const m = /^([A-Z])(?:[x*](\d+))?$/.exec(tok)
       if (!m || !OPS.has(m[1])) { bad.push(tok); continue }
       const n = m[2] === undefined ? 1 : Math.min(+m[2], 1000)
@@ -199,10 +216,100 @@ function commandText(cmd) {
   return String(cmd)
 }
 
+// Builds a throwaway HOME of one shape (the shapes of the Remove > Theme
+// guard test in test/shell.d/menu-guards-test.sh): no themes directory, an
+// empty one, a copied theme, a cloned theme (.git directory), only a
+// symlinked working copy, a worktree (.git file), only a dot-directory
+// (.git, or .backup), whose name omarchy-theme-remove lists but refuses to
+// remove, .git beside a real theme (mixed: the real one still counts), and
+// only a stray file (filed: a file is not a theme), and a theme named -n
+// (dashed: a name echo would read as an option is still a theme).
+// Verifies: SW-REQ-261003-390Z
+function makeThemesHome(shape) {
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'omarchy-bdiff-home-'))
+  const home = path.join(base, 'home')
+  const themes = path.join(home, '.config', 'omarchy', 'themes')
+  fs.mkdirSync(home)
+  if (shape !== 'missing') fs.mkdirSync(themes, { recursive: true })
+  if (shape === 'copied') fs.mkdirSync(path.join(themes, 'handmade'))
+  if (shape === 'cloned') fs.mkdirSync(path.join(themes, 'tokyo-night', '.git'), { recursive: true })
+  if (shape === 'linked') {
+    fs.mkdirSync(path.join(base, 'checkout', '.git'), { recursive: true })
+    fs.symlinkSync(path.join(base, 'checkout'), path.join(themes, 'in-progress'))
+  }
+  if (shape === 'dotted') fs.mkdirSync(path.join(themes, '.git'))
+  if (shape === 'hidden') fs.mkdirSync(path.join(themes, '.backup'))
+  if (shape === 'filed') fs.writeFileSync(path.join(themes, 'notes.txt'), '')
+  if (shape === 'dashed') fs.mkdirSync(path.join(themes, '-n'))
+  if (shape === 'mixed') {
+    fs.mkdirSync(path.join(themes, '.git'))
+    fs.mkdirSync(path.join(themes, 'handmade'))
+  }
+  if (shape === 'worktree') {
+    fs.mkdirSync(path.join(themes, 'branch'))
+    fs.writeFileSync(path.join(themes, 'branch', '.git'), 'gitdir: /elsewhere\n')
+  }
+  const stub = path.join(base, 'stub')
+  fs.mkdirSync(stub)
+  // The picker stub records its options and picks nothing, so no theme is removed.
+  fs.writeFileSync(path.join(stub, 'omarchy-menu-select'), '#!/bin/bash\nshift\nfor o in "$@"; do [[ $o == -- ]] && break; printf "%s\\n" "$o"; done >>"$SELECT_CALLS"\nexit 1\n', { mode: 0o755 })
+  return { base, home, stub, calls: path.join(base, 'select-calls') }
+}
+
+// One `G` event: does the revision show Remove > Theme in this HOME, and does
+// its remover have a theme to offer there? Both run from <rev>; the base
+// and head each answer with their own row, guard batch and script.
+// Verifies: SW-REQ-261003-390Z
+function runRemoveThemeGuard(mm, shape) {
+  const tag = `guard remove.theme home=${shape}`
+  const bash = process.env.OMARCHY_TEST_BASH || 'bash'
+  const gnu = spawnSync('find', ['/dev/null', '-maxdepth', '0', '-xtype', 'f', '-printf', ''], { encoding: 'utf8' })
+  const bash4 = spawnSync(bash, ['-c', '((BASH_VERSINFO[0] >= 4))'], { encoding: 'utf8' })
+  if (gnu.status !== 0 || bash4.status !== 0) return emit(`${tag} UNAVAILABLE needs GNU find and bash 4`)
+  if (mm.error) return emit(`${tag} model: ${mm.error}`)
+  const menuText = readRev('default/omarchy/omarchy-menu.jsonc')
+  if (menuText === null) return emit(`${tag} MISSING default/omarchy/omarchy-menu.jsonc`)
+  if (typeof mm.api.parseMenuJsonc !== 'function' || typeof mm.api.guardScript !== 'function' || typeof mm.api.isVisible !== 'function') {
+    return emit(`${tag} MISSING-FUNCTION parseMenuJsonc/guardScript/isVisible`)
+  }
+  const rows = mm.api.parseMenuJsonc(menuText)
+  const row = Array.isArray(rows) ? rows.find(r => r && r.id === 'remove.theme') : null
+  if (!row) return emit(`${tag} MISSING-ROW remove.theme`)
+  const remover = path.join(rev, 'bin', 'omarchy-theme-remove')
+  if (!fs.existsSync(remover)) return emit(`${tag} MISSING bin/omarchy-theme-remove`)
+  const fx = makeThemesHome(shape)
+  try {
+    const env = { ...process.env, HOME: fx.home, PATH: `${fx.stub}:${path.join(rev, 'bin')}:${process.env.PATH}`, SELECT_CALLS: fx.calls }
+    const script = mm.api.guardScript({ [row.id]: row })
+    let batch = '-'
+    const when = {}
+    if (script) {
+      const r = spawnSync(bash, ['-c', script], { env, encoding: 'utf8', timeout: 10000 })
+      const m = /^remove\.theme:w:([01])$/m.exec(r.stdout || '')
+      batch = m ? m[1] : 'NONE'
+      if (m) when[row.id] = m[1] === '1'
+    }
+    const shown = mm.api.isVisible({ [row.id]: row }, [row.id], when, row)
+    spawnSync(bash, [remover], { env, encoding: 'utf8', timeout: 10000 })
+    const offered = fs.existsSync(fx.calls) ? fs.readFileSync(fx.calls, 'utf8').split('\n').filter(Boolean) : []
+    const offers = offered.length ? `offers ${offered.join(',')}` : 'none'
+    // Only what the user sees is compared: whether the row shows and what the
+    // remover offers. Whether the row declares a when: is how, not what, so a
+    // control where both revisions show the row prints the same line.
+    if (batch === 'NONE') return emit(`${tag} BATCH-NO-ANSWER`)
+    // The remover refuses a name with a leading dot, so only other names are
+    // a theme it can remove.
+    const removable = offered.some(n => !n.startsWith('.'))
+    emit(`${tag} shown=${shown} remover=${offers} agree=${shown === removable ? 'yes' : 'NO'}`)
+  } finally {
+    fs.rmSync(fx.base, { recursive: true, force: true })
+  }
+}
+
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())
-  emit(`events ${ops.join('') || '-'}${slow ? ' @slow' : ''}`)
+  emit(`events ${ops.map(o => (o.length > 1 ? `@home:${o.slice(2)} ` : o)).join('') || '-'}${slow ? ' @slow' : ''}`)
   if (bad.length) emit(`ignored-tokens ${bad.join(' ')}`)
   const rel = 'shell/plugins/menu/Menu.qml'
   const qml = readRev(rel)
@@ -293,8 +400,11 @@ function runEvents() {
   }
   const exitProc = () => { if (S.busy) { S.busy = false; fns.onExited() } }
   let failure = null
+  let homeShape = 'empty'
   try {
     for (const op of ops) {
+      if (op.startsWith('H:')) { homeShape = op.slice(2); continue }
+      if (op === 'G') { runRemoveThemeGuard(mm, homeShape); continue }
       switch (op) {
         case 'S': case 'I': {
           tag++
