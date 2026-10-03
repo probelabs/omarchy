@@ -80,6 +80,10 @@ history:
       by: agent:claude-pr-A
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-03T13:02:37Z"
+      by: agent:claude-pr-A
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
