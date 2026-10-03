@@ -181,11 +181,11 @@ function appDirective(rawLine) {
 }
 
 // Verifies: SW-REQ-261003-B7ZA
-// Makes localeCompare in a vm context collate as `locale` when the input
-// names one (an argument-less localeCompare otherwise uses Node's default).
+// Makes localeCompare in a vm context collate as `locale` when the input names one, and as en-US (the root
+// collation Node uses under C and C.UTF-8) otherwise: Node's default follows the host's LC_ALL/LANG.
 function pinLocale(ctx, locale) {
-  if (!locale) return
-  vm.runInContext('(function(locale) { var lc = String.prototype.localeCompare; String.prototype.localeCompare = function(that) { return lc.call(this, that, locale) } })', ctx)(locale)
+  const tag = locale || 'en-US' // pinned, so sv_SE, et_EE or th_TH hosts give the same output
+  vm.runInContext('(function(locale) { var lc = String.prototype.localeCompare; String.prototype.localeCompare = function(that) { return lc.call(this, that, locale) } })', ctx)(tag)
 }
 
 // Verifies: SW-REQ-261003-B7ZA
