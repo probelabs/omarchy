@@ -54,9 +54,9 @@ argument-less `localeCompare` collate as that locale, the way Qt collates with
 the process locale (seq-apps-locale-ru/el/zh: the script of the language comes
 first). `@plugin-list` also prints the revision's
 `shell/services/AppSearch.js` `sortedEntries` order of the same apps
-(`plugin-list rows=[...]`), the list the plugin API hands out. `localeCompare` uses Node's default ICU locale;
-inputs without `@locale` were checked to give the same output under LANG=C, C.UTF-8, en_US.UTF-8 and
-fr_FR.UTF-8. These inputs pin the comparator, not Qt's collation: under C or
+(`plugin-list rows=[...]`), the list the plugin API hands out. An Apps input without `@locale` collates as
+en-US, the root collation Node uses under C and C.UTF-8, whatever the host locale is (Node's default ICU
+locale follows LC_ALL/LANG, and sv_SE, et_EE or th_TH would give other orders). These inputs pin the comparator, not Qt's collation: under C or
 C.UTF-8 Qt keeps UTF-16 code-unit order, which Node does not reproduce (checked in
 the real shell instead).
 test/shell.d/menu-apps-order-bdiff-test.sh asserts on four of these outputs,

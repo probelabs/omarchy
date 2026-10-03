@@ -19,6 +19,10 @@ require_command node
 HARNESS="$ROOT/test/bdiff/harness.mjs"
 CORPUS="$ROOT/test/bdiff/corpus/lifecycle"
 
+# The harness pins the collation of inputs without @locale to en-US; the run
+# below also pins LC_ALL=C.UTF-8, as the upstream test does, so no host locale
+# (sv_SE, et_EE, th_TH, ...) changes the expected orders.
+
 # Each case: description, input, the exact lines the harness prints for the
 # shown rows, the plugin list when the input asks for it, and the app an
 # Enter launched, if any.
@@ -101,7 +105,7 @@ plugin-list rows=["Éditeur","Éditeur"]'
 for ((i = 0; i < ${#CASES[@]}; i += 3)); do
   description=${CASES[i]}
   expected=${CASES[i + 2]}
-  got=$(node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" | grep -E '^(shown|plugin-list) |^apps [^-]')
+  got=$(LC_ALL=C.UTF-8 node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" | grep -E '^(shown|plugin-list) |^apps [^-]')
   if [[ $got == "$expected" ]]; then
     pass "$description"
   else
