@@ -1,17 +1,20 @@
 schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
-      requirement: SW-REQ-260922-Z680
-      command: pocs/menu-qml-static.sh
+      requirements:
+        - SW-REQ-260922-Z680
+        - SW-REQ-261003-B7ZA
+      command: bash test/shell.d/menu-apps-order-test.sh
       status: pass
-      observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-03T07:52:54Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-APPS-SORT-LOCALE` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/menu-qml-static.sh
+        - 'Captured by `proof evidence capture KI-MENU-APPS-SORT-LOCALE` from the KnownIssue''s reproducer command: bash test/shell.d/menu-apps-order-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Put the code-unit comparison back in the Apps comparator of rebuildDisplay in shell/plugins/menu/Menu.qml (if (aLabel < bLabel) return -1 and if (aLabel > bLabel) return 1 in place of localeCompare, the a85e29ab behaviour): the red reproducer test/shell.d/menu-apps-order-test.sh fails at ''apps menu files an accented name under its letter, not after Z''.'
+        - test/shell.d/menu-apps-order-test.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-APPS-SORT-LOCALE.yaml: ki-content-v1:sha256:f37b02c670c9e9e9a3a9a4ac5594662df57d6e08a3ae1360e33740f8f592667d
+        proof/known-issues/KI-MENU-APPS-SORT-LOCALE.yaml: ki-content-v1:sha256:7844355180cf1fa76d4262d61594c498efdfc089cd602fc8f9bb41ab587cc695
+        test/shell.d/menu-apps-order-test.sh: sha256:28644dfbea07a9be0831b8c80b16d09be5e994ac1fc6cf11f82c9e4c0b398192
       known_issues:
         - KI-MENU-APPS-SORT-LOCALE
       config:

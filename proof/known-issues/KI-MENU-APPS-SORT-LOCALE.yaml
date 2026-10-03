@@ -50,6 +50,10 @@ history:
       by: agent:claude-pr-new-D
       action: edit
       detail: set-title,set-description,set-reproducer-command,set-tripwire-mutation,set-mitigation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest
+    - at: "2026-10-03T07:52:53Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-apps-sort-locale.yaml
 kill_domain: sorting
 affected_file:
     - shell/plugins/menu/MenuModel.js
