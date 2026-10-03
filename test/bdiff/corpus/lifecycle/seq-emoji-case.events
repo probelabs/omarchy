@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: a leading space and capitals; the picker trims and ignores case.
+@emojis
+@type  OK
+@enter
