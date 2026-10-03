@@ -47,34 +47,6 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-02T22:05:48Z"
-      by: agent:claude-quattro-proof
-      action: edit
-      detail: set-title,set-description,set-mitigation,set-remediation,set-customer-impact
-    - at: "2026-10-02T22:06:29Z"
-      by: agent:claude-quattro-proof
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-03T06:38:42Z"
-      by: agent:claude-quattro-proof
-      action: edit
-      detail: 'set-severity=medium,severity-justification=severity: raised from low to medium. Issue omacom/omarchy#14052 shows that the Enter meant for a summoned prompt answers the pending uninstall question instead, and the selected app is uninstalled with no further prompt: Omarchy deletes user, web-app and TUI launchers (data loss), and the prompt''s caller gets a cancel. The grade comes from the wrong delivery of a prompt''s Enter (correctness) in a specific workflow, an uninstall question left open when a summon arrives; the dominant menu paths are unaffected.'
-    - at: "2026-10-03T06:38:43Z"
-      by: agent:claude-quattro-proof
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-03T06:47:12Z"
-      by: agent:claude-quattro-proof
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-03T12:37:52Z"
-      by: agent:claude-quattro-proof
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
-    - at: "2026-10-03T13:51:11Z"
-      by: agent:claude-quattro-proof
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
     - at: "2026-10-02T11:52:17Z"
       by: agent:claude-pr-A
       action: edit
@@ -95,12 +67,40 @@ history:
       by: agent:claude-pr-A
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-02T22:05:48Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-title,set-description,set-mitigation,set-remediation,set-customer-impact
+    - at: "2026-10-02T22:06:29Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-03T06:38:42Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: 'set-severity=medium,severity-justification=severity: raised from low to medium. Issue omacom/omarchy#14052 shows that the Enter meant for a summoned prompt answers the pending uninstall question instead, and the selected app is uninstalled with no further prompt: Omarchy deletes user, web-app and TUI launchers (data loss), and the prompt''s caller gets a cancel. The grade comes from the wrong delivery of a prompt''s Enter (correctness) in a specific workflow, an uninstall question left open when a summon arrives; the dominant menu paths are unaffected.'
+    - at: "2026-10-03T06:38:43Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-03T06:47:12Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
     - at: "2026-10-03T06:49:25Z"
       by: agent:claude-pr-A
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-03T12:37:52Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
     - at: "2026-10-03T13:02:37Z"
       by: agent:claude-pr-A
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-03T13:51:11Z"
+      by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
 poc_quality:
