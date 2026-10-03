@@ -11,6 +11,8 @@ affected_requirements:
     - SYS-REQ-261004-74P8
 commands:
     - bash test/shell.d/notifications-test.sh
+evidence_manifests:
+    - proof/evidence/ki-notify-web-message-first-word.yaml
 severity: low
 severity_basis: risk
 risk: correctness
@@ -44,5 +46,9 @@ history:
       by: agent:claude-pr-new-E
       action: edit
       detail: set-description,set-remediation
+    - at: "2026-10-03T22:21:07Z"
+      by: agent:claude-pr-new-E
+      action: capture-evidence
+      detail: proof/evidence/ki-notify-web-message-first-word.yaml
 kill_domain: text_cleanup
 affected_file: shell/plugins/notifications/NotificationLogic.js
