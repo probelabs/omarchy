@@ -22,23 +22,23 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-03T12:36:51.843502Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T13:01:48.134251Z"
+    reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:916c77f189ac1031526674ab21fb1fa148787b37337547bbc9d62407d61b3218
     reviewed_targets:
         implemented_by:
-            shell/services/AppSearch.js:allTermsMatch: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:entryAcronym: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:entryName: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:entrySearchText: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:entrySortKey: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:entrySubtext: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:fuzzyScore: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:keywordText: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:sortedEntries: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:termMatches: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:wordText: file1:c75ead5b8dbdc27fa4d7254a5eade00c
-            shell/services/AppSearch.js:words: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:allTermsMatch: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:entryAcronym: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:entryName: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:entrySearchText: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:entrySortKey: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:entrySubtext: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:fuzzyScore: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:keywordText: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:sortedEntries: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:termMatches: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:wordText: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:words: file1:f6686a7097b5713a054dc6b8b21a134e
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
@@ -46,6 +46,27 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Baseline requirement for the app library list now that shell/services/AppSearch.js is in the verification scope. All twelve AppSearch.js functions build that list: sortedEntries applies the displayability skips and drops a negative fuzzyScore; fuzzyScore, allTermsMatch, termMatches, entrySearchText, keywordText, entryAcronym, words and wordText decide whether every query term matches; entryName, entrySubtext and entrySortKey supply the name, subtext and sort key. The order itself is outside this requirement (KI-MENU-APPS-SORT-LOCALE). Satisfies SYS-REQ-260922-0M8A (the apps provider rows come from this list). Witnessed by test/shell.d/menu-app-library-test.sh; spec conformance REVIEW-261003-Q2WS.'
+          source: proof trace review --citation
+          citations:
+            - shell/services/AppSearch.js:1
+            - shell/services/AppSearch.js:108
+            - shell/services/AppSearch.js:11
+            - shell/services/AppSearch.js:16
+            - shell/services/AppSearch.js:25
+            - shell/services/AppSearch.js:31
+            - shell/services/AppSearch.js:39
+            - shell/services/AppSearch.js:49
+            - shell/services/AppSearch.js:57
+            - shell/services/AppSearch.js:6
+            - shell/services/AppSearch.js:72
+            - shell/services/AppSearch.js:81
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-app-library-test.sh:17
+            - test/shell.d/menu-app-library-test.sh:5
+        - reviewed_at: "2026-10-03T13:01:48.134251Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D on quattro-proof 49cd12b0: shell/services/AppSearch.js changed only inside sortedEntries, whose comparator now orders by localeCompare of the lowercased key before the old < and > tie-break (SW-REQ-261003-B7ZA, named on the same Implements line). Which entries the library lists (displayable and every query term matched) is unchanged: the filter loop, termMatches, allTermsMatch, entryAcronym and the other helpers are byte-identical at the same lines. Only the order of the returned rows changes'
           source: proof trace review --citation
           citations:
             - shell/services/AppSearch.js:1
