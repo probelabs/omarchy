@@ -302,7 +302,10 @@ project:
             # raised to the truthful current size plus headroom; revisit
             # if the plugin is ever split for real.
             # 128 -> 130 (2026-10-01): room for the consolidated JSONC requirements + the input-domain requirement.
-            max_variables: 130
+            # 130 -> 140 (2026-10-03): the app library (shell/services/AppSearch.js) joined the menu scope with
+            # SW-REQ-261003-C9GM (3 variables, 123 in specs/software/menu). PR mirrors add their own requirements
+            # on top (up to 9 variables, #13968), so 130 left no room for them.
+            max_variables: 140
         test_results:
             # P3 observed obligation results: tests_pass links this report and
             # writes its run record (<report>.run.json), which the evidence
