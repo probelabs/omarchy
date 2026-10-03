@@ -17,7 +17,7 @@ cve_surface: none
 affected_api: MenuModel.parseMenuJsonc (default and user menu JSONC)
 reproducer_command: node --test --test-reporter=spec test/node/menumodel-replay.test.mjs
 tripwire_mutation: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire test in test/node/menumodel-replay.test.mjs fails. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.
-introduced_in: 653554050e488f69d5b28486b4056748e16d4e26
+introduced_in: d2d5d4d057458c17900cb8b6b08b5d24e5a33084
 defect_class: new_defect
 minimization_status: minimized
 mitigation: Indent comment lines in the menu file with ASCII spaces or tabs only. The shipped default menu indents with ASCII spaces.
@@ -83,6 +83,14 @@ history:
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
     - at: "2026-10-03T09:15:21Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
+    - at: "2026-10-03T13:02:30Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: introduced-in=d2d5d4d057458c17900cb8b6b08b5d24e5a33084
+    - at: "2026-10-03T13:02:30Z"
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comment-indent-whitespace.yaml
