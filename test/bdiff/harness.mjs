@@ -167,12 +167,46 @@ const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'O'])
 // and isVisible, so every other input keeps the old stub and prints exactly
 // what it printed before.
 const APP_LINE = /^@app[ \t]+(\S+)[ \t]+(.*)$/
+// `@locale <BCP 47 tag>` collates as that locale (Qt's localeCompare uses the
+// process locale); `@plugin-list` also prints the revision's
+// AppSearch.sortedEntries order of the same apps. Apps inputs only.
+const LOCALE_LINE = /^@locale[ \t]+(\S+)[ \t]*$/
+const PLUGIN_LINE = /^@plugin-list[ \t]*$/
 const APPS_NAMES = ['rebuildDisplay', 'displayRow', 'isVisible']
 
 // Verifies: SW-REQ-261003-B7ZA
 function appDirective(rawLine) {
   const m = APP_LINE.exec(rawLine)
   return m ? { appId: m[1], label: m[2] } : null
+}
+
+// Verifies: SW-REQ-261003-B7ZA
+// Makes localeCompare in a vm context collate as `locale` when the input
+// names one (an argument-less localeCompare otherwise uses Node's default).
+function pinLocale(ctx, locale) {
+  if (!locale) return
+  vm.runInContext('(function(locale) { var lc = String.prototype.localeCompare; String.prototype.localeCompare = function(that) { return lc.call(this, that, locale) } })', ctx)(locale)
+}
+
+// Verifies: SW-REQ-261003-B7ZA
+// The order the revision's shell/services/AppSearch.js sortedEntries hands
+// plugins for the declared apps (no query).
+function pluginListOrder(apps, locale) {
+  const rel = 'shell/services/AppSearch.js'
+  const src = readRev(rel)
+  if (src === null) return `MISSING ${rel}`
+  const sandbox = { module: { exports: {} }, console: { log() {}, warn() {}, error() {} } }
+  const ctx = vm.createContext(sandbox)
+  pinLocale(ctx, locale)
+  try {
+    new vm.Script(src, { filename: rel }).runInContext(ctx, { timeout: VM_TIMEOUT_MS })
+    const api = sandbox.module.exports
+    if (typeof api.sortedEntries !== 'function') return 'MISSING-FUNCTION sortedEntries'
+    const rows = api.sortedEntries(apps.map(a => ({ id: a.appId, name: a.label, noDisplay: false })), '')
+    return JSON.stringify(rows.map(row => api.entryName(row.entry)))
+  } catch (e) {
+    return `THROW ${errName(e)}`
+  }
 }
 
 // Verifies: SW-REQ-261003-B7ZA
@@ -207,9 +241,14 @@ function parseEvents(text) {
   let slow = false
   const bad = []
   const apps = []
+  let locale = null
+  let pluginList = false
   for (const rawLine of text.split(/\r\n|\r|\n/)) {
     const app = appDirective(rawLine)
     if (app) { apps.push(app); continue }
+    const lm = LOCALE_LINE.exec(rawLine)
+    if (lm) { locale = lm[1]; continue }
+    if (PLUGIN_LINE.test(rawLine)) { pluginList = true; continue }
     const line = rawLine.replace(/#.*/, '')
     for (const tok of line.split(/[ \t,]+/).filter(Boolean)) {
       if (tok === '@slow') { slow = true; continue }
@@ -219,7 +258,7 @@ function parseEvents(text) {
       for (let i = 0; i < n; i++) ops.push(m[1])
     }
   }
-  return { ops, slow, bad, apps }
+  return { ops, slow, bad, apps, locale, pluginList }
 }
 
 function extractFunctions(qml, names = NAMES) {
@@ -247,7 +286,7 @@ function commandText(cmd) {
 
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
-  const { ops, slow, bad, apps } = parseEvents(readInputText())
+  const { ops, slow, bad, apps, locale, pluginList } = parseEvents(readInputText())
   const appsMode = apps.length > 0
   const names = appsMode ? NAMES.concat(APPS_NAMES) : NAMES
   const items = appsMode ? appsItems(apps) : ITEMS
@@ -323,7 +362,9 @@ function runEvents() {
     return
   }
   for (const n of NAMES) r[n] = fns[n]
+  if (appsMode) pinLocale(ctx, locale)
   const sortSpy = appsMode ? bindAppsDisplay(r, fns, rows, ctx) : null
+  if (appsMode && locale) emit(`locale ${locale}`)
 
   const callers = new Map()
   const stray = []
@@ -386,6 +427,7 @@ function runEvents() {
   emit(`actions ${S.actions.join(',') || '-'}`)
   emit(`apps ${S.apps.join(',') || '-'}`)
   emit(`stray-writes ${stray.join(' | ') || '-'}`)
+  if (appsMode && pluginList) emit(`plugin-list rows=${pluginListOrder(apps, locale)}`)
 }
 
 try {
