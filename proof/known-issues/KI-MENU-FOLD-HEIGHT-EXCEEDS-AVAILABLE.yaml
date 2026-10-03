@@ -48,6 +48,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-fold-height-exceeds-available.yaml
+    - at: "2026-10-03T15:15:15Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-fold-height-exceeds-available.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-DETAIL-WHITESPACE-QUERY: different layout defect - this is foldedListHeight exceeding the available clamp at a row boundary, that one is untrimmed filterText flipping rows to detail height; different functions and fixes'
 kill_domain: layout
 affected_file:
