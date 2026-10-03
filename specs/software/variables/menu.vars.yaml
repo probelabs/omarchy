@@ -492,6 +492,14 @@ variables:
       type: bool
       direction: input
       description: Every term of the query matches the entry's name, id, generic name, comment or keywords, or a term of five characters or fewer matches its acronym. An empty query matches every entry.
+    - name: apps_rows_rebuilt
+      type: bool
+      direction: input
+      description: The Apps menu rows are rebuilt for display with no search query, from the desktop entry names in the user's language.
+    - name: apps_rows_in_letter_order
+      type: bool
+      direction: output
+      description: The Apps rows are in localeCompare order of their lowercased names, so a name that starts with an accented or non-Latin letter sorts under that letter and not after z; equal names keep their id order.
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'
