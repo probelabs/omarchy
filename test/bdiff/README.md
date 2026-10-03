@@ -47,10 +47,13 @@ or `O` it prints `shown menu=<id> sorts=<n> rows=[...]`: the rows in display
 order and how many comparator sorts the revision ran. Inputs without `@app`
 lines keep the old display stub and print the same output as before. The
 `seq-apps-*.events` inputs (SW-REQ-261003-B7ZA) cover French, German,
-decomposed accents, non-Latin scripts, case ties, invalid UTF-8 and other
-encodings, a reordered hand-over, Enter on the first row, and a root-menu
-control. `localeCompare` uses Node's default ICU locale; the outputs were
-checked to be the same under LANG=C, C.UTF-8, en_US.UTF-8 and fr_FR.UTF-8.
+decomposed accents, non-Latin scripts, symbol- and digit-led names, case ties,
+invalid UTF-8 and other encodings, a reordered hand-over, Enter on the first
+row, and a root-menu control. `localeCompare` uses Node's default ICU locale;
+the outputs were checked to be the same under LANG=C, C.UTF-8, en_US.UTF-8 and
+fr_FR.UTF-8. These inputs pin the comparator, not Qt's collation: under C or
+C.UTF-8 Qt keeps code-point order, which Node does not reproduce (checked in
+the real shell instead).
 test/shell.d/menu-apps-order-bdiff-test.sh asserts on four of these outputs,
 so the menu-shell suite runs them with an observed outcome.
 
