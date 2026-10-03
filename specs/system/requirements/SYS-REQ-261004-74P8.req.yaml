@@ -121,5 +121,5 @@ lifecycle:
         - date: "2026-10-03T21:39:35Z"
           from: draft
           to: review
-          reason: '[pr-new-E] upstream fix for the first word of a Chromium web notification: requirement authored for the behaviour the shell has with the change; spec conformance REVIEW-261003-SE8G; witnesses in test/bdiff/notifications-card-test.sh and the behaviour-diff notification inputs'
+          reason: 'Upstream fix for the first word of a Chromium web notification: requirement written for the behaviour the shell has with the change; spec conformance REVIEW-261003-SE8G; witnesses in test/bdiff/notifications-card-test.sh and the behaviour-diff notification inputs'
           changed_by: agent:claude-pr-new-E
