@@ -51,6 +51,14 @@ CASES=(
   seq-apps-locale-ru.events
   'shown menu=apps sorts=1 rows=["Терминал","Alacritty","Zed","Αριθμομηχανή","计算器"]'
 
+  'with a Greek collation the Greek name comes first'
+  seq-apps-locale-el.events
+  'shown menu=apps sorts=1 rows=["Αριθμομηχανή","Alacritty","Zed","Терминал","计算器"]'
+
+  'with a Chinese collation the Chinese name comes first'
+  seq-apps-locale-zh.events
+  'shown menu=apps sorts=1 rows=["计算器","Alacritty","Zed","Αριθμομηχανή","Терминал"]'
+
   'equal names ignore case and keep their id order'
   seq-apps-case-tie.events
   'shown menu=apps sorts=1 rows=["Alacritty","alacritty","Zed","zed","ZED"]'
