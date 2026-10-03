@@ -159,7 +159,7 @@ function runJsonc() {
 //      (MenuModel guardScript, run by bash) and isVisible, against the
 //      revision's bin/omarchy-theme-remove with a stub picker, in a HOME of
 //      the shape set by the directive `@home:<shape>` (missing, empty,
-//      copied, cloned, linked, worktree, dotted, hidden, mixed, filed, dashed; default empty). Prints one `guard`
+//      copied, cloned, linked, worktree, dotted, hidden, mixed, filed, dashed, folded; default empty). Prints one `guard`
 //      line: whether the row shows, what the remover offers, and whether
 //      the two agree (a shown row with nothing to offer only closes the menu).
 //
@@ -172,7 +172,7 @@ const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExi
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
 const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'G'])
-const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree', 'dotted', 'hidden', 'mixed', 'filed', 'dashed'])
+const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree', 'dotted', 'hidden', 'mixed', 'filed', 'dashed', 'folded'])
 
 function parseEvents(text) {
   const ops = []
@@ -223,14 +223,19 @@ function commandText(cmd) {
 // (.git, or .backup), whose name omarchy-theme-remove lists but refuses to
 // remove, .git beside a real theme (mixed: the real one still counts), and
 // only a stray file (filed: a file is not a theme), and a theme named -n
-// (dashed: a name echo would read as an option is still a theme).
+// (dashed: a name echo would read as an option is still a theme), and a themes
+// folder that is itself a symlink into a dotfiles directory (folded).
 // Verifies: SW-REQ-261003-390Z
 function makeThemesHome(shape) {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'omarchy-bdiff-home-'))
   const home = path.join(base, 'home')
   const themes = path.join(home, '.config', 'omarchy', 'themes')
   fs.mkdirSync(home)
-  if (shape !== 'missing') fs.mkdirSync(themes, { recursive: true })
+  if (shape === 'folded') {
+    fs.mkdirSync(path.join(base, 'dotfiles', 'themes', 'mine'), { recursive: true })
+    fs.mkdirSync(path.dirname(themes), { recursive: true })
+    fs.symlinkSync(path.join(base, 'dotfiles', 'themes'), themes)
+  } else if (shape !== 'missing') fs.mkdirSync(themes, { recursive: true })
   if (shape === 'copied') fs.mkdirSync(path.join(themes, 'handmade'))
   if (shape === 'cloned') fs.mkdirSync(path.join(themes, 'tokyo-night', '.git'), { recursive: true })
   if (shape === 'linked') {

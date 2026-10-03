@@ -19,9 +19,9 @@ defect_class: new_defect
 disclosure: public
 minimization_status: minimized
 mitigation: 'Nothing breaks and no data changes: the row closes the menu and removes nothing. A user who has installed an extra theme gets the picker as before. omarchy theme remove in a terminal prints the message.'
-remediation: 'Fixed by the upstream-style change db7d7127 (omarchy-theme-removable), with SW-REQ-261003-390Z. A new helper lists the themes the remover can remove: directories under ~/.config/omarchy/themes that are not symlinks or dot-directories. The remove.theme row asks it as its when:, and the remover reads its list from it. So the row and the picker cannot disagree.'
+remediation: 'Fixed by the upstream-style change 9a160c1f (omarchy-theme-removable), with SW-REQ-261003-390Z. A new helper lists the themes the remover can remove: directories under ~/.config/omarchy/themes that are not symlinks or dot-directories. A themes folder that is itself a symlink offers nothing. The remove.theme row asks it as its when:, and the remover reads its list from it. So the row and the picker cannot disagree.'
 notes:
-    - 'Fixed on mirror pr/new-C by db7d7127, which follows the omarchy-theme-extras shape of Update > Extra Themes. The reproducer is now the in-suite test test/shell.d/menu-guards-test.sh (Reproduces marker). Over eleven HOME shapes it runs the row through the generated guard batch and the remover with a stub picker, and checks that they agree. It fails on a85e29ab and passes with the fix. Scope of the fix: the menu re-runs the guards on each open and first draws the previous answers, for about half a second. So the first open after the last theme goes away can still show the row until the batch lands. At the first open of a session, before any answer, the row shows. A user menu that overrides remove.theme replaces the whole row, guard included. These windows are the same for every guarded row.'
+    - 'Fixed on mirror pr/new-C by 9a160c1f, which follows the omarchy-theme-extras shape of Update > Extra Themes. The reproducer is now the in-suite test test/shell.d/menu-guards-test.sh (Reproduces marker). Over twelve HOME shapes it runs the row through the generated guard batch and the remover with a stub picker, and checks that they agree. It fails on a85e29ab and passes with the fix. Scope of the fix: the menu re-runs the guards on each open and first draws the previous answers, for about half a second. So the first open after the last theme goes away can still show the row until the batch lands. At the first open of a session, before any answer, the row shows. A user menu that overrides remove.theme replaces the whole row, guard included. These windows are the same for every guarded row. A themes folder that is a symlink into a dotfiles directory offers nothing, as before the change.'
 owner: agent:claude-pr-new-C
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -38,6 +38,10 @@ history:
       by: agent:claude-pr-new-C
       action: edit
       detail: set-description,set-reproducer-command,set-tripwire-mutation,set-remediation,note,set-status=fixed,add-affected-file,set-dedup-armor,add-requirement
+    - at: "2026-10-03T12:07:10Z"
+      by: agent:claude-pr-new-C
+      action: edit
+      detail: set-remediation,note
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS or of the guard-batch KIs on SYS-REQ-260922-47T8: this one is a shipped row with no when: guard. Distinct from the stale_state siblings: KI-MENU-GUARD-BATCH-STALE-APPLY is a batch result published onto a newer item set; KI-MENU-KEYBINDINGS-STALE-LUA-CACHE is a warm keybindings cache serving an old Lua command; KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE is a lock-screen video poster frame kept after an in-place overwrite. None of them is a menu row offered with nothing behind it, and none is fixed by the remove.theme guard'
 kill_domain: stale_state
 affected_file:

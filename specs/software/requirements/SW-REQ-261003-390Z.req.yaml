@@ -18,7 +18,7 @@ rationale: |-
 
     A stock install has only the bundled themes, so the row only closes the menu for most users. Commit 5bc151f9 moved the remover to the menu picker and dropped the floating terminal that showed the line.
 
-    The fix names the removable themes once, as omarchy-theme-extras does for Update > Extra Themes. omarchy-theme-removable lists them and exits nonzero when there are none. The row asks it as its when:, and the remover reads its list from it, so the two cannot disagree. The picker also stops offering a dot-directory, which the remover refuses.
+    The fix names the removable themes once, as omarchy-theme-extras does for Update > Extra Themes. omarchy-theme-removable lists them and exits nonzero when there are none. The row asks it as its when:, and the remover reads its list from it, so the two cannot disagree. The picker also stops offering a dot-directory, which the remover refuses. A themes folder that is itself a symlink offers nothing, as before the change.
 
     Each open re-runs the guards. The menu first draws the previous answers and updates when the batch lands, about half a second later. A user menu that overrides remove.theme replaces the whole row, guard included.
 tags: []
@@ -29,7 +29,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-03T11:36:20.748126Z"
+    reviewed_at: "2026-10-03T12:07:21.193361Z"
     reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:a279d710f62520498f724f2ba6afee62b4a585608a3edd7422431c5e41c33b81
     reviewed_targets:
@@ -107,6 +107,29 @@ traces:
             - test/bdiff/harness.mjs:227
             - test/bdiff/harness.mjs:262
             - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-03T12:07:21.193361Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C round 3 (product 9a160c1f, the omarchy-theme-removable shape): once the guard batch for an open has answered, the Remove menu lists Theme exactly when omarchy-theme-remove has a theme it can remove. The row''s when: is omarchy-theme-removable, the helper the remover reads its list from. The engine reads annotations from neither the .jsonc row nor the helper (outside the verification scope), so 390Z traces to isVisible, which applies the row''s answer. Verified by test/shell.d/menu-guards-test.sh: the twelve-home loop witnesses both sides, the helper and picker lists are checked for the mixed home, and the mirror-only pre-answer block witnesses the no-action row; and by the behaviour-diff harness with its twelve guard-remove-theme-*.events inputs. Satisfies SYS-REQ-260922-47T8. Spec conformance REVIEW-261003-C7RT'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:262
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dashed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dotted.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-empty.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-filed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-folded.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-hidden.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-linked.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-missing.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-mixed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
+            - test/bdiff/harness.mjs:228
+            - test/bdiff/harness.mjs:267
+            - test/shell.d/menu-guards-test.sh:6
 verification:
     assurance_level: C
     formalization_status: valid
@@ -133,7 +156,7 @@ hazard_review:
             - input_domain
           not_applicable:
             - concurrency_scale
-          rationale: 'Worst cases: the row shows with nothing to remove and only closes the menu, or the row hides while a theme could be removed (a guard narrower than the remover, for example a when: of false). edge_case: each shape of the themes directory is a case. Hidden: missing, empty, a symlinked working copy only, only .git, only .backup, only a stray file. Shown: a copied theme, a cloned theme, a worktree with a .git file, .git beside a real theme, and a theme named -n. All eleven are witnessed. boundary: zero versus one removable directory; the empty and copied homes witness both sides. input_domain applied: the entry kinds decide it. A symlink never counts, a plain file never counts, and a name with a leading dot never counts. A real directory counts whatever else sits beside it (mixed home), and the picker then offers only that directory. Names with a newline or a leading -- are pre-existing remover behaviour, outside this change and outside this requirement. concurrency_scale not applicable: each open re-runs the batch. The menu first draws the previous answers for about half a second, as for every guarded row. So a theme added or removed shows when the batch for that open lands.'
+          rationale: 'Worst cases: the row shows with nothing to remove and only closes the menu, or the row hides while a theme could be removed (a guard narrower than the remover, for example a when: of false). edge_case: each shape of the themes directory is a case. Hidden: missing, empty, a symlinked working copy only, only .git, only .backup, only a stray file. Also hidden: a themes folder that is itself a symlink into a dotfiles directory, which offers nothing, as on a85e29ab. Shown: a copied theme, a cloned theme, a worktree with a .git file, .git beside a real theme, and a theme named -n. All twelve are witnessed. boundary: zero versus one removable directory; the empty and copied homes witness both sides. input_domain applied: the entry kinds decide it. A symlink never counts, a plain file never counts, a name with a leading dot never counts, and nothing in a symlinked themes folder counts. A real directory counts whatever else sits beside it (mixed home), and the picker then offers only that directory. Names with a newline or a leading -- are pre-existing remover behaviour, outside this change and outside this requirement. concurrency_scale not applicable: each open re-runs the batch. The menu first draws the previous answers for about half a second, as for every guarded row. So a theme added or removed shows when the batch for that open lands.'
         - category: property
           disposition: reviewed
           applied:
