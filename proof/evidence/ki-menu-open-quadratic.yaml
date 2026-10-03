@@ -5,13 +5,13 @@ results:
       command: sh test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-03T06:49:30Z"
+      executed_at: "2026-10-03T09:15:29Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-OPEN-QUADRATIC` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Build the display rows in one batch (or suspend the visibleRowsHeight binding during the rebuild) so a summon folds the list a bounded number of times: the red reproducer test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh starts exiting 0 and the expected failure in test/node/report-reproducers.test.mjs flips red.'
         - test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-OPEN-QUADRATIC.yaml: ki-content-v1:sha256:7a9da65091032a4ea9369394dee5d9dd177bad3044e8d495bfc18ca53f7089b8
+        proof/known-issues/KI-MENU-OPEN-QUADRATIC.yaml: ki-content-v1:sha256:ed686d208d6f39ff5f2fbaf804eabec105e81d0fae25de08f9e88b69d6c42383
         test/reports/report-cmulr8ysi0jwr1gw4fjmt9khq.sh: sha256:eb20adffe32973af2237e2b97621fe6dea883f75bbc69965099ad2da4c414d74
       known_issues:
         - KI-MENU-OPEN-QUADRATIC
