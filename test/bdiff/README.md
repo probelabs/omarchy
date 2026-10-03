@@ -49,8 +49,13 @@ lines keep the old display stub and print the same output as before. The
 `seq-apps-*.events` inputs (SW-REQ-261003-B7ZA) cover French, German,
 decomposed accents, non-Latin scripts, symbol- and digit-led names, case ties,
 invalid UTF-8 and other encodings, a reordered hand-over, Enter on the first
-row, and a root-menu control. `localeCompare` uses Node's default ICU locale;
-the outputs were checked to be the same under LANG=C, C.UTF-8, en_US.UTF-8 and
+row, and a root-menu control. `@locale <BCP 47 tag>` makes every
+argument-less `localeCompare` collate as that locale, the way Qt collates with
+the process locale (seq-apps-locale-ru/el/zh: the script of the language comes
+first). `@plugin-list` also prints the revision's
+`shell/services/AppSearch.js` `sortedEntries` order of the same apps
+(`plugin-list rows=[...]`), the list the plugin API hands out. `localeCompare` uses Node's default ICU locale;
+inputs without `@locale` were checked to give the same output under LANG=C, C.UTF-8, en_US.UTF-8 and
 fr_FR.UTF-8. These inputs pin the comparator, not Qt's collation: under C or
 C.UTF-8 Qt keeps code-point order, which Node does not reproduce (checked in
 the real shell instead).
