@@ -9,7 +9,7 @@ results:
       command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-03T10:58:46Z"
+      executed_at: "2026-10-03T12:14:21Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-REQUEST-LIFECYCLE` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh

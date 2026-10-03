@@ -48,6 +48,10 @@ history:
       by: agent:claude-pr-new-D
       action: refresh-evidence
       detail: proof/evidence/ki-menu-guard-batch-stale-apply.yaml
+    - at: "2026-10-03T12:14:20Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-guard-batch-stale-apply.yaml
 kill_domain: stale_state
 affected_file:
     - shell/plugins/menu/MenuModel.js
