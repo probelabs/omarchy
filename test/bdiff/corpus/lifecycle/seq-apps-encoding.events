@@ -1,0 +1,14 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Encoding partition: invalid UTF-8 (decoded to U+FFFD), a BOM inside a name, an astral emoji, a leading digit,
+# a leading no-break space, full-width letters, sharp s, dotted capital I, and a name that is empty.
+@app bad ��Broken
+@app bom Zoom﻿er
+@app music 🎵 Musik
+@app game 2048
+@app nbsp  Notes
+@app fullwidth Ｚｅｄ
+@app street Straße
+@app internet İnternet
+@app empty 
+@app alpha alpha
+O
