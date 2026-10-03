@@ -7,14 +7,14 @@ results:
       command: bash test/shell.d/menu-apps-order-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-03T12:14:20Z"
-      revision: 754cd43c3f27c0f2ba2a7ee42a0ce8fc1155dae0
+      executed_at: "2026-10-03T12:45:15Z"
+      revision: 60271e637668891f99ddc515e2c9765d2b750b6e
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-APPS-SORT-LOCALE` from the KnownIssue''s reproducer command: bash test/shell.d/menu-apps-order-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Put the code-unit comparison back in the Apps comparator of rebuildDisplay in shell/plugins/menu/Menu.qml (if (aLabel < bLabel) return -1 and if (aLabel > bLabel) return 1 in place of localeCompare, the a85e29ab behaviour): the red reproducer test/shell.d/menu-apps-order-test.sh fails at ''apps menu files an accented name under its letter, not after Z''.'
         - test/shell.d/menu-apps-order-test.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-APPS-SORT-LOCALE.yaml: ki-content-v1:sha256:cca0c33d97baaebfdf708c7388cc11559e7764c02fb1bb013b970aee482c4b93
+        proof/known-issues/KI-MENU-APPS-SORT-LOCALE.yaml: ki-content-v1:sha256:e277c4a80fd51af3f1256478ec1266337112f5ccc72dc464269b7a2251afc02a
         test/shell.d/menu-apps-order-test.sh: sha256:0ef54cbd1f2c2b42ba10c5e01ae03ff3e7f1dd1abde13efd7566eca47cb19e41
       known_issues:
         - KI-MENU-APPS-SORT-LOCALE
