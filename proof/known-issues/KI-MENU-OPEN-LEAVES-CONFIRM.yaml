@@ -65,6 +65,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-03T13:51:11Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -81,7 +85,7 @@ poc_quality:
         real_infrastructure: the reproducer for omacom/omarchy#14052 (test/reports/report-cmur1322h0040rfw45yjijlzu.sh on its report branch) runs the real Menu.qml open, delete and key functions and ConfirmDialog.qml handleKey in node, with a real omarchy-menu-select caller. Only omarchy-shell is stubbed, and the uninstall removes a throwaway launcher in a temporary directory. pocs/menu-qml-static.sh pins the CNF1 mechanism in the live Menu.qml.
         quantitative_impact: one Enter removes one launcher file, and the prompt's caller exits 1 with no value instead of the picked row.
         control_test: Escape on the confirmation keeps the launcher. A select prompt with no confirmation open returns the picked value with exit 0. With PR #14054 merged, the summon dismisses the confirmation and the launcher stays.
-        current_deployment_relevance: on this baseline (upstream a85e29ab product code), open(), openDmenu(), openRoute() and openExistingMenu() clear neither deleteConfirmOpen nor deleteTarget (anchor CNF1).
+        current_deployment_relevance: on this baseline (upstream quattro product code, whose Menu.qml has not changed since 821ae589), open(), openDmenu(), openRoute() and openExistingMenu() clear neither deleteConfirmOpen nor deleteTarget (anchor CNF1).
         honest_severity: medium. The impact is an unwanted uninstall that deletes user, web-app and TUI launchers with no further prompt. It needs a summon that arrives while an uninstall question is open.
         reproducible: one deterministic command, under one second, node and perl only. The live run was repeated for a select prompt, an input prompt and a route summon.
         no_inflation: the claims are limited to the demonstrated uninstall and the cancelled prompt. No privilege or remote claim is made.
