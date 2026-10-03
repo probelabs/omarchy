@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with no ~/.config/omarchy/themes directory at all:
+# does the row show, and does omarchy-theme-remove offer a theme?
+@home:missing G
