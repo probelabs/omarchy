@@ -6,7 +6,7 @@ category: functional
 req_type: guarantee
 fretish: when emoji_query_typed the emoji_picker shall immediately satisfy emoji_results_ranked
 description: |-
-    The emoji picker lists the emojis whose keywords hold the search text, and Enter picks the first emoji of the list. The picker trims the search text and ignores case. The list has three groups in this order.
+    The emoji picker lists the emojis whose keywords hold the search text, and Enter picks the first emoji of the list. The picker reads emojis.json as a JSON array; text that is not a JSON array gives an empty list. The picker trims the search text and ignores case. The list has three groups in this order.
 
     First come the emojis that hold the search text as whole words, with a space or the end of the keywords on each side. Next come the emojis with a keyword that starts with the search text. Last come the emojis that hold the search text inside a keyword. Each group keeps the order of emojis.json.
 
@@ -35,12 +35,15 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-03T21:26:58.683973Z"
+    reviewed_at: "2026-10-03T22:00:43.685716Z"
     reviewed_by: agent:claude-pr-new-F
     reviewed_fingerprint: sha256:b0b9d48e26362a2722623efff0d3737783b3fc424db83729deae3c105b0827a1
     reviewed_targets:
         implemented_by:
-            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:6221fe0ee768f4efc85b8165a4c7c3f3
+            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:9b7311fec458c20686d348030f622c93
+            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:9b7311fec458c20686d348030f622c93
+            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:9b7311fec458c20686d348030f622c93
+            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:9b7311fec458c20686d348030f622c93
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -51,6 +54,32 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/emojis/EmojiSearch.js:18
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-emoji-car.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-case.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-cat.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-empty.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-fr.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-letter.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-none.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-ok.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-pen.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-phrase.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-red.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-steps.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-tea.events:1
+            - test/bdiff/harness.mjs:388
+            - test/shell.d/menu-emoji-search-bdiff-test.sh:11
+        - reviewed_at: "2026-10-03T22:00:43.685716Z"
+          reviewed_by: agent:claude-pr-new-F
+          method: inspection
+          rationale: 'pr-new-F re-review: the helpers parseEmojis (reads emojis.json; an empty list when the text is not a JSON array), normalizedQuery (trims and lowercases the search text) and keywordText (lowercases the keywords) now carry Implements lines next to filterEmojis, which ranks the matches into whole-word, keyword-start and inside lists in file order, cut at the limit. Verified by test/shell.d/menu-emoji-search-bdiff-test.sh (all thirteen seq-emoji inputs through test/bdiff/harness.mjs runEmojis, an oracle check of every listed state, parseEmojis on the real file and on texts that are not arrays). Satisfies SYS-REQ-260922-6642: the emoji that Enter picks is the argument of omarchy-menu-emoji-insert.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/emojis/EmojiSearch.js:1
+            - shell/plugins/emojis/EmojiSearch.js:11
+            - shell/plugins/emojis/EmojiSearch.js:16
+            - shell/plugins/emojis/EmojiSearch.js:21
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/bdiff/corpus/lifecycle/seq-emoji-car.events:1
             - test/bdiff/corpus/lifecycle/seq-emoji-case.events:1
