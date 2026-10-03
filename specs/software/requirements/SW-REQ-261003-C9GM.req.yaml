@@ -22,23 +22,23 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-03T15:29:49.754939Z"
+    reviewed_at: "2026-10-03T16:11:20.766399Z"
     reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:916c77f189ac1031526674ab21fb1fa148787b37337547bbc9d62407d61b3218
     reviewed_targets:
         implemented_by:
-            shell/services/AppSearch.js:allTermsMatch: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:entryAcronym: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:entryName: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:entrySearchText: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:entrySortKey: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:entrySubtext: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:fuzzyScore: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:keywordText: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:sortedEntries: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:termMatches: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:wordText: file1:f6686a7097b5713a054dc6b8b21a134e
-            shell/services/AppSearch.js:words: file1:f6686a7097b5713a054dc6b8b21a134e
+            shell/services/AppSearch.js:allTermsMatch: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:entryAcronym: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:entryName: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:entrySearchText: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:entrySortKey: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:entrySubtext: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:fuzzyScore: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:keywordText: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:sortedEntries: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:termMatches: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:wordText: file1:d8fc5b5c3f072f482ef9239ada9a5076
+            shell/services/AppSearch.js:words: file1:d8fc5b5c3f072f482ef9239ada9a5076
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
     review_history:
@@ -88,6 +88,27 @@ traces:
           reviewed_by: agent:claude-pr-new-D
           method: inspection
           rationale: 'pr-new-D on quattro-proof 49cd12b0: shell/services/AppSearch.js changed only inside sortedEntries, whose comparator now orders by localeCompare of the lowercased key before the old < and > tie-break (SW-REQ-261003-B7ZA, named on the same Implements line). Which entries the library lists (displayable and every query term matched) is unchanged: the filter loop, termMatches, allTermsMatch, entryAcronym and the other helpers are byte-identical at the same lines. Only the order of the returned rows changes'
+          source: proof trace review --citation
+          citations:
+            - shell/services/AppSearch.js:1
+            - shell/services/AppSearch.js:108
+            - shell/services/AppSearch.js:11
+            - shell/services/AppSearch.js:16
+            - shell/services/AppSearch.js:25
+            - shell/services/AppSearch.js:31
+            - shell/services/AppSearch.js:39
+            - shell/services/AppSearch.js:49
+            - shell/services/AppSearch.js:57
+            - shell/services/AppSearch.js:6
+            - shell/services/AppSearch.js:72
+            - shell/services/AppSearch.js:81
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-app-library-test.sh:17
+            - test/shell.d/menu-app-library-test.sh:5
+        - reviewed_at: "2026-10-03T16:11:20.766399Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D on quattro-proof 49cd12b0: shell/services/AppSearch.js changed only inside sortedEntries, whose comparator now orders by localeCompare of the lowercased key and breaks ties on the desktop id (upstream c5ed4375 + c4a14aa9; SW-REQ-261003-B7ZA, named on the same Implements line). Which entries the library lists (displayable and every query term matched) is unchanged: the filter loop, termMatches, allTermsMatch, entryAcronym and the other helpers are byte-identical at the same lines. Only the order of the returned rows changes'
           source: proof trace review --citation
           citations:
             - shell/services/AppSearch.js:1
