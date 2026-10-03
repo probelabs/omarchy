@@ -10,7 +10,7 @@ description: |-
 
     Under ru_RU, el_GR or zh_CN the script of that language comes first, before the Latin names. Under en_US or fr_FR other scripts come after the Latin names. Qt takes the collation from LC_ALL, then LC_COLLATE, then LANG; LANGUAGE does not change it. Under C or C.UTF-8 it keeps UTF-16 code-unit order, the same as before the fix.
 
-    AppSearch.sortedEntries, which gives the same list to plugins, uses the same comparison. There, two different names that collate equal, such as a composed and a decomposed É, keep a fixed order. Identical names keep their input order, as before.
+    This requirement states only the order of the rows. SW-REQ-261003-C9GM states which apps the list holds. AppSearch.sortedEntries, which gives the same list to plugins, uses the same comparison. There, two different names that collate equal, such as a composed and a decomposed É, keep a fixed order. Identical names keep their input order, as before.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -41,7 +41,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-03T13:01:47.664842Z"
+    reviewed_at: "2026-10-03T15:29:49.327119Z"
     reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:98b20d51d7a5393e07170f3db9935ce29e784885f887dab9508a829bc705cebc
     reviewed_targets:
@@ -266,6 +266,38 @@ traces:
             - test/shell.d/menu-apps-order-bdiff-test.sh:10
             - test/shell.d/menu-apps-order-test.sh:21
             - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T15:29:49.327119Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D final, on quattro-proof 49cd12b0 (upstream 393a43d4; shell/services/AppSearch.js now in the verification scope): implemented by the Apps comparator in rebuildDisplay (localeCompare of the lowercased labels, then the id) and by AppSearch.sortedEntries (localeCompare of the lowercased key, then the old < and > on the key and the name; identical names keep their input order), with Implements lines on both. Verified by test/shell.d/menu-apps-order-test.sh (sortedEntries, collate-equal names in both input orders, symbol-first order), the behaviour-diff harness and its 15 seq-apps inputs, and test/shell.d/menu-apps-order-bdiff-test.sh (15 cases). Satisfies SYS-REQ-260922-0M8A. Collation text: UTF-16 code-unit order under C/C.UTF-8; LC_ALL, then LC_COLLATE, then LANG select the collation. Spec conformance REVIEW-261003-JTMM (defensive row) and the final re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - shell/services/AppSearch.js:108
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
@@ -278,7 +310,7 @@ history:
     created_by: agent:claude-pr-new-D
     created_at: "2026-10-03T07:49:05Z"
     last_modified_by: agent:claude-pr-new-D
-    last_modified_at: "2026-10-03T12:44:48Z"
+    last_modified_at: "2026-10-03T15:29:48Z"
 hazard_review:
     reviewed_at: "2026-10-03T07:51:11Z"
     reviewed_by: agent:claude-pr-new-D
