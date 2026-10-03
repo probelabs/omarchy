@@ -18,10 +18,11 @@ tripwire_mutation: 'Put the code-unit comparison back in the Apps comparator of 
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Every app stays in the list, and search finds an app by its name in any order. Only the place of names that start with an accented or non-Latin letter is wrong; on an English desktop most names are plain ASCII.
+mitigation: Every app stays in the list, and search finds an app by its name in any order. Only the place of names that start with an accented Latin letter is wrong; names in other scripts already sort after the Latin names, as the locale collation also puts them. On an English desktop most names are plain ASCII.
 remediation: Fixed by the upstream change that makes the Apps comparator order the names with localeCompare (SW-REQ-261003-B7ZA); mirror pr/new-D.
 notes:
     - 'Fixed on mirror pr/new-D by the upstream change (the Apps comparator in rebuildDisplay orders the lowercased names with localeCompare; the id tie-break is unchanged). Spec: SW-REQ-261003-B7ZA, spec conformance REVIEW-261003-JTMM. The reproducer is now the bound in-suite test test/shell.d/menu-apps-order-test.sh (Reproduces marker); it fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.'
+    - 'Scope (round 2): the defect and the fix concern accented Latin letters. Names in Greek, Cyrillic, Arabic or Han script sort after the Latin names both before and after the fix, as the locale collation orders them. Under C or C.UTF-8 Qt keeps code-point order, so the fix changes nothing there (real shell, newpr/D/evidence/real-shell-c-utf8.txt).'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -70,6 +71,10 @@ history:
       by: agent:claude-pr-new-D
       action: edit
       detail: set-title,set-description,set-reproducer-command,set-tripwire-mutation,set-mitigation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest
+    - at: "2026-10-03T09:19:25Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: set-mitigation,append-note
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
