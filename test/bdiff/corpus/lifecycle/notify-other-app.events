@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# Control: an app that is not a Chromium-based browser. Its body is kept as sent, link and all.
+@notify {"app": "Slack", "appIcon": "slack", "body": "<a href=\"https://app.slack.com/\">app.slack.com</a>\n\ngithub.com/omacom/omarchy can you review?"}
+@notify {"app": "Slack", "appIcon": "slack", "body": "https://example.com/path Message body"}
+@notify {"app": "notify-send", "appIcon": "", "body": "Node.js 24 is out"}

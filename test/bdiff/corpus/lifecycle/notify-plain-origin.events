@@ -1,0 +1,6 @@
+# Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+# Control: the origin as plain text (a notification server without hyperlinks).
+# The leading web address and the white space after it go; the rest is kept.
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "chat.example.com:8123\n\nSee you at 5"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "chat.example.com:8123\n\ngithub.com/omacom/omarchy can you review?"}
+@notify {"app": "Chromium", "appIcon": "file:///tmp/org.chromium.Chromium.scoped_dir.eQ5uKw/logo.png", "body": "https://example.com/path Message body"}

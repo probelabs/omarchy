@@ -20,6 +20,11 @@
 //              event sequence against the REAL bodies of the request functions
 //              of <rev>/shell/plugins/menu/Menu.qml under node:vm, and prints
 //              each summoning caller's outcome and the final menu state.
+//            An .events file with `@notify` lines runs the notification card
+//              mode instead: each line is one notification as the D-Bus server
+//              hands it to the card (app, app icon, body), and the harness
+//              prints what <rev>/shell/plugins/notifications/NotificationLogic.js
+//              makes of it, called the way NotificationCard.qml calls it.
 //   other    a usage message on stderr, exit 2.
 //
 // Output is deterministic (no times, no paths, no pids), so any base/head
@@ -331,9 +336,76 @@ function runEvents() {
   emit(`stray-writes ${stray.join(' | ') || '-'}`)
 }
 
+// ------------------------------------------------- .events @notify mode
+//
+// One notification per line: `@notify {"app": …, "appIcon": …, "body": …}`
+// (JSON, so a body keeps its exact newlines and markup). Other lines are
+// comments. Each notification goes through the revision's own
+// NotificationLogic.js, loaded under node:vm like the repo's tests load it
+// (CommonJS module.exports), and is called the way NotificationCard.qml calls
+// it: `sanitizedBody = sanitizeBody(body, app, appIcon)` decides whether the
+// body line is shown at all (`visible: sanitizedBody.length > 0`), and
+// `styledBody(body, app, appIcon)` is the text the card renders (StyledText).
+// The harness prints both for each notification. Nothing here depends on the
+// locale, the time zone or the host: the product code uses only regular
+// expressions without the `u` flag, String.prototype.toLowerCase and string
+// slicing.
+// Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+function notifyLines(text) {
+  const out = []
+  for (const line of text.split(/\r\n|\r|\n/)) {
+    const m = /^@notify\s+(.*)$/.exec(line)
+    if (m) out.push(m[1])
+  }
+  return out
+}
+
+// Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+function loadNotificationLogic() {
+  const rel = 'shell/plugins/notifications/NotificationLogic.js'
+  const src = readRev(rel)
+  if (src === null) return { error: `MISSING ${rel}` }
+  const sandbox = { module: { exports: {} }, console: { log() {}, warn() {}, error() {} } }
+  sandbox.exports = sandbox.module.exports
+  const ctx = vm.createContext(sandbox)
+  try {
+    new vm.Script(src, { filename: rel }).runInContext(ctx, { timeout: VM_TIMEOUT_MS })
+  } catch (e) {
+    return { error: `LOAD-ERROR ${errName(e)}` }
+  }
+  return { api: Object.assign({}, ctx, ctx.module && ctx.module.exports) }
+}
+
+// Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
+function runNotify(lines) {
+  emit(`# ${HARNESS} notifications`)
+  const nl = loadNotificationLogic()
+  if (nl.error) { emit(`notifications: ${nl.error}`); return }
+  for (const n of ['sanitizeBody', 'styledBody']) {
+    if (typeof nl.api[n] !== 'function') { emit(`notifications: MISSING-FUNCTION ${n}`); return }
+  }
+  lines.forEach((raw, i) => {
+    let n
+    try { n = JSON.parse(raw) } catch { emit(`notification ${i + 1}: BAD-INPUT`); return }
+    const app = String(n.app ?? ''), appIcon = String(n.appIcon ?? ''), body = String(n.body ?? '')
+    let sanitized, styled
+    try { sanitized = nl.api.sanitizeBody(body, app, appIcon) } catch (e) { sanitized = `THROW ${errName(e)}` }
+    try { styled = nl.api.styledBody(body, app, appIcon) } catch (e) { styled = `THROW ${errName(e)}` }
+    const shown = typeof sanitized === 'string' && sanitized.length > 0
+    // The card first: the engine's excerpts start just before the first
+    // differing byte, so a reviewer sees what the user sees.
+    emit(`notification ${i + 1} app=${JSON.stringify(app)} body-line-shown=${shown} card-text=${JSON.stringify(styled)}`)
+    emit(`notification ${i + 1} sanitizeBody=${JSON.stringify(sanitized)}`)
+  })
+}
+
 try {
   if (ext === '.jsonc' || ext === '.json') runJsonc()
-  else if (ext === '.events') runEvents()
+  else if (ext === '.events') {
+    const notify = notifyLines(readInputText())
+    if (notify.length) runNotify(notify)
+    else runEvents()
+  }
   else usage(`unknown input extension "${ext || '(none)'}": expected .jsonc or .events`)
 } catch (e) {
   // Never a stack trace with worktree paths in it: those differ between
