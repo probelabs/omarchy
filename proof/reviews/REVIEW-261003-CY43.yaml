@@ -8,7 +8,6 @@ comment: 'Round-3 re-review on the upstream change cb981de6. The Apps comparator
 citations:
     - shell/plugins/menu/Menu.qml:656@rebuildDisplay
     - shell/plugins/menu/Menu.qml:714
-    - shell/services/AppSearch.js:98@sortedEntries
     - test/shell.d/menu-apps-order-test.sh:57
     - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
     - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
