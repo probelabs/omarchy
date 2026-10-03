@@ -1,0 +1,49 @@
+id: KI-MENU-EMOJI-SEARCH-INSIDE-WORD
+title: The emoji picker puts a match inside an unrelated word first, so Enter picks the wrong emoji
+description: |-
+    The emoji picker selects the first result while the user types, and Enter picks it. On upstream quattro 393a43d4, filterEmojis in shell/plugins/emojis/EmojiSearch.js (lines 26 to 37) keeps every emoji whose keywords contain the search text anywhere. It keeps them in the order of emojis.json. So a match inside an unrelated word comes first when that emoji is earlier in the file.
+
+    A check in the real shell on 393a43d4 opened the picker the way Super+Ctrl+E does and typed the search text. Enter picked the broken heart for ok (from broken). It picked the face with tears of joy for tea (from tears) and the cold face for fr (from freezing). The same code gives the tired face for red, the fearful face for car and the hugging face for pen.
+affected_requirements:
+    - SW-REQ-261004-H41S
+commands:
+    - bash test/shell.d/emojis-test.sh
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: bash test/shell.d/emojis-test.sh
+tripwire_mutation: 'Put back the single list of upstream 393a43d4 in filterEmojis in shell/plugins/emojis/EmojiSearch.js (push every match to one list in file order and return it): the red reproducer test/shell.d/emojis-test.sh fails at ''emoji filtering ranks a whole keyword, then a keyword start, then a match inside a word''.'
+introduced_in: inception
+defect_class: latent
+disclosure: public
+minimization_status: minimized
+mitigation: Every matching emoji stays in the list. Only the order is wrong. The user can move the cursor with the arrow keys before Enter, or type more of the word.
+remediation: 'Fixed by PR #<PR>, which lists whole-keyword matches first, then keyword starts, then matches inside a word (SW-REQ-261004-H41S).'
+notes:
+    - |-
+      Fixed by PR #<PR>. filterEmojis now puts each match in one of three groups as it reads emojis.json: the search text as whole words, then as the start of a keyword, then inside a keyword. Each group keeps the file order. Spec: SW-REQ-261004-H41S. The reproducer test/shell.d/emojis-test.sh fails on 393a43d4 and passes with the fix. The in-suite test test/shell.d/menu-emoji-search-bdiff-test.sh runs the picker over the real emojis.json.
+
+      Scope: the same emojis match as before. When more than 1000 emojis match, as for one letter such as e, the picker shows the first 1000 of the ranked list. So for such a letter the shown emojis change too.
+owner: agent:claude-pr-new-F
+review_date: "2026-10-04"
+release_disposition: fixed
+status: fixed
+history:
+    - at: "2026-10-03T21:24:45Z"
+      by: agent:claude-pr-new-F
+      action: created
+    - at: "2026-10-03T21:24:45Z"
+      by: agent:claude-pr-new-F
+      action: edit
+      detail: note
+    - at: "2026-10-03T21:27:20Z"
+      by: agent:claude-pr-new-F
+      action: edit
+      detail: set-description
+    - at: "2026-10-03T21:27:44Z"
+      by: agent:claude-pr-new-F
+      action: edit
+      detail: set-description
+kill_domain: search_ranking
+affected_file: shell/plugins/emojis/EmojiSearch.js
