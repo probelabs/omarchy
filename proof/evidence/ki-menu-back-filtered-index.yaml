@@ -5,13 +5,12 @@ results:
       command: bash test/shell.d/menu-pointer-lifecycle-test.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-03T07:55:41Z"
-      revision: 507747d415afea14d3bb92320b5f927397e417c4
+      executed_at: "2026-10-03T09:15:18Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-BACK-FILTERED-INDEX` from the KnownIssue''s reproducer command: bash test/shell.d/menu-pointer-lifecycle-test.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - test/shell.d/menu-pointer-lifecycle-test.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-BACK-FILTERED-INDEX.yaml: ki-content-v1:sha256:a0fca5dbb193d40c21627bfe858a38a2d8a9b49f9d90b91f859357b07e8cb693
+        proof/known-issues/KI-MENU-BACK-FILTERED-INDEX.yaml: ki-content-v1:sha256:93fec2ec38de9b0292b0a34c1112add1c3c13211e4e0f64e40212d08eb533829
         test/shell.d/menu-pointer-lifecycle-test.sh: sha256:bfa0f502960e29851bdf2de26cfac09788d08144d0d1caf669b06f2f5af4bec6
       known_issues:
         - KI-MENU-BACK-FILTERED-INDEX
