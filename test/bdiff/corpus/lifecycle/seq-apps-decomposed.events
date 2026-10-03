@@ -1,0 +1,8 @@
+# Verifies: SW-REQ-261003-B7ZA
+# The same accent precomposed (U+00C9) and decomposed (E + U+0301).
+@app nfc Écrans
+@app nfd Éditeur
+@app editor Editor
+@app zed Zed
+@app files Files
+O

@@ -157,13 +157,59 @@ function runJsonc() {
 const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected']
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
-const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X'])
+const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'O'])
+
+// Apps-menu inputs (SW-REQ-261003-B7ZA). A line `@app <appId> <name>` declares
+// one installed app; the name is the rest of the line, kept byte for byte as
+// the decoded text (any script, accents, U+FFFD from invalid UTF-8). `O`
+// summons the Apps menu ({"menu":"apps"}). Only an input that declares apps
+// gets the Apps menu and runs the revision's REAL rebuildDisplay, displayRow
+// and isVisible, so every other input keeps the old stub and prints exactly
+// what it printed before.
+const APP_LINE = /^@app[ \t]+(\S+)[ \t]+(.*)$/
+const APPS_NAMES = ['rebuildDisplay', 'displayRow', 'isVisible']
+
+// Verifies: SW-REQ-261003-B7ZA
+function appDirective(rawLine) {
+  const m = APP_LINE.exec(rawLine)
+  return m ? { appId: m[1], label: m[2] } : null
+}
+
+// Verifies: SW-REQ-261003-B7ZA
+// The item tree of an apps input: the fixed ITEMS, an Apps menu under root,
+// and one app row per declaration, in file order (the order DesktopEntries
+// would hand them over; the menu must not depend on it).
+function appsItems(apps) {
+  const items = Object.assign({}, ITEMS, { apps: { id: 'apps', kind: 'menu', label: 'Apps', parent: 'root' } })
+  for (const a of apps) items['apps.' + a.appId] = { id: 'apps.' + a.appId, kind: 'app', appId: a.appId, label: a.label, parent: 'apps' }
+  return items
+}
+
+// Verifies: SW-REQ-261003-B7ZA
+// Binds the revision's real Apps display path onto the simulated root and
+// counts every comparator sort the revision runs (a spy on the context's
+// Array.prototype.sort). rebuildDmenuDisplay keeps the stub's dmenu rows.
+// test/shell.d/menu-apps-order-bdiff-test.sh asserts on what this prints.
+function bindAppsDisplay(r, fns, rows, ctx) {
+  const spy = vm.runInContext('(function() { var n = { count: 0 }; var sort = Array.prototype.sort; Array.prototype.sort = function(f) { if (typeof f === "function") n.count++; return sort.call(this, f) }; return n })()', ctx)
+  for (const n of APPS_NAMES) r[n] = fns[n]
+  Object.assign(r, {
+    rowsLoaded: true, searchDivider: false, layoutSerial: 0,
+    whenResults: {}, checkedResults: {}, disabledResults: {},
+    settleCursor() {}, revealCursor() {},
+    rebuildDmenuDisplay() { rows.length = 0; for (const o of this.dmenuOptions) rows.push({ label: o, detail: '' }) },
+  })
+  return spy
+}
 
 function parseEvents(text) {
   const ops = []
   let slow = false
   const bad = []
+  const apps = []
   for (const rawLine of text.split(/\r\n|\r|\n/)) {
+    const app = appDirective(rawLine)
+    if (app) { apps.push(app); continue }
     const line = rawLine.replace(/#.*/, '')
     for (const tok of line.split(/[ \t,]+/).filter(Boolean)) {
       if (tok === '@slow') { slow = true; continue }
@@ -173,12 +219,12 @@ function parseEvents(text) {
       for (let i = 0; i < n; i++) ops.push(m[1])
     }
   }
-  return { ops, slow, bad }
+  return { ops, slow, bad, apps }
 }
 
-function extractFunctions(qml) {
+function extractFunctions(qml, names = NAMES) {
   const found = {}
-  for (const n of NAMES) {
+  for (const n of names) {
     const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
     if (m) found[n] = m[0]
   }
@@ -201,14 +247,17 @@ function commandText(cmd) {
 
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
-  const { ops, slow, bad } = parseEvents(readInputText())
+  const { ops, slow, bad, apps } = parseEvents(readInputText())
+  const appsMode = apps.length > 0
+  const names = appsMode ? NAMES.concat(APPS_NAMES) : NAMES
+  const items = appsMode ? appsItems(apps) : ITEMS
   emit(`events ${ops.join('') || '-'}${slow ? ' @slow' : ''}`)
   if (bad.length) emit(`ignored-tokens ${bad.join(' ')}`)
   const rel = 'shell/plugins/menu/Menu.qml'
   const qml = readRev(rel)
   if (qml === null) { emit(`lifecycle: MISSING ${rel}`); return }
-  const { found, onExited } = extractFunctions(qml)
-  const missing = NAMES.filter(n => !found[n])
+  const { found, onExited } = extractFunctions(qml, names)
+  const missing = names.filter(n => !found[n])
   if (missing.length) {
     // Without these the sequence cannot be replayed faithfully; report, do not guess.
     emit(`lifecycle: MISSING-FUNCTION ${missing.join(' ')}`)
@@ -240,8 +289,8 @@ function runEvents() {
     activeMenu: 'root', navStack: [], filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '',
     pendingInitialMenu: 'root', deleteConfirmOpen: false, deleteTarget: null, shell: null,
     appLibrary: { launch(id) { S.apps.push(id) }, refreshIcons() {}, remove() {} },
-    items: ITEMS, itemOrder: Object.keys(ITEMS),
-    item(id) { return ITEMS[id] || null },
+    items, itemOrder: Object.keys(items),
+    item(id) { return items[id] || null },
     resolveRoute(x) { return x },
     disarmPointer() {}, evaluateGuards() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
     setActiveMenu(id) { this.activeMenu = id; this.rebuildDisplay() },
@@ -254,7 +303,7 @@ function runEvents() {
       if (this.mode === 'select' || this.mode === 'input') { for (const o of this.dmenuOptions) rows.push({ label: o, detail: '' }) }
       else rows.push({ kind: 'app', appId: 'firefox', label: 'Firefox' }, { kind: 'action', itemId: 'act', action: 'echo act' }, { kind: 'menu', itemId: 'sub' })
     },
-    __dm: { get count() { return rows.length }, get(i) { return rows[i] } },
+    __dm: { get count() { return rows.length }, get(i) { return rows[i] }, clear() { rows.length = 0 }, append(row) { rows.push(row) } },
   }
   Object.defineProperty(r, 'dmenuActive', { get() { return r.mode === 'select' || r.mode === 'input' }, enumerable: true })
   // The QML id scope: names a revision's functions use resolve to root
@@ -265,15 +314,16 @@ function runEvents() {
       return k in t || (!(k in sandbox) && !(k in globalThis))
     },
   })
-  const src = NAMES.map(n => found[n]).join('\n')
+  const src = names.map(n => found[n]).join('\n')
   let fns
   try {
-    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${NAMES.join(', ')}, onExited: function() { ${onExited || ''} } } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
+    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${names.join(', ')}, onExited: function() { ${onExited || ''} } } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
   } catch (e) {
     emit(`lifecycle: COMPILE-ERROR ${errName(e)}`)
     return
   }
   for (const n of NAMES) r[n] = fns[n]
+  const sortSpy = appsMode ? bindAppsDisplay(r, fns, rows, ctx) : null
 
   const callers = new Map()
   const stray = []
@@ -304,6 +354,7 @@ function runEvents() {
         }
         case 'N': r.open(JSON.stringify({ mode: 'select', options: ['alpha'] })); break
         case 'M': r.open(JSON.stringify({ menu: 'root' })); break
+        case 'O': r.open(JSON.stringify({ menu: 'apps' })); break
         case 'A': r.open(JSON.stringify({ menu: 'act' })); break
         case 'P': r.activateIndex(0); break
         case 'R': r.activateIndex(1); break
@@ -311,6 +362,12 @@ function runEvents() {
         case 'X': exitProc(); break
       }
       deliver()
+      if (sortSpy && (op === 'O' || op === 'M')) {
+        // What the summoned menu shows, in display order, and how many
+        // comparator sorts the revision ran to build it.
+        emit(`shown menu=${r.activeMenu} sorts=${sortSpy.count} rows=${JSON.stringify(rows.map(row => row.label))}`)
+        sortSpy.count = 0
+      }
       if (slow && S.busy) { exitProc(); deliver() }
     }
     let guard = 0
