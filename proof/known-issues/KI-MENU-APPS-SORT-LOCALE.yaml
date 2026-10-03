@@ -1,27 +1,31 @@
 id: KI-MENU-APPS-SORT-LOCALE
-title: Apps submenu sorts with code-unit < on lowercased labels while search sorts with localeCompare
-description: The apps comparator uses aLabel < bLabel (UTF-16 code units), so labels above U+007A sort after 'z' - accented app names land at the end. The search path instead uses localeCompare on the same rows (anchor SRT1).
+title: The Apps menu lists names that start with an accented letter after Z
+description: |-
+    The Apps menu sorts its rows in rebuildDisplay with its own comparator, because DesktopEntries can reorder the apps. On upstream a85e29ab the comparator compares the lowercased names with < and >, that is by UTF-16 code unit. So every name that starts with a letter above U+007A sorts after z. The search sort in the same function uses localeCompare.
+
+    App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed and Zellij at the end of the list. A live run on the box (Quickshell, LANG=fr_FR.UTF-8) on a85e29ab showed this order. Every app stays in the list and search still finds it.
 affected_requirements:
     - SW-REQ-260922-Z680
+    - SW-REQ-261003-B7ZA
 evidence_manifests:
-    - pocs/menu-qml-static.sh
     - proof/evidence/ki-menu-apps-sort-locale.yaml
 severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-qml-static.sh
+reproducer_command: bash test/shell.d/menu-apps-order-test.sh
+tripwire_mutation: 'Put the code-unit comparison back in the Apps comparator of rebuildDisplay in shell/plugins/menu/Menu.qml (if (aLabel < bLabel) return -1 and if (aLabel > bLabel) return 1 in place of localeCompare, the a85e29ab behaviour): the red reproducer test/shell.d/menu-apps-order-test.sh fails at ''apps menu files an accented name under its letter, not after Z''.'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Ordering difference is cosmetic; every entry stays reachable and search-side ordering already uses localeCompare
-remediation: use localeCompare in the apps sort
+mitigation: Every app stays in the list, and search finds an app by its name in any order. Only the place of names that start with an accented or non-Latin letter is wrong; on an English desktop most names are plain ASCII.
+remediation: Fixed by the upstream change that makes the Apps comparator order the names with localeCompare (SW-REQ-261003-B7ZA); mirror pr/new-D.
 notes:
-    - 'Upstream: original #14154 (ours, 2026-10-03); open fix PR #14155 (ours).'
+    - 'Fixed on mirror pr/new-D by the upstream change (the Apps comparator in rebuildDisplay orders the lowercased names with localeCompare; the id tie-break is unchanged). Spec: SW-REQ-261003-B7ZA, spec conformance REVIEW-261003-JTMM. The reproducer is now the bound in-suite test test/shell.d/menu-apps-order-test.sh (Reproduces marker); it fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:50:22Z"
       by: human:Leonid Bugaev
@@ -62,6 +66,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-apps-sort-locale.yaml
+    - at: "2026-10-03T07:52:14Z"
+      by: agent:claude-pr-new-D
+      action: edit
+      detail: set-title,set-description,set-reproducer-command,set-tripwire-mutation,set-mitigation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
