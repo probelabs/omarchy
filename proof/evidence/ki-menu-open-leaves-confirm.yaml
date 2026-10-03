@@ -1,17 +1,21 @@
 schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
-      requirement: SW-REQ-260922-8CQ4
-      command: pocs/menu-qml-static.sh
+      requirements:
+        - SW-REQ-260922-8CQ4
+        - SW-REQ-261002-VJR1
+      command: bash test/shell.d/menu-uninstall-confirm-test.sh
       status: pass
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-03T13:51:12Z"
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-03T21:06:15Z"
+      revision: ec03d7c5dd4244f87830e881f71462c552f3b946
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-OPEN-LEAVES-CONFIRM` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - pocs/menu-qml-static.sh
+        - 'Captured by `proof evidence capture KI-MENU-OPEN-LEAVES-CONFIRM` from the KnownIssue''s reproducer command: bash test/shell.d/menu-uninstall-confirm-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Remove the guarded root.cancelDelete() call at the top of open() in shell/plugins/menu/Menu.qml (the baseline behaviour): the red reproducer test/shell.d/menu-uninstall-confirm-test.sh fails at ''a select prompt summoned over an uninstall confirmation dismisses it''.'
+        - test/shell.d/menu-uninstall-confirm-test.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
-        proof/known-issues/KI-MENU-OPEN-LEAVES-CONFIRM.yaml: ki-content-v1:sha256:58b3d1bcd5e4918e2ca1055003872f7db5e62e51218480e3f6ec21e596027c37
+        proof/known-issues/KI-MENU-OPEN-LEAVES-CONFIRM.yaml: ki-content-v1:sha256:e6c2fed50d7158396cf825c15386a1d7d7a9c7ea19d29df213ecb3d9bcfb5479
+        test/shell.d/menu-uninstall-confirm-test.sh: sha256:a49e7e886d776b46080fb1bd8024867a51568b88506f48f303e83b8566a61cbf
       known_issues:
         - KI-MENU-OPEN-LEAVES-CONFIRM
       config:
