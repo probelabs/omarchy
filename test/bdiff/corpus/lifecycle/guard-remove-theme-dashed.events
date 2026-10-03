@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with one theme named -n (a name echo would read as an option is still a theme):
+# does the row show, and does omarchy-theme-remove offer a theme it can remove?
+@home:dashed G
