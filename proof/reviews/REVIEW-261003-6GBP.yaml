@@ -1,0 +1,22 @@
+id: REVIEW-261003-6GBP
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-03T22:53:26Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Re-review for the upstream commit dbbfa62c, the final revision. matchRank now returns 0 (whole) for an empty search text itself, and filterEmojis calls it for every emoji; before, filterEmojis gave 0 for an empty search text without calling matchRank. Through filterEmojis the result is the same: with no search text every emoji goes to the whole-word group, the loop stops when that group holds the limit, and the picker lists emojis.json in file order up to 1000, the no-action row, which the witness checks against the file by its order digest (seq-emoji-empty). matchRank on its own no longer loops forever on an empty search text (indexOf of an empty string at the same place). isWordChar, the ranking, the cut at the limit, the rounding of a fractional limit and the helpers are as REVIEW-261003-KMT9 states, at lines that move down by two. The description matches; the witness test passes; the guarantee-violation row stays structurally unreachable.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:27@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:28
+    - shell/plugins/emojis/EmojiSearch.js:35@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:36
+    - shell/plugins/emojis/EmojiSearch.js:49@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:54
+    - shell/plugins/emojis/EmojiSearch.js:67
+    - shell/plugins/emojis/EmojiSearch.js:71
+    - shell/plugins/emojis/EmojiSearch.js:2@parseEmojis
+    - shell/plugins/emojis/EmojiSearch.js:12@normalizedQuery
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:65
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:157
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:177
+    - test/bdiff/corpus/lifecycle/seq-emoji-empty.events:1
