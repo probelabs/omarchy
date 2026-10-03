@@ -3,10 +3,13 @@
 set -euo pipefail
 
 # Verifies: SW-REQ-260922-MQ37, SW-REQ-260922-Y58B, SW-REQ-260922-W17G, SW-REQ-260922-RGCV, SW-REQ-260922-2JZT, SYS-REQ-260922-47T8
+# Verifies: SW-REQ-261003-390Z
 #mcdc:ignore:defensive SW-REQ-260922-MQ37: guards_declared=T, one_line_per_guard=F => FALSE -- guardLine is appended exactly once per declared guard; a guard answered by zero or two lines needs a broken string build [reviewed: REVIEW-M5]
 #mcdc:ignore:defensive SW-REQ-260922-Y58B: empty_guard_script=F, no_guards_declared=T => FALSE -- guardScript returns "" exactly when the built guards string is empty; a non-empty script from guardless items needs broken concatenation [reviewed: REVIEW-M5]
 #mcdc:ignore:defensive SW-REQ-260922-W17G: reader_read_once=F, reader_value_reused=T => FALSE -- the global substitution leaves no plain $(reader) call behind, so a reused reader has nothing left to read twice [reviewed: REVIEW-M5]
 #mcdc:ignore:defensive SW-REQ-260922-2JZT: only_plain_form_substituted=F, plain_substitution_form=T => FALSE -- the substitution is a global replace of the exact plain form; an occurrence left behind needs a broken replace [reviewed: REVIEW-M5]
+#mcdc:ignore:defensive SW-REQ-261003-390Z: remove_menu_guards_applied=T, remove_theme_row_shown=T, remover_has_removable_theme=F => FALSE -- the row's when: is omarchy-theme-removable, the same helper the remover reads its list from; a shown row with nothing to remove needs the helper to answer 0 with an empty list, or the row to lose its when: (the a85e29ab row) [reviewed: REVIEW-261003-C7RT]
+#mcdc:ignore:defensive SW-REQ-261003-390Z: remove_menu_guards_applied=T, remove_theme_row_shown=F, remover_has_removable_theme=T => FALSE -- a hidden row with a removable theme needs the guard to ask something narrower than the helper the remover lists with (for example a when: of false); the copied, cloned, worktree, mixed and dashed homes below fail on any such guard [reviewed: REVIEW-261003-C7RT]
 # mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
@@ -379,11 +382,11 @@ assert_remove_theme_guard_agrees() {
 
   # A row with no when: is always shown.
   if [[ -n $remove_theme_batch ]]; then
-    answer=$(HOME="$home" PATH="$ROOT/bin:$PATH" bash -c "$remove_theme_batch" 2>/dev/null | command grep '^remove\.theme:w:')
+    answer=$(HOME="$home" PATH="$ROOT/bin:$PATH" "$TEST_BASH" -c "$remove_theme_batch" 2>/dev/null | command grep '^remove\.theme:w:')
     [[ $answer == remove.theme:w:1 ]] || guarded=1
   fi
   calls=$(mktemp)
-  HOME="$home" SELECT_CALLS="$calls" PATH="$stub_dir:$ROOT/bin:$PATH" "$ROOT/bin/omarchy-theme-remove" >/dev/null 2>&1 || true
+  HOME="$home" SELECT_CALLS="$calls" PATH="$stub_dir:$ROOT/bin:$PATH" "$TEST_BASH" "$ROOT/bin/omarchy-theme-remove" >/dev/null 2>&1 || true
   [[ -s $calls ]] && opened=0
   while IFS= read -r name; do
     [[ $name == -- ]] && break
@@ -404,6 +407,9 @@ mkdir -p "$themes_home/filed/.config/omarchy/themes"
 # A name that echo would read as an option is still a theme.
 mkdir -p "$themes_home/dashed/.config/omarchy/themes/-n"
 
+# Reproduces: KI-MENU-REMOVE-THEME-NO-THEMES
+# MCDC SW-REQ-261003-390Z: remove_menu_guards_applied=T, remove_theme_row_shown=F, remover_has_removable_theme=F => TRUE
+# MCDC SW-REQ-261003-390Z: remove_menu_guards_applied=T, remove_theme_row_shown=T, remover_has_removable_theme=T => TRUE
 for shape in missing:1 empty:1 copied:0 cloned:0 linked:1 worktree:0 dotted:1 hidden:1 mixed:0 filed:1 dashed:0; do
   assert_remove_theme_guard_agrees \
     "Remove > Theme shows exactly when omarchy-theme-remove has a theme to offer" \
@@ -418,8 +424,27 @@ pass "omarchy-theme-removable lists real themes and nothing else"
 # The picker is offered the same list, so it no longer shows a .git it would
 # refuse to remove.
 calls=$(mktemp)
-HOME="$themes_home/mixed" SELECT_CALLS="$calls" PATH="$stub_dir:$ROOT/bin:$PATH" "$ROOT/bin/omarchy-theme-remove" >/dev/null 2>&1 || true
+HOME="$themes_home/mixed" SELECT_CALLS="$calls" PATH="$stub_dir:$ROOT/bin:$PATH" "$TEST_BASH" "$ROOT/bin/omarchy-theme-remove" >/dev/null 2>&1 || true
 offered=$(sed -n '2,/^--$/p' "$calls" | command grep -vx -- '--')
 rm -f "$calls"
 [[ $offered == handmade ]] || fail "omarchy-theme-remove offers only the themes it can remove" "got: $offered"
 pass "omarchy-theme-remove offers only the themes it can remove"
+
+# proof mirror (not in the upstream change): until the guard batch for an open
+# has answered, the menu applies no answer for the row, so isVisible keeps
+# Remove > Theme listed even in a HOME with nothing to remove. The guarantee
+# is not invoked then; the batch answer hides the row (the loop above).
+# MCDC SW-REQ-261003-390Z: remove_menu_guards_applied=F, remove_theme_row_shown=T, remover_has_removable_theme=F => TRUE [no-action: with no batch answer applied (whenResults has no remove.theme entry) isVisible returns true for the guarded row in the empty home, and the batch for that home answers remove.theme:w:0]
+pre_answer=$(node -e '
+  const fs = require("fs")
+  const path = require("path")
+  const menu = require(path.join(process.env.ROOT, "shell/plugins/menu/MenuModel.js"))
+  const items = menu.parseMenuJsonc(fs.readFileSync(path.join(process.env.ROOT, "default/omarchy/omarchy-menu.jsonc"), "utf8"))
+  const row = items.find(item => item.id === "remove.theme")
+  const byId = { [row.id]: row }
+  process.stdout.write(`${Boolean(row.when)}:${menu.isVisible(byId, [row.id], {}, row)}:${menu.isVisible(byId, [row.id], { [row.id]: false }, row)}`)
+')
+empty_answer=$(HOME="$themes_home/empty" PATH="$ROOT/bin:$PATH" "$TEST_BASH" -c "$remove_theme_batch" 2>/dev/null | command grep '^remove\.theme:w:')
+[[ $pre_answer == true:true:false && $empty_answer == remove.theme:w:0 ]] ||
+  fail "Remove > Theme stays listed until the guard batch answers, then hides" "got: $pre_answer / $empty_answer"
+pass "Remove > Theme stays listed until the guard batch answers, then hides"
