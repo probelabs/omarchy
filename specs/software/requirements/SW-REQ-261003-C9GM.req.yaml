@@ -67,16 +67,22 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-quattro-proof
+        reviewed_at: "2026-10-03T12:20:00Z"
         ai_generated: true
+    not_modeled:
+        - predicate: term.length <= 5
+          reason: "Acronym gate in termMatches (AppSearch.js:69): a query term of five characters or fewer may also match the entry's acronym. The requirement folds every matching route into query_terms_matched, so the length cut-off is part of that variable's definition, not a separate FRETish variable."
 history:
     created_by: agent:claude-quattro-proof
     created_at: "2026-10-03T12:33:27Z"
     last_modified_by: agent:claude-quattro-proof
     last_modified_at: "2026-10-03T12:37:01Z"
 hazard_review:
+    reviewed_at: "2026-10-03T12:46:02Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
           disposition: reviewed
