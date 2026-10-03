@@ -18,7 +18,7 @@ rationale: |-
 
     App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed and Zellij. A live run on the box with LANG=fr_FR.UTF-8 showed this order on a85e29ab.
 
-    The fix compares the names with localeCompare, as the search sort in the same function already does. The tie-break on the id is unchanged. The live run with the fix shows the two names under E.
+    The fix compares the names with localeCompare, as the search sort in the same function already does. The fix keeps the tie-break on the id. The live run with the fix shows the two names under E.
 tags: []
 variables:
     - apps_rows_rebuilt
@@ -81,7 +81,7 @@ history:
     created_by: agent:claude-pr-new-D
     created_at: "2026-10-03T07:49:05Z"
     last_modified_by: agent:claude-pr-new-D
-    last_modified_at: "2026-10-03T07:51:12Z"
+    last_modified_at: "2026-10-03T08:20:14Z"
 hazard_review:
     reviewed_at: "2026-10-03T07:51:11Z"
     reviewed_by: agent:claude-pr-new-D
