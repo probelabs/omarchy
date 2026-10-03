@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with one theme that is a git worktree (.git file; control: the row shows):
+# does the row show, and does omarchy-theme-remove offer a theme?
+@home:worktree G
