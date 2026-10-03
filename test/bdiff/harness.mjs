@@ -159,7 +159,7 @@ function runJsonc() {
 //      (MenuModel guardScript, run by bash) and isVisible, against the
 //      revision's bin/omarchy-theme-remove with a stub picker, in a HOME of
 //      the shape set by the directive `@home:<shape>` (missing, empty,
-//      copied, cloned, linked, worktree, dotted; default empty). Prints one `guard`
+//      copied, cloned, linked, worktree, dotted, hidden, mixed; default empty). Prints one `guard`
 //      line: whether the row shows, what the remover offers, and whether
 //      the two agree (a shown row with nothing to offer only closes the menu).
 //
@@ -172,7 +172,7 @@ const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExi
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
 const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'G'])
-const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree', 'dotted'])
+const HOME_SHAPES = new Set(['missing', 'empty', 'copied', 'cloned', 'linked', 'worktree', 'dotted', 'hidden', 'mixed'])
 
 function parseEvents(text) {
   const ops = []
@@ -219,8 +219,9 @@ function commandText(cmd) {
 // Builds a throwaway HOME of one shape (the shapes of the Remove > Theme
 // guard test in test/shell.d/menu-guards-test.sh): no themes directory, an
 // empty one, a copied theme, a cloned theme (.git directory), only a
-// symlinked working copy, a worktree (.git file), and only a dot-directory
-// (.git), whose name omarchy-theme-remove lists but refuses to remove.
+// symlinked working copy, a worktree (.git file), only a dot-directory
+// (.git, or .backup), whose name omarchy-theme-remove lists but refuses to
+// remove, and .git beside a real theme (mixed: the real one still counts).
 // Verifies: SW-REQ-261003-390Z
 function makeThemesHome(shape) {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'omarchy-bdiff-home-'))
@@ -235,6 +236,11 @@ function makeThemesHome(shape) {
     fs.symlinkSync(path.join(base, 'checkout'), path.join(themes, 'in-progress'))
   }
   if (shape === 'dotted') fs.mkdirSync(path.join(themes, '.git'))
+  if (shape === 'hidden') fs.mkdirSync(path.join(themes, '.backup'))
+  if (shape === 'mixed') {
+    fs.mkdirSync(path.join(themes, '.git'))
+    fs.mkdirSync(path.join(themes, 'handmade'))
+  }
   if (shape === 'worktree') {
     fs.mkdirSync(path.join(themes, 'branch'))
     fs.writeFileSync(path.join(themes, 'branch', '.git'), 'gitdir: /elsewhere\n')

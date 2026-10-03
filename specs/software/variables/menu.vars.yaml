@@ -480,14 +480,18 @@ variables:
       type: bool
       direction: output
       description: 'The rejection stands recorded and honored: the .failed marker keyed by the video hash exists, the video offers no row, and the rows stay uncached.'
-    - name: remover_has_no_theme
+    - name: remove_menu_guards_applied
       type: bool
       direction: input
-      description: ~/.config/omarchy/themes holds no directory that is not a symlink and has no leading dot, so omarchy-theme-remove has no theme it can remove (it lists only non-symlink directories and refuses dot-names).
-    - name: remove_theme_row_hidden
+      description: The guard batch has answered the Remove menu rows, and the menu applies those answers.
+    - name: remover_has_removable_theme
+      type: bool
+      direction: input
+      description: ~/.config/omarchy/themes holds a directory that is not a symlink and has no leading dot, so omarchy-theme-remove offers a theme it can remove.
+    - name: remove_theme_row_shown
       type: bool
       direction: output
-      description: The guard batch answers the remove.theme when as false, so the Remove menu does not list Theme.
+      description: The Remove menu lists Theme.
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'

@@ -4,8 +4,8 @@ status: review
 priority: shall
 category: functional
 req_type: guarantee
-fretish: when remover_has_no_theme the menu_view shall immediately satisfy remove_theme_row_hidden
-description: 'The Remove menu lists Theme only when omarchy-theme-remove has a theme it can remove. That is a directory under ~/.config/omarchy/themes that is not a symlink and has no leading dot. With none, the guard batch answers the row''s when as false and the menu hides the row. So the row never runs a remover that has nothing to offer and closes the menu with no answer.'
+fretish: when remove_menu_guards_applied the menu_view shall immediately satisfy (remove_theme_row_shown <=> remover_has_removable_theme)
+description: 'Once the guard batch has answered, the Remove menu lists Theme exactly when omarchy-theme-remove has a theme it can remove. That is a directory under ~/.config/omarchy/themes that is not a symlink and has no leading dot. With one, the row shows and the remover offers it. With none, the guard batch answers the row''s when as false and the menu hides the row. So the row never closes the menu with no answer.'
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -21,14 +21,15 @@ rationale: |-
     The fix gives the row a when: that asks what the remover can act on. It lists only non-symlink directories, and it refuses a name with a leading dot. The guard batch then hides the row until the remover has a theme it can remove. The engine does not scan .jsonc annotations, so the Implements line on the row is inert. The requirement traces to isVisible, which applies the answer. A live run on the box hid the row with no themes and with a symlink-only theme, and showed it after a theme install.
 tags: []
 variables:
-    - remover_has_no_theme
-    - remove_theme_row_hidden
+    - remove_menu_guards_applied
+    - remover_has_removable_theme
+    - remove_theme_row_shown
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-03T08:39:04.244172Z"
+    reviewed_at: "2026-10-03T09:21:36.218818Z"
     reviewed_by: agent:claude-pr-new-C
-    reviewed_fingerprint: sha256:6777f9a7018db59b4796270e392887801689ef319580f192912738058d305ec5
+    reviewed_fingerprint: sha256:a279d710f62520498f724f2ba6afee62b4a585608a3edd7422431c5e41c33b81
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/MenuModel.js:isVisible: file1:4646148b2f50db0b9c90b218accbb160
@@ -62,6 +63,26 @@ traces:
             - test/bdiff/harness.mjs:224
             - test/bdiff/harness.mjs:252
             - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-03T09:21:36.218818Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C final (quattro-proof 87c3ca68, product db375766): 390Z is now two-way - once the guard batch has answered, the Remove menu lists Theme exactly when omarchy-theme-remove has a theme it can remove (a non-symlink directory without a leading dot). Implemented by isVisible applying the row''s when: (the JSONC row itself is not scannable by the engine). Verified by test/shell.d/menu-guards-test.sh: the nine-home loop witnesses both sides (missing, empty, linked, dotted, hidden hidden; copied, cloned, worktree, mixed shown) and the mirror-only pre-answer block witnesses the no-action row; and by the behaviour-diff harness (makeThemesHome/runRemoveThemeGuard) with its nine guard-remove-theme-*.events inputs. Satisfies SYS-REQ-260922-47T8. Spec conformance REVIEW-261003-C7RT'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:262
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dotted.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-empty.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-hidden.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-linked.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-missing.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-mixed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
+            - test/bdiff/harness.mjs:225
+            - test/bdiff/harness.mjs:258
+            - test/shell.d/menu-guards-test.sh:6
 verification:
     assurance_level: C
     formalization_status: valid
@@ -76,7 +97,7 @@ history:
     last_modified_by: agent:claude-pr-new-C
     last_modified_at: "2026-10-03T07:59:40Z"
 hazard_review:
-    reviewed_at: "2026-10-03T08:05:00Z"
+    reviewed_at: "2026-10-03T09:40:00Z"
     reviewed_by: agent:claude-pr-new-C
     reviewed_against_catalog_version: 1.11.0
     categories:
@@ -85,15 +106,15 @@ hazard_review:
           applied:
             - edge_case
             - boundary
-          not_applicable:
             - input_domain
+          not_applicable:
             - concurrency_scale
-          rationale: 'Worst case: the row shows with nothing to remove, runs the remover, and closes the menu with no answer. edge_case: each shape of the themes directory is a case - missing, empty, a symlinked working copy only, only a dot-directory (hidden), a copied theme, a cloned theme, a worktree with a .git file (shown); all seven are witnessed, including a themes directory that holds only a .git directory (hidden: the remover would refuse that name). boundary: zero versus one non-symlink directory is the only boundary; the empty and copied shapes witness both sides. input_domain not applicable: the decision reads only whether one entry exists; theme names and contents do not change it. concurrency_scale not applicable: the batch runs again on each evaluation, so a theme added or removed shows at the next one, as for every sibling guard.'
+          rationale: 'Worst cases: the row shows with nothing to remove and only closes the menu, or the row hides while a theme could be removed (a guard narrower than the remover, for example a when: of false). edge_case: each shape of the themes directory is a case. Hidden: missing, empty, a symlinked working copy only, only .git, only .backup. Shown: a copied theme, a cloned theme, a worktree with a .git file, and .git beside a real theme. All nine are witnessed. boundary: zero versus one removable directory; the empty and copied homes witness both sides. input_domain applied: the entry kinds decide it. A symlink never counts, and a name with a leading dot never counts, because the remover refuses it; a real directory counts whatever else sits beside it (mixed home). Names with a newline or a leading -- are pre-existing remover behaviour, outside this change and outside this requirement. concurrency_scale not applicable: the batch runs again on each evaluation, so a theme added or removed shows at the next one, as for every sibling guard.'
         - category: property
           disposition: reviewed
           applied:
             - totality
-          rationale: 'Every HOME shape gives one defined answer, row shown or row hidden, and that answer equals whether the remover asks the picker. No shape shows the row with nothing to offer or hides it with a theme to offer.'
+          rationale: 'Every HOME shape gives one defined answer once the batch has answered, row shown or row hidden. That answer equals whether the remover offers a name it would remove. No shape shows the row with nothing to offer or hides it with a theme to offer. Before the first answer the row shows, as every guarded row does.'
         - category: structural
           disposition: not_applicable
           rationale: 'One JSONC string and one find predicate; no memory, encoding or numeric surface. The escaped quotes in the JSONC string are covered by the witness, which parses the shipped row.'

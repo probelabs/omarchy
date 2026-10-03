@@ -1,0 +1,4 @@
+# Verifies: SW-REQ-261003-390Z
+# Remove > Theme over a HOME with a .git directory beside a real theme (control: the real theme keeps the row):
+# does the row show, and does omarchy-theme-remove offer a theme it can remove?
+@home:mixed G
