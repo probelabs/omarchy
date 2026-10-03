@@ -3,10 +3,12 @@
 set -euo pipefail
 
 # Verifies: SW-REQ-260922-MQ37, SW-REQ-260922-Y58B, SW-REQ-260922-W17G, SW-REQ-260922-RGCV, SW-REQ-260922-2JZT, SYS-REQ-260922-47T8
+# Verifies: SW-REQ-261003-390Z
 #mcdc:ignore:defensive SW-REQ-260922-MQ37: guards_declared=T, one_line_per_guard=F => FALSE -- guardLine is appended exactly once per declared guard; a guard answered by zero or two lines needs a broken string build [reviewed: REVIEW-M5]
 #mcdc:ignore:defensive SW-REQ-260922-Y58B: empty_guard_script=F, no_guards_declared=T => FALSE -- guardScript returns "" exactly when the built guards string is empty; a non-empty script from guardless items needs broken concatenation [reviewed: REVIEW-M5]
 #mcdc:ignore:defensive SW-REQ-260922-W17G: reader_read_once=F, reader_value_reused=T => FALSE -- the global substitution leaves no plain $(reader) call behind, so a reused reader has nothing left to read twice [reviewed: REVIEW-M5]
 #mcdc:ignore:defensive SW-REQ-260922-2JZT: only_plain_form_substituted=F, plain_substitution_form=T => FALSE -- the substitution is a global replace of the exact plain form; an occurrence left behind needs a broken replace [reviewed: REVIEW-M5]
+#mcdc:ignore:defensive SW-REQ-261003-390Z: remove_theme_row_hidden=F, remover_has_no_theme=T => FALSE -- the remove.theme when: is the find predicate omarchy-theme-remove lists with (non-symlink directories under ~/.config/omarchy/themes), less the dot-names it refuses; a shown row with nothing to remove needs the two predicates to diverge, which is the a85e29ab row with no when: [reviewed: REVIEW-261003-C7RT]
 # mcdc:witness-out-of-process
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
@@ -394,6 +396,9 @@ assert_remove_theme_guard_agrees() {
 
 mkdir -p "$themes_home/dotted/.config/omarchy/themes/.git"
 
+# Reproduces: KI-MENU-REMOVE-THEME-NO-THEMES
+# MCDC SW-REQ-261003-390Z: remove_theme_row_hidden=T, remover_has_no_theme=T => TRUE
+# MCDC SW-REQ-261003-390Z: remove_theme_row_hidden=F, remover_has_no_theme=F => TRUE [no-action: a copied, cloned or worktree theme gives the remover a theme to offer, so the guarantee is not invoked and the row shows]
 for shape in missing:1 empty:1 copied:0 cloned:0 linked:1 worktree:0 dotted:1; do
   assert_remove_theme_guard_agrees \
     "Remove > Theme shows exactly when omarchy-theme-remove has a theme to offer" \

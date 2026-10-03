@@ -19,15 +19,15 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:41.90176Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T08:00:03.061166Z"
+    reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:420fd55c985b9e93456f8ce0c8d32c97623ec554d8bb3f717b03e5debca81336
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:parseMenuJsonc: file1:bddf782ed3ac81606c0c53a1106414c4
             shell/plugins/menu/Menu.qml:stripJsonc: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:stripJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4646148b2f50db0b9c90b218accbb160
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:4646148b2f50db0b9c90b218accbb160
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
@@ -107,6 +107,26 @@ traces:
             - test/node/menumodel-replay.test.mjs:114
             - test/node/menumodel-replay.test.mjs:964
             - test/shell.d/menu-test.sh:107
+            - test/shell.d/menu-test.sh:257
+            - test/shell.d/menu-test.sh:262
+            - test/shell.d/menu-test.sh:272
+            - test/shell.d/menu-test.sh:280
+            - test/shell.d/menu-test.sh:297
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-03T08:00:03.061166Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C (upstream-style fix 638c6474 on quattro-proof 39746e65): shell/plugins/menu/MenuModel.js changed only in one comment line, the Implements line above isVisible, which now also names SW-REQ-261003-390Z. No code line changed and no line moved, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:244
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:44
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:964
             - test/shell.d/menu-test.sh:257
             - test/shell.d/menu-test.sh:262
             - test/shell.d/menu-test.sh:272
