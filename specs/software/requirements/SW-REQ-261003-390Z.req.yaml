@@ -29,13 +29,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-03T13:05:39.697113Z"
+    reviewed_at: "2026-10-03T20:00:43.719005753Z"
     reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:a279d710f62520498f724f2ba6afee62b4a585608a3edd7422431c5e41c33b81
     reviewed_targets:
         implemented_by:
             bin/omarchy-theme-removable: file1:66d405f28593d84bc45c32ccec16c1f3
             bin/omarchy-theme-remove: file1:6f221416f11f17ae5a9d3fb125bfc659
+            default/omarchy/omarchy-menu.jsonc:remove.theme: file1:1e11e45328513e518cf24a7f32908b6b
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -154,6 +155,32 @@ traces:
             - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
             - test/bdiff/harness.mjs:228
             - test/bdiff/harness.mjs:267
+            - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-03T20:00:43.719005753Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'Engine a7a32809 reads row-level annotations in .jsonc, so the remove.theme row in default/omarchy/omarchy-menu.jsonc (line 296, annotated at 295) is now a traced target of 390Z. The row is the menu side of 390Z: its when: is omarchy-theme-removable, the helper that lists the themes the remover can remove (bin/omarchy-theme-removable, also traced), and its action is omarchy-theme-remove, which reads its picker list from the same helper (bin/omarchy-theme-remove). So the row shows exactly when the remover has a theme to offer, once the guard batch has answered. The other links are unchanged: the helper, the remover, the parent SYS-REQ-260922-47T8 (rows reflect system state), the witnesses in test/shell.d/menu-guards-test.sh (now also at function level, assert_remove_theme_guard_agrees) and the behaviour-diff harness with its twelve guard inputs.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-theme-removable:10
+            - bin/omarchy-theme-remove:7
+            - default/omarchy/omarchy-menu.jsonc:295
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dashed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dotted.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-empty.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-filed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-folded.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-hidden.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-linked.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-missing.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-mixed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
+            - test/bdiff/harness.mjs:228
+            - test/bdiff/harness.mjs:267
+            - test/shell.d/menu-guards-test.sh:379
             - test/shell.d/menu-guards-test.sh:6
 verification:
     assurance_level: C

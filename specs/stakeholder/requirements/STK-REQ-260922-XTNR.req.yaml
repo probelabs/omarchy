@@ -16,17 +16,17 @@ rationale: 'The menu is the primary UX surface of omarchy and its top churn/bug 
 tags: []
 variables: []
 traces:
-    reviewed_at: "2026-10-04T07:31:44.423623Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T20:00:44.012054056Z"
+    reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:c8f0cea8d4dca8bc47b2f568d92d2ea0f3cf1fc48d174200d8d7279ea6d9346f
     reviewed_targets:
         implemented_by:
-            default/omarchy/omarchy-menu.jsonc: file1:5a37ce1068baa9e720f440a603e04240
+            default/omarchy/omarchy-menu.jsonc: file1:1e11e45328513e518cf24a7f32908b6b
     review_history:
-        - reviewed_at: "2026-10-04T07:31:44.423623Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-03T20:00:44.012054056Z"
+          reviewed_by: agent:claude-pr-new-C
           method: inspection
-          rationale: 'The engine reads annotations in .jsonc files (since a7a32809), so the file-level Implements: STK-REQ-260922-XTNR on line 2 of default/omarchy/omarchy-menu.jsonc is a traced target. The file is the Omarchy menu definition: the rows users reach system actions, settings and applications through, with when: guards that keep rows in step with system state. That is the menu XTNR describes. The verifying tests are menu-acceptance-test.sh (AC-001, AC-002) and menu-dispatcher-test.sh (nominal).'
+          rationale: 'Engine a7a32809 reads annotations in .jsonc, so the baseline file-level Implements: STK-REQ-260922-XTNR on line 2 of default/omarchy/omarchy-menu.jsonc is now a traced target. The file is the Omarchy menu definition: the rows users reach system actions, settings and applications through, with when: guards that keep rows in step with system state. That is the menu XTNR describes. This PR changes one row in it (remove.theme gains a when: guard), in line with XTNR and traced to SW-REQ-261003-390Z at row level. The verifying tests are unchanged: menu-acceptance-test.sh (AC-001, AC-002) and menu-dispatcher-test.sh (nominal).'
           source: proof trace review --citation
           citations:
             - default/omarchy/omarchy-menu.jsonc:2
