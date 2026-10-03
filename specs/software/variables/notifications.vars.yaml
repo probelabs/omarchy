@@ -7,8 +7,8 @@ variables:
     - name: origin_link_at_start
       type: bool
       direction: input
-      description: After optional white space, the body starts with a link whose text is a host name with a dot (ASCII letters, digits and hyphens), with an optional scheme, port and path.
+      description: 'After optional white space, the body starts with an <a> tag whose content, apart from white space around it, is only a web address of this form, then </a>: an optional http:// or https:// or www., one or more labels of ASCII letters, digits and hyphens each followed by a dot, a last label of two or more ASCII letters, an optional :port and an optional path that starts with / and holds no < or white space. Case does not matter.'
     - name: message_after_link_kept
       type: bool
       direction: output
-      description: sanitizeBody returns the rest of the image-stripped body after that link and the white space after it, with no other change.
+      description: sanitizeBody returns the image-stripped body without the white space before that link, the link and all the white space after it, with no other change. White space that the message starts with goes too.

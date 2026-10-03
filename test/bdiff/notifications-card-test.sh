@@ -49,11 +49,12 @@ notification 2 app="Chromium" body-line-shown=true card-text="README.md has new 
 notification 2 app="Google Chrome" body-line-shown=true card-text="Node.js 24 is out"
 notification 3 app="" body-line-shown=true card-text="teams.microsoft.com link inside"'
 
-  'a Chromium web notification with a plain message loses only the origin link'
+  'a Chromium web notification with a plain message loses only the origin link and the white space after it'
   notify-link-plain-message.events
   'notification 1 app="Chromium" body-line-shown=true card-text="See you at 5"
 notification 2 app="Chromium" body-line-shown=true card-text="e.g. bring the slides"
-notification 3 app="Chromium" body-line-shown=true card-text="Two lines<br/>of message"'
+notification 3 app="Chromium" body-line-shown=true card-text="Two lines<br/>of message"
+notification 4 app="Chromium" body-line-shown=true card-text="indented reply"'
 
   # MCDC SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=F => TRUE [no-action: the body has no origin link, so the link removal changes nothing; the card text is the body without its leading plain-text origin, and a second web address after that origin stays]
   'without a link, a Chromium body loses only its leading plain-text origin'
@@ -73,12 +74,15 @@ notification 3 app="Chromium" body-line-shown=true card-text="See you at 5"
 notification 4 app="Chromium" body-line-shown=true card-text="Reply to <a href=\"https://app.slack.com/\">app.slack.com</a> today"
 notification 5 app="Chromium" body-line-shown=true card-text="<abbr title=\"x\">chat.example.com</abbr><br/><br/>See you at 5"'
 
-  # MCDC SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=F => TRUE [no-action: the link text localhost:8123, 127.0.0.1:8123 or bücher.de is not a host name with a dot to the cleanup, so nothing is removed; the card text still starts with the link]
-  'an origin link to localhost, an IP address or a non-ASCII host stays in the card'
+  # MCDC SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=F => TRUE [no-action: the link content localhost:8123, 127.0.0.1:8123, bücher.de, foo.x1, a.b or a <b> element is not what the origin-link expression matches, so nothing is removed; the card text still starts with the link]
+  'an origin link the cleanup does not match stays in the card'
   notify-link-origin-kept.events
   'notification 1 app="Chromium" body-line-shown=true card-text="<a href=\"http://localhost:8123/\">localhost:8123</a><br/><br/>github.com/omacom/omarchy can you review?"
 notification 2 app="Chromium" body-line-shown=true card-text="<a href=\"http://127.0.0.1:8123/\">127.0.0.1:8123</a><br/><br/>Node.js 24 is out"
-notification 3 app="Chromium" body-line-shown=true card-text="<a href=\"https://xn--bcher-kva.de/\">bücher.de</a><br/><br/>Node.js 24 is out"'
+notification 3 app="Chromium" body-line-shown=true card-text="<a href=\"https://xn--bcher-kva.de/\">bücher.de</a><br/><br/>Node.js 24 is out"
+notification 4 app="Chromium" body-line-shown=true card-text="<a href=\"http://foo.x1/\">foo.x1</a><br/><br/>Node.js 24 is out"
+notification 5 app="Chromium" body-line-shown=true card-text="<a href=\"http://a.b/\">a.b</a><br/><br/>Node.js 24 is out"
+notification 6 app="Chromium" body-line-shown=true card-text="<a href=\"https://web.whatsapp.com/\"><b>web.whatsapp.com</b></a><br/><br/>Node.js 24 is out"'
 
   # MCDC SW-REQ-261004-DHZ3: chromium_sender=F, message_after_link_kept=F, origin_link_at_start=T => TRUE [no-action: Slack is not a Chromium-based browser, so the origin cleanup does not run; the card text still starts with the link, and a leading web address stays]
   # MCDC SYS-REQ-261004-74P8: page_message_shown=F, web_notification_received=F => TRUE [no-action: Slack and notify-send are not a browser, so no origin is removed; the card text is the body as sent]

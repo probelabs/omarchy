@@ -48,9 +48,12 @@ event every still-running write is drained. The method is the one used for the
 
 A line `@notify {"app": …, "appIcon": …, "body": …}` is one notification as the
 notification server hands it to the card; the JSON keeps the body's exact
-newlines and markup. An `.events` file with at least one `@notify` line runs
-the notification mode, not the request-lifecycle simulator, so the menu inputs
-print the same output as before. The inputs use the body that a real Chromium
+newlines and markup. An `.events` file with at least one line that starts
+with `@notify` runs the notification mode, not the request-lifecycle
+simulator, so the menu inputs print the same output as before. A `@notify`
+line that is not one JSON object prints `BAD-INPUT` for that notification,
+writes the reason to stderr and makes the harness exit 2; it never falls back
+to the menu simulator. The inputs use the body that a real Chromium
 148 sends for a web notification to a server that takes hyperlinks: the origin
 link, a blank line, then the message. The output does not depend on the locale
 or the time zone (checked under C, C.UTF-8, en_US, tr_TR, et_EE and th_TH).
@@ -63,7 +66,7 @@ notification input against this checkout; no audit test command runs it.
 |---|---|---|
 | `data` | data, `builtin_data` | every JS `\s` character at the start and before each line, BOM, CRLF, CR, no final newline, empty, whitespace-only, huge (1 MiB) and invalid UTF-8 variants of three seeds: the shipped menu, the shipped sample extension, and `corpus/jsonc/u-issue-11211-1.jsonc` |
 | `corpus` | corpus | `default/omarchy/omarchy-menu.jsonc`, `config/omarchy/extensions/omarchy-menu.jsonc`, `pocs/reproducers/**/*.jsonc`, `corpus/jsonc/*.jsonc` |
-| `lifecycle` | corpus | every `corpus/lifecycle/*.events` sequence, run once |
+| `lifecycle` | corpus | every `corpus/lifecycle/*.events` file, run once: the menu request-lifecycle sequences and the `notify-*.events` notification inputs (a file with a line that starts with `@notify` runs the notification mode, any other file the lifecycle simulator) |
 | `scale` | scale, n 8 | `corpus/lifecycle/burst-*.events` (bursts of 1, 2 and 20 select summons, then an answer) |
 | `timing` | timing, n 8, 2 ms | `corpus/lifecycle/interleave-*.events` (summons interleaved with alias / menu summons and process exits) |
 

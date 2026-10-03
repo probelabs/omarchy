@@ -6,9 +6,9 @@ category: functional
 req_type: guarantee
 fretish: when chromium_sender & origin_link_at_start the notification_card shall immediately satisfy message_after_link_kept
 description: |-
-    For a notification from a Chromium-based browser, sanitizeBody removes the origin that the browser puts at the start of the body. The app name or the app icon must contain chrom, brave, vivaldi, microsoft-edge or opera; case does not matter. When the body starts with an origin link, sanitizeBody removes only that link and the white space around it. It keeps the rest of the body, which is the message. This holds also when the message starts with a web address or a dotted word, such as Node.js.
+    For a notification from a Chromium-based browser, sanitizeBody removes the origin that the browser puts at the start of the body. The app name or the app icon must contain chrom, brave, vivaldi, microsoft-edge or opera; case does not matter. When the body starts with an origin link, sanitizeBody removes only that link, the white space before it and all the white space after it. It keeps the rest of the body, which is the message, with its first word. This holds also when the message starts with a web address or a dotted word, such as Node.js. White space that the message starts with goes with the link.
 
-    A link is an origin link when its text is a host name with a dot. The host name has ASCII letters, digits and hyphens, and it can have a scheme, a port and a path.
+    A link is an origin link when its content is only a web address of one form. It can start with http://, https:// or www. Then come labels of ASCII letters, digits and hyphens, each followed by a dot, and a last label of two or more ASCII letters. A port and a path that holds no < or white space can follow. Any other link stays in the body, for example localhost, an IP address, foo.x1 or a link with markup inside.
 
     A body without an origin link loses a leading web address and the white space after it. That is the origin when the browser sends it as plain text. sanitizeBody removes image tags from every body first, and the card shows the result through styledBody.
 formalization_strategy: fretish
@@ -36,14 +36,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-261004-74P8
-    reviewed_at: "2026-10-03T21:51:28.427358Z"
+    reviewed_at: "2026-10-03T23:06:08.286561Z"
     reviewed_by: agent:claude-pr-new-E
     reviewed_fingerprint: sha256:830ca0d149bfa2fd949b5a7f021becb693cb7e4b5e798177d80e589ff2179db5
     reviewed_targets:
         implemented_by:
             shell/plugins/notifications/NotificationLogic.js:sanitizeBody: file1:8aa013aac4714892a7b55a8d43c75936
         satisfies:
-            SYS-REQ-261004-74P8: req1:05525400fae22690f36ea21439e936cc
+            SYS-REQ-261004-74P8: req1:adf5d78b69a07b735a2512160a152722
     review_history:
         - reviewed_at: "2026-10-03T21:40:14.24185Z"
           reviewed_by: agent:claude-pr-new-E
@@ -109,6 +109,28 @@ traces:
             - test/bdiff/harness.mjs:364
             - test/bdiff/harness.mjs:380
             - test/bdiff/notifications-card-test.sh:15
+        - reviewed_at: "2026-10-03T23:06:08.286561Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'sanitizeBody is the function the card calls for its body text and carries the rule: for a Chromium-based sender, once the origin link replacement removed text, the rest of the body is returned with no other change; the plain-text replacement runs only without a link. It satisfies SYS-REQ-261004-74P8 (the whole message, from its first word, for a web notification with the origin link). The witnesses run the real NotificationLogic.js through the behaviour-diff harness on the notify inputs, and notifications-card-test.sh asserts the card lines.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:103
+            - shell/plugins/notifications/NotificationLogic.js:93
+            - specs/system/requirements/SYS-REQ-261004-74P8.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-space-anchor.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
 verification:
     assurance_level: C
     formalization_status: valid
@@ -121,7 +143,7 @@ history:
     created_by: agent:claude-pr-new-E
     created_at: "2026-10-03T21:29:19Z"
     last_modified_by: agent:claude-pr-new-E
-    last_modified_at: "2026-10-03T21:42:31Z"
+    last_modified_at: "2026-10-03T23:06:06Z"
 hazard_review:
     reviewed_at: "2026-10-03T21:38:12Z"
     reviewed_by: agent:claude-pr-new-E
