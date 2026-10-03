@@ -1,0 +1,23 @@
+id: REVIEW-261003-HBN4
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-03T22:14:31Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Re-review for the revised upstream commit a1e56f38. isWordChar counts a to z, 0 to 9 and every character above U+007F as part of a word, so a space, an underscore, a hyphen, a colon or the end of the keywords ends one; a curly apostrophe or quote (above U+007F) does not, and the description says so. matchRank walks every place the search text shows and keeps the best group (0 whole, 1 start, 2 inside), stopping at a whole word; so a later whole word beats an earlier inside match, as the description says. filterEmojis puts each match in groups[rank] in file order and returns the three groups joined and cut at the limit; it stops early only when the whole group holds the limit, which only an empty search text reaches. Math.ceil rounds a fractional limit up, as the old loop did. parseEmojis, normalizedQuery and keywordText are unchanged. The witness test asserts all sixteen emoji inputs, checks every listed state against an oracle that implements the boundary rule with a regular expression, and checks the separators, digits, a later whole word and the fractional limit on filterEmojis directly. The guarantee-violation row stays structurally unreachable: a search text that is not empty has only the ranked path.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:24@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:31@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:37
+    - shell/plugins/emojis/EmojiSearch.js:44@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:49
+    - shell/plugins/emojis/EmojiSearch.js:62
+    - shell/plugins/emojis/EmojiSearch.js:66
+    - shell/plugins/emojis/EmojiSearch.js:2@parseEmojis
+    - shell/plugins/emojis/EmojiSearch.js:12@normalizedQuery
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:65
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:153
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:164
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:166
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:170
+    - test/bdiff/corpus/lifecycle/seq-emoji-man.events:1

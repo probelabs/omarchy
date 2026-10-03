@@ -23,6 +23,7 @@ function keywordText(item) {
 // "man: beard", the quotes in "“reserved”". A letter is any character that has
 // a case, "é" too (the shipped keywords are English), and "o’clock" stays one
 // word.
+// Implements: SW-REQ-261004-H41S
 function isWordChar(c) {
   return (c >= "0" && c <= "9") || c === "'" || c === "\u2019" || c.toLowerCase() !== c.toUpperCase()
 }
@@ -30,6 +31,7 @@ function isWordChar(c) {
 // 0 when the query is a whole keyword, 1 when a keyword starts with it, 2 when
 // it only appears inside one, -1 when it does not appear. An empty query
 // matches everything as a whole.
+// Implements: SW-REQ-261004-H41S
 function matchRank(text, needle) {
   if (!needle) return 0
   var rank = -1

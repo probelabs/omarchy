@@ -8,9 +8,11 @@ fretish: when emoji_query_typed the emoji_picker shall immediately satisfy emoji
 description: |-
     The emoji picker lists the emojis whose keywords hold the search text, and Enter picks the first emoji of the list. The picker reads emojis.json as a JSON array; text that is not a JSON array gives an empty list. The picker trims the search text and ignores case. The list has three groups in this order.
 
-    First come the emojis that hold the search text as whole words, with a space or the end of the keywords on each side. Next come the emojis with a keyword that starts with the search text. Last come the emojis that hold the search text inside a keyword. Each group keeps the order of emojis.json.
+    First come the emojis that hold the search text as whole words. Next come the emojis with a keyword that starts with the search text. Last come the emojis that hold the search text inside a keyword. Each group keeps the order of emojis.json. When the search text shows in more than one place, the best place decides the group.
 
-    The picker shows at most 1000 emojis, from the start of this list. When more emojis match, as for a single letter such as e, the picker shows the first 1000 of the ranked list. With an empty search text the picker lists emojis.json in file order, up to 1000.
+    A word is a run of the characters a to z, 0 to 9 and every character above U+007F. Any other character ends a word: a space, the end of the keywords, an underscore, a hyphen, a colon. So man: beard, red_haired_man and t-man hold man as a whole word. A curly apostrophe or quote is above U+007F, so it does not end a word.
+
+    The picker shows at most 1000 emojis, from the start of this list. filterEmojis rounds a fractional limit up, as before the fix. When more emojis match, as for a single letter such as e, the picker shows the first 1000 of the ranked list. With an empty search text the picker lists emojis.json in file order, up to 1000.
 
     An emoji matches the search text when it matched before the fix. The fix changes the order of the list, and so it also changes which 1000 emojis show when more than 1000 match.
 formalization_strategy: fretish
@@ -23,11 +25,11 @@ component: menu
 rationale: |-
     Upstream omacom/omarchy quattro 393a43d4 has this defect. filterEmojis in shell/plugins/emojis/EmojiSearch.js keeps every emoji whose keywords contain the search text anywhere, in the order of emojis.json. The picker selects the first result, and Enter hands it to the insert helper. So a match inside an unrelated word can come first.
 
-    In the real shell on 393a43d4, Enter picks the broken heart for ok (from broken). It picks the face with tears of joy for tea (from tears) and the cold face for fr (from freezing). With the fix, Enter picks the OK hand, the teacup and the flag of France.
+    In the real shell on 393a43d4, Enter picks the broken heart for ok (from broken). It picks the face with tears of joy for tea (from tears) and the cold face for fr (from freezing). With the fix, the behaviour-diff harness shows that Enter picks the OK hand, the teacup and the flag of France.
 
-    The fix sorts the matches into three lists while it reads emojis.json, and joins them at the end. It stops early only when the whole-word list holds the limit. Only an empty search text puts every emoji in that list.
+    The fix sorts the matches into three lists while it reads emojis.json, and joins them at the end. matchRank looks at each place the search text shows and keeps the best group. isWordChar tells where a word ends. The loop stops early only when the whole-word list holds the limit. Only an empty search text puts every emoji in that list.
 
-    The behaviour-diff harness runs the picker functions of Emojis.qml with the real filterEmojis and the real emojis.json of each revision. The witness test test/shell.d/menu-emoji-search-bdiff-test.sh checks its output for each input. The upstream test test/shell.d/emojis-test.sh checks the three groups, the limit after the ranking and the OK hand for ok.
+    The behaviour-diff harness runs the picker functions of Emojis.qml with the real filterEmojis and the real emojis.json of each revision. The witness test test/shell.d/menu-emoji-search-bdiff-test.sh checks its output for each input. The upstream test test/shell.d/emojis-test.sh checks the three groups, the limit after the ranking, the separators, a fractional limit and the OK hand for ok.
 tags: []
 variables:
     - emoji_query_typed
@@ -35,15 +37,17 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-03T22:00:43.685716Z"
+    reviewed_at: "2026-10-03T22:14:43.994925Z"
     reviewed_by: agent:claude-pr-new-F
     reviewed_fingerprint: sha256:b0b9d48e26362a2722623efff0d3737783b3fc424db83729deae3c105b0827a1
     reviewed_targets:
         implemented_by:
-            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:9b7311fec458c20686d348030f622c93
-            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:9b7311fec458c20686d348030f622c93
-            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:9b7311fec458c20686d348030f622c93
-            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:9b7311fec458c20686d348030f622c93
+            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:1ba95542b8d3ae2cd4e28e6f905fa4a3
+            shell/plugins/emojis/EmojiSearch.js:isWordChar: file1:1ba95542b8d3ae2cd4e28e6f905fa4a3
+            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:1ba95542b8d3ae2cd4e28e6f905fa4a3
+            shell/plugins/emojis/EmojiSearch.js:matchRank: file1:1ba95542b8d3ae2cd4e28e6f905fa4a3
+            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:1ba95542b8d3ae2cd4e28e6f905fa4a3
+            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:1ba95542b8d3ae2cd4e28e6f905fa4a3
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -96,6 +100,37 @@ traces:
             - test/bdiff/corpus/lifecycle/seq-emoji-tea.events:1
             - test/bdiff/harness.mjs:388
             - test/shell.d/menu-emoji-search-bdiff-test.sh:11
+        - reviewed_at: "2026-10-03T22:14:43.994925Z"
+          reviewed_by: agent:claude-pr-new-F
+          method: inspection
+          rationale: 'pr-new-F, upstream a1e56f38: implemented by filterEmojis (ranks each match into whole-word, keyword-start or inside groups in file order, cut at the limit, a fractional limit rounded up), matchRank (the best place the search text shows decides the group), isWordChar (a to z, 0 to 9 and characters above U+007F form words; anything else ends one) and the helpers parseEmojis, normalizedQuery and keywordText, each with an Implements line. Verified by test/shell.d/menu-emoji-search-bdiff-test.sh: all sixteen seq-emoji inputs through test/bdiff/harness.mjs runEmojis, an oracle check of every listed state, and direct checks of separators, digits, a later whole word and the fractional limit. Satisfies SYS-REQ-260922-6642: the emoji that Enter picks is the argument of omarchy-menu-emoji-insert.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/emojis/EmojiSearch.js:1
+            - shell/plugins/emojis/EmojiSearch.js:11
+            - shell/plugins/emojis/EmojiSearch.js:16
+            - shell/plugins/emojis/EmojiSearch.js:23
+            - shell/plugins/emojis/EmojiSearch.js:30
+            - shell/plugins/emojis/EmojiSearch.js:43
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-emoji-car.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-case.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-cat.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-empty.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-fr.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-key.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-letter.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-man.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-none.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-ok.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-pen.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-phrase.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-red.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-rex.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-steps.events:1
+            - test/bdiff/corpus/lifecycle/seq-emoji-tea.events:1
+            - test/bdiff/harness.mjs:388
+            - test/shell.d/menu-emoji-search-bdiff-test.sh:11
 verification:
     assurance_level: C
     formalization_status: valid
@@ -123,7 +158,7 @@ hazard_review:
           not_applicable:
             - input_domain
             - concurrency_scale
-          rationale: 'Worst case: Enter hands the insert helper an emoji the user did not ask for, such as the broken heart for ok. edge_case: a search text that is a whole keyword, the start of a keyword, or only inside a keyword; a phrase of several words; capitals and a leading space; a search text that matches nothing (all witnessed). empty_input: with no search text the picker lists emojis.json in file order up to the limit (witnessed, no-action row). boundary: more matches than the limit of 1000, as for the letter e; the picker keeps the first 1000 of the ranked list (witnessed). input_domain is not applicable: the search text is plain typed text, and filterEmojis only trims it, lowercases it and looks for it in the keywords. concurrency_scale is not applicable: one picker runs filterEmojis synchronously on each key, over one fixed list of 1870 emojis.'
+          rationale: 'Worst case: Enter hands the insert helper an emoji the user did not ask for, such as the broken heart for ok. edge_case: a search text that is a whole keyword, the start of a keyword, or only inside a keyword; a phrase of several words; keywords that a colon, an underscore or a hyphen splits (man, rex); a search text that shows inside a word and later as a whole word; capitals and a leading space; a search text that matches nothing (all witnessed). empty_input: with no search text the picker lists emojis.json in file order up to the limit (witnessed, no-action row). boundary: more matches than the limit of 1000, as for the letter e; the picker keeps the first 1000 of the ranked list (witnessed). input_domain is not applicable: the search text is plain typed text, and filterEmojis only trims it, lowercases it and looks for it in the keywords. concurrency_scale is not applicable: one picker runs filterEmojis synchronously on each key, over one fixed list of 1870 emojis.'
         - category: property
           disposition: reviewed
           applied:
