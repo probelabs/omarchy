@@ -183,6 +183,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: append-note
+    - at: "2026-10-03T21:06:07Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
