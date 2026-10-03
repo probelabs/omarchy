@@ -85,6 +85,13 @@ apps alacritty'
   'shown menu=apps sorts=1 rows=["Écrans","Firefox","Zed"]
 apps screens'
 
+  # Both rows read "Éditeur": a.desktop has the composed É (U+00C9) and comes
+  # first, z.desktop the decomposed E + U+0301, in the menu and the plugin list.
+  'names that collate equal keep desktop id order in the menu and the plugin list'
+  seq-apps-plugin-tie.events
+  'shown menu=apps sorts=1 rows=["Éditeur","Éditeur"]
+plugin-list rows=["Éditeur","Éditeur"]'
+
   # MCDC SW-REQ-261003-B7ZA: apps_rows_in_letter_order=F, apps_rows_rebuilt=F => TRUE [no-action: the same apps are installed but the root menu is summoned; the sort spy shows sorts=0, so the Apps comparator never runs and the root rows keep their item order]
   'a root summon does not run the Apps sort'
   seq-apps-root-control.events
