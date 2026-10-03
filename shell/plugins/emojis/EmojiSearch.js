@@ -1,3 +1,4 @@
+// Implements: SW-REQ-261004-H41S
 function parseEmojis(raw) {
   try {
     var data = JSON.parse(String(raw || ""))
@@ -7,10 +8,12 @@ function parseEmojis(raw) {
   }
 }
 
+// Implements: SW-REQ-261004-H41S
 function normalizedQuery(query) {
   return String(query || "").trim().toLowerCase()
 }
 
+// Implements: SW-REQ-261004-H41S
 function keywordText(item) {
   return String((item && item.k) || "").toLowerCase()
 }
