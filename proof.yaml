@@ -64,6 +64,9 @@ project:
             # sorts (AppSearch.sortedEntries).
             - bin/omarchy-theme-remov*
             - shell/services/AppSearch.js
+            # Emoji search: the menu's Trigger > Emoji row opens the emoji
+            # picker, and bin/omarchy-menu-emoji-insert inserts its pick.
+            - shell/plugins/emojis/EmojiSearch.js
             - test/shell.d/*menu*-test.sh
             - test/shell.d/keybindings-menu-test.sh
             # Node suites (menu-node, menu-reports): in scope so their

@@ -40,6 +40,7 @@ function matchRank(text, needle) {
   return rank
 }
 
+// Implements: SW-REQ-261004-H41S
 function filterEmojis(emojis, query, limit) {
   var values = Array.isArray(emojis) ? emojis : []
   var needle = normalizedQuery(query)
