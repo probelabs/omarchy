@@ -160,7 +160,8 @@ function runJsonc() {
 //      revision's bin/omarchy-theme-remove with a stub picker, in a HOME of
 //      the shape set by the directive `@home:<shape>` (missing, empty,
 //      copied, cloned, linked, worktree; default empty). Prints one `guard`
-//      line: whether the row shows and whether the remover offers a theme.
+//      line: whether the row shows, what the remover offers, and whether
+//      the two agree (a shown row with nothing to offer only closes the menu).
 //
 // Model (method: review notes for #9056, harness bdiff-9056.js): the shared
 // QML `Process { id: resultProc }` ignores `running = true` while it is still
@@ -280,7 +281,11 @@ function runRemoveThemeGuard(mm, shape) {
     spawnSync(bash, [remover], { env, encoding: 'utf8', timeout: 10000 })
     const offered = fs.existsSync(fx.calls) ? fs.readFileSync(fx.calls, 'utf8').split('\n').filter(Boolean) : []
     const offers = offered.length ? `offers ${offered.join(',')}` : 'none'
-    emit(`${tag} when=${row.when ? 'declared' : 'none'} batch=${batch} shown=${shown} remover=${offers} agree=${shown === (offered.length > 0) ? 'yes' : 'NO'}`)
+    // Only what the user sees is compared: whether the row shows and what the
+    // remover offers. Whether the row declares a when: is how, not what, so a
+    // control where both revisions show the row prints the same line.
+    if (batch === 'NONE') return emit(`${tag} BATCH-NO-ANSWER`)
+    emit(`${tag} shown=${shown} remover=${offers} agree=${shown === (offered.length > 0) ? 'yes' : 'NO'}`)
   } finally {
     fs.rmSync(fx.base, { recursive: true, force: true })
   }
