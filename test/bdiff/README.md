@@ -13,6 +13,7 @@ node test/bdiff/harness.mjs <rev-worktree> <input>
 |---|---|---|
 | `*.jsonc` (also `*.json`) | `<rev>/shell/plugins/menu/MenuModel.js`, loaded in a `node:vm` context like the repo's tests load it (CommonJS `module.exports`) | `summary rows=<n> strip_parse=<kind>`, then `parseMenuJsonc(text)` rows and `JSON.parse(stripJsonc(text))` (or `ERR`) as JSON in insertion order |
 | `*.events` | the real bodies of `open`, `close`, `cancel`, `finishRequest`, `openDmenu`, `openExistingMenu`, `openRoute`, `activateIndex`, `applyDmenuSelection`, `applySelected` and the `resultProc` `onExited` handler, extracted from `<rev>/shell/plugins/menu/Menu.qml` and run under `node:vm` | each caller's outcome (`STRANDED`, `<cancel>` or the value written), the final `opened` / `mode` / `requestActive` / done-file owner, actions run, apps launched, stray writes |
+| `*.events` with an `@emojis` line | the real `open`, `dismiss`, `loadEmojis`, `rebuildDisplay`, `setFilter`, `activateIndex` and `applySelected` of `<rev>/shell/plugins/emojis/Emojis.qml`, with `<rev>`'s `EmojiSearch.js` and `emojis.json`, under `node:vm` | after each step: the search text, how many emojis the picker lists, the first 12, digests of the order and of the set, and the emoji that Enter hands to `bin/omarchy-menu-emoji-insert` |
 | anything else | nothing | a usage message, exit 2 |
 
 The input file is decoded the way Quickshell `FileView.text()` gives it to QML
@@ -42,6 +43,27 @@ The shared QML `Process` is modelled as it behaves live: `running = true` while
 it is still running is ignored, and it stays busy until an `X`. After the last
 event every still-running write is drained. The method is the one used for the
 #9056 review.
+
+## Emoji picker inputs (`corpus/lifecycle/seq-emoji-*.events`)
+
+An `@emojis` line opens the emoji picker the way Super+Ctrl+E does
+(`omarchy-shell shell toggle omarchy.emojis`): `loadEmojis` with the
+revision's `emojis.json`, then `open`. One step per line, `#` starts a comment
+line:
+
+| Line | Step |
+|---|---|
+| `@type <text>` | types `<text>` (everything after the one space) one character at a time, as the key handler does for a printable key: `setFilter(filterText + character)` |
+| `@clear` | Escape with a search text: `setFilter("")` |
+| `@enter` | Return: `activateIndex(selectedIndex)` while the cursor is on |
+
+`rebuildDisplay` passes the picker's own limit (1000) to `filterEmojis`. The
+`set` digest is over the listed emojis sorted by UTF-16 code unit, so it
+changes only when the listed emojis change, not their order. Nothing in this
+mode depends on the locale or the time zone. The spawn of
+`omarchy-menu-emoji-insert` is recorded, not run. These inputs witness
+SW-REQ-261004-H41S; `test/shell.d/menu-emoji-search-bdiff-test.sh` asserts
+every one of them.
 
 ## Partitions
 
