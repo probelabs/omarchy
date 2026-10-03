@@ -1,0 +1,15 @@
+id: REVIEW-261003-Q2WS
+kind: spec_conformance
+reviewer: agent:claude-quattro-proof
+reviewed_at: "2026-10-03T12:35:18Z"
+subject: SW-REQ-261003-C9GM
+decision: approved
+comment: 'Read shell/services/AppSearch.js at upstream a85e29ab. sortedEntries walks the entries once. It skips an entry that is missing or NoDisplay, one the library''s hidden callback rejects, and one with no name and no id (entryName falls back to the id). It then calls fuzzyScore, which returns 0 for an empty query and -1 when allTermsMatch rejects a term, and skips a negative score. Every entry that passes all four tests is pushed once. So app_listed holds exactly when app_displayable and query_terms_matched hold. The three violation rows need one of those continue statements removed, or a push for a skipped entry; they are dispositioned defensive. termMatches matches a term against the name, the id, the joined search text (name, generic name, comment, keywords, id) or, for terms of five characters or fewer, the acronym. The requirement leaves the order out: rows sort by score when there is a query, then by lowercased name in code-unit order (KI-MENU-APPS-SORT-LOCALE). Witnesses in test/shell.d/menu-app-library-test.sh: displayable matching apps listed for an empty, a keyword, an acronym and a two-term query; NoDisplay, hidden, nameless and unmatched entries not listed.'
+citations:
+    - shell/services/AppSearch.js:85
+    - shell/services/AppSearch.js:115
+    - shell/services/AppSearch.js:116
+    - shell/services/AppSearch.js:118
+    - shell/services/AppSearch.js:120
+    - shell/services/AppSearch.js:121
+    - test/shell.d/menu-app-library-test.sh:5

@@ -1,0 +1,108 @@
+id: SW-REQ-261003-C9GM
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: the app_library shall always satisfy (app_listed <=> (app_displayable & query_terms_matched))
+description: The app library lists an installed app exactly when the app is displayable and every query term matches it. An app is displayable when it has a name or an id, is not marked NoDisplay, and the library does not hide it. A term matches the name, id, generic name, comment or keywords, or its acronym when the term has five characters or fewer. An empty query matches every app. The Apps menu asks with an empty query.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-0M8A
+component: menu
+rationale: shell/services/AppSearch.js builds the list that AppLibrary.sortedEntries returns to the Apps menu and the launcher. This requirement states which apps the list holds, as the upstream code behaves. It does not state the order. The code ranks rows by fuzzyScore when there is a query, then by the lowercased name in code-unit order. KI-MENU-APPS-SORT-LOCALE records that this order puts accented names after z.
+tags: []
+variables:
+    - app_displayable
+    - query_terms_matched
+    - app_listed
+traces:
+    satisfies:
+        - SYS-REQ-260922-0M8A
+    reviewed_at: "2026-10-03T12:36:51.843502Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_fingerprint: sha256:916c77f189ac1031526674ab21fb1fa148787b37337547bbc9d62407d61b3218
+    reviewed_targets:
+        implemented_by:
+            shell/services/AppSearch.js:allTermsMatch: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:entryAcronym: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:entryName: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:entrySearchText: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:entrySortKey: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:entrySubtext: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:fuzzyScore: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:keywordText: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:sortedEntries: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:termMatches: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:wordText: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+            shell/services/AppSearch.js:words: file1:c75ead5b8dbdc27fa4d7254a5eade00c
+        satisfies:
+            SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
+    review_history:
+        - reviewed_at: "2026-10-03T12:36:51.843502Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Baseline requirement for the app library list now that shell/services/AppSearch.js is in the verification scope. All twelve AppSearch.js functions build that list: sortedEntries applies the displayability skips and drops a negative fuzzyScore; fuzzyScore, allTermsMatch, termMatches, entrySearchText, keywordText, entryAcronym, words and wordText decide whether every query term matches; entryName, entrySubtext and entrySortKey supply the name, subtext and sort key. The order itself is outside this requirement (KI-MENU-APPS-SORT-LOCALE). Satisfies SYS-REQ-260922-0M8A (the apps provider rows come from this list). Witnessed by test/shell.d/menu-app-library-test.sh; spec conformance REVIEW-261003-Q2WS.'
+          source: proof trace review --citation
+          citations:
+            - shell/services/AppSearch.js:1
+            - shell/services/AppSearch.js:108
+            - shell/services/AppSearch.js:11
+            - shell/services/AppSearch.js:16
+            - shell/services/AppSearch.js:25
+            - shell/services/AppSearch.js:31
+            - shell/services/AppSearch.js:39
+            - shell/services/AppSearch.js:49
+            - shell/services/AppSearch.js:57
+            - shell/services/AppSearch.js:6
+            - shell/services/AppSearch.js:72
+            - shell/services/AppSearch.js:81
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-app-library-test.sh:17
+            - test/shell.d/menu-app-library-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-quattro-proof
+    created_at: "2026-10-03T12:33:27Z"
+    last_modified_by: agent:claude-quattro-proof
+    last_modified_at: "2026-10-03T12:37:01Z"
+hazard_review:
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          not_applicable:
+            - concurrency_scale
+            - error_handling
+          rationale: 'Worst case: an app the user can launch is missing from the Apps menu, or a NoDisplay or hidden entry shows. boundary: an empty query lists every displayable entry (fuzzyScore returns 0 before matching); a term of five characters matches the acronym, a longer term does not. edge_case: an entry with no name falls back to its id; with neither, sortedEntries drops it. concurrency_scale not applicable: one call per menu build over an in-memory list. error_handling not applicable: keywordText catches a non-array keywords value and the rest are pure string operations.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - idempotency
+          rationale: 'determinism: for a given entry list, query and hidden callback, the returned set is fixed. idempotency: asking twice returns the same set; sortedEntries does not change its input.'
+        - category: structural
+          disposition: not_applicable
+          rationale: GC'd JavaScript (the QML JS engine); no manual memory, binary framing or format strings.
+        - category: domain
+          disposition: not_applicable
+          rationale: In-memory desktop-entry fields only; no network, crypto, secrets or privilege surface.
+lifecycle:
+    change_history:
+        - date: "2026-10-03T12:37:01Z"
+          from: draft
+          to: review
+          reason: Baseline requirement for the app library list (shell/services/AppSearch.js entered the verification scope); spec conformance REVIEW-261003-Q2WS; witnesses in test/shell.d/menu-app-library-test.sh
+          changed_by: agent:claude-quattro-proof

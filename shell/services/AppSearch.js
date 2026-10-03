@@ -1,15 +1,19 @@
+// Implements: SW-REQ-261003-C9GM
 function entryName(entry) {
   return String((entry && entry.name) || (entry && entry.id) || "")
 }
 
+// Implements: SW-REQ-261003-C9GM
 function entrySubtext(entry) {
   return String((entry && entry.genericName) || "")
 }
 
+// Implements: SW-REQ-261003-C9GM
 function entrySortKey(entry) {
   return entryName(entry).toLowerCase()
 }
 
+// Implements: SW-REQ-261003-C9GM
 function keywordText(entry) {
   try {
     if (entry && entry.keywords && typeof entry.keywords.join === "function") return entry.keywords.join(" ")
@@ -18,11 +22,13 @@ function keywordText(entry) {
   return ""
 }
 
+// Implements: SW-REQ-261003-C9GM
 function entrySearchText(entry) {
   if (!entry) return ""
   return [entry.name, entry.genericName, entry.comment, keywordText(entry), entry.id].join(" ").toLowerCase()
 }
 
+// Implements: SW-REQ-261003-C9GM
 function wordText(value) {
   return String(value || "")
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
@@ -30,6 +36,7 @@ function wordText(value) {
     .toLowerCase()
 }
 
+// Implements: SW-REQ-261003-C9GM
 function words(value) {
   var values = wordText(value).split(/[^a-z0-9]+/)
   var result = []
@@ -39,6 +46,7 @@ function words(value) {
   return result
 }
 
+// Implements: SW-REQ-261003-C9GM
 function entryAcronym(entry) {
   var values = words([entry && entry.name, entry && entry.genericName, keywordText(entry), entry && entry.id].join(" "))
   var result = ""
@@ -46,6 +54,7 @@ function entryAcronym(entry) {
   return result
 }
 
+// Implements: SW-REQ-261003-C9GM
 function termMatches(entry, term) {
   if (!term) return true
 
@@ -60,6 +69,7 @@ function termMatches(entry, term) {
   return term.length <= 5 && entryAcronym(entry).indexOf(term) >= 0
 }
 
+// Implements: SW-REQ-261003-C9GM
 function allTermsMatch(entry, query) {
   var terms = String(query || "").toLowerCase().trim().split(/\s+/)
   for (var i = 0; i < terms.length; i++) {
@@ -68,6 +78,7 @@ function allTermsMatch(entry, query) {
   return true
 }
 
+// Implements: SW-REQ-261003-C9GM
 function fuzzyScore(entry, query) {
   var q = String(query || "").trim().toLowerCase()
   if (!q) return 0
@@ -94,6 +105,7 @@ function fuzzyScore(entry, query) {
   return 4000 - name.length
 }
 
+// Implements: SW-REQ-261003-C9GM
 function sortedEntries(values, query, hiddenCallback) {
   var q = String(query || "").trim()
   var rows = []

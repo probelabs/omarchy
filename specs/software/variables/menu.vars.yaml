@@ -480,6 +480,18 @@ variables:
       type: bool
       direction: output
       description: 'The rejection stands recorded and honored: the .failed marker keyed by the video hash exists, the video offers no row, and the rows stay uncached.'
+    - name: app_listed
+      type: bool
+      direction: output
+      description: The entry has one row in the returned list.
+    - name: app_displayable
+      type: bool
+      direction: input
+      description: The desktop entry has a name or an id, is not marked NoDisplay, and the library does not hide it.
+    - name: query_terms_matched
+      type: bool
+      direction: input
+      description: Every term of the query matches the entry's name, id, generic name, comment or keywords, or a term of five characters or fewer matches its acronym. An empty query matches every entry.
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'

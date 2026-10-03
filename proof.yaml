@@ -59,6 +59,11 @@ project:
             - bin/omarchy-menu*
             - shell/plugins/menu/**
             - default/omarchy/omarchy-menu.jsonc
+            # Theme remover and its helper (Remove > Theme reads them through
+            # its when: guard and action), and the app index the Apps menu
+            # sorts (AppSearch.sortedEntries).
+            - bin/omarchy-theme-remov*
+            - shell/services/AppSearch.js
             - test/shell.d/*menu*-test.sh
             - test/shell.d/keybindings-menu-test.sh
             # Node suites (menu-node, menu-reports): in scope so their
@@ -100,6 +105,8 @@ project:
                 - bin/omarchy-menu*
                 - shell/plugins/menu/**
                 - default/omarchy/omarchy-menu.jsonc
+                - bin/omarchy-theme-remov*
+                - shell/services/AppSearch.js
             production_exclude:
                 - '**/*_test.go'
                 - '**/testdata/**'
