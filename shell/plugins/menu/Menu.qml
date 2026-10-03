@@ -652,7 +652,7 @@ Item {
     })
   }
 
-  // Implements: SW-REQ-260922-TKDP
+  // Implements: SW-REQ-260922-TKDP, SW-REQ-261003-B7ZA
   function rebuildDisplay() {
     if (root.dmenuActive) {
       root.rebuildDmenuDisplay()
