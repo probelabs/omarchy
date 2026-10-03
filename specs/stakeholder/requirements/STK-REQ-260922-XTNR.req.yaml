@@ -15,7 +15,23 @@ component: menu
 rationale: 'The menu is the primary UX surface of omarchy and its top churn/bug hotspot. bin/omarchy-menu history shows 304 commits, 13 bug fixes, and 3 cascade episodes. Its rows make claims about system state that must not lie.'
 tags: []
 variables: []
-traces: {}
+traces:
+    reviewed_at: "2026-10-03T21:14:19.352695Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_fingerprint: sha256:c8f0cea8d4dca8bc47b2f568d92d2ea0f3cf1fc48d174200d8d7279ea6d9346f
+    reviewed_targets:
+        implemented_by:
+            default/omarchy/omarchy-menu.jsonc: file1:5a37ce1068baa9e720f440a603e04240
+    review_history:
+        - reviewed_at: "2026-10-03T21:14:19.352695Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'The engine reads annotations in .jsonc files (since a7a32809), so the baseline file-level Implements: STK-REQ-260922-XTNR on line 2 of default/omarchy/omarchy-menu.jsonc is now a traced target. The file is the Omarchy menu definition: the rows users reach system actions, settings and applications through, with when: guards that keep rows in step with system state. That is the menu XTNR describes. This PR does not change the file. The verifying tests are unchanged: menu-acceptance-test.sh (AC-001, AC-002) and menu-dispatcher-test.sh (nominal).'
+          source: proof trace review --citation
+          citations:
+            - default/omarchy/omarchy-menu.jsonc:2
+            - test/shell.d/menu-acceptance-test.sh:12
+            - test/shell.d/menu-dispatcher-test.sh:48
 verification:
     assurance_level: C
     formalization_status: none
