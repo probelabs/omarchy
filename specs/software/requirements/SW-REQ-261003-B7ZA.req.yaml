@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when apps_rows_rebuilt the menu_view shall immediately satisfy apps_rows_in_letter_order
-description: The Apps menu lists its rows in alphabetical order of their names for the user's language. A name that starts with an accented or non-Latin letter, such as Écrans or Übersetzer, sorts under its letter and not after Z. Case does not change the order, and two equal names keep their id order.
+description: 'The Apps menu orders its rows by the collation of the user''s locale and ignores case. A name that starts with an accented Latin letter, such as Écrans or Übersetzer, sorts under its base letter. Names in other scripts sort where the collation puts them; for Greek, Cyrillic, Arabic and Han names that is after the Latin names. Two equal names keep their id order. Qt supplies the collation: under the C or C.UTF-8 locale it keeps code-point order.'
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -19,6 +19,10 @@ rationale: |-
     App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed and Zellij. A live run on the box with LANG=fr_FR.UTF-8 showed this order on a85e29ab.
 
     The fix compares the names with localeCompare, as the search sort in the same function already does. The fix keeps the tie-break on the id. The live run with the fix shows the two names under E.
+
+    The node witnesses (test/shell.d/menu-apps-order-test.sh, the behaviour-diff harness and test/shell.d/menu-apps-order-bdiff-test.sh) run the comparator under the ICU collation of Node. They pin the comparator, not the collation of Qt.
+
+    A real-shell run on the box covers Qt. Under fr_FR.UTF-8 the accented names move under their base letter. Under C.UTF-8 the order stays as on a85e29ab. Under en_US, names that start with a symbol, such as _Under, (beta) X or ~Tilde, now sort before digits and letters. This requirement accepts that change as part of the locale order.
 tags: []
 variables:
     - apps_rows_rebuilt
@@ -26,7 +30,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-03T07:57:54.126381Z"
+    reviewed_at: "2026-10-03T09:19:45.355576Z"
     reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:98b20d51d7a5393e07170f3db9935ce29e784885f887dab9508a829bc705cebc
     reviewed_targets:
@@ -69,6 +73,31 @@ traces:
             - test/shell.d/menu-apps-order-bdiff-test.sh:10
             - test/shell.d/menu-apps-order-test.sh:21
             - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T09:19:45.355576Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D round 2 on quattro-proof 87c3ca68 (upstream a85e29ab merged; Menu.qml unchanged by the merge): B7ZA restated - the rows follow the locale collation (accented Latin names under their base letter, other scripts where the collation puts them, after Latin for Greek/Cyrillic/Arabic/Han), case-insensitive, id tie-break; Qt supplies the collation and keeps code-point order under C/C.UTF-8; the node witnesses pin the comparator, the real-shell run covers Qt. New input seq-apps-symbols.events (symbol-led names before digits and letters, an intended change). B7ZA is verified by the behaviour-diff harness and a proof-side witness test. test/bdiff/harness.mjs (appDirective, appsItems, bindAppsDisplay) runs each revision''s real rebuildDisplay, displayRow and isVisible for an Apps summon, with a sort spy; the ten seq-apps-*.events inputs cover French, German, decomposed accents, non-Latin scripts, case ties, encodings (U+FFFD, BOM, astral, NBSP, full-width), a reordered hand-over, Enter on the first row and a root-menu control. test/shell.d/menu-apps-order-bdiff-test.sh asserts four of those outputs in the menu-shell suite (T,T rows and the F,F no-action row: sorts=0 on a root summon). Implemented by the Apps comparator in rebuildDisplay (Implements line on rebuildDisplay), which orders the lowercased names with localeCompare and falls back to the id only on a tie; verified by test/shell.d/menu-apps-order-test.sh, which extracts that comparator from Menu.qml and runs it on French and German names and a case tie; satisfies SYS-REQ-260922-0M8A (dynamic rows such as apps). Spec conformance REVIEW-261003-JTMM'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:172
+            - test/bdiff/harness.mjs:178
+            - test/bdiff/harness.mjs:188
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
@@ -81,7 +110,7 @@ history:
     created_by: agent:claude-pr-new-D
     created_at: "2026-10-03T07:49:05Z"
     last_modified_by: agent:claude-pr-new-D
-    last_modified_at: "2026-10-03T08:20:14Z"
+    last_modified_at: "2026-10-03T09:19:19Z"
 hazard_review:
     reviewed_at: "2026-10-03T07:51:11Z"
     reviewed_by: agent:claude-pr-new-D
