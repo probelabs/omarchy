@@ -40,7 +40,7 @@ the next event).
 | `P` / `R` | activate row 0 / row 1 |
 | `C` | close |
 | `X` | the shared answer `Process` exits (fires the revision's `onExited`) |
-| `G` | Remove > Theme guard: the revision's `remove.theme` row (from its own `default/omarchy/omarchy-menu.jsonc`) through its guard batch (`guardScript` under bash) and `isVisible`, and its `bin/omarchy-theme-remove` with a stub picker, in a throwaway HOME (under the system temp directory, removed afterwards) of the shape set by `@home:<shape>`: `missing`, `empty` (default), `copied`, `cloned`, `linked` (symlink only), `worktree` (`.git` file). Prints `guard remove.theme home=<shape> shown=<bool> remover=<offers …\|none> agree=<yes\|NO>`; needs GNU find and bash 4, else an `UNAVAILABLE` line on both sides |
+| `G` | Remove > Theme guard: the revision's `remove.theme` row (from its own `default/omarchy/omarchy-menu.jsonc`) through its guard batch (`guardScript` under bash) and `isVisible`, and its `bin/omarchy-theme-remove` with a stub picker, in a throwaway HOME (under the system temp directory, removed afterwards) of the shape set by `@home:<shape>`: `missing`, `empty` (default), `copied`, `cloned`, `linked` (symlink only), `worktree` (`.git` file), `dotted` (only a `.git` directory, a name the remover refuses). Prints `guard remove.theme home=<shape> shown=<bool> remover=<offers …\|none> agree=<yes\|NO>` (agree: the row shows exactly when the remover offers a name without a leading dot); needs GNU find and bash 4, else an `UNAVAILABLE` line on both sides |
 
 The shared QML `Process` is modelled as it behaves live: `running = true` while
 it is still running is ignored, and it stays busy until an `X`. After the last

@@ -26,7 +26,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-03T08:00:15.228093Z"
+    reviewed_at: "2026-10-03T08:39:04.244172Z"
     reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:6777f9a7018db59b4796270e392887801689ef319580f192912738058d305ec5
     reviewed_targets:
@@ -43,6 +43,24 @@ traces:
           citations:
             - shell/plugins/menu/MenuModel.js:262
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-03T08:39:04.244172Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C: 390Z is now also verified by the behaviour-diff harness: test/bdiff/harness.mjs makeThemesHome/runRemoveThemeGuard run each revision''s remove.theme row through its guard batch and isVisible and its bin/omarchy-theme-remove with a stub picker, and the seven guard-remove-theme-*.events inputs drive the missing, empty, symlink-only and dot-only homes (remove_theme_row_hidden=T at the head, F at 39746e65) plus copied, cloned and worktree controls. Implemented by isVisible applying the row''s when:; satisfies SYS-REQ-260922-47T8. Spec conformance REVIEW-261003-C7RT'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:262
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dotted.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-empty.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-linked.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-missing.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
+            - test/bdiff/harness.mjs:224
+            - test/bdiff/harness.mjs:252
             - test/shell.d/menu-guards-test.sh:6
 verification:
     assurance_level: C

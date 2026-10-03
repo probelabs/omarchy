@@ -19,9 +19,9 @@ defect_class: new_defect
 disclosure: public
 minimization_status: minimized
 mitigation: 'Nothing breaks and no data changes: the row closes the menu and removes nothing. A user who has installed an extra theme gets the picker as before. omarchy theme remove in a terminal prints the message.'
-remediation: 'Fixed by the upstream-style change 638c6474 (SW-REQ-261003-390Z), mirror pr/new-C. The remove.theme row now has a when: guard. It asks the question the script asks: is there a directory under ~/.config/omarchy/themes that is not a symlink. The guard batch hides the row until the remover has a theme to offer.'
+remediation: 'Fixed by the upstream-style change 4859cd49 (SW-REQ-261003-390Z), mirror pr/new-C. The remove.theme row now has a when: guard. It asks what the script can act on: a directory under ~/.config/omarchy/themes that is not a symlink and has no leading dot. The guard batch hides the row until the remover has a theme it can remove.'
 notes:
-    - 'Fixed on mirror pr/new-C by the upstream-style change 638c6474 (the remove.theme row gets the remover''s own find predicate as its when:). Spec: SW-REQ-261003-390Z, spec conformance REVIEW-261003-C7RT. The reproducer is now the bound in-suite test test/shell.d/menu-guards-test.sh (Reproduces marker): over six HOME shapes it checks that the guard agrees with whether omarchy-theme-remove asks the picker. It fails on a85e29ab and passes with the fix. pocs/menu-remove-theme-guard.sh, the baseline red reproducer, also passes with the fix. A live run on the box showed the same: no Theme row with no themes or a symlink-only theme, and the row after a theme install.'
+    - 'Fixed on mirror pr/new-C by the upstream-style change 4859cd49 (the remove.theme row gets a when: that finds a non-symlink theme directory without a leading dot). It replaces 638c6474, which missed the dot-name case: a lone .git directory there still showed a row that did nothing. Spec: SW-REQ-261003-390Z, spec conformance REVIEW-261003-C7RT. The reproducer is now the bound in-suite test test/shell.d/menu-guards-test.sh (Reproduces marker). Over seven HOME shapes it runs the row through the generated guard batch and checks that the result agrees with whether omarchy-theme-remove offers a name it would remove. It fails on a85e29ab and passes with the fix. A live run on the box showed the same.'
 owner: agent:claude-pr-new-C
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -54,6 +54,10 @@ history:
       by: agent:claude-pr-new-C
       action: refresh-evidence
       detail: proof/evidence/ki-menu-remove-theme-no-themes.yaml
+    - at: "2026-10-03T08:38:55Z"
+      by: agent:claude-pr-new-C
+      action: edit
+      detail: set-remediation,note
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS or of the guard-batch KIs on SYS-REQ-260922-47T8: this one is a shipped row with no when: guard. Distinct from the stale_state siblings: KI-MENU-GUARD-BATCH-STALE-APPLY is a batch result published onto a newer item set; KI-MENU-KEYBINDINGS-STALE-LUA-CACHE is a warm keybindings cache serving an old Lua command; KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE is a lock-screen video poster frame kept after an in-place overwrite. None of them is a menu row offered with nothing behind it, and none is fixed by the remove.theme guard'
 kill_domain: stale_state
 affected_file:
