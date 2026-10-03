@@ -94,6 +94,7 @@ function fuzzyScore(entry, query) {
   return 4000 - name.length
 }
 
+// Implements: SW-REQ-261003-B7ZA
 function sortedEntries(values, query, hiddenCallback) {
   var q = String(query || "").trim()
   var rows = []
