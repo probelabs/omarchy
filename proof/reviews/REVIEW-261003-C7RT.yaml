@@ -8,5 +8,5 @@ comment: 'Read default/omarchy/omarchy-menu.jsonc, bin/omarchy-theme-removable, 
 citations:
     - bin/omarchy-theme-removable:10
     - bin/omarchy-theme-remove:7
-    - test/shell.d/menu-guards-test.sh:416
-    - test/shell.d/menu-guards-test.sh:441
+    - test/shell.d/menu-guards-test.sh:417
+    - test/shell.d/menu-guards-test.sh:442
