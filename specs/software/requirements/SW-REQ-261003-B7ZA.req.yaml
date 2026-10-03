@@ -1,0 +1,75 @@
+id: SW-REQ-261003-B7ZA
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when apps_rows_rebuilt the menu_view shall immediately satisfy apps_rows_in_letter_order
+description: The Apps menu lists its rows in alphabetical order of their names for the user's language. A name that starts with an accented or non-Latin letter, such as Écrans or Übersetzer, sorts under its letter and not after Z. Case does not change the order, and two equal names keep their id order.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-0M8A
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro a85e29ab has this defect. rebuildDisplay sorts the Apps rows with its own comparator, because DesktopEntries can reorder its values when an application starts. The comparator compares the lowercased names with < and >, that is by UTF-16 code unit. So every name that starts with a letter above U+007A goes after z.
+
+    App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed and Zellij. A live run on the box with LANG=fr_FR.UTF-8 showed this order on a85e29ab.
+
+    The fix compares the names with localeCompare, as the search sort in the same function already does. The tie-break on the id is unchanged. The live run with the fix shows the two names under E.
+tags: []
+variables:
+    - apps_rows_rebuilt
+    - apps_rows_in_letter_order
+traces:
+    satisfies:
+        - SYS-REQ-260922-0M8A
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-D
+        reviewed_at: "2026-10-03T07:51:12Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-D
+    created_at: "2026-10-03T07:49:05Z"
+    last_modified_by: agent:claude-pr-new-D
+    last_modified_at: "2026-10-03T07:51:12Z"
+hazard_review:
+    reviewed_at: "2026-10-03T07:51:11Z"
+    reviewed_by: agent:claude-pr-new-D
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+            - empty_input
+          not_applicable:
+            - boundary
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: an app whose name starts with an accented or non-Latin letter shows after Z, so a user who scans the list by letter does not find it where it belongs. edge_case: precomposed accents (É, Ü), a decomposed accent (E plus a combining mark), non-Latin scripts, mixed case and two equal names; each case sorts by localeCompare and an equal pair keeps id order (witnessed). empty_input: an entry with no name gives the empty string, which sorts first as before. boundary not applicable: the comparator has no range or limit. input_domain not applicable: the names reach the comparator as decoded strings from DesktopEntries; it parses nothing. concurrency_scale not applicable: one synchronous sort on the GUI thread per rebuild.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: the same names and ids give the same order on every rebuild, whatever order DesktopEntries returns them in, because a tie on the name falls back to the id. totality: the comparator returns a defined result for every pair of rows, including equal names, empty names and names in any script.'
+        - category: structural
+          disposition: not_applicable
+          rationale: One string comparison inside an array sort; no memory, numeric or encoding transform. The names are already decoded strings when they reach the comparator.
+        - category: domain
+          disposition: not_applicable
+          rationale: Display order of rows inside the shell window only; no trust boundary, privilege, network, crypto or process surface.
+lifecycle:
+    change_history:
+        - date: "2026-10-03T07:51:12Z"
+          from: draft
+          to: review
+          reason: '[pr-new-D] upstream fix for the Apps menu sort of accented names: requirement authored for the behaviour the change adds; spec conformance REVIEW-261003-JTMM; executing witnesses in test/shell.d/menu-apps-order-test.sh'
+          changed_by: agent:claude-pr-new-D
