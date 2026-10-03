@@ -1,0 +1,48 @@
+id: KI-NOTIFY-WEB-MESSAGE-FIRST-WORD
+title: A web notification that starts with a web address or a dotted word loses its first word
+description: |-
+    sanitizeBody in shell/plugins/notifications/NotificationLogic.js (lines 92 to 99 on upstream 393a43d4 and 8e02fc84) cleans the body of a notification from a Chromium-based browser. It chains two replacements. Line 97 removes a leading origin link. Line 98 then removes a leading web address and the white space after it. The second replacement runs on the text that the first one leaves.
+
+    Chromium starts the body of a web notification with the origin of the page. It sends the origin as a link when the notification server takes hyperlinks, and the notification server of the shell takes them. So the body is the origin link, a blank line and then the message.
+
+    After the link goes, the second replacement removes the start of the message when it looks like a web address. A web address, a www. name or a dotted word such as Node.js or README.md is enough. In a check with a real Chromium 148 and the real shell, the message "github.com/omacom/omarchy can you review?" showed as "can you review?". The message "Node.js 24 is out, upgrade today" showed as "24 is out, upgrade today".
+affected_requirements:
+    - SW-REQ-261004-DHZ3
+    - SYS-REQ-261004-74P8
+commands:
+    - bash test/shell.d/notifications-test.sh
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: bash test/shell.d/notifications-test.sh
+tripwire_mutation: 'Chain the two replacements in sanitizeBody in shell/plugins/notifications/NotificationLogic.js again, as on 393a43d4 (return text.replace(<origin link>, "").replace(<leading web address>, "")): the red reproducer test/shell.d/notifications-test.sh fails at ''notifications strip only the chromium origin link, not a URL that starts the message''.'
+introduced_in: dc4618c28cd6987e9fed876d64200ac9805ea447
+defect_class: new_defect
+disclosure: public
+minimization_status: minimized
+mitigation: The whole message stays in the web page that sent it. A message that starts with a plain word shows correctly. Only the first word goes, so the rest of the message still shows on the card.
+remediation: 'Fixed by PR #<PR>. sanitizeBody returns the body as soon as it removed the origin link. It removes a plain-text origin only when the body has no origin link (SW-REQ-261004-DHZ3).'
+notes:
+    - |-
+      Fixed by PR #<PR>. sanitizeBody now returns the body as soon as the origin link replacement removed text, so the message after the link keeps its first word. Spec: SW-REQ-261004-DHZ3. The reproducer test/shell.d/notifications-test.sh fails with the sanitizeBody of 393a43d4 and passes with the fix.
+
+      Scope: a body without an origin link still loses a leading web address and the white space after it, before and after the fix. There the cleanup cannot tell a plain-text origin from a web address that starts a message. With the notification server of the shell, Chromium sends a web notification with the origin link. An origin link to localhost, an IP address or a host name with non-ASCII letters stays in the card, before and after the fix.
+owner: agent:claude-pr-new-E
+review_date: "2026-10-04"
+release_disposition: fixed
+status: fixed
+history:
+    - at: "2026-10-03T21:39:08Z"
+      by: agent:claude-pr-new-E
+      action: created
+    - at: "2026-10-03T21:39:08Z"
+      by: agent:claude-pr-new-E
+      action: edit
+      detail: note
+    - at: "2026-10-03T21:42:24Z"
+      by: agent:claude-pr-new-E
+      action: edit
+      detail: set-description,set-remediation
+kill_domain: text_cleanup
+affected_file: shell/plugins/notifications/NotificationLogic.js
