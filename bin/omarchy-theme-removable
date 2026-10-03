@@ -7,6 +7,7 @@
 # without reading the list. A symlinked theme is someone's working copy, and a
 # dot-directory is never a theme, so neither is offered for removal. Nor is
 # anything in a themes folder that is itself a symlink to someone's dotfiles.
+# Implements: SW-REQ-261003-390Z
 status=1
 
 [[ -L ~/.config/omarchy/themes ]] && exit $status
