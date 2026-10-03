@@ -71,6 +71,7 @@ assertDeepEqual(listed([decomposed, composed]), ['a.desktop', 'z.desktop'], 'app
 
 // The visible change for English names: a leading symbol now sorts ahead of
 // digits and letters, instead of wherever its code point falls.
+// MCDC SW-REQ-261003-B7ZA: apps_rows_in_letter_order=T, apps_rows_rebuilt=T => TRUE
 assertDeepEqual(
   order(['Zed', '1Password', '~Tilde', 'Alacritty', '_Under'].map((label, i) => ({ label, itemId: `apps.${i}` }))),
   ['_Under', '~Tilde', '1Password', 'Alacritty', 'Zed'],
