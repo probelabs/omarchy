@@ -259,7 +259,7 @@ function childCount(items, itemOrder, id) {
   return count
 }
 
-// Implements: SW-REQ-260922-JRW1
+// Implements: SW-REQ-260922-JRW1, SW-REQ-261003-390Z
 function isVisible(items, itemOrder, whenResults, entry, depth) {
   if (!entry) return false
   if (entry.when && whenResults && whenResults[entry.id] === false) return false

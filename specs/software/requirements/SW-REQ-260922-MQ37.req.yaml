@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:19.00197696Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-03T08:00:04.218751Z"
+    reviewed_by: agent:claude-pr-new-C
     reviewed_fingerprint: sha256:fc8d35f87287613f6ae2ec347e485c2a39bd2b6a171e936a3582d0644564093f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardLine: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:guardScript: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:guardLine: file1:4646148b2f50db0b9c90b218accbb160
+            shell/plugins/menu/MenuModel.js:guardScript: file1:4646148b2f50db0b9c90b218accbb160
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -50,6 +50,16 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
             - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-03T08:00:04.218751Z"
+          reviewed_by: agent:claude-pr-new-C
+          method: inspection
+          rationale: 'pr/new-C (upstream-style fix 638c6474 on quattro-proof 39746e65): shell/plugins/menu/MenuModel.js changed only in one comment line, the Implements line above isVisible, which now also names SW-REQ-261003-390Z. No code line changed and no line moved, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:485
+            - shell/plugins/menu/MenuModel.js:495
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
