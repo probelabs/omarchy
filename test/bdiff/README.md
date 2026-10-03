@@ -49,7 +49,7 @@ lines keep the old display stub and print the same output as before. The
 `seq-apps-*.events` inputs (SW-REQ-261003-B7ZA) cover French, German,
 decomposed accents, non-Latin scripts, symbol- and digit-led names, case ties,
 invalid UTF-8 and other encodings, a reordered hand-over, Enter on the first
-row, and a root-menu control. `@locale <BCP 47 tag>` makes every
+row, a root-menu control, and two apps whose names collate equal (seq-apps-plugin-tie: desktop id order in the menu and the plugin list). `@locale <BCP 47 tag>` makes every
 argument-less `localeCompare` collate as that locale, the way Qt collates with
 the process locale (seq-apps-locale-ru/el/zh: the script of the language comes
 first). `@plugin-list` also prints the revision's
