@@ -1,0 +1,12 @@
+id: REVIEW-261003-JH9B
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T12:14:15Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: 'Re-review for the c5ed4375 form of AppSearch.sortedEntries, which supersedes the sortedEntries wording of REVIEW-261003-CY43. With no query, sortedEntries orders by localeCompare of the lowercased key; when that returns 0 it falls back to the old < and > on the key and then on the name. So two different names that collate equal, such as a composed and a decomposed É, get one order whatever the input order (the PR test checks both input orders). Two identical names compare 0 at every step and keep their input order, as on a85e29ab; there is no id tie-break in sortedEntries. B7ZA now says exactly that. The Apps comparator in rebuildDisplay is unchanged from CY43: localeCompare of the lowercased labels, then the id.'
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - test/shell.d/menu-apps-order-test.sh:57
+    - test/shell.d/menu-apps-order-test.sh:66
+    - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
