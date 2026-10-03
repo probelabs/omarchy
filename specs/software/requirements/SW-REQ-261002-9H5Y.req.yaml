@@ -18,7 +18,7 @@ rationale: |-
 
     The PR prints the device and inode number of each file. After the newest-first sort it keeps the first row for each device, inode and file name. Commit cc710e11 added the file name to the key; the maintainers' bot pushed it, and the PR author agreed. Two hard links under different names now stay separate rows, because transcode and the retro installer derive their output from the chosen name. A file reached through aliased roots always keeps its name, so it still gives one row.
 
-    Known limitation, kept on purpose in the PR discussion: two hard links with the same name in different directories also give one row, so only one of the two paths can be picked. Both paths hold identical content. One find -printf call cannot tell the parent directories apart, so the key does not hold them.
+    Known limitation: two hard links with the same name in different directories give one row. The user can then pick only one of the two paths. The PR discussion keeps this on purpose: both paths hold identical content, and one find -printf call cannot tell the parent directories apart.
 tags: []
 variables:
     - same_file_reached_twice
@@ -69,7 +69,7 @@ history:
     created_by: agent:claude-pr-13197
     created_at: "2026-10-02T00:58:49Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-03T09:09:24Z"
+    last_modified_at: "2026-10-03T10:32:37Z"
 hazard_review:
     reviewed_at: "2026-10-02T01:10:00Z"
     reviewed_by: agent:claude-code
@@ -84,7 +84,7 @@ hazard_review:
             - input_domain
             - concurrency_scale
             - error_handling
-          rationale: 'Worst case: a file is offered twice, or a distinct file the user wants is hidden. boundary: one row per device, inode and file name across all roots, after the newest-first sort (witnessed: a link root and its target, and the same root given twice, each give one row). edge_case: two hard links under different names give two rows (the PR''s own test); two hard links with the same name in different directories give one row, so only one of the two paths can be picked (the known limitation in the rationale); which spelling stays depends on the sort order of equal rows. Files on different devices with the same inode number stay distinct rows because the key holds the device number. input_domain not applicable: the key is find metadata and the file name, not file contents. concurrency_scale not applicable: one run per user action. error_handling not applicable: the dedup step cannot fail; it filters the rows find printed.'
+          rationale: 'Worst case: a file is offered twice, or a distinct file the user wants is hidden. boundary: one row per device, inode and file name across all roots, after the newest-first sort (witnessed: a link root and its target, and the same root given twice, each give one row). edge_case: two hard links under different names give two rows (the PR''s own test); two hard links with the same name in different directories give one row, so the user can pick only one of the two paths (the known limitation in the rationale); which spelling stays depends on the sort order of equal rows. Files on different devices with the same inode number stay distinct rows because the key holds the device number. input_domain not applicable: the key is find metadata and the file name, not file contents. concurrency_scale not applicable: one run per user action. error_handling not applicable: the dedup step cannot fail; it filters the rows find printed.'
         - category: property
           disposition: reviewed
           applied:
