@@ -354,7 +354,7 @@ function runEvents() {
 function notifyLines(text) {
   const out = []
   for (const line of text.split(/\r\n|\r|\n/)) {
-    const m = /^@notify\s+(.*)$/.exec(line)
+    const m = /^@notify[ \t]+([\s\S]*)$/.exec(line)
     if (m) out.push(m[1])
   }
   return out
