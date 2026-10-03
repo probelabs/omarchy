@@ -6,6 +6,7 @@ results:
       status: pass
       observed_result: known_issue_reproduced
       executed_at: "2026-10-03T09:15:22Z"
+      revision: 2472e12301df9347f3fe61a6010b53195db4fd3b
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE` from the KnownIssue''s reproducer command: node --test --test-reporter=spec test/node/menumodel-replay.test.mjs. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Copy every JS whitespace character outside a string literal as a plain space in the scanner, and keep line feeds, as omacom/omarchy#13968 does. Then the green tripwire test in test/node/menumodel-replay.test.mjs fails. The KI-MENU-JSONC-COMMENT-INDENT-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
