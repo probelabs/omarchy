@@ -1,6 +1,9 @@
 id: KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN
 title: 'Fingerprint gate fail-open: substring grep treats not-enrolled or failed fprintd-list probes as enrolled'
-description: The fingerprint gate (bin/omarchy-apply-lock:47-48) greps fprintd-list output for the substring 'finger' with stderr discarded and no pipefail. Real fprintd empty-enrollment text ('User alice has no fingers enrolled ...') contains 'fingers'. The gate therefore takes the ENROLLED branch and installs pam_fprintd for a user with zero prints. A daemon error banner ('Fingerprints' then non-zero exit) also passes because the pipeline status is grep's. The script then configures fingerprint PAM for an account that can never match a print.
+description: |-
+    Before upstream omacom/omarchy#7158, the fingerprint gate in bin/omarchy-apply-lock grepped fprintd-list output for the substring 'finger'. It discarded stderr and had no pipefail. fprintd's empty-enrollment text ('User alice has no fingers enrolled ...') contains 'fingers'. The gate therefore took the enrolled branch and installed pam_fprintd for a user with zero prints. A failed probe that printed a 'Fingerprints ...' banner also passed, because the pipeline status was grep's.
+
+    #7158 (879d6583d, merged 2026-10-04) replaced the gate, and upstream quattro 035ce29f carries it. bin/omarchy-apply-lock:55-59 captures the probe output with stderr. Line 62 installs the stack only on an enrolled '- #N:' row. Lines 72-80 remove it on an explicit empty enrollment. Lines 81-82 keep the existing configuration when the probe fails.
 affected_requirements:
     - SW-REQ-260912-S154
     - SW-REQ-260912-Y0WT
@@ -14,12 +17,14 @@ reproducer_command: ./pocs/crs-260930-g166-c01-c13.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: Impact covers only installs where fprintd-list reports no enrollment or fails. Password PAM stays primary and fingerprint is additive, so auth keeps working while misconfigured
-remediation: Match the enrollment table (line-anchored 'Fingerprints' header plus per-finger rows) and require fprintd-list exit 0 with pipefail; treat any probe failure as not-enrolled
+mitigation: Upstream quattro 035ce29f includes the fix. On an older install, run omarchy-apply-lock again after the update. The new gate removes a fingerprint stack that the old gate installed for a user with no prints.
+remediation: 'Fixed by omacom/omarchy#7158 (879d6583d): the gate requires an enrolled ''- #N:'' row and keeps the configuration on a failed probe (SW-REQ-261004-SP65). pocs/crs-260930-g166-c01-c13.sh stays as a regression check. It runs the real helper and exits 0 while the fix holds.'
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The rewritten reproducer runs the real helper end to end, so it follows the new gate. It exits 0 on 035ce29f: the empty and failed probes install nothing, and the enrolled control installs the stack. It exits 1 on upstream quattro 393a43d4, where both inputs install pam_fprintd. Upstream omacom/omarchy#9551 (Karl Ahlin, 2026-09-01) reported the defect. The maintainers closed it unmerged and shipped its matcher in #7158.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:06:04Z"
       by: human:Leonid Bugaev
@@ -44,6 +49,39 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,set-mitigation,set-remediation,append-note,set-status=fixed
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#9551
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fixed
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-recheck
+      detail: status=fixed
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/pull/9551
+    reference: '#9551'
+    reported_at: "2026-09-01"
+    reported_by: human:github/kahlin
+    response:
+        status: fixed
+        received_at: "2026-10-04"
+        text: 'The enrolled-entry matching credited to Karl Ahlin is now shipped in merged #7158, in both lock configuration and lock-screen detection. This competing PR remains closed.'
+        response_url: https://github.com/omacom/omarchy/pull/9551#issuecomment-5982404200
+    rechecks:
+        - performed_at: "2026-10-04"
+          status: fixed
+          notes: 'Upstream quattro 035ce29f (#7158, 879d6583d): pocs/crs-260930-g166-c01-c13.sh exits 0 (empty and failed probes install nothing; enrolled control installs the stack); it exits 1 on upstream quattro 393a43d4.'
+          verified_by: agent:claude-code
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -57,14 +95,14 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: the PoC evals the live gate condition (bin/omarchy-apply-lock lines 47-48) verbatim against a stubbed fprintd-list emitting real daemon output shapes.
-        quantitative_impact: 2 of 2 fail-open inputs (zero-enrollment text, daemon-error banner) take the ENROLLED branch; the enrolled control takes the intended branch.
-        control_test: a genuinely enrolled store reads TRUE through the same extracted condition (control arm in pocs/crs-260930-g166-c01-c13.sh).
-        current_deployment_relevance: the substring gate is live on this branch; the PoC extracts lines 47-48 at run time.
+        real_infrastructure: pocs/crs-260930-g166-c01-c13.sh runs a scratch copy of the real bin/omarchy-apply-lock end to end; the copy differs only by retargeted absolute paths, checked by reverse substitution. sudo, omarchy-shell and fprintd-list are stubs; fprintd-list prints the real daemon output shapes.
+        quantitative_impact: on upstream quattro 393a43d4, 2 of 2 fail-open inputs (zero enrollment, failed probe) install pam_fprintd; on 035ce29f, 0 of 2 do. The enrolled control installs the stack on both.
+        control_test: the enrolled arm runs the same helper copy and must install the fingerprint stack, or the reproducer exits 2.
+        current_deployment_relevance: the reproducer reads bin/omarchy-apply-lock at run time, so it follows the gate that ships (line 62 on this branch).
         honest_severity: medium - pam_fprintd gets configured for an account with no prints; password PAM stays primary, so the wrong-gate outcome misconfigures rather than bypasses auth.
-        reproducible: single command ./pocs/crs-260930-g166-c01-c13.sh, deterministic, sub-second.
+        reproducible: single command ./pocs/crs-260930-g166-c01-c13.sh, deterministic, under a second; exit 0 = defect absent, 1 = defect present, 2 = control failed.
         no_inflation: no auth-bypass claim; impact limited to wrong fingerprint PAM configuration.
-        operational_path_verified: the enrolled control exercises the intended path of the same gate.
+        operational_path_verified: the enrolled control drives the intended install path through the same run of the real helper.
     not_applicable:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'

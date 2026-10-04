@@ -1,6 +1,9 @@
 id: KI-LOCK-FPRINT-PROBE-FAIL-OPEN
 title: 'Lock-service fingerprint probe fail-open: substring grep treats zero-enrollment fprintd-list output as configured'
-description: fingerprintCheckProc's embedded probe (shell/plugins/lock/Service.qml:534) is 'fprintd-list "$USER" 2>/dev/null | grep -qi finger'. fprintd-list's stdout for an empty store is 'User NAME has no fingers enrolled for ... Fingerprint Sensor'; grep -qi finger matches the substring, the probe echoes yes, and fingerprintConfigured = true (line 538). The lock screen then offers fingerprint auth to a zero-enrollment user where every attempt fails. Same substring-oracle class as KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN but a disjoint file and code site (executed per lock via refreshFingerprintStatus).
+description: |-
+    Before upstream omacom/omarchy#7158, fingerprintCheckProc in shell/plugins/lock/Service.qml probed with 'fprintd-list "$USER" 2>/dev/null | grep -qi finger'. For an empty store, fprintd-list prints 'User NAME has no fingers enrolled for ...'. grep matched the substring, the probe echoed yes, and fingerprintConfigured became true. The lock screen then offered fingerprint auth to a user with zero prints, and every attempt failed. KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN has the same substring-oracle class at a different file and code site.
+
+    #7158 (879d6583d, merged 2026-10-04) fixed it, and upstream quattro 035ce29f carries the fix. The probe (Service.qml:726-731) now prints the raw 'LC_ALL=C fprintd-list' output. applyFingerprintProbe (Service.qml:162-186) classifies it with FingerprintModel.classifyProbe (FingerprintModel.js:42-48). Only an enrolled '- #N:' row reads as configured. An explicit empty enrollment reads as not configured.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
@@ -13,12 +16,14 @@ reproducer_command: ./pocs/crs-260930-ttvk-c02.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: wrong fingerprint attempts still fall through to the password field
-remediation: Count enrolled fingers (line-anchored 'Fingerprints' table with >= 1 per-finger row) and require fprintd-list exit 0 before echoing yes
+mitigation: Upstream quattro 035ce29f includes the fix. Until a machine gets the update, a wrong fingerprint attempt still falls through to the password field.
+remediation: Fixed by omacom/omarchy#7158 (879d6583d; SW-REQ-261004-V813). pocs/crs-260930-ttvk-c02.sh stays as a regression check. It runs the live probe command and handler and exits 0 while the fix holds.
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The rewritten reproducer runs the live probe command with bash and the live onExited handler in node. It exits 0 on 035ce29f: a zero-enrollment user gets fingerprintConfigured=false, and the enrolled control gets true. It exits 1 on upstream quattro 393a43d4, where the probe answers ''yes'' for the empty store. Upstream omacom/omarchy#9551 (Karl Ahlin, 2026-09-01) reported both callers. The maintainers closed it unmerged and shipped its matcher in #7158.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:17:50Z"
       by: human:Leonid Bugaev
@@ -35,6 +40,39 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-fprint-probe-fail-open.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,set-mitigation,set-remediation,append-note,set-status=fixed
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#9551
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fixed
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-recheck
+      detail: status=fixed
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/pull/9551
+    reference: '#9551'
+    reported_at: "2026-09-01"
+    reported_by: human:github/kahlin
+    response:
+        status: fixed
+        received_at: "2026-10-04"
+        text: 'The enrolled-entry matching credited to Karl Ahlin is now shipped in merged #7158, in both lock configuration and lock-screen detection. This competing PR remains closed.'
+        response_url: https://github.com/omacom/omarchy/pull/9551#issuecomment-5982404200
+    rechecks:
+        - performed_at: "2026-10-04"
+          status: fixed
+          notes: 'Upstream quattro 035ce29f (#7158, 879d6583d): pocs/crs-260930-ttvk-c02.sh exits 0 (zero enrollment reads as not configured; enrolled control reads as configured); it exits 1 on upstream quattro 393a43d4.'
+          verified_by: agent:claude-code
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -48,14 +86,14 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: the PoC extracts the live probe command from shell/plugins/lock/Service.qml verbatim and runs it with a PATH-stubbed fprintd-list emitting the real zero-enrollment text.
-        quantitative_impact: the probe answers yes for a zero-enrollment store (wrong) and yes for an enrolled store (control, correct) - the same code path, discriminated only by the input.
-        control_test: an enrolled-store stub through the same extracted probe answers yes for the right reason (control arm in pocs/crs-260930-ttvk-c02.sh).
-        current_deployment_relevance: the substring probe is live in Service.qml on this branch; extracted at run time.
+        real_infrastructure: pocs/crs-260930-ttvk-c02.sh runs the live probe command from shell/plugins/lock/Service.qml with bash (only the PAM-file test is retargeted) and the live onExited handler, applyFingerprintProbe and FingerprintModel.js in node; fprintd-list is a stub that prints the real daemon output.
+        quantitative_impact: on upstream quattro 393a43d4 the zero-enrollment probe sets fingerprintConfigured=true; on 035ce29f it stays false. The enrolled control reads as configured on both.
+        control_test: the enrolled arm through the same probe and handler must read as configured, or the reproducer exits 2.
+        current_deployment_relevance: the reproducer reads Service.qml and FingerprintModel.js at run time, so it follows the probe that ships.
         honest_severity: medium - a zero-enrollment user is offered fingerprint auth that can never succeed; password fallback still works, so the impact is a wrong offer plus failed attempts, not a bypass.
-        reproducible: single command ./pocs/crs-260930-ttvk-c02.sh, deterministic, sub-second.
+        reproducible: single command ./pocs/crs-260930-ttvk-c02.sh, deterministic, under a second; exit 0 = defect absent, 1 = defect present, 2 = control failed.
         no_inflation: no bypass claim; impact limited to the misconfigured offer.
-        operational_path_verified: the enrolled control exercises the intended reading of the same probe.
+        operational_path_verified: the enrolled control exercises the intended reading of the same probe and handler.
     not_applicable:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'

@@ -1,6 +1,9 @@
 id: KI-LOCK-FPRINT-START-FAIL-NO-RETRY
 title: fingerprintPam.start() returning false disables fingerprint auth for the rest of the lock with no retry
-description: startFingerprint (shell/plugins/lock/Service.qml:294-295) clears fingerprintAuthenticating when fingerprintPam.start() returns false but arms no timer. Only handleFingerprintFinished and the PAM onError path restart fingerprintRetryTimer; neither runs when a conversation never began. The per-event callers (onSecureStateChanged, fingerprintCheckProc.onExited) fire once - so a transient start failure leaves fingerprint dead until some unrelated event re-runs startFingerprint.
+description: |-
+    Before upstream omacom/omarchy#7158, startFingerprint (shell/plugins/lock/Service.qml) cleared fingerprintAuthenticating when fingerprintPam.start() returned false, but armed no timer. Only handleFingerprintFinished and the PAM onError path restarted fingerprintRetryTimer. Neither runs when a conversation never began. A transient start failure therefore left fingerprint dead until an unrelated event re-ran startFingerprint.
+
+    #7158 (879d6583d, merged 2026-10-04) fixed it, and upstream quattro 035ce29f carries the fix. A failed start (Service.qml:399-404) now calls settleFingerprintAttempt and refreshFingerprintStatus. settleFingerprintAttempt (Service.qml:430-458) counts the miss and arms the retry with FingerprintModel.retryDelayMs.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
@@ -8,13 +11,15 @@ evidence_manifests:
 severity: low
 severity_basis: risk
 risk: correctness
-reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+reproducer_command: ./pocs/crs-260930-ttvk-c07.sh
 introduced_in: inception
 defect_class: latent
-mitigation: re-lock or a later refreshFingerprintStatus restarts it
-remediation: Arm fingerprintRetryTimer in the start()-false arm so the offer comes back on the same lock
+mitigation: Upstream quattro 035ce29f includes the fix. On an older install, a re-lock restarts fingerprint unlock.
+remediation: Fixed by omacom/omarchy#7158 (879d6583d; SW-REQ-261004-296X). pocs/crs-260930-ttvk-c07.sh stays as a regression check. It exits 0 while a failed start arms the retry.
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The text anchor in pocs/crs-260930-ttvk-qml-static.sh could not see the retry, because #7158 arms it one call deeper. The new runtime reproducer pocs/crs-260930-ttvk-c07.sh runs the live functions in node with start() returning false. It exits 0 on 035ce29f, where the failed start arms the retry at 1000 ms. It exits 1 on upstream quattro 393a43d4, where no retry is armed. Upstream omacom/omarchy#9453 reported the same dead-fingerprint outcome from a probe miss, and #7158 closed it.'
 review_date: "2026-09-30"
-status: reviewed
+status: fixed
 history:
     - at: "2026-09-30T12:18:14Z"
       by: human:Leonid Bugaev
@@ -43,6 +48,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-fprint-start-fail-no-retry.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,set-reproducer-command,set-mitigation,set-remediation,append-note,set-status=fixed
 kill_domain: error_propagation
 do_not_refile_as: fingerprint fails after a wrong print (that path re-arms via handleFingerprintFinished; only a failed START is dead)
 source_claim: CRS-260930-TTVK/C07

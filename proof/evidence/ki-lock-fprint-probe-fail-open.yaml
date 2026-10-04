@@ -4,10 +4,10 @@ results:
       requirement: SYS-REQ-260912-T0XP
       command: ./pocs/crs-260930-ttvk-c02.sh
       status: pass
-      observed_result: known_issue_reproduced
+      observed_result: known_issue_not_reproduced
       executed_at: "2026-09-30T21:02:50Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-LOCK-FPRINT-PROBE-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-c02.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Reproducer contract changed on 2026-10-04: ./pocs/crs-260930-ttvk-c02.sh is now a RED reproducer. It asserts the correct behavior: exit 0 = defect absent, exit 1 = defect present, exit 2 = control failed. Upstream omacom/omarchy#7158 (879d6583d) fixed the defect, so the expected result on upstream quattro 035ce29f is pass, read as known_issue_not_reproduced; on upstream quattro 393a43d4 the same script exits 1. Re-stamp with: proof evidence capture KI-LOCK-FPRINT-PROBE-FAIL-OPEN --red-reproducer.'
         - pocs/crs-260930-ttvk-c02.sh
       freshness_hashes:
         pocs/crs-260930-ttvk-c02.sh: sha256:85ddd2b8bd839f6b8a3e1946afc821c5e9ec3b354999f326ff3452a6ae22823a
