@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:44:38.347955Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-04T19:21:27.587131Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:1f82e7cfb359952b438ad645676ae21cc84c31dc2a41f478fde158dda5bfb4dc
     reviewed_targets:
         implemented_by:
             bin/omarchy-menu: file1:76a45c4a34c3d8b7dfbc6ccde479d525
-            shell/plugins/menu/BarWidget.qml:onPressed: file1:ee5a9e7c9b2c94b6a78bead4c792ebd5
+            shell/plugins/menu/BarWidget.qml:onPressed: file1:775cbfef931e8bfaab2465269d87dce3
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -67,6 +67,16 @@ traces:
             - test/shell.d/menu-dispatcher-test.sh:46
             - test/shell.d/menu-dispatcher-test.sh:5
             - test/shell.d/menu-dispatcher-test.sh:81
+        - reviewed_at: "2026-10-04T19:21:27.587131Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f: BarWidget.qml gained only a centerFigures: false property on the bar button (27a3feff, icon spacing); the onPressed handler that summons the menu through the shell IPC is unchanged.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu:10
+            - shell/plugins/menu/BarWidget.qml:19
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-dispatcher-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid
