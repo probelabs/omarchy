@@ -21,6 +21,8 @@ disclosure: public
 minimization_status: minimized
 mitigation: 'Nothing breaks and no data changes: the row closes the menu and removes nothing. A user who has installed an extra theme gets the picker as before. omarchy theme remove in a terminal prints the message.'
 remediation: 'Hide the row until the remover has a theme it can remove. #7775 used this shape for Update > Extra Themes. A helper lists the removable themes, the directories that are not symlinks or dot-directories, and exits nonzero when there are none. The row''s when: runs the helper. The remover reads its list from the same helper, so the row and the picker agree.'
+notes:
+    - 'Upstream: original #14150 (ours, 2026-10-03); open fix PR #14153 (ours).'
 owner: agent:claude-pr-new-C
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -41,6 +43,60 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-remove-theme-no-themes.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#14150
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/14150
+    reference: '#14150'
+    reported_at: "2026-10-03"
+    reported_by: human:buger
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: 'Open on 2026-10-04 with no maintainer or omarchybot response. Our fix PR #14153 is open and not merged.'
+        response_url: https://github.com/omacom/omarchy/issues/14150
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/menu-remove-theme-guard.sh runs the shipped remove.theme row through the real guard batch (MenuModel.js guardScript and isVisible) and runs the real bin/omarchy-theme-remove with a stub picker. #14150 records the live run under Quickshell with keys sent by wtype.
+        quantitative_impact: 2 of 2 no-theme home shapes (an empty themes folder, a folder with only a symlink) show the row while the remover offers nothing.
+        control_test: a home with one copied theme shows the row, and the remover offers that theme.
+        current_deployment_relevance: remove.theme and bin/omarchy-theme-remove are unchanged on upstream quattro 035ce29f; that tip adds only two unrelated Microsoft rows to omarchy-menu.jsonc.
+        honest_severity: low - the row only closes the menu; nothing is removed or changed, and a user with an extra theme gets the picker as before.
+        reproducible: one deterministic command, about one second; it exits 1 while the defect is present.
+        no_inflation: the claim is limited to a row that does nothing on a stock install.
+        operational_path_verified: the control runs the intended path, a home with a removable theme.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue does not apply'
+        reachability_verified: 'local-behavioral correctness defect: the trigger is ordinary use inside the user''s own session; there is no ingress access-control or input-validation layer to traverse'
+        untrusted_attacker: 'local-behavioral defect: no untrusted party supplies the input, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: 'docs/menu.md (Guards) says Remove rows hide through when: what is not there to remove. remove.theme has no when:, and bin/omarchy-theme-remove prints its no-theme message to a detached stdout. The row breaks the documented Remove-row convention.'
+    commit_origin: 5bc151f99 (2026-05-20, Convert theme remove to a QS menu) made the row run the remover with no terminal, so its no-theme message stopped reaching the user.
+    intended_path_verified: true
+    master_status: changed-unrelated
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS or any guard-batch KI such as those on SYS-REQ-260922-47T8: those are parser and batch faults; this one is a shipped row with no when: guard, which the batch never evaluates'
 kill_domain: stale_state
 affected_file:

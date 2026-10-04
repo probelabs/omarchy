@@ -16,6 +16,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: Ordering difference is cosmetic; every entry stays reachable and search-side ordering already uses localeCompare
 remediation: use localeCompare in the apps sort
+notes:
+    - 'Upstream: original #14154 (ours, 2026-10-03); open fix PR #14155 (ours).'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -40,6 +42,60 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-apps-sort-locale.yaml
+    - at: "2026-10-04T19:27:12Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#14154
+    - at: "2026-10-04T19:27:12Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:12Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/14154
+    reference: '#14154'
+    reported_at: "2026-10-03"
+    reported_by: human:buger
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: 'Open on 2026-10-04 with no maintainer or omarchybot response. Our fix PR #14155 is open and not merged.'
+        response_url: https://github.com/omacom/omarchy/issues/14154
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: #14154 records the live run: the shell from the tree under Quickshell with LANG=fr_FR.UTF-8 lists Éditeur de texte after Zed. The test of fix PR #14155 (test/shell.d/menu-apps-order-test.sh) runs the comparator taken from the real Menu.qml; on this tree it puts Éditeur de texte and Übersetzer after Zed. pocs/menu-qml-static.sh pins the mechanism (anchor SRT1).
+        quantitative_impact: 2 of 6 labels sort after Zed (Éditeur de texte, Übersetzer); the 4 ASCII labels keep alphabetical order.
+        control_test: in the same run the ASCII labels Calculatrice, Fichiers, Terminal and Zed keep alphabetical order. With LANG=en_US.UTF-8 the live Apps menu shows the English names in order (#14154).
+        current_deployment_relevance: the comparator is unchanged on upstream quattro 035ce29f; this tree differs from it only in proof annotations.
+        honest_severity: low - the Apps list on a non-English desktop puts accented names after Z; every app stays listed and launchable, and search order is correct.
+        reproducible: pocs/menu-qml-static.sh is one deterministic command under one second; the comparator test runs under one second with node.
+        no_inflation: the claim is limited to row order; no row is lost and no action changes.
+        operational_path_verified: the intended path, an English desktop, ran live in #14154 and sorts correctly.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue does not apply'
+        reachability_verified: 'local-behavioral correctness defect: the trigger is ordinary use inside the user''s own session; there is no ingress access-control or input-validation layer to traverse'
+        untrusted_attacker: 'local-behavioral defect: no untrusted party supplies the input, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: The Menu.qml comment above the comparator says to keep the Apps menu alphabetical. An accented name after Z is not alphabetical, so the code contradicts its comment. docs/menu.md does not describe the Apps order.
+    commit_origin: 7798ed34b (2026-07-23, Keep apps menu alphabetically sorted) added the comparator that compares lowercased labels with < and >.
+    intended_path_verified: true
+    master_status: identical
 kill_domain: sorting
 affected_file:
     - shell/plugins/menu/MenuModel.js
