@@ -115,6 +115,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Which emojis the picker window lists only. No trust boundary, privilege, network, crypto or process surface; the insert helper is outside this requirement.
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-10-04T07:52:45Z"
@@ -122,3 +123,8 @@ lifecycle:
           to: review
           reason: Baseline requirement for the emoji picker's search (shell/plugins/emojis/EmojiSearch.js entered the verification scope as part of the menu component); spec conformance REVIEW-261004-TD57; witnesses in test/shell.d/menu-emoji-picker-test.sh
           changed_by: agent:claude-quattro-proof
+        - date: "2026-10-04T15:54:21Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=3; review_record:REVIEW-261004-F2FG=present | review_record:REVIEW-261004-TD57=present | tests_pass:test_status=passing
+          changed_by: agent:claude-test-results
