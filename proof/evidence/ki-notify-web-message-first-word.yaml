@@ -7,15 +7,15 @@ results:
       command: bash test/shell.d/notifications-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-03T23:07:00Z"
-      revision: feb2ce00a02bcaedb122acba2be9ff9b2808de41
+      executed_at: "2026-10-04T00:37:47Z"
+      revision: ce71e8c9daa06610e3400671308987ef231cdba1
       input_set:
         - 'Captured by `proof evidence capture KI-NOTIFY-WEB-MESSAGE-FIRST-WORD` from the KnownIssue''s reproducer command: bash test/shell.d/notifications-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Chain the two replacements in sanitizeBody in shell/plugins/notifications/NotificationLogic.js again, as on 393a43d4 (return text.replace(<origin link>, "").replace(<leading web address>, "")): the red reproducer test/shell.d/notifications-test.sh fails at ''notifications strip only the chromium origin link, not a URL that starts the message''.'
         - test/shell.d/notifications-test.sh
       freshness_hashes:
-        proof/known-issues/KI-NOTIFY-WEB-MESSAGE-FIRST-WORD.yaml: ki-content-v1:sha256:4e95c1c2640e16ae337d87e35301791daf368647de0dd19ee06243795c919125
-        test/shell.d/notifications-test.sh: sha256:714733cf4d2c7ea55cb0fc4f6a8d0bf67d36b3327bc5e3c30146b399d48660f5
+        proof/known-issues/KI-NOTIFY-WEB-MESSAGE-FIRST-WORD.yaml: ki-content-v1:sha256:52230f0a3aa8243afebf32bc25ec5c43302532351a839242ab75b7d4992c5572
+        test/shell.d/notifications-test.sh: sha256:52c78d6f3be388a7ab53fb748a8d6e74ce5e078dd4c1083eb306a867dd81e4fd
       known_issues:
         - KI-NOTIFY-WEB-MESSAGE-FIRST-WORD
       config:

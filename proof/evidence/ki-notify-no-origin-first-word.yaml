@@ -1,0 +1,22 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: STK-REQ-261004-6HJ2
+      command: bash pocs/notify-no-origin-first-word.sh
+      status: fail
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-04T00:37:47Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-NOTIFY-NO-ORIGIN-FIRST-WORD` from the KnownIssue''s reproducer command: bash pocs/notify-no-origin-first-word.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Return the body unchanged in sanitizeBody in shell/plugins/notifications/NotificationLogic.js when it has no origin link (drop the plain-text replacement): the red reproducer pocs/notify-no-origin-first-word.sh then exits 0 with every message kept whole.'
+        - pocs/notify-no-origin-first-word.sh
+      freshness_hashes:
+        pocs/notify-no-origin-first-word.sh: sha256:37ea20a46fa24a903dc22e48375993f91b1befb016884a91cdbadc75fcfa3039
+        proof/known-issues/KI-NOTIFY-NO-ORIGIN-FIRST-WORD.yaml: ki-content-v1:sha256:6a72ebad0c1b239d666167131236d5d41caa50ae04482ee207b9517d73b950e6
+      known_issues:
+        - KI-NOTIFY-NO-ORIGIN-FIRST-WORD
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root

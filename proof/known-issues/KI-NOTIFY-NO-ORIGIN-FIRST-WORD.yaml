@@ -6,6 +6,8 @@ description: |-
     So a Chromium-based app that sends "Node.js 24 is out" with no origin in front shows "24 is out". "github.com/omacom/omarchy can you review?" shows as "can you review?". This is the same on upstream 393a43d4 and with PR #<PR>. That PR fixes only the body that starts with the origin link (KI-NOTIFY-WEB-MESSAGE-FIRST-WORD).
 affected_requirements:
     - STK-REQ-261004-6HJ2
+evidence_manifests:
+    - proof/evidence/ki-notify-no-origin-first-word.yaml
 severity: low
 severity_basis: risk
 risk: correctness
@@ -26,6 +28,10 @@ history:
     - at: "2026-10-04T00:36:35Z"
       by: agent:claude-pr-new-E
       action: created
+    - at: "2026-10-04T00:37:46Z"
+      by: agent:claude-pr-new-E
+      action: capture-evidence
+      detail: proof/evidence/ki-notify-no-origin-first-word.yaml
 dedup_armor: KI-NOTIFY-WEB-MESSAGE-FIRST-WORD is the body that starts with the origin link, where the link strip and the plain-text strip ran in a chain; that one is fixed. This one is the body with no origin link, where only the plain-text strip runs; it is open.
 kill_domain: text_cleanup
 affected_file: shell/plugins/notifications/NotificationLogic.js
