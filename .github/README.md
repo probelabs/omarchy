@@ -31,7 +31,7 @@ Audit results are stored as git notes next to the commits they describe (`refs/n
 ## Current state
 
 - **Upstream code covered:** `393a43d` (upstream `quattro` tip, merged into `quattro-proof`).
-- **Latest audit of this branch:** 0 errors, 0 warnings (ReqProof engine `8cac9cf`, full run without cache).
+- **Latest audit of this branch:** 0 errors, 0 warnings (ReqProof engine `bb9318e`, full run without cache).
   - The remaining notes are advisory: functions still waiting for property-based tests, and lint suggestions.
   - Test results are part of the run: every suite in `proof.yaml` writes one JUnit report
     (`test/junit/junit.sh`), and the audit links each test case to the requirements it verifies. No test fails.
