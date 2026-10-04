@@ -107,5 +107,9 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: introduced-in=f4b453f146f5c2b20eba3e311fa12f03f9879589
+    - at: "2026-10-04T08:05:06Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-back-filtered-index.yaml
 kill_domain: cursor_restore
 affected_file: shell/plugins/menu/Menu.qml
