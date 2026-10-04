@@ -336,6 +336,7 @@ drain_pending_thumbnails() {
   fi
 }
 
+# Implements: SW-REQ-260922-43HQ, SW-REQ-260922-MH9B
 if [[ $rows_cache_hit != true && -f $rows_cache_file && -f $rows_signature_file ]] && cmp -s "$rows_signature_file" <(printf '%s' "$rows_signature"); then
   rows=$(<"$rows_cache_file")
   printf '%s' "$rows_fast_signature" >"$rows_fast_signature_file"
@@ -361,6 +362,7 @@ elif [[ $rows_cache_hit != true ]]; then
     fi
   done
 
+  # Implements: SW-REQ-260922-MH9B, SW-REQ-260929-THMB
   drain_pending_thumbnails
 
   if [[ -s $pending_file || -s $pending_video_file ]]; then
@@ -380,6 +382,7 @@ elif [[ $rows_cache_hit != true ]]; then
     rows="$pruned"
   fi
 
+  # Implements: SW-REQ-260922-MH9B
   # Publish the cache under a lock and via renames: a picker killed mid-write,
   # or two pickers interleaving, must never leave truncated or mismatched rows
   # behind signatures that still validate. Rows go first so a kill between

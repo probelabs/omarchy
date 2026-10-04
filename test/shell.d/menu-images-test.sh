@@ -333,6 +333,7 @@ while IFS=$'\t' read -r row_image row_thumbnail; do
 done <<<"$rows"
 pass "image menu prints its rows for the shell to hold"
 
+# Verifies: SW-REQ-260929-THMB
 # A queue lock the menu cannot open leaves its jobs unpublished. The menu
 # still answers with every row and exits cleanly, but starts no pool.
 wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
@@ -651,6 +652,7 @@ lazy_rows() {
   rows=$(<"$lazy_state/rows")
 }
 
+# Verifies: SW-REQ-260929-THMB
 for cores in 1 2 8; do
   rm -f "$lazy_images/new.png"
   printf 'image' >"$lazy_images/0.png"

@@ -13,9 +13,7 @@ citations:
     - bin/omarchy-menu-images:290
     - bin/omarchy-menu-images:298
     - bin/omarchy-menu-images:305
-    - bin/omarchy-menu-images:319
-    - bin/omarchy-menu-images:325
     - test/shell.d/menu-images-test.sh:44
     - test/shell.d/menu-images-test.sh:176
-    - test/shell.d/menu-images-test.sh:336
-    - test/shell.d/menu-images-test.sh:654
+    - test/shell.d/menu-images-test.sh:337
+    - test/shell.d/menu-images-test.sh:656

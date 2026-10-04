@@ -9,5 +9,5 @@ citations:
     - bin/omarchy-menu-images:124
     - bin/omarchy-menu-images:129
     - bin/omarchy-menu-images:134
-    - bin/omarchy-menu-images:339
+    - bin/omarchy-menu-images:340
     - test/shell.d/menu-images-test.sh:279
