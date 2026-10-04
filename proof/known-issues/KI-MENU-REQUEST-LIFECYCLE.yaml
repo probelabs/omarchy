@@ -171,6 +171,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: append-note
+    - at: "2026-10-04T08:05:13Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
 kill_domain: handshake
 affected_file:
     - shell/plugins/menu/MenuModel.js
