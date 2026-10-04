@@ -1,0 +1,5 @@
+# Verifies: SW-REQ-261004-H41S
+# Emoji picker: mail; a hyphen ends a word, so e-mail holds mail as a whole word, before email.
+@emojis
+@type mail
+@enter
