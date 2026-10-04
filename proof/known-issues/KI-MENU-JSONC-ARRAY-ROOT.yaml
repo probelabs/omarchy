@@ -19,6 +19,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: The trigger is a menu file with an array root, which the documented format never uses. Label-only elements stay hidden; elements with an action show under the user's own labels, so nothing tells the user the file is wrong.
 remediation: Reject an array root like the scalar roots, as omacom/omarchy#13968 does with an Array.isArray guard (requirement SW-REQ-260928-BMFE in the proof layer).
+notes:
+    - 'Upstream: our issue #13492 (2026-09-28). Our fix PR #13511 was closed unmerged. Open fix PRs: #13681, #13803 and our #13968.'
 customer_impact: If a menu file's top level is a list instead of an object, the menu silently reads the list as entries. Items with an action appear under their own labels, items without one stay hidden, and no error says the file has the wrong shape. The shipped menu is not affected; only a hand-edited file written as a list hits this.
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
@@ -53,6 +55,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-array-root.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-INLINE-COMMENT or KI-MENU-JSONC-STRIP-GAPS: this one is an array root read by index as entries with ids 0, 1, …; those are the items wrapper key, string rewriting, inline comment tails and block comments'
 kill_domain: parsing
 affected_file:

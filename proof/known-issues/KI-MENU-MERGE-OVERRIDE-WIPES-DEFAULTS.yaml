@@ -18,6 +18,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: Default installs ship no label-only overrides; users who override a row restate the fields they care about, masking the wipe
 remediation: merge the RAW user entry over the default before normalizing (or make the merge skip empty-string/empty-array values from the overlay source)
+notes:
+    - 'Upstream: PR #10007 (2026-09-03) reported this first. The canonical issue is #11211; #11509 and #12236 are duplicates. Fix PRs #11137, #11519 and #11711 were closed unmerged; #10007 and #12255 are open.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -46,6 +48,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-merge-override-wipes-defaults.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 kill_domain: merge_semantics
 affected_file:
     - shell/plugins/menu/MenuModel.js

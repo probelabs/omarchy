@@ -28,13 +28,14 @@ t("F12b.swapProviderRows-stale-after-drop", () => {
 });
 
 // F15e2: term1 matches the label, term2 only the description -> matchesQuery
-// accepts but searchScore lands on the unmatched baseline 80
-t("F15e2.crossfield-collapses-to-80", () => {
+// accepts but searchScore lands on the unmatched baseline (the score of a row
+// that matches nothing: 80 tier minus the menu-row nudge)
+t("F15e2.crossfield-collapses-to-unmatched-baseline", () => {
   const e = { id: "x", label: "alpha", description: "beta", parent: "root", kind: "menu", order: 0 };
-  const items = { x: e };
+  const none = { id: "y", label: "gamma", description: "delta", parent: "root", kind: "menu", order: 0 };
   const accepted = M.matchesQuery(e, "alpha beta", true);
-  const score = M.searchScore(items, e, "alpha beta");
-  return accepted && score === 80 * 1000;
+  const score = M.searchScore({ x: e }, e, "alpha beta");
+  return accepted && score === M.searchScore({ y: none }, none, "alpha beta");
 });
 
 // F16a2: unquoted id interpolation via the exported guardScript

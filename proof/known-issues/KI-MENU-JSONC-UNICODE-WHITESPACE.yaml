@@ -24,6 +24,8 @@ defect_class: latent
 minimization_status: minimized
 mitigation: Replace no-break spaces and other non-ASCII spaces in the menu file with ASCII spaces. The shipped default menu carries none.
 remediation: 'Read every JS whitespace character outside a string literal as plain whitespace before JSON.parse, as omacom/omarchy#13968 does (characters inside strings stay data). Close criterion: pocs/menu-jsonc-unicode-whitespace.sh exits 0 and the KI-MENU-JSONC-UNICODE-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
+notes:
+    - 'Upstream: no issue reports this. Our open PR #13968 fixes it.'
 owner: agent:claude-baseline-pass
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -60,6 +62,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

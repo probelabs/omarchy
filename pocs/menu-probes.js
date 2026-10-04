@@ -111,9 +111,12 @@ t("F15c.searchScore-empty-query-prefix", () => {
   const appFirst = M.searchScore({}, app, "same") < M.searchScore({}, menu, "same");
   console.log("F15d.searchScore-app-first-by-design: " + (appFirst ? "INTENDED" : "CHANGED") + "  -- an app ranks ahead of an equal menu row (omacom/omarchy#6383)");
 }
+// The unmatched baseline is the score of a row that matches nothing (80 tier minus the menu-row nudge).
 t("F15e.multiword-crossfield-collapses-to-baseline", () => {
   const e = { id: "x", label: "Alpha", description: "runs the beta tool", parent: "root", kind: "menu", order: 0 };
-  return M.searchScore({ x: e }, e, "alpha beta") >= 80 * 1000 && M.matchesQuery(e, "alpha beta", true) === true;
+  const none = { id: "y", label: "Gamma", description: "runs the delta tool", parent: "root", kind: "menu", order: 0 };
+  return M.matchesQuery(e, "alpha beta", true) === true &&
+    M.searchScore({ x: e }, e, "alpha beta") === M.searchScore({ y: none }, none, "alpha beta");
 });
 
 // F16: guard generation

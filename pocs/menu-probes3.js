@@ -36,11 +36,15 @@ t("F16d2.guardHelpers-option-like", () => {
   return "gen=" + (line || "none") + " real=" + real;
 });
 
-t("F15e2.crossfield-collapses-to-80tier", () => {
+// F15e2: an accepted cross-field match scores exactly like a row that matches nothing
+// (the unmatched baseline: 80 tier, minus the menu-row nudge, so 78000 for a root menu row).
+t("F15e2.crossfield-collapses-to-unmatched-baseline", () => {
   const e = { id: "x", label: "alpha", description: "beta", parent: "root", kind: "menu", order: 0 };
+  const none = { id: "y", label: "gamma", description: "delta", parent: "root", kind: "menu", order: 0 };
   const accepted = M.matchesQuery(e, "alpha beta", true);
   const score = M.searchScore({ x: e }, e, "alpha beta");
-  return accepted && score >= 80 * 1000 && score < 90 * 1000;
+  const baseline = M.searchScore({ y: none }, none, "alpha beta");
+  return accepted && !M.matchesQuery(none, "alpha beta", true) && score === baseline && "score=" + score + " baseline=" + baseline;
 });
 
 // F15f: exact-label root (2) vs nested exact label (0): root swamped by depth?

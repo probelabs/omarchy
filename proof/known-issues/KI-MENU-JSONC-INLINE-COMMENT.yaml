@@ -19,6 +19,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: docs/menu.md documents the limitation, and comments on their own line work. The missing entries are visible, but nothing in the menu or the journal says why; nothing changes the user's data.
 remediation: 'Strip a // comment wherever its opener sits outside a string, without breaking the trailing-comma-then-comment-line shape, as omacom/omarchy#13968 does (requirement SW-REQ-260928-C8W1 in the proof layer). The earlier single-pass attempt (omacom/omarchy#13512, closed) broke that shape; #13968 supersedes it.'
+notes:
+    - 'Upstream: PR #6525 (2026-08-02) reported this first. Our issue #13493 (2026-09-28) came later. Our fix PR #13512 was closed unmerged. Open fix PRs: #6525, #13681, #13803 and our #13968.'
 customer_impact: 'One // comment after content on a line, for example after an entry, makes the whole menu file unreadable, so every entry in it disappears: all of your own additions in the extension file, or the whole menu in the default file. Nothing in the menu or the journal says why. Comments on their own line work, and no data is changed.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
@@ -61,6 +63,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-inline-comment.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-ITEMS-KEY-AMBIGUITY: this one is line comments after content on the same line; those are block comments, string rewriting, array roots and the items wrapper key'
 kill_domain: parsing
 affected_file:

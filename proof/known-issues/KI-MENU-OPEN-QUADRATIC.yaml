@@ -21,6 +21,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: Menus of typical size (tens of rows) open without a visible delay. The cost grows only for very long select lists such as the keybindings menu
 remediation: Append the rows in one model update, or defer the height binding until the rebuild ends. Also add a requirement that bounds the menu-open cost; none exists today
+notes:
+    - 'Upstream: issue #10601 (2026-09-07). Fix PR #10631 was closed unmerged; it did not change the counts.'
 customer_impact: Opening a long select menu does work that grows with the square of its length, because the menu measures the whole list again after each row is added. Menus of tens of rows open without a visible delay, but the 231-row keybindings menu (Super+K) costs 27,027 row visits each time it opens. Nothing breaks; the menu only opens more slowly.
 owner: agent:claude-quattro-clean
 review_date: "2026-10-01"
@@ -47,6 +49,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-quadratic.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 dedup_armor: 'Not a duplicate of KI-MENU-FOLD-HEIGHT-EXCEEDS-AVAILABLE: that one is the folded height result being too large, this one is how often the fold is computed'
 kill_domain: resource_exhaustion
 affected_file:

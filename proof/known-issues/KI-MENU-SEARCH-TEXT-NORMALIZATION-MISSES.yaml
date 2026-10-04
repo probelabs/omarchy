@@ -18,6 +18,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: case handling is correct for every in-tree caller (all pre-lowercase); only punctuation and exact-form matching are defective
 remediation: strip edge punctuation before the whole-word compare and keep the untokenized alias/id text as an additional nameText component
+notes:
+    - 'Upstream: open PR #11962 (2026-09-15) reports and fixes only the hyphenated-alias leg.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -46,6 +48,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-search-text-normalization-misses.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 kill_domain: search_normalization
 affected_file:
     - shell/plugins/menu/MenuModel.js

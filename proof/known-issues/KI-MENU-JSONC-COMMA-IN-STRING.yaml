@@ -79,6 +79,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: note
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=pending
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
@@ -87,10 +91,9 @@ upstream_report:
     reported_at: "2026-09-25"
     reported_by: human:buger
     response:
-        status: fix_in_progress
+        status: pending
         received_at: "2026-10-04"
-        text: 'Open on 2026-10-04. omarchybot, the maintainers'' triage bot, labelled #13250 bug on 2026-09-27. Fix PRs #13305 and #13968 (ours) are open and not merged.'
-        response_url: https://github.com/omacom/omarchy/issues/13250
+        text: 'No maintainer response yet. Open fix PR(s): #13305, #13968.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

@@ -17,6 +17,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: A failed provider leaves partial rows until the next successful run; static menu entries remain available throughout
 remediation: check exitCode/exitStatus before merging (keep last good rows otherwise), set providersLoaded only on success, and re-run mergeAppRows when appLibrary appears
+notes:
+    - 'Upstream: issue #13202 (2026-09-25) reports only the apps-provider leg (Apps shows Nothing here yet). Open fix PRs: #13469 and #13642.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -45,6 +47,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-provider-partial-commit.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 kill_domain: provider_lifecycle
 affected_file:
     - shell/plugins/menu/MenuModel.js
