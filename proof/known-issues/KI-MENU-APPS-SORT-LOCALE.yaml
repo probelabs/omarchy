@@ -25,6 +25,7 @@ notes:
       Fixed by PR #14155. The Apps comparator in rebuildDisplay and AppSearch.sortedEntries now order the names with localeCompare; the id tie-break is unchanged. Spec: SW-REQ-261003-B7ZA. The reproducer is the in-suite test test/shell.d/menu-apps-order-test.sh. It fails on a85e29ab and passes with the fix. The SRT1 anchor is out of pocs/menu-qml-static.sh.
 
       Scope, checked in the real shell: under ru_RU, el_GR and zh_CN the script of the language now comes first, before the Latin names. Under en_US and fr_FR other scripts still follow the Latin names. Under C and C.UTF-8 Qt keeps UTF-16 code-unit order, the same as before the fix, so the fix changes nothing there.
+    - 'Upstream: original #14154 (ours, 2026-10-03); open fix PR #14155 (ours).'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -47,26 +48,6 @@ history:
       detail: proof/evidence/ki-menu-apps-sort-locale.yaml
     - at: "2026-09-30T21:02:49Z"
       by: human:Leonid Bugaev
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-apps-sort-locale.yaml
-    - at: "2026-10-04T19:27:12Z"
-      by: agent:claude-code
-      action: upstream-report
-      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#14154
-    - at: "2026-10-04T19:27:12Z"
-      by: agent:claude-code
-      action: upstream-response
-      detail: status=fix_in_progress
-    - at: "2026-10-04T19:27:12Z"
-      by: agent:claude-code
-      action: edit
-      detail: note
-    - at: "2026-10-04T19:33:23Z"
-      by: agent:claude-code
-      action: upstream-response
-      detail: status=pending
-    - at: "2026-10-04T19:47:21Z"
-      by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-apps-sort-locale.yaml
     - at: "2026-10-03T07:52:14Z"
@@ -105,6 +86,26 @@ history:
       by: agent:claude-pr-new-D
       action: edit
       detail: set-remediation,note
+    - at: "2026-10-04T19:27:12Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#14154
+    - at: "2026-10-04T19:27:12Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:12Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=pending
+    - at: "2026-10-04T19:47:21Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-apps-sort-locale.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
