@@ -63,30 +63,6 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T15:04:04Z"
-      by: agent:claude-baseline-pass
-      action: edit
-      detail: set-mitigation,set-remediation,set-customer-impact
-    - at: "2026-10-02T15:09:28Z"
-      by: agent:claude-baseline-pass
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T15:21:35Z"
-      by: agent:claude-baseline-pass
-      action: edit
-      detail: set-mitigation
-    - at: "2026-10-02T15:24:53Z"
-      by: agent:claude-baseline-pass
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-04T18:18:35Z"
-      by: agent:claude-quattro-proof
-      action: edit
-      detail: 'set-severity=medium,severity-justification=severity: raised from low to medium. A second summon before the first is answered leaves the earlier omarchy-menu-select caller polling its done file forever, as the reproducer (two real callers through the real Menu.qml request bodies) and the live shell show (19 of 20 callers in a burst). The action behind that caller never runs and the process stays behind. That is the consequence KI-MENU-SELECT-POLL-DEADLOCK is graded medium for, and the trigger here is commoner: pressing a menu key again while a prompt is open (omacom/omarchy#9057). The grade comes from correctness in a specific workflow; later menus still work and nothing else is lost.'
-    - at: "2026-10-04T18:20:28Z"
-      by: agent:claude-quattro-proof
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-01T11:07:23Z"
       by: agent:claude-quattro-proof
       action: edit
@@ -101,6 +77,22 @@ history:
       detail: append-note
     - at: "2026-10-01T11:09:01Z"
       by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T15:04:04Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-mitigation,set-remediation,set-customer-impact
+    - at: "2026-10-02T15:09:28Z"
+      by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T15:21:35Z"
+      by: agent:claude-baseline-pass
+      action: edit
+      detail: set-mitigation
+    - at: "2026-10-02T15:24:53Z"
+      by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-02T17:01:02Z"
@@ -192,6 +184,14 @@ history:
       action: edit
       detail: append-note
     - at: "2026-10-04T16:07:28Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-04T18:18:35Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: 'set-severity=medium,severity-justification=severity: raised from low to medium. A second summon before the first is answered leaves the earlier omarchy-menu-select caller polling its done file forever, as the reproducer (two real callers through the real Menu.qml request bodies) and the live shell show (19 of 20 callers in a burst). The action behind that caller never runs and the process stays behind. That is the consequence KI-MENU-SELECT-POLL-DEADLOCK is graded medium for, and the trigger here is commoner: pressing a menu key again while a prompt is open (omacom/omarchy#9057). The grade comes from correctness in a specific workflow; later menus still work and nothing else is lost.'
+    - at: "2026-10-04T18:20:28Z"
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
