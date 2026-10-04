@@ -106,6 +106,10 @@ history:
       by: agent:claude-pr-new-D
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-04T20:54:20Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
