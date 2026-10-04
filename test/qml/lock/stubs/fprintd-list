@@ -1,8 +1,32 @@
 #!/bin/bash
-# fprintd-list stand-in for Service.qml's fingerprint probe: answers "no"
-# until the driver flips the mode file to yes, so the fingerprint PAM flow
-# only starts when the harness schedules it.
-if [[ $(cat "$MCDC_STUB_STATE/fprintd" 2>/dev/null) == yes ]]; then
-  echo "fingerprints enrolled on device"
-fi
+# fprintd-list stand-in for Service.qml's enrollment probe. Service.qml runs
+# `LC_ALL=C fprintd-list "$USER"` and classifies the raw answer, so each mode
+# prints what the real tool prints for that case:
+#   no (default) - the per-device "has no fingers enrolled" line
+#   yes          - an enrolled print listed as a " - #N:" row
+#   both         - two readers: one lists a print, the other has none
+#   unknown      - fprintd cannot be reached (a D-Bus error, exit 1)
+#   empty        - no output at all
+# The driver flips the mode file per step; every call is counted so a step
+# can prove that no probe ran.
+echo hit >> "$MCDC_STUB_STATE/fprintd-hits"
+user=${1:-$USER}
+case $(cat "$MCDC_STUB_STATE/fprintd" 2>/dev/null) in
+  yes)
+    printf "Fingerprints for user %s on Fake Reader (press):\n - #0: right-index-finger\n" "$user"
+    ;;
+  both)
+    printf "Fingerprints for user %s on Fake Reader (press):\n - #0: right-index-finger\n" "$user"
+    printf "User %s has no fingers enrolled for Second Reader.\n" "$user"
+    ;;
+  unknown)
+    echo "ListEnrolledFingers failed: GDBus.Error:org.freedesktop.DBus.Error.NoReply: Timeout was reached"
+    exit 1
+    ;;
+  empty)
+    ;;
+  *)
+    printf "User %s has no fingers enrolled for Fake Reader.\n" "$user"
+    ;;
+esac
 exit 0
