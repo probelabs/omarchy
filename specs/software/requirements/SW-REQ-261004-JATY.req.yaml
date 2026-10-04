@@ -1,0 +1,110 @@
+id: SW-REQ-261004-JATY
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: the emoji_picker shall always satisfy (emoji_listed <=> (emoji_present & query_in_keywords & emoji_within_limit))
+description: |-
+    The emoji picker's search lists an emoji exactly when three things hold. The entry has an emoji. Its keywords contain the search text. The list still has room for it.
+
+    The search trims the search text and ignores case. An empty search text matches every emoji. Text that is not a JSON array gives an empty list.
+
+    The list has room while fewer than the limit of matching emojis come before the entry in the picker's order. The limit is 1000 unless the caller gives a number. A limit of 0 or less lists nothing. This requirement does not state the order of the list.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: |-
+    shell/plugins/emojis/EmojiSearch.js holds the search that the emoji picker (Emojis.qml) runs on every keystroke. parseEmojis reads emojis.json. filterEmojis builds the list with normalizedQuery and keywordText.
+
+    The picker selects the first entry of the list, and Enter hands it to bin/omarchy-menu-emoji-insert, a menu action script (SYS-REQ-260922-6642). This requirement states which emojis the list holds, as the upstream code behaves. It does not state the order. Upstream keeps the order of emojis.json, so a match inside an unrelated word can come first.
+tags: []
+variables:
+    - emoji_present
+    - query_in_keywords
+    - emoji_within_limit
+    - emoji_listed
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+    reviewed_at: "2026-10-04T07:53:01.601209Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_fingerprint: sha256:dfd668da89128531d915759a760142047068fceeb88beafedd493a3fb2de1cc8
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:4013ed7645af1c641e80353e545d4c42
+            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:4013ed7645af1c641e80353e545d4c42
+            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:4013ed7645af1c641e80353e545d4c42
+            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:4013ed7645af1c641e80353e545d4c42
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
+    review_history:
+        - reviewed_at: "2026-10-04T07:53:01.601209Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Baseline requirement for the emoji picker''s search now that shell/plugins/emojis/EmojiSearch.js is in the verification scope. All four EmojiSearch.js functions build the list: parseEmojis reads emojis.json (an array or an empty list); filterEmojis skips an entry with no emoji, lists one whose keywords contain the search text and stops at the limit; normalizedQuery trims and lowercases the search text and keywordText lowercases the keywords for it. The order is outside this requirement. Satisfies SYS-REQ-260922-6642: Enter hands the first entry of this list to bin/omarchy-menu-emoji-insert, a menu action script. Witnessed by test/shell.d/menu-emoji-picker-test.sh; spec conformance REVIEW-261004-TD57.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/emojis/EmojiSearch.js:1
+            - shell/plugins/emojis/EmojiSearch.js:11
+            - shell/plugins/emojis/EmojiSearch.js:16
+            - shell/plugins/emojis/EmojiSearch.js:21
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-emoji-picker-test.sh:33
+            - test/shell.d/menu-emoji-picker-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-quattro-proof
+        reviewed_at: "2026-10-04T07:53:01Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-quattro-proof
+    created_at: "2026-10-04T07:48:56Z"
+    last_modified_by: agent:claude-quattro-proof
+    last_modified_at: "2026-10-04T07:53:01Z"
+obligation_suppressions:
+    - id: error_handling
+      reason: 'SYS-REQ-260922-6642 asks action scripts for their side effect or a loud, exit-coded refusal. This requirement states which emojis the picker lists; the search runs no script and has no refusal to make: when emojis.json does not parse, parseEmojis gives an empty list and the picker shows no emojis, silently. The loud refusal belongs to bin/omarchy-menu-emoji-insert.'
+      suppressed_by: agent:claude-quattro-proof
+      suppressed_at: "2026-10-04T07:52:37Z"
+hazard_review:
+    reviewed_at: "2026-10-04T07:52:35Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+            - empty_input
+          not_applicable:
+            - concurrency_scale
+            - input_domain
+          rationale: 'Worst case: an emoji the search should list is missing, or one it should not list shows, and Enter inserts the wrong one. boundary: a list that reaches the limit stops there; a limit of 0 or less lists nothing; a missing or non-numeric limit counts as 1000 (witnessed). edge_case: an entry with no emoji or a missing entry is skipped even when its keywords match; capitals and spaces around the search text (witnessed). empty_input: an empty search text lists every emoji up to the limit (witnessed). input_domain is not applicable: the search text is plain typed text that filterEmojis only trims, lowercases and looks for. concurrency_scale is not applicable: the picker runs filterEmojis synchronously on each key over one fixed list.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: the same search text, emojis and limit give the same list, since filterEmojis reads nothing else. totality: every search text and limit give a list, maybe empty, and text that is not a JSON array gives an empty list.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Array walks and substring checks on strings that are already decoded; no memory, numeric or encoding transform beyond lowercasing.
+        - category: domain
+          disposition: not_applicable
+          rationale: Which emojis the picker window lists only. No trust boundary, privilege, network, crypto or process surface; the insert helper is outside this requirement.
+lifecycle:
+    change_history:
+        - date: "2026-10-04T07:52:45Z"
+          from: draft
+          to: review
+          reason: Baseline requirement for the emoji picker's search (shell/plugins/emojis/EmojiSearch.js entered the verification scope as part of the menu component); spec conformance REVIEW-261004-TD57; witnesses in test/shell.d/menu-emoji-picker-test.sh
+          changed_by: agent:claude-quattro-proof

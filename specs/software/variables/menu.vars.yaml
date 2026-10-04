@@ -492,6 +492,22 @@ variables:
       type: bool
       direction: input
       description: Every term of the query matches the entry's name, id, generic name, comment or keywords, or a term of five characters or fewer matches its acronym. An empty query matches every entry.
+    - name: emoji_listed
+      type: bool
+      direction: output
+      description: The emoji is in the list the emoji picker's search returns.
+    - name: emoji_present
+      type: bool
+      direction: input
+      description: The entry is an object with a non-empty emoji (its e field).
+    - name: query_in_keywords
+      type: bool
+      direction: input
+      description: The entry's keywords (its k field), lowercased, contain the search text after trimming and lowercasing. An empty search text matches every entry.
+    - name: emoji_within_limit
+      type: bool
+      direction: input
+      description: Fewer than the limit of matching emojis come before the entry in the picker's order. The limit is 1000 when the caller gives none or a value that is not a number; a limit of 0 or less leaves no room.
 independence:
     declared: true
     reason: 'All 50 formalized guarantees constrain pairwise-disjoint output variables (verified 2026-09-27: 0 of 1225 pairs share a consequent variable, matching the engine''s connected-component pruning). Cross-requirement conflicts over outputs are structurally impossible; antecedent-only overlap (shared inputs) cannot create a consistency conflict.'

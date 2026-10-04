@@ -3,8 +3,10 @@ component: menu
 paths:
   - shell/plugins/menu/**
   - shell/services/AppSearch.js
+  - shell/plugins/emojis/EmojiSearch.js
   - bin/omarchy-menu*
   - test/shell.d/menu-*
+  - test/shell.d/emojis-test.sh
 owner: omarchy proof layer maintainers (component "menu" in specs/software)
 updated: 2026-10-04
 rules:
@@ -19,7 +21,7 @@ sources:
     (2026-10) that the proof review had missed. Its sort test assumed one locale, and names equal under the sort key
     came out in a different order on two paths."
 ---
-# Review guidance: the menu component (menus, the Apps list, app search)
+# Review guidance: the menu component (menus, the Apps list, app search, emoji search)
 
 1. **RG-MENU-1. Host-dependent tests must pin the host.** A test whose result depends on settings of the machine
    that runs it (locale and collation, timezone, environment variables, the runtime's build options such as ICU

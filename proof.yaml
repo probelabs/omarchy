@@ -64,6 +64,13 @@ project:
             # sorts (AppSearch.sortedEntries).
             - bin/omarchy-theme-remov*
             - shell/services/AppSearch.js
+            # The emoji picker's search (the menu's Trigger > Emoji row opens
+            # the picker, and bin/omarchy-menu-emoji-insert inserts its pick),
+            # part of the menu component (SW-REQ-261004-JATY). The picker's
+            # QML and its emoji data stay out. Its upstream test runs in
+            # plugins-shell.
+            - shell/plugins/emojis/EmojiSearch.js
+            - test/shell.d/emojis-test.sh
             - test/shell.d/*menu*-test.sh
             - test/shell.d/keybindings-menu-test.sh
             # Node suites (menu-node, menu-reports): in scope so their
@@ -107,6 +114,7 @@ project:
                 - default/omarchy/omarchy-menu.jsonc
                 - bin/omarchy-theme-remov*
                 - shell/services/AppSearch.js
+                - shell/plugins/emojis/EmojiSearch.js
             production_exclude:
                 - '**/*_test.go'
                 - '**/testdata/**'

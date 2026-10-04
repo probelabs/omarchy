@@ -1,0 +1,18 @@
+id: REVIEW-261004-TD57
+kind: spec_conformance
+reviewer: agent:claude-quattro-proof
+reviewed_at: "2026-10-04T07:51:48Z"
+subject: SW-REQ-261004-JATY
+decision: approved
+comment: 'Read shell/plugins/emojis/EmojiSearch.js at upstream 393a43d4. filterEmojis walks the emojis once. A limit that is missing, null or not a number becomes 1000, a negative one becomes 0, and a limit of 0 returns an empty list at once. In the loop it skips an entry that is missing or has no emoji (its e field) before anything else. It then pushes the entry when the search text is empty or the lowercased keywords contain it; normalizedQuery trims and lowercases the search text and keywordText lowercases the k field. After each push it stops once the list holds the limit. So emoji_listed holds exactly when emoji_present, query_in_keywords and emoji_within_limit hold, where the room is counted in the order the loop sees the emojis. The four violation rows need the skip, the match test or the stop removed; they are dispositioned defensive. parseEmojis returns the parsed value only when it is an array and an empty list otherwise. The requirement leaves the order out: upstream lists matches in the order of emojis.json. Witnesses in test/shell.d/menu-emoji-picker-test.sh: matching emojis listed for a word, a padded capitalised and an empty search text and with the default limit; non-matching, emoji-less and over-limit entries not listed; parseEmojis on an array, an object and bad text.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:2@parseEmojis
+    - shell/plugins/emojis/EmojiSearch.js:12@normalizedQuery
+    - shell/plugins/emojis/EmojiSearch.js:17@keywordText
+    - shell/plugins/emojis/EmojiSearch.js:22@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:28
+    - shell/plugins/emojis/EmojiSearch.js:34
+    - shell/plugins/emojis/EmojiSearch.js:35
+    - shell/plugins/emojis/EmojiSearch.js:37
+    - test/shell.d/menu-emoji-picker-test.sh:33
+    - test/shell.d/menu-emoji-picker-test.sh:57

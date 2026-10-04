@@ -1,3 +1,4 @@
+// Implements: SW-REQ-261004-JATY
 function parseEmojis(raw) {
   try {
     var data = JSON.parse(String(raw || ""))
@@ -7,14 +8,17 @@ function parseEmojis(raw) {
   }
 }
 
+// Implements: SW-REQ-261004-JATY
 function normalizedQuery(query) {
   return String(query || "").trim().toLowerCase()
 }
 
+// Implements: SW-REQ-261004-JATY
 function keywordText(item) {
   return String((item && item.k) || "").toLowerCase()
 }
 
+// Implements: SW-REQ-261004-JATY
 function filterEmojis(emojis, query, limit) {
   var values = Array.isArray(emojis) ? emojis : []
   var needle = normalizedQuery(query)
