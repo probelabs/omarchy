@@ -57,6 +57,10 @@ history:
       by: agent:claude-code
       action: upstream-response
       detail: status=acknowledged
+    - at: "2026-10-04T20:23:35Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
@@ -69,11 +73,6 @@ upstream_report:
         received_at: "2026-09-28"
         text: 'Another open pull request is the better fix for #8580: #13129. [...] Waiting on the maintainer to choose between this and #13129.'
         response_url: https://github.com/omacom/omarchy/pull/8581#issuecomment-5877597870
-submission_validation:
-    natspec_review: The handler comment says a returning panel must give up the blank state, or the wallpaper stays frozen until the next keypress. No comment says the idle blank should resume afterwards.
-    commit_origin: 1e7bb6655 "Recover a session lock stranded by a dead shell (#6692)" (2026-08-11) added onScreensChanged with no blank re-arm. 41b6cc696 (#6792, 2026-09-06) added the displaysBlank = false clear.
-    intended_path_verified: true
-    master_status: 'identical: onScreensChanged is unchanged on upstream quattro 035ce29f. PR omacom/omarchy#8581 and #13129 are open.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -99,6 +98,11 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral power defect: the trigger is an output hotplug in the user''s own session; there is no ingress access-control or input-validation layer to traverse'
         untrusted_attacker: 'local-behavioral defect: nothing is gained by any party, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: The handler comment says a returning panel must give up the blank state, or the wallpaper stays frozen until the next keypress. No comment says the idle blank should resume afterwards.
+    commit_origin: 1e7bb6655 "Recover a session lock stranded by a dead shell (#6692)" (2026-08-11) added onScreensChanged with no blank re-arm. 41b6cc696 (#6792, 2026-09-06) added the displaysBlank = false clear.
+    intended_path_verified: true
+    master_status: 'identical: onScreensChanged is unchanged on upstream quattro 035ce29f. PR omacom/omarchy#8581 and #13129 are open.'
 kill_domain: state_loss
 do_not_refile_as: blank never engages (the initial idle path works; only the post-screens-change re-arm is missing)
 source_claim: CRS-260930-TTVK/C04

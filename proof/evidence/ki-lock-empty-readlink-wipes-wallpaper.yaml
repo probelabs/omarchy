@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-ttvk-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T20:23:30Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-ttvk-qml-static.sh
       freshness_hashes:
-        pocs/crs-260930-ttvk-qml-static.sh: sha256:f85f3e1b6ee61ac6e0dfeca87061137ef28cf6269337570b662577123be33bb0
-        proof/known-issues/KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER.yaml: ki-content-v1:sha256:2965a5f28ce908eda60664ed3071851461ed492d36c62122517b5076e0d0665f
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:5783ec3e89ad4bc3915d7b36d71c088d39464734c11c26b31c19eb56440df265
+        proof/known-issues/KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER.yaml: ki-content-v1:sha256:d7b75f53e71f8272c0d4123e698cbd810846b84ece9f02e6bcc6ed285d8fdbae
       known_issues:
         - KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER
       config:

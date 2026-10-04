@@ -49,6 +49,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-description,append-note
+    - at: "2026-10-04T20:23:35Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-stale-poster-inplace-overwrite.yaml
 kill_domain: stale_state
 do_not_refile_as: poster never regenerates on wallpaper CHANGE (a path change takes the mismatch arm and re-runs; only the same-path overwrite is dropped)
 source_claim: CRS-260930-TTVK/C06

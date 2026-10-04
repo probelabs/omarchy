@@ -71,6 +71,10 @@ history:
       by: agent:claude-code
       action: upstream-response
       detail: status=acknowledged
+    - at: "2026-10-04T20:23:35Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
@@ -83,11 +87,6 @@ upstream_report:
         received_at: "2026-09-06"
         text: Your reading of that branch is right in itself — it does accept any locked -> false as an unlock with no "was this authenticated?" flag, and that is a genuine fail-open worth fixing regardless.
         response_url: https://github.com/omacom/omarchy/issues/10459#issuecomment-5559317834
-submission_validation:
-    natspec_review: The branch carries no upstream comment. finishUnlock (Service.qml:239-252) clears lockRequested before locked=false, so only an external drop reaches the branch. No comment or doc says that such a drop should count as an unlock.
-    commit_origin: 7ea4e1ab0 "Switch hyprlock to QS" (2026-05-19) added the !locked && lockRequested branch. 8f5336e0d and eb3cb5225 (2026-06-22) added the pending-lock cleanup. None of them re-locks.
-    intended_path_verified: true
-    master_status: 'identical: the branch is unchanged on upstream quattro 035ce29f. PR omacom/omarchy#11810 tried a re-lock and closed unmerged.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false
@@ -113,7 +112,12 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         quantitative_impact: 'impact is a boolean lock-state violation, not a measurable quantity: C01 pins sessionLock.locked=true while passwordPamConfigured=false, C08 pins the request dropped with runWake fired and no re-lock'
         reachability_verified: 'no party can trigger the compositor-side lock loss on demand: upstream triage found no Hyprland 0.56.2 route that ends a held lock, so there is no attacker entry point to drive end to end; the trigger is a compositor or quickshell event'
-        untrusted_attacker: 'the trigger is a compositor or quickshell event, not an attacker action; a person at the machine gains only after a loss that nobody can cause on demand (cve_surface unlikely)'
+        untrusted_attacker: the trigger is a compositor or quickshell event, not an attacker action; a person at the machine gains only after a loss that nobody can cause on demand (cve_surface unlikely)
+submission_validation:
+    natspec_review: The branch carries no upstream comment. finishUnlock (Service.qml:239-252) clears lockRequested before locked=false, so only an external drop reaches the branch. No comment or doc says that such a drop should count as an unlock.
+    commit_origin: 7ea4e1ab0 "Switch hyprlock to QS" (2026-05-19) added the !locked && lockRequested branch. 8f5336e0d and eb3cb5225 (2026-06-22) added the pending-lock cleanup. None of them re-locks.
+    intended_path_verified: true
+    master_status: 'identical: the branch is unchanged on upstream quattro 035ce29f. PR omacom/omarchy#11810 tried a re-lock and closed unmerged.'
 kill_domain: fail_open
 do_not_refile_as: normal unlock double-handled (finishUnlock pre-clears lockRequested, so the user-driven path never reaches this branch)
 source_claim: CRS-260930-TTVK/C08

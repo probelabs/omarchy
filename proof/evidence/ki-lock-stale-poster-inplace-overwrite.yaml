@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-ttvk-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T20:23:36Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-ttvk-qml-static.sh
       freshness_hashes:
-        pocs/crs-260930-ttvk-qml-static.sh: sha256:f85f3e1b6ee61ac6e0dfeca87061137ef28cf6269337570b662577123be33bb0
-        proof/known-issues/KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE.yaml: ki-content-v1:sha256:8cbec354dd33407470b14687bce6d096fdba67395523968e3c83ce1ac6733b59
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:5783ec3e89ad4bc3915d7b36d71c088d39464734c11c26b31c19eb56440df265
+        proof/known-issues/KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE.yaml: ki-content-v1:sha256:a29e016e69986a1a84778abc98c7d4dd515df312f680d94aaee86806c82e8177
       known_issues:
         - KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE
       config:

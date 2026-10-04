@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-ttvk-c04.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T20:23:36Z"
       input_set:
         - 'Reproducer contract changed on 2026-10-04: the command is now ./pocs/crs-260930-ttvk-c04.sh, a runtime GREEN tripwire that runs the live onScreensChanged, runWake and armBlankTimer in node. Exit 0 = defect present (known_issue_reproduced), exit 1 = fixed, exit 2 = control failed. It exits 0 on upstream quattro 035ce29f and 393a43d4. Re-stamp with: proof evidence capture KI-LOCK-SCREENS-CHANGE-BLANK-LOST --green-tripwire.'
         - pocs/crs-260930-ttvk-c04.sh
       freshness_hashes:
         pocs/crs-260930-ttvk-c04.sh: sha256:bdffa6e3b71e5c0d475529f30cc7144f85afc35f48bb44a308967f53f748ffc4
-        proof/known-issues/KI-LOCK-SCREENS-CHANGE-BLANK-LOST.yaml: ki-content-v1:sha256:949277eee1160f2dd02606e9b209a2ddca33456d07e09f774005105e08f6f54f
+        proof/known-issues/KI-LOCK-SCREENS-CHANGE-BLANK-LOST.yaml: ki-content-v1:sha256:73c573694a7b4d505416c4af7b6342ba941dc4baf9ac6af1ca6e63bc6227e6c3
       known_issues:
         - KI-LOCK-SCREENS-CHANGE-BLANK-LOST
       config:

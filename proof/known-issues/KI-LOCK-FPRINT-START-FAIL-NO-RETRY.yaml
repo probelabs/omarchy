@@ -52,6 +52,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-description,set-reproducer-command,set-mitigation,set-remediation,append-note,set-status=fixed
+    - at: "2026-10-04T20:23:29Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-fprint-start-fail-no-retry.yaml
 kill_domain: error_propagation
 do_not_refile_as: fingerprint fails after a wrong print (that path re-arms via handleFingerprintFinished; only a failed START is dead)
 source_claim: CRS-260930-TTVK/C07

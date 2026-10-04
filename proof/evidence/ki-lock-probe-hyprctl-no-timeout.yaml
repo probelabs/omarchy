@@ -5,15 +5,14 @@ results:
       command: ./pocs/eh0k-hyprctl-monitors-no-timeout.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T21:59:34Z"
-      revision: 1e09445217d017c8e87679b30d2034b9825de831
+      executed_at: "2026-10-04T20:23:31Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT` from the KnownIssue''s reproducer command: ./pocs/eh0k-hyprctl-monitors-no-timeout.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: bin/omarchy-hyprland-session-locked line 17 `monitors=$(hyprctl -j monitors 2>/dev/null) || exit 2` becomes `monitors=$(timeout 2 hyprctl -j monitors 2>/dev/null) || exit 2`: the stall arm then returns exit 2 (undetermined) after about 2s instead of being killed by the external 5s watchdog, the rc=124 assertion in pocs/eh0k-hyprctl-monitors-no-timeout.sh fails, and the tripwire flips red. The two control arms (exit 0 locked, exit 1 unlocked) are unaffected.'
         - pocs/eh0k-hyprctl-monitors-no-timeout.sh
       freshness_hashes:
         pocs/eh0k-hyprctl-monitors-no-timeout.sh: sha256:1232b67243408b98074e89f2d95067351b64d2ed057dab0d9aac8e6f4fe48001
-        proof/known-issues/KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT.yaml: ki-content-v1:sha256:c2d8cfed7b9883f5c371a0fa143c7dcd0f2d3fbeff42c7441cee5930a867a2e6
+        proof/known-issues/KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT.yaml: ki-content-v1:sha256:7ac926908ec715668e60513791a49380eae305b6dc42cec38282e2fcd70ade22
       known_issues:
         - KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT
       config:

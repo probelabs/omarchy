@@ -7,14 +7,14 @@ results:
       command: ./pocs/apply-lock-pam-torn-write.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T21:46:18Z"
+      executed_at: "2026-10-04T20:23:30Z"
       input_set:
         - 'Captured by `proof evidence capture KI-APPLY-LOCK-PAM-NONATOMIC-WRITE` from the KnownIssue''s reproducer command: ./pocs/apply-lock-pam-torn-write.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: In bin/omarchy-apply-lock, each `as_root tee /etc/pam.d/<stack> >/dev/null <<''EOF''` becomes `as_root tee /etc/pam.d/<stack>.tmp >/dev/null <<''EOF''`, followed after the heredoc by `as_root mv -f /etc/pam.d/<stack>.tmp /etc/pam.d/<stack>`, for both omarchy-lock-password and omarchy-lock-fingerprint. The interrupted write then tears only the temp file, the live path keeps the previous complete stack, the "torn prefix" and "previous stack gone" assertions in pocs/apply-lock-pam-torn-write.sh fail on both arms, and the tripwire flips red. The control arm is unaffected.'
         - pocs/apply-lock-pam-torn-write.sh
       freshness_hashes:
-        pocs/apply-lock-pam-torn-write.sh: sha256:db1c3a7374fe552f4f85363f92cc5936f79c3624b59becd2d10d60aaab367ea6
-        proof/known-issues/KI-APPLY-LOCK-PAM-NONATOMIC-WRITE.yaml: ki-content-v1:sha256:d1c75cf8bdfbe89ddc60d477b2546a219df00bcab3d6c44f87939cc51bb99194
+        pocs/apply-lock-pam-torn-write.sh: sha256:f8efbe71f678269aa66f868ef5c118021b3be81835bcb849b114c5ce09bf745f
+        proof/known-issues/KI-APPLY-LOCK-PAM-NONATOMIC-WRITE.yaml: ki-content-v1:sha256:823a8b79e3134bcb2639b9a7cda7d4950a9f3e8a4e4bd2b38c8d4f9dbd94c13c
       known_issues:
         - KI-APPLY-LOCK-PAM-NONATOMIC-WRITE
       config:

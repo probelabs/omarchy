@@ -65,6 +65,10 @@ history:
       by: agent:claude-code
       action: upstream-recheck
       detail: status=fixed
+    - at: "2026-10-04T20:23:29Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker

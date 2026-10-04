@@ -49,6 +49,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-description,append-note
+    - at: "2026-10-04T20:23:29Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
 kill_domain: state_loss
 do_not_refile_as: wallpaper never refreshes (the success path works; the failure path destroys prior state instead of keeping it)
 source_claim: CRS-260930-TTVK/C05

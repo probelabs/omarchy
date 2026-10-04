@@ -51,6 +51,10 @@ history:
       by: agent:claude-code
       action: upstream-response
       detail: status=acknowledged
+    - at: "2026-10-04T20:23:28Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-260930-2fbe.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
@@ -63,11 +67,6 @@ upstream_report:
         received_at: "2026-10-01"
         text: Reviewed at 3fa17d4850dd3dae4bdf038ade03b90c67ef1596. The bug is real, and this fixes it.
         response_url: https://github.com/omacom/omarchy/pull/9429#issuecomment-5937550640
-submission_validation:
-    natspec_review: bin/omarchy-system-lock has only its summary header ("Lock the computer and turn off the display"). No comment covers the exit status. The lock IPC answers ok, missing-pam or failed (Service.qml:923-929), and the script discards the answer.
-    commit_origin: 7ea4e1ab0 "Switch hyprlock to QS" (2026-05-19) introduced `omarchy-shell lock lock >/dev/null` with no exit check.
-    intended_path_verified: true
-    master_status: 'identical: bin/omarchy-system-lock is byte-identical on upstream quattro 393a43d4 and 035ce29f. PR omacom/omarchy#9429 fixes it and is open.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -93,4 +92,9 @@ poc_quality:
         attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
         reachability_verified: 'no ingress access-control or trust boundary to traverse: the surface is the user own session lock CLI path inside their own session'
         untrusted_attacker: 'local visibility/reliability defect: the trigger is a refused engagement or a missing binary, not an adversary; no actor model applies'
+submission_validation:
+    natspec_review: bin/omarchy-system-lock has only its summary header ("Lock the computer and turn off the display"). No comment covers the exit status. The lock IPC answers ok, missing-pam or failed (Service.qml:923-929), and the script discards the answer.
+    commit_origin: 7ea4e1ab0 "Switch hyprlock to QS" (2026-05-19) introduced `omarchy-shell lock lock >/dev/null` with no exit check.
+    intended_path_verified: true
+    master_status: 'identical: bin/omarchy-system-lock is byte-identical on upstream quattro 393a43d4 and 035ce29f. PR omacom/omarchy#9429 fixes it and is open.'
 affected_file: bin/omarchy-system-lock

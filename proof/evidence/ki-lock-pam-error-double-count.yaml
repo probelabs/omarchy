@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-ttvk-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T20:23:30Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-PAM-ERROR-DOUBLE-COUNT` from the KnownIssue''s reproducer command: ./pocs/crs-260930-ttvk-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-ttvk-qml-static.sh
       freshness_hashes:
-        pocs/crs-260930-ttvk-qml-static.sh: sha256:f85f3e1b6ee61ac6e0dfeca87061137ef28cf6269337570b662577123be33bb0
-        proof/known-issues/KI-LOCK-PAM-ERROR-DOUBLE-COUNT.yaml: ki-content-v1:sha256:11177f60f4fb3c011c1b8b3fe48d1f6576dd99341f49609f3dc019b5010e8716
+        pocs/crs-260930-ttvk-qml-static.sh: sha256:5783ec3e89ad4bc3915d7b36d71c088d39464734c11c26b31c19eb56440df265
+        proof/known-issues/KI-LOCK-PAM-ERROR-DOUBLE-COUNT.yaml: ki-content-v1:sha256:6451497b205aec03b48e9c0f761af08c52a9c2e26da8e7595da63fd5d10b530e
       known_issues:
         - KI-LOCK-PAM-ERROR-DOUBLE-COUNT
       config:
