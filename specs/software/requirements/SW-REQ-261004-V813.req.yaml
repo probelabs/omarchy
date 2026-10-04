@@ -94,10 +94,16 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Reads the session user's own enrollment through the packaged probe; no trust boundary is crossed.
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-10-04T19:07:04Z"
           from: draft
           to: review
           reason: 'Baseline requirement for upstream behaviour merged in quattro 035ce29f (#7158 879d6583 / #7806 00cee6d3); authored by agent:claude-code under the owner''s delegation'
+          changed_by: agent:claude-code
+        - date: "2026-10-04T20:36:04Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-261004-D4AD=present | tests_pass:test_status=passing
           changed_by: agent:claude-code

@@ -83,7 +83,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: 'Local exec of a packaged binary under a restricted PATH; name_resolution_pre_chroot evaluated and not applicable: there is no chroot or sandbox entry, and the absolute path leaves nothing to resolution.'
-verification_state: failing
+verification_state: not_started
 lifecycle:
     change_history:
         - date: "2026-09-12T23:26:25Z"
@@ -96,3 +96,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-10=present | known_issue:KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-04T20:36:04Z"
+          from: verification=failing
+          to: verification=not_started
+          reason: auto-derived [failing→not_started] signals=2; review_record:REVIEW-10=present | known_issue:KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN=none
+          changed_by: agent:claude-code
