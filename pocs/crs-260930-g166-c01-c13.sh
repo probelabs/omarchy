@@ -1,75 +1,121 @@
 #!/bin/bash
-# PoC for claims CRS-260930-G166/C01 + CRS-260930-G166/C13 (spec SW-REQ-260912-S154/Y0WT family)
-# Mechanism: the fingerprint gate (bin/omarchy-apply-lock:47-48) greps the
-# fprintd-list output for the substring "finger" with stderr discarded and no
-# pipefail. Real fprintd empty-enrollment text ("User alice has no fingers
-# enrolled ...") contains "fingers" -> the gate takes the ENROLLED branch and
-# installs pam_fprintd for a user with zero prints; a daemon error banner
-# ("Fingerprints" then non-zero exit) also passes because the pipeline status
-# is grep's.
-# Both-ways: evals the condition expression extracted VERBATIM from the live
-# script (so a fix to line 48 changes what the PoC runs). The stub prints the
-# real empty-enrollment text: exit 0 of the condition = defect present. A fix
-# that requires actual enrollment (or probe success) makes the condition exit
-# non-zero and this PoC exits 1.
+# Regression reproducer for claims CRS-260930-G166/C01 + CRS-260930-G166/C13
+# (KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN; specs SW-REQ-260912-S154, SW-REQ-260912-Y0WT,
+# SW-REQ-261004-SP65).
+#
+# Defect: the fingerprint gate in bin/omarchy-apply-lock decided "enrolled" with
+# `fprintd-list "$target_user" 2>/dev/null | grep -qi finger`. fprintd's
+# empty-enrollment text ("User alice has no fingers enrolled for ...") contains
+# "fingers", and a failed probe that printed a "Fingerprints ..." banner before
+# exiting non-zero also passed, because the pipeline status was grep's. Both
+# cases installed pam_fprintd for an account with no usable print.
+# Upstream omacom/omarchy#7158 (879d6583d, merged 2026-10-04) replaced the gate:
+# it installs only on an enrolled "- #N:" row, removes the stack on an explicit
+# empty enrollment, and keeps the existing configuration when the probe fails.
+#
+# Method: runs a scratch copy of the REAL helper end to end, unprivileged. The
+# copy differs from bin/omarchy-apply-lock only by retargeted absolute paths
+# (/etc/pam.d/, /usr/bin/fprintd-list, /usr/lib/systemd/system-sleep/,
+# /etc/systemd/system/), and a reverse substitution must reproduce the product
+# file byte for byte. PATH stubs: sudo (runs the command unprivileged, drops
+# install's -o/-g root, records systemctl), omarchy-shell (no running shell).
+# The fprintd-list stub prints the real daemon output shapes. Each arm starts
+# with no fingerprint stack, as on a fresh install.
+#
+# RED REPRODUCER (asserts the correct behavior): exit 0 = neither fail-open
+# input installs the fingerprint stack (fix present); exit 1 = a zero-enrollment
+# or failed probe installed it (defect present); exit 2 = the enrolled control
+# did not install the stack, so the harness cannot tell a fix from a broken run.
 set -u
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
+HELPER="$REPO/bin/omarchy-apply-lock"
+[[ -f $HELPER ]] || { echo "bin/omarchy-apply-lock missing"; exit 2; }
+(( EUID != 0 )) || { echo "run unprivileged: as root the helper bypasses sudo and resets PATH"; exit 2; }
+TMP="$(mktemp -d)"; TMP="$(cd "$TMP" && pwd -P)"
+cleanup() { [[ -n ${TMP:-} && -d $TMP && $(basename "$TMP") == tmp.* ]] && find "$TMP" -depth -delete 2>/dev/null; }
+trap cleanup EXIT
+mkdir -p "$TMP/bin" "$TMP/pam.d" "$TMP/sleep" "$TMP/units"
 
-# Stub standing in for /usr/bin/fprintd-list (the PoC rewrites the absolute
-# path inside the extracted expression, nothing else).
-cat > "$TMP/fprintd-list" <<'EOF'
+COPY="$TMP/omarchy-apply-lock"
+sed -e "s|/etc/pam\.d/|$TMP/pam.d/|g" -e "s|/usr/bin/fprintd-list|$TMP/fprintd-list|g" \
+    -e "s|/usr/lib/systemd/system-sleep/|$TMP/sleep/|g" -e "s|/etc/systemd/system/|$TMP/units/|g" "$HELPER" >"$COPY"
+chmod +x "$COPY"
+if sed -e "s|$TMP/pam.d/|/etc/pam.d/|g" -e "s|$TMP/fprintd-list|/usr/bin/fprintd-list|g" \
+       -e "s|$TMP/sleep/|/usr/lib/systemd/system-sleep/|g" -e "s|$TMP/units/|/etc/systemd/system/|g" "$COPY" | cmp -s - "$HELPER"; then
+  echo "ok: scratch copy differs from bin/omarchy-apply-lock only by the retargeted absolute paths"
+else
+  echo "HARNESS ERROR: retargeted copy differs from the product file beyond the path substitutions"; exit 2
+fi
+
+cat >"$TMP/bin/sudo" <<EOF
 #!/bin/bash
+echo "sudo \$*" >>"$TMP/calls.log"
+case \$1 in
+  systemctl) exit 0 ;;                       # no system manager in the harness
+  install)                                   # unprivileged: drop the root owner/group
+    args=(); skip=0
+    for a in "\${@:2}"; do
+      if (( skip )); then skip=0; continue; fi
+      case \$a in -o|-g) skip=1 ;; *) args+=("\$a") ;; esac
+    done
+    exec install "\${args[@]}" ;;
+esac
+exec "\$@"
+EOF
+cat >"$TMP/fprintd-list" <<'EOF'
+#!/bin/bash
+echo "Using device /net/reactivated/Fprint/Device/0"
 case "${FPRINTD_CASE:-empty}" in
-  empty) echo "User $1 has no fingers enrolled for Synaptics Mets Sensors." ;;
-  error) echo "Fingerprints"; echo "ListEnrolledFingers failed" ; exit 1 ;;
-  enrolled) printf 'Fingerprints\n  right-index-finger: LFT\n' ;;
+  empty) echo "User $1 has no fingers enrolled for Synaptics Sensors." ;;
+  error) echo "Fingerprints for user $1 on Synaptics Sensors (press):"
+         echo "ListEnrolledFingers failed: GDBus.Error:net.reactivated.Fprint.Error.Internal" >&2
+         exit 1 ;;
+  enrolled) echo "Fingerprints for user $1 on Synaptics Sensors (press):"
+            echo " - #0: right-index-finger" ;;
 esac
 EOF
-chmod +x "$TMP/fprintd-list"
+printf '#!/bin/bash\nexit 1\n' >"$TMP/bin/omarchy-shell"
+chmod +x "$TMP/bin/sudo" "$TMP/fprintd-list" "$TMP/bin/omarchy-shell"
 
-# Extract the live condition (lines 47-48), point the absolute path at the stub
-COND="$(sed -n '47,48p' "$REPO/bin/omarchy-lock-does-not-exist" 2>/dev/null || sed -n '47,48p' "$REPO/bin/omarchy-apply-lock")"
-COND="${COND//#usr#bin#fprintd-list/}"
-COND="$(printf '%s\n' "$COND" | sed "s#/usr/bin/fprintd-list#$TMP/fprintd-list#")"
-# drop the surrounding if/then so we get the bare condition for eval
-COND="${COND#if }"; COND="${COND%; then}"
-
-evaluate() {
-  ( target_user="alice"; eval "$COND" )
+run_case() { # $1 fprintd case -> echoes installed|absent
+  rm -f "$TMP/pam.d/"* "$TMP/sleep/"* 2>/dev/null
+  FPRINTD_CASE=$1 OMARCHY_INSTALL_USER=alice OMARCHY_PATH="$REPO" PATH="$TMP/bin:$PATH" \
+    "$COPY" >"$TMP/out.$1" 2>&1
+  echo "rc=$?" >>"$TMP/out.$1"
+  if [[ -f $TMP/pam.d/omarchy-lock-fingerprint ]] && grep -q pam_fprintd "$TMP/pam.d/omarchy-lock-fingerprint"; then
+    echo installed
+  else
+    echo absent
+  fi
 }
 
-FPRINTD_CASE=empty
-if evaluate; then
-  echo "case empty-enrollment: gate TRUE -> pam_fprintd installed for a user with no prints"
-  C1=0
+fail=0
+r=$(run_case empty)
+if [[ $r == installed ]]; then
+  echo "case empty-enrollment: fingerprint stack INSTALLED for a user with no prints (defect present)"; fail=1
 else
-  echo "case empty-enrollment: gate FALSE (fix present?)"
-  C1=1
+  echo "case empty-enrollment: no fingerprint stack for a user with no prints (fix present)"
+fi
+r=$(run_case error)
+if [[ $r == installed ]]; then
+  echo "case daemon-error:     fingerprint stack INSTALLED although the probe failed (defect present)"; fail=1
+else
+  echo "case daemon-error:     failed probe installed nothing (fix present)"
 fi
 
-FPRINTD_CASE=error
-if evaluate; then
-  echo "case daemon-error:   gate TRUE -> pam_fprintd installed despite failed probe (fail-open)"
-  C2=0
+# Negative control: a genuinely enrolled user gets the stack through the same run.
+r=$(run_case enrolled)
+if [[ $r == installed ]]; then
+  echo "control enrolled: fingerprint stack installed for an enrolled user (intended path intact)"
 else
-  echo "case daemon-error:   gate FALSE (fix present?)"
-  C2=1
-fi
-
-# Negative control (PoC rules 3/10): a genuinely enrolled user takes the
-# ENROLLED branch - the intended path the two fail-open cases abuse.
-FPRINTD_CASE=enrolled
-if evaluate; then
-  echo "control enrolled: gate TRUE for a genuinely enrolled user (intended path intact)"
-else
-  echo "CONTROL FAILED: gate refused a genuinely enrolled user; PoC cannot distinguish defect from overcorrection"
+  echo "CONTROL FAILED: enrolled user got no fingerprint stack; harness cannot tell a fix from a broken run"
+  sed 's/^/    /' "$TMP/out.enrolled"
   exit 2
 fi
 
-if (( C1 == 0 || C2 == 0 )); then
-  echo "SYMPTOM: substring grep on fprintd-list output treats not-enrolled / failed probes as enrolled and installs fingerprint PAM (defect present)"
-  exit 0
+if (( fail )); then
+  echo "SYMPTOM: the gate installs pam_fprintd for a zero-enrollment or failed fprintd-list probe (defect present)"
+  exit 1
 fi
-echo "PASS-REFUTED: gate now requires real enrollment under a successful probe - defect fixed"
-exit 1
+echo "PASS: only an enrolled '- #N:' row installs the fingerprint stack; empty and failed probes do not (defect absent)"
+exit 0

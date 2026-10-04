@@ -12,15 +12,19 @@
 # in that window (installer killed, session lost, power cut) leaves that torn
 # prefix as the stack the lock screen authenticates against.
 #
-# Harness: a scratch copy of the REAL helper with exactly two kinds of path
-# retargeted into a temp dir - /etc/pam.d/ and the absolute /usr/bin/fprintd-list
-# gate - and the copy is checked to differ from the product file by nothing else
-# (reverse substitution must reproduce it byte for byte). Side-effect commands
-# are PATH stubs: sudo (runs the command unprivileged, and for the tee under test
-# lets exactly N bytes of the stack through and then holds, freezing the write
-# window), fprintd-list (reports an enrolled finger) and omarchy-shell. The tee
-# that writes the file is the real one. The run is then SIGKILLed at the hold,
-# which is the interruption.
+# Harness: a scratch copy of the REAL helper with its absolute paths retargeted
+# into a temp dir - /etc/pam.d/, the /usr/bin/fprintd-list probe, and the
+# fingerprint resume-recovery destinations under /usr/lib/systemd/system-sleep/
+# and /etc/systemd/system/ - and the copy is checked to differ from the product
+# file by nothing else (reverse substitution must reproduce it byte for byte).
+# Side-effect commands are PATH stubs: sudo (runs the command unprivileged; drops
+# install's -o/-g root; records systemctl daemon-reload, which the fingerprint
+# branch runs before its tee since upstream omacom/omarchy#7158; and for the tee
+# under test lets exactly N bytes of the stack through and then holds, freezing
+# the write window), fprintd-list (reports an enrolled finger) and omarchy-shell.
+# OMARCHY_PATH points at this checkout, so the real resume hook and drop-in are
+# installed. The tee that writes the file is the real one. The run is then
+# SIGKILLed at the hold, which is the interruption.
 #
 # GREEN TRIPWIRE: pins the buggy behavior, so it PASSES while the defect is
 # present. Arms 1-2 (password stack, fingerprint stack) assert that after the
@@ -48,22 +52,24 @@ cleanup() {
   if [[ -f $TMP/stub.pids ]]; then
     while read -r pid; do kill -KILL "$pid" 2>/dev/null; done <"$TMP/stub.pids"
   fi
-  rm -rf "$TMP"
+  [[ -n ${TMP:-} && -d $TMP && $(basename "$TMP") == tmp.* ]] && find "$TMP" -depth -delete 2>/dev/null
 }
 trap cleanup EXIT
-mkdir -p "$TMP/bin" "$TMP/pam.d"
+mkdir -p "$TMP/bin" "$TMP/pam.d" "$TMP/sleep" "$TMP/units"
 PAMD="$TMP/pam.d"
 fail=0
 N=60 # bytes of the new stack that reach the live file before the interruption
 
 # --- scratch copy of the real helper, retargeted and verified -------------------
 COPY="$TMP/omarchy-apply-lock"
-sed -e "s|/etc/pam\.d/|$PAMD/|g" -e "s|/usr/bin/fprintd-list|$TMP/fprintd-list|g" "$HELPER" >"$COPY"
+sed -e "s|/etc/pam\.d/|$PAMD/|g" -e "s|/usr/bin/fprintd-list|$TMP/fprintd-list|g" \
+    -e "s|/usr/lib/systemd/system-sleep/|$TMP/sleep/|g" -e "s|/etc/systemd/system/|$TMP/units/|g" "$HELPER" >"$COPY"
 chmod +x "$COPY"
-if sed -e "s|$PAMD/|/etc/pam.d/|g" -e "s|$TMP/fprintd-list|/usr/bin/fprintd-list|g" "$COPY" | cmp -s - "$HELPER"; then
-  echo "ok: scratch copy differs from bin/omarchy-apply-lock only by the retargeted /etc/pam.d and fprintd-list paths"
+if sed -e "s|$PAMD/|/etc/pam.d/|g" -e "s|$TMP/fprintd-list|/usr/bin/fprintd-list|g" \
+       -e "s|$TMP/sleep/|/usr/lib/systemd/system-sleep/|g" -e "s|$TMP/units/|/etc/systemd/system/|g" "$COPY" | cmp -s - "$HELPER"; then
+  echo "ok: scratch copy differs from bin/omarchy-apply-lock only by the retargeted absolute paths"
 else
-  echo "HARNESS ERROR: retargeted copy differs from the product file beyond the two path substitutions"; exit 2
+  echo "HARNESS ERROR: retargeted copy differs from the product file beyond the path substitutions"; exit 2
 fi
 grep -q "tee $PAMD/omarchy-lock-password" "$COPY" && grep -q "tee $PAMD/omarchy-lock-fingerprint" "$COPY" ||
   echo "note: the helper no longer writes the stacks with a direct tee to the live path"
@@ -78,6 +84,16 @@ heredoc omarchy-lock-fingerprint >"$TMP/new-fingerprint"
 cat >"$TMP/bin/sudo" <<EOF
 #!/bin/bash
 echo "sudo \$*" >>"$TMP/calls.log"
+case \$1 in
+  systemctl) exit 0 ;;                       # no system manager in the harness
+  install)                                   # unprivileged: drop the root owner/group
+    args=(); skip=0
+    for a in "\${@:2}"; do
+      if (( skip )); then skip=0; continue; fi
+      case \$a in -o|-g) skip=1 ;; *) args+=("\$a") ;; esac
+    done
+    exec install "\${args[@]}" ;;
+esac
 if [[ \$1 == tee && -n \${PAUSE_TARGET:-} && " \$* " == *"\$PAUSE_TARGET"* ]]; then
   # Let exactly PAUSE_BYTES of the stack through to the real tee, then hold:
   # the write is frozen mid-way until the harness interrupts the run.
@@ -98,14 +114,14 @@ seed() { printf '%s' "$OLD" >"$PAMD/omarchy-lock-password"; printf '%s' "$OLD" >
 inode() { ls -i "$1" | awk '{print $1}'; }
 
 run_helper() { # foreground, uninterrupted
-  OMARCHY_INSTALL_USER=tripwire PATH="$TMP/bin:$PATH" "$COPY" >/dev/null 2>&1
+  OMARCHY_INSTALL_USER=tripwire OMARCHY_PATH="$REPO" PATH="$TMP/bin:$PATH" "$COPY" >/dev/null 2>&1
 }
 
 interrupt_run() { # $1 live file basename: freeze its write after N bytes, then SIGKILL the run
   local target="$PAMD/$1" i pgid
   rm -f "$TMP/paused"
   set -m
-  OMARCHY_INSTALL_USER=tripwire PAUSE_TARGET="$target" PAUSE_BYTES=$N PATH="$TMP/bin:$PATH" \
+  OMARCHY_INSTALL_USER=tripwire OMARCHY_PATH="$REPO" PAUSE_TARGET="$target" PAUSE_BYTES=$N PATH="$TMP/bin:$PATH" \
     "$COPY" >/dev/null 2>&1 &
   pgid=$!
   set +m
