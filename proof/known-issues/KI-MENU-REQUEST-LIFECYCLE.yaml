@@ -62,6 +62,10 @@ history:
       by: agent:claude-quattro-clean
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T11:55:01Z"
+      by: agent:claude-pr-A
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-02T15:04:04Z"
       by: agent:claude-baseline-pass
       action: edit
@@ -76,6 +80,10 @@ history:
       detail: set-mitigation
     - at: "2026-10-02T15:24:53Z"
       by: agent:claude-baseline-pass
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-02T17:01:03Z"
+      by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-04T18:18:35Z"
@@ -100,14 +108,6 @@ history:
       detail: note
     - at: "2026-10-04T19:47:33Z"
       by: agent:claude-code
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T11:55:01Z"
-      by: agent:claude-pr-A
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-request-lifecycle.yaml
-    - at: "2026-10-02T17:01:03Z"
-      by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-04T20:49:59Z"
