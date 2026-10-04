@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-29T10:09:06.479074908Z"
-    reviewed_by: human:Leonid Bugaev
-    reviewed_fingerprint: sha256:502dfcd4710429a1f41020502764b1826688d0b76a01e2da416fd2983ca1c94c
+    reviewed_at: "2026-10-04T19:20:26.939759Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:f08d392e698e947e6168b40145d65461c6fadfc15f783d5c880331a9273666eb
     reviewed_targets:
         implemented_by:
-            bin/omarchy-apply-lock: file1:c07ad430124bfb6b4259ef144de3622c
+            bin/omarchy-apply-lock: file1:a393c2e67ce62abf2be22c989d5e1d76
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -35,6 +35,17 @@ traces:
           source: proof trace review --citation
           citations:
             - bin/omarchy-apply-lock:7
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/apply-lock-test.sh:7
+        - reviewed_at: "2026-10-04T19:20:26.939759Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f (#7158): bin/omarchy-apply-lock now takes exactly one fingerprint step per run, install with the fprintd resume recovery on a listed print, remove on an empty enrollment, keep on a failed probe; the FRETish states the three outcomes. Satisfies STK-REQ-260912-XJ5D. Witnessed by test/shell.d/apply-lock-test.sh; spec conformance REVIEW-261004-AL7K.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-apply-lock:62
+            - bin/omarchy-apply-lock:7
+            - bin/omarchy-apply-lock:82
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/apply-lock-test.sh:7
 verification:

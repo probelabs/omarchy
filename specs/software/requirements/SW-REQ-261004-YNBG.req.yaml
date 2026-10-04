@@ -19,6 +19,25 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-JW2J
+    reviewed_at: "2026-10-04T19:21:07.031836Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:8e1f136972233c1cb99961264573a6d049b457cec04d4a6317265fac78924a91
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-apply-lock: file1:a393c2e67ce62abf2be22c989d5e1d76
+        satisfies:
+            SYS-REQ-260912-JW2J: req1:66c13015998ab2cfad2d87363ff3465a
+    review_history:
+        - reviewed_at: "2026-10-04T19:21:07.031836Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'New requirement for upstream #7158: the install arm installs the fprintd resume hook and the stop-timeout drop-in and reloads systemd under set -e before it writes the PAM fingerprint stack. Satisfies SYS-REQ-260912-JW2J (install outcome). Witnessed by test/shell.d/apply-lock-test.sh; spec conformance REVIEW-261004-YN8R.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-apply-lock:46
+            - bin/omarchy-apply-lock:62
+            - specs/system/requirements/SYS-REQ-260912-JW2J.req.yaml
+            - test/shell.d/apply-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

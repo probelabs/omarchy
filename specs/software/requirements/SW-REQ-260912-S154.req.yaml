@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-JW2J
-    reviewed_at: "2026-09-29T10:09:05.686198498Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-04T19:21:05.630337Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:a48bb5822e226023dad092f6a6f6148b12d65059b86ac7d90e94514d8ffdbc65
     reviewed_targets:
         implemented_by:
-            bin/omarchy-apply-lock: file1:c07ad430124bfb6b4259ef144de3622c
+            bin/omarchy-apply-lock: file1:a393c2e67ce62abf2be22c989d5e1d76
         satisfies:
-            SYS-REQ-260912-JW2J: req1:fdf396cd213c1dbb23f2efe1525ac6a5
+            SYS-REQ-260912-JW2J: req1:66c13015998ab2cfad2d87363ff3465a
     review_history:
         - reviewed_at: "2026-09-27T21:18:00.524682Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -35,6 +35,15 @@ traces:
           source: proof trace review --citation
           citations:
             - bin/omarchy-apply-lock:46
+            - specs/system/requirements/SYS-REQ-260912-JW2J.req.yaml
+            - test/shell.d/apply-lock-test.sh:7
+        - reviewed_at: "2026-10-04T19:21:05.630337Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f (#7158): the probe still runs only /usr/bin/fprintd-list by its absolute path; it now keeps the answer for classification and ignores the exit status. Satisfies the revised SYS-REQ-260912-JW2J. Witnessed by test/shell.d/apply-lock-test.sh (poisoned PATH matrix).'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-apply-lock:55
             - specs/system/requirements/SYS-REQ-260912-JW2J.req.yaml
             - test/shell.d/apply-lock-test.sh:7
 verification:

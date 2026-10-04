@@ -19,6 +19,24 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-JW2J
+    reviewed_at: "2026-10-04T19:21:06.563302Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:f27c5212335840cef0c3fcfec12d04480629bb1f5229242835873d01d28a40e3
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-apply-lock: file1:a393c2e67ce62abf2be22c989d5e1d76
+        satisfies:
+            SYS-REQ-260912-JW2J: req1:66c13015998ab2cfad2d87363ff3465a
+    review_history:
+        - reviewed_at: "2026-10-04T19:21:06.563302Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'New requirement for upstream #7158: the else arm of the fingerprint step in bin/omarchy-apply-lock keeps the configuration on any answer that is neither a listed print nor an empty enrollment. Satisfies SYS-REQ-260912-JW2J (keep outcome). Witnessed by test/shell.d/apply-lock-test.sh; spec conformance REVIEW-261004-SP6R.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-apply-lock:82
+            - specs/system/requirements/SYS-REQ-260912-JW2J.req.yaml
+            - test/shell.d/apply-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
