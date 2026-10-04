@@ -78,6 +78,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-remove-theme-no-themes.yaml
+    - at: "2026-10-04T20:50:02Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-remove-theme-no-themes.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
