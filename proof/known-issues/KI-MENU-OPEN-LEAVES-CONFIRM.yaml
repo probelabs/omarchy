@@ -101,6 +101,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-04T20:52:11Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
