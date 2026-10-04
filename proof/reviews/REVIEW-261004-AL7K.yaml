@@ -1,0 +1,15 @@
+id: REVIEW-261004-AL7K
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:17:46Z"
+subject: SYS-REQ-260912-JW2J
+decision: approved
+comment: 'Re-review after upstream #7158 (879d6583) and the revised FRETish (exactly one fingerprint step per run: install, remove or keep). Read bin/omarchy-apply-lock at upstream quattro 035ce29f. The password stack is written by tee at the top of every run, before the fingerprint step. The fingerprint step is one if/elif/else over the probe answer: a listed print row installs the resume hook, the stop-timeout drop-in and the PAM fingerprint stack; fprintd''s empty-enrollment answer or a missing fprintd-list removes the stack and the hook; any other answer prints the could-not-check line and keeps the files. The three violation rows need the password write or the if/elif/else removed, so they are dispositioned defensive. Witnesses in test/shell.d/apply-lock-test.sh: install at the hardened run, keep at the unknown-probe run (the password stack still written), remove at the not-enrolled run, no side effect without a run. Requirement change recorded by agent:claude-code under the owner''s delegation.'
+citations:
+    - bin/omarchy-apply-lock:7
+    - bin/omarchy-apply-lock:63
+    - bin/omarchy-apply-lock:83
+    - test/shell.d/apply-lock-test.sh:238
+    - test/shell.d/apply-lock-test.sh:282
+    - test/shell.d/apply-lock-test.sh:337
+    - test/shell.d/apply-lock-test.sh:343

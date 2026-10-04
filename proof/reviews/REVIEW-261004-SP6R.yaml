@@ -1,0 +1,11 @@
+id: REVIEW-261004-SP6R
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:17:46Z"
+subject: SW-REQ-261004-SP65
+decision: approved
+comment: 'Read the fingerprint step of bin/omarchy-apply-lock at upstream quattro 035ce29f. The probe runs /usr/bin/fprintd-list with stderr folded in and ignores its exit status. The if arm needs a line that starts with a dash and a numeric index (a listed print); the elif arm needs the literal answer no (no fprintd-list) or the phrase has no fingers enrolled. Every other answer reaches the else arm, which only prints that it could not check the enrollment and keeps the PAM stack, the resume hook and the drop-in. So fingerprint_config_kept holds whenever fingerprint_probe_failed holds; the violation row needs the else arm to write or remove a file and is dispositioned defensive. Witnesses in test/shell.d/apply-lock-test.sh: an unreachable daemon (status 1, activation error) keeps all three files byte for byte; a listed print writes the stack (not kept). Requirement authored by agent:claude-code under the owner''s delegation.'
+citations:
+    - bin/omarchy-apply-lock:83
+    - test/shell.d/apply-lock-test.sh:239
+    - test/shell.d/apply-lock-test.sh:281

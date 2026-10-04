@@ -1,0 +1,13 @@
+id: REVIEW-261004-YN8R
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:17:46Z"
+subject: SW-REQ-261004-YNBG
+decision: approved
+comment: 'Read the install arm of the fingerprint step in bin/omarchy-apply-lock at upstream quattro 035ce29f. The helper runs under set -e. It installs the resume hook (0755) and the stop-timeout drop-in (0644) with install -D and runs systemctl daemon-reload before the tee that writes /etc/pam.d/omarchy-lock-fingerprint. A missing source makes install fail and stops the run before the tee. The removal arm removes the stack and the hook, and the drop-in only when present, reloading systemd only then. So a run that writes the stack has installed the recovery; the violation row needs the order reversed or set -e dropped and is dispositioned defensive. Witnesses in test/shell.d/apply-lock-test.sh: the hardened run installs the hook and the drop-in beside the stack; with either source missing the run fails and no stack exists. Requirement authored by agent:claude-code under the owner''s delegation.'
+citations:
+    - bin/omarchy-apply-lock:47
+    - bin/omarchy-apply-lock:63
+    - bin/omarchy-apply-lock:65
+    - test/shell.d/apply-lock-test.sh:240
+    - test/shell.d/apply-lock-test.sh:304
