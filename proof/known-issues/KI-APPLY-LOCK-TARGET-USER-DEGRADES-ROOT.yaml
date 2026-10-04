@@ -1,11 +1,11 @@
 id: KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
-title: Failed PKEXEC_UID/user mapping silently degrades target_user to root, configuring PAM for the wrong account
-description: target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The script then configures the fprintd probe and both PAM files for the wrong account (root unless $USER maps elsewhere). The installing user's lock authentication then stays misconfigured.
+title: Failed PKEXEC_UID/user mapping silently degrades target_user to root, so the fingerprint decision is made for the wrong account
+description: 'target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd enrollment probe (line 48) then asks about the wrong account (root unless $USER maps elsewhere). The password PAM stack does not depend on the account, so only the fingerprint decision is wrong: an installing user with enrolled prints gets no fingerprint PAM until the helper runs again with the right account.'
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
     - proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
-severity: medium
+severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
@@ -39,6 +39,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+    - at: "2026-10-04T18:18:35Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: 'set-title,set-description,set-severity=low,severity-justification=severity: lowered from medium to low. target_user only feeds the fprintd enrollment probe (bin/omarchy-apply-lock:48); the helper writes the same password PAM stack for every account. A wrong account therefore costs at most fingerprint unlock for a user with enrolled prints, and password unlock is unaffected. The trigger also needs a direct pkexec call whose PKEXEC_UID getent cannot map: the installer (omarchy-apply-system) and the upgrade pass OMARCHY_INSTALL_USER, sudo sets SUDO_USER, and a deferred-provisioning install has no user with enrolled prints yet. The earlier description said both PAM files were configured for the wrong account, which overstated the impact.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -56,9 +60,9 @@ poc_quality:
         quantitative_impact: 2 of 2 unmapped-uid cases degrade target_user to root; the control case with an explicit OMARCHY_INSTALL_USER resolves to that user.
         control_test: the explicit-install-user case in pocs/crs-260930-g166-c05-c06.sh shows the intended mapping path intact.
         current_deployment_relevance: the resolution block is live on this branch; extracted at run time.
-        honest_severity: medium - lock PAM and the fingerprint probe get configured for the wrong account (usually root), leaving the installing user's lock auth misconfigured; no privilege gain is demonstrated.
+        honest_severity: low - only the fprintd enrollment probe runs for the wrong account; the password PAM stack is the same for every account, so the worst case is fingerprint unlock left unconfigured for a user with enrolled prints. No privilege gain.
         reproducible: single command ./pocs/crs-260930-g166-c05-c06.sh, deterministic, sub-second.
-        no_inflation: claims limited to the demonstrated wrong-account configuration.
+        no_inflation: claims limited to the demonstrated wrong-account resolution and the fingerprint decision it feeds.
         operational_path_verified: the explicit-user control exercises the intended mapping path.
     not_applicable:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'

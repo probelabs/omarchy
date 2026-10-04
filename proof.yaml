@@ -1,7 +1,7 @@
 project:
     catalog:
         version: "1.11.0"
-    name: Omarchy Lock Dogfood
+    name: Omarchy
     purpose: External codebase audit
     scope: Incrementally model externally-owned source code, tests, and documentation before enforcing release gates.
     specs:

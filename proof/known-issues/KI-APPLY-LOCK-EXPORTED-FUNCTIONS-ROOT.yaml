@@ -1,13 +1,16 @@
 id: KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
-title: Exported bash functions execute as root inside apply-lock despite the trusted-PATH replacement
-description: The EUID==0 control (bin/omarchy-apply-lock:15) replaces PATH but leaves the environment intact. Bash imports the exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into the function table, and function lookup precedes PATH in bash. A caller-supplied grep runs instead of /usr/bin/grep inside the fingerprint gate (line 48). An imported command_not_found_handle returning 0 makes 'if omarchy-shell lock status' (line 62) TRUE with the binary absent (chroot install). Caller-supplied CODE executes with root privileges - the hostile-environment case the PATH pin exists to refuse (SW-REQ-260912-EKJP trusted_path_only) is reachable anyway.
+title: Imported bash functions bypass the trusted-PATH pin in apply-lock's root branch
+description: |-
+    The EUID==0 branch (bin/omarchy-apply-lock:15) replaces PATH but keeps the rest of the inherited environment. Bash imports exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into its function table, and bash looks a name up as a function before it searches PATH. An imported grep therefore runs instead of /usr/bin/grep in the fingerprint gate (line 48). An imported command_not_found_handle that returns 0 makes 'if omarchy-shell lock status' (line 62) true when the binary is absent (chroot install). SW-REQ-260912-EKJP (trusted_path_only) does not hold for functions: the root branch can still run commands from its environment instead of the pinned ones.
+
+    No privilege boundary is crossed. Every route into the root branch either drops imported functions or hands over an environment that root already controls. sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17). pkexec starts the helper in a minimal environment. The installer and the upgrade, when they run as root, pass their own environment. Only a process that already runs as root can plant the functions. When a normal user runs the helper, grep runs as that user and only steers that user's own fingerprint setup. The defect is a gap in defence-in-depth hardening.
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
     - proof/evidence/ki-apply-lock-exported-functions-root.yaml
-severity: high
-severity_basis: reproducer
-risk: availability
+severity: low
+severity_basis: risk
+risk: correctness
 cve_surface: none
 affected_api: bin/omarchy-apply-lock (root lock-screen PAM provisioning)
 reproducer_command: ./pocs/crs-260930-g166-c07-c09.sh
@@ -15,7 +18,7 @@ tripwire_mutation: 'Unset imported bash functions under EUID 0 in bin/omarchy-ap
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: sudo env_reset strips exported functions for the non-root arm; the already-root arm (install/upgrade, no sudo) stays exposed
+mitigation: 'Every route into the root branch drops imported functions or passes an environment root already controls: sudo removes variables whose value starts with "()", pkexec starts the helper in a minimal environment, and the installer and the upgrade pass their own root environment. Planting the functions therefore needs root already.'
 remediation: 'Unset imported functions before any decision point: eval ''unset -f $(compgen -A function)'' under EUID 0. Alternatively run the body via env -i bash --noprofile --norc. Use ''command'' for the pinned lookups'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -65,33 +68,37 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-10-04T18:18:30Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: 'set-title,set-description,set-severity=low,set-severity-basis=risk,set-risk,set-mitigation,kill-domain=lookup_shadowing,set-dedup-armor,severity-justification=severity: lowered from high to low. The defect is real: in the root branch, bash functions imported from the environment shadow the pinned grep (line 48) and the missing omarchy-shell (line 62), as pocs/crs-260930-g166-c07-c09.sh shows. No privilege boundary is crossed, though. sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17), pkexec starts the helper in a minimal environment, and the root callers (installer, upgrade) pass their own environment, so only a process that already runs as root can plant the functions. That makes it a defence-in-depth gap in SW-REQ-260912-EKJP, graded on correctness. The earlier record called it code execution as root by an untrusted caller while it also recorded cve_surface none and risk availability; those fields contradicted each other.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
     control_test: true
-    untrusted_attacker: true
+    untrusted_attacker: false
     current_deployment_relevance: true
     honest_severity: true
-    attacker_profitability: true
+    attacker_profitability: false
     reproducible: true
     no_inflation: true
     operational_path_verified: true
     reachability_verified: false
     notes: |
         real_infrastructure: the PoC extracts the LIVE decision expressions (bin/omarchy-apply-lock lines 48 and 62) verbatim and runs them under the hostile inherited environment - no reimplementation.
-        quantitative_impact: both vectors leave a filesystem marker proving caller-supplied code executed at the root helper's decision points (grep hijack in the fingerprint gate; command_not_found_handle returning 0 with the binary absent); the clean-environment control leaves no marker and reads the gate correctly.
+        quantitative_impact: both vectors leave a filesystem marker proving that code from the helper's inherited environment ran at the root branch's decision points (grep hijack in the fingerprint gate; command_not_found_handle returning 0 with the binary absent); the clean-environment control leaves no marker and reads the gate correctly.
         control_test: same extracted condition under a clean environment with an enrolled fprintd-list stub evaluates TRUE via the pinned /usr/bin/grep (pocs/crs-260930-g166-c07-c09.sh control arm).
-        untrusted_attacker: the hijack input is caller-controlled exported functions - no privileged role is needed to plant them in the invoking session.
         current_deployment_relevance: the pin at bin/omarchy-apply-lock:15 replaces PATH but not the environment on this branch today; the PoC extracts the live lines at run time.
-        honest_severity: high - demonstrated caller-controlled code execution at root privilege inside the lock installer; no higher impact claimed.
-        attacker_profitability: cost is control of the calling shell's environment (any session process); revenue is arbitrary code execution as root at every decision point - favorable asymmetry, stated without inflation.
+        honest_severity: low - the defect is real (code from the inherited environment runs at both decision points of the root branch), but planting that code there already needs root: sudo removes "()"-valued variables, pkexec starts the helper in a minimal environment, and root callers pass their own environment. A defence-in-depth gap with no privilege gain.
         reproducible: single command ./pocs/crs-260930-g166-c07-c09.sh, deterministic, runs in well under a minute.
-        no_inflation: the claim is limited to the demonstrated decision-point execution; no persistence or further escalation is asserted.
+        no_inflation: the claim is limited to code from the inherited environment running at the two decision points; no privilege gain, persistence or escalation is asserted.
         operational_path_verified: the control arm exercises the intended path (pinned lookup, correct gate decision) and shows it intact in a clean environment.
     not_applicable:
-        reachability_verified: 'the modeled attacker is the invoking user''s own environment of a local root helper: the trusted-PATH pin IS the ingress layer and the defect itself is its bypass, so a separate end-to-end reachability run through pkexec adds nothing the extracted live decision expressions do not already demonstrate'
-dedup_armor: 'Not mergeable into KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN or KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT without raising severity: those siblings are wrong-gate and wrong-account configuration defects contained to misconfigured PAM, while this one executes caller-controlled exported functions as root at the decision points - the only code-execution-as-root finding in the apply-lock family, graded high on that basis'
-kill_domain: privileged_code_injection
+        attacker_profitability: 'no attacker gains anything: only a process that already runs as root can plant functions in the root branch, so attacker cost versus revenue cannot be framed'
+        reachability_verified: 'no untrusted party reaches the root branch with imported functions: sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17), pkexec starts the helper in a minimal environment, and the installer (omarchy-apply-system, EUID 0) and the upgrade pass their own root environment; the PoC exercises the live decision expressions under such an environment, and no ingress layer exists to traverse'
+        untrusted_attacker: 'no untrusted party can supply the functions: every route into the root branch drops them (sudo, pkexec) or passes an environment root already controls (installer, upgrade)'
+dedup_armor: 'Not mergeable into KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN or KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT: those siblings are a wrong gate and a wrong account in the fingerprint decision, while this one is imported functions shadowing the pinned command lookups of the root branch. The fixes differ: this one unsets the imported functions or runs the body in a clean environment.'
+kill_domain: lookup_shadowing
 do_not_refile_as: PATH shadowing via user-writable directory (the PATH pin closes that; this is the function-table bypass of the same guarantee)
 affected_file: bin/omarchy-apply-lock
 source_claim:

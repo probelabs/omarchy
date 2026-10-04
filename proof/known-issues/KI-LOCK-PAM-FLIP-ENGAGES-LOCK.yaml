@@ -6,9 +6,9 @@ affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
     - proof/evidence/ki-lock-pam-flip-engages-lock.yaml
-severity: high
-severity_basis: reproducer
-risk: correctness
+severity: medium
+severity_basis: risk
+risk: availability
 cve_surface: none
 affected_api: shell/plugins/lock/Service.qml (session lock lifecycle, missing-pam gate)
 reproducer_command: ./pocs/lock-service-failopen-runtime.sh
@@ -16,7 +16,7 @@ tripwire_mutation: 'Re-check passwordPamConfigured inside requestSessionLock (sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: fingerprint PAM (if configured) can still unlock; TTY remains
+mitigation: 'Fingerprint unlock (if configured) still works; otherwise recover from a TTY. The trigger needs the root-owned /etc/pam.d/omarchy-lock-password to disappear inside the 500 ms window after a lock request, and the lock fails closed: nothing is exposed.'
 remediation: Re-check passwordPamConfigured in requestSessionLock before sessionLock.locked = true and stand the lock back down (with the missing-pam notification) when it went false. Treat a PAM flip while lockRequested as a teardown trigger
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -62,6 +62,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+    - at: "2026-10-04T18:18:35Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: 'set-severity=medium,set-severity-basis=risk,set-risk,set-mitigation,severity-justification=severity: lowered from high to medium. The race is real (pocs/lock-service-failopen-runtime.sh), but it fails closed: the session locks with no password PAM behind it, which locks the user out of the graphical session and exposes nothing. The trigger needs the root-owned /etc/pam.d/omarchy-lock-password to disappear or become unreadable inside the 500 ms stabilize window after a lock request. Fingerprint unlock (if configured) or a TTY login still recovers the session. Under the non-security rubric that is availability in a specific, rare workflow with an inconvenient recovery: medium.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false
@@ -79,7 +83,7 @@ poc_quality:
         quantitative_impact: the impact is a boolean lock-state violation - sessionLock.locked=true while passwordPamConfigured=false - not a measurable quantity.
         control_test: the control run of the same verbatim function with PAM present engages the lock legitimately, and the static control asserts the IPC-instant gate is present and load-bearing (pocs/crs-260930-ttvk-qml-static.sh).
         current_deployment_relevance: the gate-then-stabilize-then-engage sequence is live in Service.qml on this branch; the harness extracts it at run time.
-        honest_severity: high - the session locks with no password PAM behind it and the stranded watchdog stands down; only fingerprint or TTY remains.
+        honest_severity: medium - the session locks with no password PAM behind it and the stranded watchdog stands down, so only fingerprint or a TTY login recovers it (a lock-out: availability); the trigger needs the root-owned PAM file to vanish inside the 500 ms stabilize window, and nothing is exposed.
         reproducible: single command ./pocs/lock-service-failopen-runtime.sh, deterministic, about 100ms, exit 0 while the defect is present.
         no_inflation: claim limited to the demonstrated engage-without-PAM transition; no lock-out persistence is asserted.
         operational_path_verified: the PAM-present control exercises the intended engage path of the same function.
