@@ -5,7 +5,12 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: the lock_service shall always satisfy fingerprint_reader_unavailable <=> (probe_miss_streak_reached | (fingerprint_auth_configured & !attempt_usable & attempt_miss_streak_reached))
-description: The lock service shall report the fingerprint reader unavailable after 3 probe answers in a row that were neither a listed fingerprint nor a definite none, or, while fingerprint authentication is configured, after 3 fingerprint attempts in a row that were not usable. A usable attempt shows a finger prompt and does not end in a device error within 2 s of it. The report clears when an attempt shows a prompt. The service shall retry an attempt 250 ms after a usable one; after n unusable attempts it shall wait 1 s times 2 to the power n-1, at most 40 s. It shall abort an attempt that shows no prompt within 20 s. A miss within 5 s after a resume shall count as the first miss, and an attempt or wait that spans a suspend shall be restarted within 250 ms. User activity shall shorten a longer wait to 250 ms at most once per 2 s or the current wait, whichever is longer, and at the 40 s cap only 32 s after the last attempt ended.
+description: |-
+    The lock service shall report the reader unavailable after 3 probe answers in a row that are neither a listed print nor a definite none. When the service treats fingerprint authentication as configured, 3 unusable attempts in a row shall also cause the report. A usable attempt shows a finger prompt and does not end in a device error within 2 s of the prompt. An attempt that shows a prompt clears the report.
+
+    After a usable attempt, the service shall start the next attempt after 250 ms. After n unusable attempts, it shall wait 1 s times 2 to the power n-1, at most 40 s. It shall abort an attempt that shows no prompt within 20 s. It shall count a miss within 5 s after a resume as the first miss. It shall restart an attempt or a wait that spans a suspend within 250 ms.
+
+    User activity shall shorten a longer wait to 250 ms. It shall do so at most once per 2 s or once per current wait, whichever is longer. At the 40 s cap, it shall do so only 32 s after the last attempt ended.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +18,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: "A reader that fprintd cannot claim (wedged after suspend, or held by another client) used to be retried every 250 ms for as long as the screen stayed locked, with no sign to the user. Upstream #7158 (FingerprintModel.js and Service.qml) backs off, keeps fprintd's 30 s idle exit free so a wedged claim can clear, reports the reader unavailable after 3 misses (the lock view crosses the icon out and says so, SW-REQ-260912-41VV), restarts after a resume, and bounds a claim that never prompts."
+rationale: "A reader that fprintd cannot claim, for example wedged after suspend or held by another client, made the lock screen retry every 250 ms. The retries continued while the screen stayed locked, and the user saw no sign. Upstream #7158 (FingerprintModel.js and Service.qml) backs off and leaves fprintd its 30 s idle exit, so a wedged claim can clear. It reports the reader unavailable after 3 misses, and the lock view crosses the icon out (SW-REQ-260912-41VV). It also restarts after a resume and stops a claim that never prompts."
 tags: []
 variables: []
 traces:
@@ -27,11 +32,17 @@ verification:
         reviewer: agent:claude-code
         reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
+    gap_reviews:
+        - check: ambiguity
+          issue_key: ambiguity|lock|SW-REQ-261004-296X|SW-REQ-261004-V813
+          reviewer: agent:claude-code
+          reason: 'Reviewed: SW-REQ-261004-V813 decides fingerprint_auth_configured from the probe answer (it is V813''s output); SW-REQ-261004-296X only reads it as an input to the unavailable report, so the two requirements state different outputs and do not overlap.'
+          reviewed_at: "2026-10-04T19:16:46.884899Z"
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:15Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:07:04Z"
+    last_modified_at: "2026-10-04T19:16:36Z"
 hazard_review:
     reviewed_at: "2026-10-04T19:06:41Z"
     reviewed_by: agent:claude-code

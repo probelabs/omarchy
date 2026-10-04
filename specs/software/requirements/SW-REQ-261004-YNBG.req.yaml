@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-JW2J
 component: lock
-rationale: "Suspend can wedge fprintd's device claim (libfprint/fprintd#173). Upstream #7158 restarts fprintd from a system-sleep hook after resume and caps its stop time with a drop-in, and installs both beside the PAM fingerprint stack so setup and upgrades cannot leave fingerprint authentication configured without its recovery. The empty-enrollment branch removes them again."
+rationale: "Suspend can wedge the device claim of fprintd (libfprint/fprintd#173). Upstream #7158 restarts fprintd from a system-sleep hook after resume and caps its stop time with a drop-in. The helper installs both beside the PAM fingerprint stack. Setup and upgrades then cannot leave fingerprint authentication without its recovery. The empty-enrollment branch removes them again."
 tags: []
 variables: []
 traces:
@@ -31,7 +31,7 @@ history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:14Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:07:04Z"
+    last_modified_at: "2026-10-04T19:16:36Z"
 hazard_review:
     reviewed_at: "2026-10-04T19:06:41Z"
     reviewed_by: agent:claude-code

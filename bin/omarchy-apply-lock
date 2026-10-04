@@ -43,6 +43,7 @@ auth       required                    pam_faillock.so authsucc
 account    include                     system-local-login
 EOF
 
+# Implements: SW-REQ-261004-YNBG
 # Install resume recovery alongside fingerprint PAM, so setup and upgrades
 # cannot leave one configured without the other.
 resume_hook_src="$OMARCHY_PATH/default/systemd/system-sleep/fprintd-resume"
@@ -58,7 +59,7 @@ else
   fingerprint_status="no"
 fi
 
-# Implements: SW-REQ-260912-Y0WT — install on an enrolled print, remove on an empty enrollment, keep on a failed probe
+# Implements: SW-REQ-260912-Y0WT, SW-REQ-261004-YNBG — install on an enrolled print (recovery first), remove on an empty enrollment
 if grep -qE '^[[:space:]]*-[[:space:]]*#[0-9]+:' <<< "$fingerprint_status"; then
   echo "Configuring lock screen fingerprint authentication..."
   as_root install -Dm755 -o root -g root "$resume_hook_src" "$resume_hook_dst"
@@ -78,6 +79,7 @@ elif [[ $fingerprint_status == "no" ]] || grep -qi 'has no fingers enrolled' <<<
     as_root rmdir --ignore-fail-on-non-empty "$(dirname "$stop_timeout_dst")"
     as_root systemctl daemon-reload
   fi
+  # Implements: SW-REQ-261004-SP65 — any other answer is a failed probe: keep the configuration
 else
   echo "Could not check fingerprint enrollment; keeping the existing configuration." >&2
 fi

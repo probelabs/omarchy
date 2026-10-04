@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when fingerprint_probe_answered the lock_service shall always satisfy fingerprint_auth_configured <=> (probe_lists_print | (!probe_says_none & fingerprint_was_configured))
-description: When the lock screen's enrollment probe finishes, the lock service shall treat fingerprint authentication as configured when the answer lists an enrolled fingerprint. It shall treat it as not configured when the answer says the user has no enrolled fingerprint, or the fingerprint PAM file or fprintd-list is missing. Any other answer, for example an fprintd that cannot be reached, shall leave the state unchanged. While fingerprint authentication is not configured after such an answer, the service shall run the probe again after the attempt backoff.
+description: When the lock screen's enrollment probe finishes, the lock service shall classify the answer. It shall treat fingerprint authentication as configured when the answer lists an enrolled fingerprint. It shall treat it as not configured when the answer says that the user has none. The same applies when the fingerprint PAM file or fprintd-list is missing. Any other answer shall leave the state unchanged, for example when the service cannot reach fprintd. While fingerprint authentication stays unconfigured after such an answer, the service shall run the probe again after the attempt backoff.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: "The lock screen's probe used to grep the fprintd-list answer for the word \"finger\". An empty enrollment on a reader with Fingerprint in its name (\"has no fingers enrolled for ... Fingerprint Sensor\") then read as enrolled (KI-LOCK-FPRINT-PROBE-FAIL-OPEN), and a probe that could not reach fprintd read as not enrolled and switched fingerprint authentication off. Upstream #7158 (FingerprintModel.classifyProbe, Service.applyFingerprintProbe) classifies the answer: only a listed print or a definite none changes the state, and an unknown answer is asked again with the attempt backoff."
+rationale: "The lock screen's probe used to search the fprintd-list answer for the word \"finger\". An empty enrollment on a reader with Fingerprint in its name then read as enrolled (KI-LOCK-FPRINT-PROBE-FAIL-OPEN). A probe that could not reach fprintd read as not enrolled and switched fingerprint authentication off. Upstream #7158 classifies the answer in FingerprintModel.classifyProbe and Service.applyFingerprintProbe. Only a listed print or a definite none changes the state. The service asks again about an unknown answer, with the attempt backoff."
 tags: []
 variables: []
 traces:
@@ -27,11 +27,17 @@ verification:
         reviewer: agent:claude-code
         reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
+    gap_reviews:
+        - check: ambiguity
+          issue_key: ambiguity|lock|SW-REQ-261004-296X|SW-REQ-261004-V813
+          reviewer: agent:claude-code
+          reason: 'Reviewed: SW-REQ-261004-V813 decides fingerprint_auth_configured from the probe answer (it is V813''s output); SW-REQ-261004-296X only reads it as an input to the unavailable report, so the two requirements state different outputs and do not overlap.'
+          reviewed_at: "2026-10-04T19:16:46.884899Z"
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:15Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:07:04Z"
+    last_modified_at: "2026-10-04T19:16:36Z"
 hazard_review:
     reviewed_at: "2026-10-04T19:06:41Z"
     reviewed_by: agent:claude-code

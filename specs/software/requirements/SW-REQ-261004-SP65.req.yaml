@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when fingerprint_probe_failed the apply_lock shall always satisfy fingerprint_config_kept
-description: When /usr/bin/fprintd-list answers with neither an enrolled fingerprint nor an explicit report that the target user has no enrolled fingerprint, omarchy-apply-lock shall keep the existing fingerprint configuration. It shall not write or remove the PAM fingerprint stack, the fprintd resume hook or the stop-timeout drop-in, and it shall print that it could not check the enrollment.
+description: A failed probe is an answer from /usr/bin/fprintd-list that neither lists an enrolled fingerprint nor reports that the target user has none. After a failed probe, omarchy-apply-lock shall keep the existing fingerprint configuration. It shall not write or remove the PAM fingerprint stack, the fprintd resume hook or the stop-timeout drop-in. It shall print that it could not check the enrollment.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-JW2J
 component: lock
-rationale: "Upstream #7158 (879d6583) stopped treating a failed enrollment probe as an empty enrollment. A transient fprintd failure during setup or an upgrade (fprintd not activatable, a D-Bus timeout) used to remove working fingerprint authentication and its recovery; now only a definite answer changes the configuration, and the helper says it could not check."
+rationale: "Upstream #7158 (879d6583) stopped treating a failed enrollment probe as an empty enrollment. Before, a transient fprintd failure during setup or an upgrade removed working fingerprint authentication and its recovery. Examples are an fprintd that the system cannot activate and a D-Bus timeout. Now only a definite answer changes the configuration, and the helper says that it could not check."
 tags: []
 variables: []
 traces:
@@ -31,7 +31,7 @@ history:
     created_by: agent:claude-code
     created_at: "2026-10-04T18:59:55Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:07:04Z"
+    last_modified_at: "2026-10-04T19:16:36Z"
 hazard_review:
     reviewed_at: "2026-10-04T19:06:41Z"
     reviewed_by: agent:claude-code

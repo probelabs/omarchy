@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: "Waking a DPMS-blanked display can stall the compositor for seconds while the monitor modesets, so the wake key's release arrives late and client-side key repeat floods the password field with that character. Upstream #7806 (merged 00cee6d3) drops auto-repeated presses in the field; holding Backspace or Delete to clear stays useful."
+rationale: "Waking a DPMS-blanked display can stall the compositor for seconds while the monitor modesets. The release of the wake key then arrives late, and client-side key repeat floods the password field. Upstream #7806 (merged 00cee6d3) drops auto-repeated presses in the field. Holding Backspace or Delete to clear the field stays useful."
 tags: []
 variables: []
 traces:
@@ -31,7 +31,7 @@ history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:15Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:07:04Z"
+    last_modified_at: "2026-10-04T19:16:36Z"
 hazard_review:
     reviewed_at: "2026-10-04T19:06:41Z"
     reviewed_by: agent:claude-code

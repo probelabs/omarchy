@@ -4,13 +4,15 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
-# Verifies: SW-REQ-260912-EKJP, SW-REQ-260912-S154, SW-REQ-260912-Y0WT, SYS-REQ-260912-JW2J
+# Verifies: SW-REQ-260912-EKJP, SW-REQ-260912-S154, SW-REQ-260912-Y0WT, SYS-REQ-260912-JW2J, SW-REQ-261004-SP65, SW-REQ-261004-YNBG
 
 # Row dispositions (see proof mcdc show <REQ-ID> for the tables):
 #mcdc:ignore:defensive SW-REQ-260912-Y0WT: fingerprint_not_enrolled=T, fingerprint_pam_removed=F => FALSE -- the not-enrolled arm unconditionally removes the fingerprint PAM file; leaving it in place needs a broken build [reviewed: REVIEW-11]
-#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=F => FALSE -- the password PAM stack is written unconditionally at the top of every run [reviewed: REVIEW-18]
-#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_pam_installed=T, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=F => FALSE -- the password stack is written before the fingerprint branch is evaluated; fingerprint PAM without password PAM is structurally absent [reviewed: REVIEW-18]
-#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_pam_installed=T, fingerprint_pam_removed=T, lock_auth_config_run=T, password_pam_installed=T => FALSE -- the formula's exclusion conjunct !(installed & removed) makes this a violation row: the if/else installs or removes, never both [reviewed: REVIEW-18]
+#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_config_kept=F, fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=F => FALSE -- the password PAM stack is written unconditionally at the top of every run [reviewed: REVIEW-261004-AL7K]
+#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_config_kept=F, fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=T => FALSE -- the fingerprint step is one if/elif/else over the probe answer, so every run installs, removes or keeps; a run with none of the three needs a broken build [reviewed: REVIEW-261004-AL7K]
+#mcdc:ignore:defensive SYS-REQ-260912-JW2J: fingerprint_config_kept=T, fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=F => FALSE -- the password stack is written before the fingerprint step, so a run that keeps the fingerprint configuration has written it [reviewed: REVIEW-261004-AL7K]
+#mcdc:ignore:defensive SW-REQ-261004-SP65: fingerprint_config_kept=F, fingerprint_probe_failed=T => FALSE -- the else arm for a failed probe only prints the could-not-check line; it writes and removes nothing [reviewed: REVIEW-261004-SP6R]
+#mcdc:ignore:defensive SW-REQ-261004-YNBG: fingerprint_pam_installed=T, resume_recovery_installed=F => FALSE -- install of the resume hook and the drop-in and systemctl daemon-reload run under set -e before the tee that writes the stack, so a run that writes the stack installed both; a missing source stops the run first (witnessed below) [reviewed: REVIEW-261004-YN8R]
 
 apply_lock="$ROOT/bin/omarchy-apply-lock"
 
@@ -233,7 +235,9 @@ grep -Fx "$target_user" "$trusted_args" >/dev/null || fail "the trusted fprintd-
 # MCDC SW-REQ-260912-EKJP: running_as_root=T, trusted_path_only=T => TRUE
 # MCDC SW-REQ-260912-S154: fingerprint_enrollment_queried=T, fprintd_absolute_path_only=T => TRUE
 # MCDC SW-REQ-260912-Y0WT: fingerprint_not_enrolled=F, fingerprint_pam_removed=F => TRUE [no-action: the trusted probe reports an enrolled print and the -s fingerprint_pam assertion proves the removal path never fires]
-# MCDC SYS-REQ-260912-JW2J: fingerprint_pam_installed=T, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=T => TRUE
+# MCDC SYS-REQ-260912-JW2J: fingerprint_config_kept=F, fingerprint_pam_installed=T, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=T => TRUE
+# MCDC SW-REQ-261004-SP65: fingerprint_config_kept=F, fingerprint_probe_failed=F => TRUE [no-action: the probe lists a print, so the run writes the stack instead of keeping the old configuration]
+# MCDC SW-REQ-261004-YNBG: fingerprint_pam_installed=T, resume_recovery_installed=T => TRUE
 pass "the hardened root lock helper uses the trusted fingerprint probe"
 
 reset_runtime_files
@@ -273,6 +277,9 @@ TEST_FPRINTD_OUTPUT="Impossible to get devices: Could not activate remote peer" 
 for pair in "$fingerprint_pam:saved-pam" "$test_tmp/system-sleep/fprintd-resume:saved-hook" "$test_tmp/fprintd.service.d/10-stop-timeout.conf:saved-timeout"; do
   cmp -s "${pair%:*}" "$test_tmp/${pair##*:}" || fail "an unknown enrollment probe preserves existing recovery files"
 done
+[[ -s $password_pam ]] || fail "an unknown enrollment probe still writes the password PAM fixture"
+# MCDC SW-REQ-261004-SP65: fingerprint_config_kept=T, fingerprint_probe_failed=T => TRUE
+# MCDC SYS-REQ-260912-JW2J: fingerprint_config_kept=T, fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=T, password_pam_installed=T => TRUE
 pass "an unknown enrollment probe preserves existing recovery files"
 
 # The device name and empty-enrollment prose both contain the word "finger".
@@ -294,6 +301,7 @@ for source in "$hook_source" "$timeout_source"; do
   [[ ! -e $fingerprint_pam ]] || fail "failed recovery installation cannot create fingerprint PAM"
   mv "$source.saved" "$source"
 done
+# MCDC SW-REQ-261004-YNBG: fingerprint_pam_installed=F, resume_recovery_installed=F => TRUE [no-action: with a recovery source missing the install fails and the run stops before it writes the stack]
 pass "failed recovery installation cannot create fingerprint PAM"
 
 run_as_root "$patched_helper" "restore enrollment before removing fprintd-list"
@@ -326,13 +334,13 @@ grep -Fx "$target_user" "$trusted_args" >/dev/null || fail "the not-enrolled pro
 [[ ! -e $fingerprint_pam ]] ||
   fail "the not-enrolled run removes the fingerprint PAM fixture"
 # MCDC SW-REQ-260912-Y0WT: fingerprint_not_enrolled=T, fingerprint_pam_removed=T => TRUE
-# MCDC SYS-REQ-260912-JW2J: fingerprint_pam_installed=F, fingerprint_pam_removed=T, lock_auth_config_run=T, password_pam_installed=T => TRUE
+# MCDC SYS-REQ-260912-JW2J: fingerprint_config_kept=F, fingerprint_pam_installed=F, fingerprint_pam_removed=T, lock_auth_config_run=T, password_pam_installed=T => TRUE
 pass "the lock helper removes the fingerprint PAM stack when no print is enrolled"
 
 # Control: after a reset and no helper run, no install, removal, or probe side
 # effect exists.
 reset_runtime_files
-# MCDC SYS-REQ-260912-JW2J: fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=F, password_pam_installed=F => TRUE [no-action: post-reset with zero helper invocations, all four side-effect files are absent — nothing is installed, removed, or queried without a run]
+# MCDC SYS-REQ-260912-JW2J: fingerprint_config_kept=F, fingerprint_pam_installed=F, fingerprint_pam_removed=F, lock_auth_config_run=F, password_pam_installed=F => TRUE [no-action: post-reset with zero helper invocations, all four side-effect files are absent — nothing is installed, removed, or queried without a run]
 [[ ! -e $password_pam && ! -e $fingerprint_pam && ! -e $trusted_args && ! -e $attack_marker ]] ||
   fail "no lock-config side effect exists without a helper run"
 pass "no lock-config side effect exists without a helper run"
