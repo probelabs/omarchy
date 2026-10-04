@@ -437,6 +437,7 @@ Item {
     var now = Date.now()
     fingerprintAttemptFastError = !!deviceError && fingerprintAttemptReachedDevice && now - fingerprintAttemptPromptedAtMs < FingerprintModel.FAST_ERROR_MS
     var usableAttempt = fingerprintAttemptReachedDevice && !fingerprintAttemptFastError
+    //mcdc:ignore:defensive fingerprintSleepWatch.running is bound to lockRequested && fingerprintConfigured and nothing assigns it, and the guard above has just returned unless both are true, so the watcher is always running here and its condition can never flip the outcome; the usable, unusable-without-a-gap and unusable-across-a-sleep arms are witnessed by the lock harness
     if (!usableAttempt && fingerprintSleepWatch.running
         && FingerprintModel.spannedSleep(now - fingerprintSleepWatch.lastTickMs, fingerprintSleepWatch.interval)) {
       noteFingerprintResumed()
