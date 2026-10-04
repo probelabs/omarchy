@@ -7,14 +7,14 @@ results:
       command: ./pocs/lock-service-failopen-runtime.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T18:20:28Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-PAM-FLIP-ENGAGES-LOCK` from the KnownIssue''s reproducer command: ./pocs/lock-service-failopen-runtime.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Re-check passwordPamConfigured inside requestSessionLock (shell/plugins/lock/Service.qml:87-99) and stand the lock back down on the false transition: the anchored C01 assertions in pocs/crs-260930-ttvk-qml-static.sh flip from PRESENT to ABSENT and the script exits 1'
         - pocs/lock-service-failopen-runtime.sh
       freshness_hashes:
         pocs/lock-service-failopen-runtime.sh: sha256:adb7b8d42cc83fc932fc54c6b754f8cc411b873945a0cf356ec36bb26b8dd4ab
-        proof/known-issues/KI-LOCK-PAM-FLIP-ENGAGES-LOCK.yaml: ki-content-v1:sha256:05b66a5990917e817e6c9d7c7d8084f00603ff97b2df659970e3f796308bc4c0
+        proof/known-issues/KI-LOCK-PAM-FLIP-ENGAGES-LOCK.yaml: ki-content-v1:sha256:243be214574646fad2b33284b4fbb7a8737b371a2546b586ccb1da5e05750fbc
       known_issues:
         - KI-LOCK-PAM-FLIP-ENGAGES-LOCK
       config:

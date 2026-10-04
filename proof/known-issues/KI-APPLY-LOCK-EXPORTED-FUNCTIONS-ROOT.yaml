@@ -72,6 +72,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: 'set-title,set-description,set-severity=low,set-severity-basis=risk,set-risk,set-mitigation,kill-domain=lookup_shadowing,set-dedup-armor,severity-justification=severity: lowered from high to low. The defect is real: in the root branch, bash functions imported from the environment shadow the pinned grep (line 48) and the missing omarchy-shell (line 62), as pocs/crs-260930-g166-c07-c09.sh shows. No privilege boundary is crossed, though. sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17), pkexec starts the helper in a minimal environment, and the root callers (installer, upgrade) pass their own environment, so only a process that already runs as root can plant the functions. That makes it a defence-in-depth gap in SW-REQ-260912-EKJP, graded on correctness. The earlier record called it code execution as root by an untrusted caller while it also recorded cve_surface none and risk availability; those fields contradicted each other.'
+    - at: "2026-10-04T18:20:27Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

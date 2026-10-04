@@ -66,6 +66,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: 'set-severity=medium,set-severity-basis=risk,set-risk,set-mitigation,severity-justification=severity: lowered from high to medium. The race is real (pocs/lock-service-failopen-runtime.sh), but it fails closed: the session locks with no password PAM behind it, which locks the user out of the graphical session and exposes nothing. The trigger needs the root-owned /etc/pam.d/omarchy-lock-password to disappear or become unreadable inside the 500 ms stabilize window after a lock request. Fingerprint unlock (if configured) or a TTY login still recovers the session. Under the non-security rubric that is availability in a specific, rare workflow with an inconvenient recovery: medium.'
+    - at: "2026-10-04T18:20:27Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false

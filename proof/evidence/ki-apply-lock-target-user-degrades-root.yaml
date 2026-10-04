@@ -5,13 +5,13 @@ results:
       command: ./pocs/crs-260930-g166-c05-c06.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T18:20:28Z"
       input_set:
         - 'Captured by `proof evidence capture KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT` from the KnownIssue''s reproducer command: ./pocs/crs-260930-g166-c05-c06.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-g166-c05-c06.sh
       freshness_hashes:
         pocs/crs-260930-g166-c05-c06.sh: sha256:83ff77a52d1a44f8cbbcc8d71d42fc1f163b249d65b7ba48c877286f04dbbe48
-        proof/known-issues/KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT.yaml: ki-content-v1:sha256:9502042647b0a1b225182ab00e2428ab64fd24979389b70ce1602eedda3b5085
+        proof/known-issues/KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT.yaml: ki-content-v1:sha256:4bad1f3e03e33d63aa10d9b5d287b08600cbbf2946f83e309cc8d0e9d8d42adb
       known_issues:
         - KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
       config:

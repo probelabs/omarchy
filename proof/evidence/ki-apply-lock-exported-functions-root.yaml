@@ -5,13 +5,14 @@ results:
       command: ./pocs/crs-260930-g166-c07-c09.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:50Z"
+      executed_at: "2026-10-04T18:20:28Z"
+      revision: e15e02549005a557e3cd2a9916c68ed2626425d0
       input_set:
         - 'Captured by `proof evidence capture KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT` from the KnownIssue''s reproducer command: ./pocs/crs-260930-g166-c07-c09.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-g166-c07-c09.sh
       freshness_hashes:
         pocs/crs-260930-g166-c07-c09.sh: sha256:23d9be4bc12f6c6810da54d88d9a7400d0bad8809d906d493c64f2b225fffefb
-        proof/known-issues/KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT.yaml: ki-content-v1:sha256:d671ee42a0685f7e3f4695af88c6dc1a1269b43a6580a5b890b240e78878d7d7
+        proof/known-issues/KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT.yaml: ki-content-v1:sha256:af7ad775393942ce475b888ab66073b07c231c5c646a2e99c68f9311c8ded6de
       known_issues:
         - KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
       config:

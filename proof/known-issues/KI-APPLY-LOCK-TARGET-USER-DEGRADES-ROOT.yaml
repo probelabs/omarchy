@@ -43,6 +43,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: 'set-title,set-description,set-severity=low,severity-justification=severity: lowered from medium to low. target_user only feeds the fprintd enrollment probe (bin/omarchy-apply-lock:48); the helper writes the same password PAM stack for every account. A wrong account therefore costs at most fingerprint unlock for a user with enrolled prints, and password unlock is unaffected. The trigger also needs a direct pkexec call whose PKEXEC_UID getent cannot map: the installer (omarchy-apply-system) and the upgrade pass OMARCHY_INSTALL_USER, sudo sets SUDO_USER, and a deferred-provisioning install has no user with enrolled prints yet. The earlier description said both PAM files were configured for the wrong account, which overstated the impact.'
+    - at: "2026-10-04T18:20:27Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
