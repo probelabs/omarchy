@@ -9,13 +9,13 @@ results:
       command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-02T17:01:04Z"
-      revision: 86aff185e074170e913d2302ca8894b9af5dd8f7
+      executed_at: "2026-10-04T18:26:25Z"
+      revision: 1c0ebf8592d9370c3be1808768640e6dc0a164c8
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-REQUEST-LIFECYCLE` from the KnownIssue''s reproducer command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-REQUEST-LIFECYCLE.yaml: ki-content-v1:sha256:7102e503692b108f1da014b79c1b0cf46c0edc1b3982204925d476645d4b121d
+        proof/known-issues/KI-MENU-REQUEST-LIFECYCLE.yaml: ki-content-v1:sha256:f6fe06d7c54efedf225050273344cd5891308ee7c74d940db035838611a23b35
         test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh: sha256:f576fa65e0aa77869652a554c3554e8437213f0a1a01564be421e53ff3e90c16
       known_issues:
         - KI-MENU-REQUEST-LIFECYCLE
