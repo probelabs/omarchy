@@ -56,6 +56,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-mitigation
+    - at: "2026-10-04T19:47:31Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-images-vips-no-timeout.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

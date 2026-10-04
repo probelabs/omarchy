@@ -46,6 +46,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-path-helpers-coercion.yaml
+    - at: "2026-10-04T19:47:32Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-path-helpers-coercion.yaml
 kill_domain: coercion
 affected_file:
     - shell/plugins/menu/MenuModel.js

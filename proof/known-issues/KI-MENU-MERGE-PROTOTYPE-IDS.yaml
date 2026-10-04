@@ -46,6 +46,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-merge-prototype-ids.yaml
+    - at: "2026-10-04T19:47:32Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-merge-prototype-ids.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-ITEM-PROTOTYPE-LEAK: that one reads prototype-named ids as real entries at map lookups; this one writes such an id into storage but drops it from itemOrder so the row never renders - write-side ordering loss, not read-side phantom entries'
 kill_domain: prototype_pollution
 affected_file:

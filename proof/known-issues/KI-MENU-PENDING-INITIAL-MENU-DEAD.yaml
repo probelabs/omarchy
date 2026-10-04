@@ -68,6 +68,10 @@ history:
       by: agent:claude-code
       action: upstream-response
       detail: status=pending
+    - at: "2026-10-04T19:47:32Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker

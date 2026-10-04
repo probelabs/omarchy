@@ -5,14 +5,14 @@ results:
       command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:57Z"
+      executed_at: "2026-10-04T19:47:32Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes.js
       freshness_hashes:
-        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS.yaml: ki-content-v1:sha256:9fd7dacc1c64291675b346c2b619d02f1c1966515ff6a439255f52690ccaf635
+        pocs/menu-probes.js: sha256:776d23990bd6fc3e6894b6db6cf9da3bb8ca8779f618713b2d6e22aa98a9caa5
+        proof/known-issues/KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS.yaml: ki-content-v1:sha256:9896e3dc11a51c0c58302475812d87e7f41b69160c5700ef83883c8714ae345d
       known_issues:
         - KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS
       config:

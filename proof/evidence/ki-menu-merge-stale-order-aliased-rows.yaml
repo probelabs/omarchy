@@ -5,13 +5,13 @@ results:
       command: node pocs/menu-probes2.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:57Z"
+      executed_at: "2026-10-04T19:47:33Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS` from the KnownIssue''s reproducer command: node pocs/menu-probes2.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes2.js
       freshness_hashes:
-        pocs/menu-probes2.js: sha256:199d70de8e76ea2d66f76643426b0849423923425b1ddab580fd08b499d6d15e
+        pocs/menu-probes2.js: sha256:79283c7c77a98c425d4420aa4e806744fa91a2d97307d9e0cf60a3c39085ac51
         proof/known-issues/KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS.yaml: ki-content-v1:sha256:2eff7eb5e1d222128c424829e8f5e36703de285a61aca3b27d9687cec89154e5
       known_issues:
         - KI-MENU-MERGE-STALE-ORDER-ALIASED-ROWS

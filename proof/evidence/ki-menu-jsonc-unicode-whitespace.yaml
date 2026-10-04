@@ -7,13 +7,13 @@ results:
       command: sh pocs/menu-jsonc-unicode-whitespace.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-01T21:46:18Z"
+      executed_at: "2026-10-04T19:47:32Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-JSONC-UNICODE-WHITESPACE` from the KnownIssue''s reproducer command: sh pocs/menu-jsonc-unicode-whitespace.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - pocs/menu-jsonc-unicode-whitespace.sh
       freshness_hashes:
         pocs/menu-jsonc-unicode-whitespace.sh: sha256:0f103ac63eeadb773235ca3eec991de8f33bc958689ec3e99a848db1db087114
-        proof/known-issues/KI-MENU-JSONC-UNICODE-WHITESPACE.yaml: ki-content-v1:sha256:db49292bf74c06762bbe116611b2bc1c7a30185170f79a23fcc3f6335965e2c8
+        proof/known-issues/KI-MENU-JSONC-UNICODE-WHITESPACE.yaml: ki-content-v1:sha256:bc50adc0809830ec95999e0852e3a706695e52da9dc1245156c3953d4f8c98f0
       known_issues:
         - KI-MENU-JSONC-UNICODE-WHITESPACE
       config:

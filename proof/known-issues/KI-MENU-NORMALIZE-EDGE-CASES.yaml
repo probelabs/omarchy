@@ -50,6 +50,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-normalize-edge-cases.yaml
+    - at: "2026-10-04T19:47:32Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-normalize-edge-cases.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-DMENU-NAN-GEOMETRY: that one is dmenu geometry Number() coercion collapsing the card; this one is normalizeItem preserving malformed JSONC field types (null parent, boolean guards, numeric labels) that later break guard generation'
 kill_domain: input_validation
 affected_file:

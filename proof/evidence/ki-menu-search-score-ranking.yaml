@@ -2,17 +2,18 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-SJ7P
-      command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
+      command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:58Z"
+      executed_at: "2026-10-04T19:47:34Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-SEARCH-SCORE-RANKING` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes.js
+        - 'Re-commanded by `proof evidence refresh`: this row runs KI-MENU-SEARCH-SCORE-RANKING''s CURRENT reproducer command (node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js). The command previously stored in this manifest was: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js'
       freshness_hashes:
-        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
-        proof/known-issues/KI-MENU-SEARCH-SCORE-RANKING.yaml: ki-content-v1:sha256:8fd6d2a7c42e9e87fb8c736383bf4f14cffaf32a09729fea04b061ce39dcb4fa
+        pocs/menu-probes.js: sha256:776d23990bd6fc3e6894b6db6cf9da3bb8ca8779f618713b2d6e22aa98a9caa5
+        proof/known-issues/KI-MENU-SEARCH-SCORE-RANKING.yaml: ki-content-v1:sha256:31e978b89b0c7921fa5b6195112c147bb4601ec0c8aa5f39b3beaa93d05a58e0
       known_issues:
         - KI-MENU-SEARCH-SCORE-RANKING
       config:

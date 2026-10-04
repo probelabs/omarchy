@@ -7,13 +7,13 @@ results:
       command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:58Z"
+      executed_at: "2026-10-04T19:47:33Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
         - pocs/menu-probes.js
       freshness_hashes:
-        pocs/menu-probes.js: sha256:0e5def5f92d27bbcdd1cc169350cc646fcc6ff5cf009628c822a8f8e1c940e65
+        pocs/menu-probes.js: sha256:776d23990bd6fc3e6894b6db6cf9da3bb8ca8779f618713b2d6e22aa98a9caa5
         proof/known-issues/KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED.yaml: ki-content-v1:sha256:790c99dbb547389923dee1b82e5a6fac18965c690f1dfbe9fcaf6759b3e57a13
       known_issues:
         - KI-MENU-PROVIDER-SLUG-COLLISION-DROPPED

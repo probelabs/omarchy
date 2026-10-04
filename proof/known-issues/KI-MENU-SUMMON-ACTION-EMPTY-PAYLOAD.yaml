@@ -42,6 +42,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-summon-action-empty-payload.yaml
+    - at: "2026-10-04T19:47:36Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-summon-action-empty-payload.yaml
 kill_domain: payload_divergence
 affected_file:
     - shell/plugins/menu/MenuModel.js

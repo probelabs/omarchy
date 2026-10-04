@@ -47,6 +47,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-guard-id-injection-batch-abort.yaml
+    - at: "2026-10-04T19:47:21Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-guard-id-injection-batch-abort.yaml
 kill_domain: command_injection
 affected_file:
     - shell/plugins/menu/MenuModel.js

@@ -50,6 +50,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-items-key-ambiguity.yaml
+    - at: "2026-10-04T19:47:31Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-items-key-ambiguity.yaml
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-ARRAY-ROOT or KI-MENU-JSONC-INLINE-COMMENT: this one is the document shape after a successful parse (an object-valued top-level items key is read as the wrapper and its siblings are dropped); those are stripping or root-type defects that omacom/omarchy#13968 fixes, and it does not change the items wrapper rule'
 kill_domain: parsing
 affected_file:
