@@ -207,6 +207,23 @@ project:
                     if find /dev/null -printf '' >/dev/null 2>&1; then junit_run "$B" test/shell.d/menu-file-test.sh; else junit_skip test/shell.d/menu-file-test.sh "requires GNU find (-printf)"; fi;
                     for t in test/shell.d/menu-*-test.sh; do case "${t##*/}" in menu-test.sh|menu-pointer-lifecycle-test.sh|menu-plugin-test.sh|menu-dispatcher-test.sh|menu-dmenu-test.sh|menu-timezone-test.sh|menu-share-test.sh|menu-guards-test.sh|menu-images-test.sh|menu-file-test.sh|menu-compositor-test.sh|menu-acceptance-test.sh) ;; *) junit_run "$B" "$t" ;; esac; done;
                     junit_end
+            # plugins-shell runs the upstream tests of the notifications and
+            # emoji plugins, and every behaviour-comparison witness script
+            # (test/bdiff/*-test.sh), so a pull request on those plugins has
+            # its own test, and the witness its mirror adds, in the audit's
+            # test report without a proof.yaml change (mirrors never touch
+            # it). The plugin code itself stays out of the verification scope
+            # (completeness.production_exclude). Both tests read no host
+            # setting: they pass unchanged under C, C.UTF-8, tr_TR, et_EE,
+            # th_TH and ja_JP and another time zone (2026-10-04), so the
+            # command pins nothing.
+            plugins-shell:
+                language: bash
+                command: >-
+                    set -e; B=/usr/bin/bash; . test/junit/junit.sh; junit_begin plugins-shell;
+                    for t in notifications emojis; do junit_run "$B" "test/shell.d/$t-test.sh"; done;
+                    for t in test/bdiff/*-test.sh; do [ -e "$t" ] || continue; junit_run "$B" "$t"; done;
+                    junit_end
             menu-node:
                 language: js
                 command: >-
@@ -319,7 +336,7 @@ project:
             # run executes only the commands its targets bind, so without this
             # list menu-reports (the issue-report reproducers) never reached
             # the report in a full audit.
-            commands: [lock-shell, menu-shell, menu-live, menu-node, menu-reports, lock-qml]
+            commands: [lock-shell, menu-shell, plugins-shell, menu-live, menu-node, menu-reports, lock-qml]
         slow_tests:
             enabled: true
             # A <testcase> in the combined report is a WHOLE test script or
