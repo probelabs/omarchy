@@ -9,7 +9,7 @@
 # node:vm, and records the emoji that Enter hands to omarchy-menu-emoji-insert.
 
 # Verifies: SW-REQ-261004-H41S
-#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261003-6GBP]
+#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261004-5ZAN]
 # mcdc:witness-out-of-process
 
 set -euo pipefail
@@ -26,7 +26,29 @@ const { execFileSync } = require('child_process')
 const harness = path.join(root, 'test/bdiff/harness.mjs')
 const corpus = path.join(root, 'test/bdiff/corpus/lifecycle')
 const run = input => execFileSync('node', [harness, root, path.join(corpus, input)], { encoding: 'utf8', env: Object.assign({}, process.env, { LC_ALL: 'C.UTF-8' }) })
-const steps = out => out.split('\n').filter(line => /^(shown|top|enter) /.test(line)).slice(2).join('\n')
+// The harness output, read by its labels: the state the picker opens with
+// (the shown, top and digest lines after "opened"), then each later state and
+// each Enter, in order.
+const parse = out => {
+  const states = []
+  const enters = []
+  let opened = false
+  for (const line of out.split('\n')) {
+    const label = line.split(' ')[0]
+    if (label === 'opened') opened = true
+    else if (label === 'shown') states.push({ shown: line, query: JSON.parse(/^shown query=("(?:[^"\\]|\\.)*")/.exec(line)[1]), count: +/ count=(\d+) /.exec(line)[1] })
+    else if ((label === 'top' || label === 'digest') && states.length) states[states.length - 1][label] = line
+    else if (label === 'enter') { enters.push(line); if (states.length) states[states.length - 1].enter = line }
+  }
+  return { opened, states, enters }
+}
+const steps = out => {
+  const { states } = parse(out)
+  const lines = []
+  for (const state of states.slice(1)) lines.push(state.shown, state.top)
+  for (const line of out.split('\n')) if (line.split(' ')[0] === 'enter') lines.push(line)
+  return lines.join('\n')
+}
 const insert = emoji => `enter $OMARCHY_PATH/bin/omarchy-menu-emoji-insert ${emoji} opened=false`
 
 // Each case: description, input, the lines the harness prints after the
@@ -105,6 +127,7 @@ const cases = [
     insert('😀')]],
 ]
 
+const search = requireFromRoot('shell/plugins/emojis/EmojiSearch.js')
 const outputs = {}
 for (const [description, input, expected] of cases) {
   outputs[input] = run(input)
@@ -114,54 +137,54 @@ for (const [description, input, expected] of cases) {
 const inputs = fs.readdirSync(corpus).filter(name => /^seq-emoji-.*\.events$/.test(name)).sort()
 assertDeepEqual(inputs, Object.keys(outputs).sort(), 'every emoji input of the corpus is asserted here')
 
-// The whole list, not only the first 12: an oracle written from the
-// requirement text ranks emojis.json for each search text the harness shows,
-// and its digests must match the harness output.
+// Each input prints the state the picker opens with, then one state per
+// @type or @clear line. The count of states comes from the corpus files.
+const expectedStates = inputs.reduce((n, input) => n + 1 + fs.readFileSync(path.join(corpus, input), 'utf8').split('\n').filter(line => /^@(type|clear)( |$)/.test(line)).length, 0)
+const allStates = inputs.flatMap(input => parse(outputs[input]).states)
+assertEqual(allStates.length, expectedStates, 'the harness prints one state for the opening and one per @type or @clear line')
+
+// The same emojis match as before the fix: the count is the number of
+// emojis whose keywords contain the search text, at most 1000.
 const data = JSON.parse(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8'))
-const digest = list => crypto.createHash('sha256').update(list.join('\n')).digest('hex').slice(0, 12)
-// A word is a run of digits, apostrophes (' and ’) and letters, a letter
-// being a character with a case; any other character ends it. The best place the search text shows in
-// the keywords decides its group: 0 whole word, 1 start of a word, 2 inside.
-const inWord = c => c !== undefined && (/[0-9'’]/.test(c) || c.toLowerCase() !== c.toUpperCase())
-const group = (text, needle) => {
-  let best = -1
-  for (let at = text.indexOf(needle); at >= 0; at = text.indexOf(needle, at + 1)) {
-    const g = inWord(text[at - 1]) ? 2 : (inWord(text[at + needle.length]) ? 1 : 0)
-    if (best < 0 || g < best) best = g
-  }
-  return best
+const contains = query => data.filter(item => String(item.k || '').toLowerCase().includes(query.trim().toLowerCase())).length
+for (const state of allStates) {
+  if (state.count !== Math.min(1000, contains(state.query))) fail(`the picker lists every emoji that contains the search text (${JSON.stringify(state.query)})`, `count ${state.count}, contains ${contains(state.query)}`)
 }
-const ranked = query => {
-  const needle = query.trim().toLowerCase()
-  const groups = [[], [], []]
-  for (const item of data) {
-    const g = needle ? group(String(item.k || '').toLowerCase(), needle) : 0
-    if (g >= 0) groups[g].push(item.e)
-  }
-  return groups[0].concat(groups[1], groups[2]).slice(0, 1000)
+pass('the picker lists every emoji that contains the search text, up to 1000, for every state the inputs show')
+
+// Golden groups, written from the requirement and read off the keywords in
+// emojis.json: for each search text, emojis with the text as a whole word,
+// then emojis with a keyword that starts with it, then emojis that hold it
+// only inside a word. Each group is listed in file order. The picker's list
+// must hold them in exactly this order: all of a group before the next group.
+const golden = {
+  ok: [['👌', '👍', '🙆'], [], ['💔', '👀', '🧑‍🍳']], // ok hand; thumbs up ok; gesturing ok | - | broken, look, cook
+  tea: [['🍵', '🧋'], ['😂', '🥲', '🥹'], ['😤', '🧖']], // tea; bubble tea | tears, tear, tears | steam, steamy
+  fr: [['🇫🇷'], ['🥶', '🙁', '☹️'], ['🌍', '🇨🇫', '🇿🇦']], // fr | freezing, frowning, frowning | africa x3
+  key: [['🔐', '🔑', '🗝️'], ['🎹', '⌨️', '#️⃣'], ['💩', '🙈', '🙉']], // key x3 | keyboard x2, keycap | hankey, monkey, monkey
+  car: [['🚃', '🚋', '🚓'], ['💅', '🤸'], ['😨', '🧕', '🧣']], // car x3 | care, cartwheeling | scared, headscarf, scarf
+  pen: [['🖋️', '🖊️', '🔏'], ['😔', '🐧', '✏️'], ['🤗', '🫢', '😮']], // pen x3 | pensive, penguin, pencil | open x3
+  red: [['❤️', '👨‍🦰', '👩‍🦰'], [], ['😪', '😨', '😩']], // red heart; red_haired x2 | - | tired, scared, tired
+  man: [['👨', '🧔‍♂️', '👨‍🦰'], ['💅', '🧑‍🦽', '👩‍🦽'], ['🧔‍♀️', '👩']], // man; man: beard; red_haired_man | manicure, manual x2 | woman x2
+  e: [['📧'], ['😃', '😄', '😁'], ['😀', '😆', '😅']], // e-mail | eyes x3 | grinning, satisfied, sweat
+  o: [['🎃', '⭕', '🅾️'], ['🤣', '😂', '😛'], ['😃', '😄', '😅']], // jack-o-lantern; o; o button | on, of, out | joy, joy, hot
+  cat: [['😺', '😸', '😹'], [], ['🍹', '🎓', '🔔']], // cat x3 | - | vacation, education, notification
+  rex: [['🦖'], [], []], // t-rex
 }
-let states = 0
-for (const input of inputs) {
-  const lines = outputs[input].split('\n')
-  for (let i = 0; i < lines.length; i++) {
-    const shown = /^shown query=("(?:[^"\\]|\\.)*") count=(\d+) /.exec(lines[i])
-    if (!shown) continue
-    const list = ranked(JSON.parse(shown[1]))
-    const want = `digest order=${digest(list)} set=${digest(list.slice().sort())}`
-    if (+shown[2] !== list.length || lines[i + 2] !== want) {
-      fail(`the picker lists every match in the ranked order (${input}, query ${shown[1]})`, `expected: count=${list.length} ${want}\nactual:   count=${shown[2]} ${lines[i + 2]}`)
-    }
-    states++
-  }
+for (const [query, groups] of Object.entries(golden)) {
+  const list = search.filterEmojis(data, query, 1000).map(item => item.e)
+  const want = groups.flat()
+  const at = want.map(emoji => list.indexOf(emoji))
+  const ordered = at.every((index, i) => index >= 0 && (i === 0 || index > at[i - 1]))
+  const bounds = groups.map(group => group.map(emoji => list.indexOf(emoji)))
+  const separated = bounds.every((group, g) => bounds.slice(g + 1).flat().every(later => group.every(index => index < later)))
+  if (!ordered || !separated) fail(`${query} lists whole words, then keyword starts, then matches inside a word`, `want ${want.join(' ')} at ${at.join(',')}`)
 }
-assert(states === 34, 'the picker lists every match in the ranked order, for every search text the inputs show', `states checked: ${states}`)
+pass('each search text lists the golden whole words, then keyword starts, then matches inside a word')
 
 // The list starts from emojis.json as parseEmojis reads it: the real file
 // gives every entry, and text that is not a JSON array gives no emoji.
-const search = requireFromRoot('shell/plugins/emojis/EmojiSearch.js')
-// SW-REQ-261004-H41S:error_handling:nominal -- the shipped emojis.json parses to every entry
 assertEqual(search.parseEmojis(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8')).length, data.length, 'the picker reads every entry of emojis.json')
-// SW-REQ-261004-H41S:error_handling:negative -- text that is not a JSON array gives an empty list, not an error
 assertDeepEqual([search.parseEmojis('{'), search.parseEmojis('{"e":"x"}'), search.parseEmojis('')], [[], [], []], 'text that is not a JSON array gives an empty list')
 
 // filterEmojis on its own: the separators of the upstream test, and a
@@ -174,7 +197,8 @@ assertDeepEqual(search.filterEmojis([{ e: 'curly', k: 'woman’s boot' }, { e: '
 assertDeepEqual(search.filterEmojis([{ e: 'start', k: 'okay' }, { e: 'later', k: 'broken ok' }], 'ok').map(item => item.e), ['later', 'start'], 'a whole word later in the keywords beats a match inside an earlier word')
 assertDeepEqual(search.filterEmojis([{ e: 'inside', k: 'x100' }, { e: 'start', k: '100 points' }, { e: 'whole', k: 'number 10' }], '10').map(item => item.e), ['whole', 'start', 'inside'], 'digits are part of a word')
 
+const digest = list => crypto.createHash('sha256').update(list.join('\n')).digest('hex').slice(0, 12)
 const fileOrder = data.filter(item => item && item.e).slice(0, 1000).map(item => item.e)
-const opened = outputs['seq-emoji-empty.events'].split('\n')
-assertEqual(opened[4], `digest order=${digest(fileOrder)} set=${digest(fileOrder.slice().sort())}`, 'with no search text the list is the first 1000 emojis of emojis.json, in file order')
+const opening = parse(outputs['seq-emoji-empty.events']).states[0]
+assertEqual(opening.query === '' && opening.digest, `digest order=${digest(fileOrder)} set=${digest(fileOrder.slice().sort())}`, 'with no search text the list is the first 1000 emojis of emojis.json, in file order')
 JS
