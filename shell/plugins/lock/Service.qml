@@ -62,6 +62,7 @@ Item {
   readonly property var batteryService: shell && shell.services ? shell.firstPartyServiceFor("omarchy.battery") : null
   readonly property bool powerSaverActive: batteryService ? batteryService.powerSaverOnBattery : false
   // A prompt clears the unavailable notice before the attempt finishes.
+  // Implements: SW-REQ-261004-296X
   readonly property bool fingerprintUnavailable: FingerprintModel.isUnavailable(fingerprintProbeStreak) || (fingerprintConfigured && (!fingerprintAttemptReachedDevice || fingerprintAttemptFastError) && FingerprintModel.isUnavailable(fingerprintUnreachedStreak))
 
   // Implements: SYS-REQ-260912-T0XP
@@ -157,6 +158,7 @@ Item {
   }
 
   // Only definitive enrollment results may disable authentication.
+  // Implements: SW-REQ-261004-V813
   function applyFingerprintProbe(text) {
     var status = FingerprintModel.classifyProbe(text)
     if (status === "unknown") {
@@ -265,6 +267,7 @@ Item {
   }
 
   // User activity advances retries without recreating a busy retry loop.
+  // Implements: SW-REQ-261004-296X
   function nudgeFingerprint() {
     if (!lockRequested) return
     if (!fingerprintConfigured && fingerprintRecheckTimer.running) {
@@ -286,12 +289,14 @@ Item {
   }
 
 
+  // Implements: SW-REQ-261004-296X
   function armFingerprintRetry(delayMs) {
     fingerprintRetryTimer.interval = delayMs
     fingerprintRetryTimer.restart()
   }
 
   // Reset pre-sleep failures while the resume hook restarts fprintd.
+  // Implements: SW-REQ-261004-296X
   function noteFingerprintResumed() {
     var now = Date.now()
     if (FingerprintModel.inResumeGrace(now, fingerprintResumedAtMs)) return
@@ -301,6 +306,7 @@ Item {
   }
 
   // A suspended PAM conversation may be orphaned by the daemon restart.
+  // Implements: SW-REQ-261004-296X
   function restartFingerprintAfterSleep() {
     noteFingerprintResumed()
     if (fingerprintAuthenticating || fingerprintPam.active) {
@@ -381,7 +387,7 @@ Item {
     runWake()
   }
 
-  // Implements: SYS-REQ-260912-T0XP
+  // Implements: SYS-REQ-260912-T0XP, SW-REQ-261004-296X
   function startFingerprint() {
     if (!lockRequested || !sessionLock.secure || !fingerprintConfigured) return
     if (fingerprintPam.active || fingerprintAuthenticating) return
@@ -403,6 +409,7 @@ Item {
   }
 
   // A prompt proves the claim landed, so stop waiting for reachability.
+  // Implements: SW-REQ-261004-296X
   function noteFingerprintReachedDevice() {
     if (fingerprintAttemptReachedDevice) return
     fingerprintAttemptReachedDevice = true
@@ -411,6 +418,7 @@ Item {
   }
 
   // abort() gives no completion signal; settle the attempt here.
+  // Implements: SW-REQ-261004-296X
   function timeoutFingerprintReach() {
     logEvent("fingerprint-reach-timeout")
     if (fingerprintPam.active) fingerprintPam.abort()
@@ -418,6 +426,7 @@ Item {
   }
 
   // onError and onCompleted can both fire; settle each attempt once.
+  // Implements: SW-REQ-261004-296X
   function settleFingerprintAttempt(deviceError) {
     if (!fingerprintAuthenticating) return
     fingerprintAuthenticating = false
@@ -448,7 +457,7 @@ Item {
     armFingerprintRetry(FingerprintModel.retryDelayMs(fingerprintUnreachedStreak))
   }
 
-  // Implements: SYS-REQ-260912-T0XP
+  // Implements: SYS-REQ-260912-T0XP, SW-REQ-261004-296X
   function handleFingerprintFinished(result) {
     if (result === PamResult.Success && lockRequested) {
       // A match after a run of misses is the recovery too; the unlock resets
@@ -597,6 +606,7 @@ Item {
     config: "omarchy-lock-fingerprint"
     user: root.userName
 
+    // Implements: SW-REQ-261004-296X
     onPamMessage: {
       if (!messageIsError) root.noteFingerprintReachedDevice()
     }
@@ -653,6 +663,7 @@ Item {
     repeat: true
     running: root.lockRequested && root.fingerprintConfigured
     property double lastTickMs: 0
+    // Implements: SW-REQ-261004-296X
     onRunningChanged: lastTickMs = Date.now()
     onTriggered: {
       var now = Date.now()
@@ -666,6 +677,7 @@ Item {
     id: fingerprintReachTimer
     interval: FingerprintModel.REACH_TIMEOUT_MS
     repeat: false
+    // Implements: SW-REQ-261004-296X
     onTriggered: root.timeoutFingerprintReach()
   }
 
@@ -714,7 +726,7 @@ Item {
     id: fingerprintCheckProc
     command: ["bash", "-c", "if [[ -f /etc/pam.d/omarchy-lock-fingerprint ]] && command -v fprintd-list >/dev/null 2>&1; then LC_ALL=C fprintd-list \"$USER\" 2>&1; else echo no; fi"]
     stdout: StdioCollector { id: fingerprintCheckStdout; waitForEnd: true }
-    // Implements: SYS-REQ-260912-T0XP
+    // Implements: SW-REQ-261004-V813
     onExited: root.applyFingerprintProbe(fingerprintCheckStdout.text)
   }
 
@@ -724,6 +736,7 @@ Item {
     id: fingerprintRecheckTimer
     interval: FingerprintModel.ERROR_RETRY_BASE_MS
     repeat: false
+    // Implements: SW-REQ-261004-V813
     onTriggered: root.refreshFingerprintStatus()
   }
 

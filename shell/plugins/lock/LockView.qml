@@ -74,6 +74,7 @@ Item {
   // the monitor modesets, so the wake key's release arrives late and client-side
   // key repeat floods the field with that character. A held key has no business
   // typing a password; only holding Backspace/Delete to clear stays useful.
+  // Implements: SW-REQ-261004-VVN2
   function dropsAutoRepeat(key) {
     return key !== Qt.Key_Backspace && key !== Qt.Key_Delete
   }
@@ -224,7 +225,7 @@ Item {
           if (submitted.length > 0) root.submitPassword(submitted)
         }
 
-        // Implements: SW-REQ-260912-ND55
+        // Implements: SW-REQ-260912-ND55, SW-REQ-261004-VVN2
         Keys.onPressed: function(event) {
           root.wakeRequested()
           if (event.isAutoRepeat && root.dropsAutoRepeat(event.key)) {
@@ -278,6 +279,7 @@ Item {
     // The crossed-out icon has no meaning to a user who has never seen it — it
     // is not intuitive that it signals a broken reader — so the words carry the
     // explanation and the icon only reinforces it.
+    // Implements: SW-REQ-260912-41VV
     Text {
       objectName: "fingerprintUnavailableNotice"
       textFormat: Text.PlainText

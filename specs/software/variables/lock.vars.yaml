@@ -160,6 +160,70 @@ variables:
       type: bool
       direction: output
       description: The lock view shows the fingerprint indicator exactly when a sensor is configured.
+    - name: fingerprint_probe_failed
+      type: bool
+      direction: input
+      description: The enrollment probe answered with neither an enrolled fingerprint nor an explicit empty enrollment (for example fprintd could not be reached).
+    - name: fingerprint_config_kept
+      type: bool
+      direction: output
+      description: The fingerprint PAM stack, the fprintd resume hook and the stop-timeout drop-in are left as they were.
+    - name: fingerprint_pam_installed
+      type: bool
+      direction: input
+      description: The helper writes the PAM fingerprint stack in this run.
+    - name: resume_recovery_installed
+      type: bool
+      direction: output
+      description: The fprintd resume hook and the stop-timeout drop-in are installed, and systemd reloaded, before the PAM fingerprint stack is written.
+    - name: fingerprint_probe_answered
+      type: bool
+      direction: input
+      description: "The lock screen's enrollment probe finished."
+    - name: probe_lists_print
+      type: bool
+      direction: input
+      description: The probe answer lists an enrolled fingerprint.
+    - name: probe_says_none
+      type: bool
+      direction: input
+      description: The probe answer says the user has no enrolled fingerprint, or the fingerprint PAM file or fprintd-list is missing.
+    - name: fingerprint_was_configured
+      type: bool
+      direction: input
+      description: The lock service treated fingerprint authentication as configured before the probe answered.
+    - name: fingerprint_auth_configured
+      type: bool
+      direction: output
+      description: The lock service treats fingerprint authentication as configured.
+    - name: probe_miss_streak_reached
+      type: bool
+      direction: input
+      description: At least 3 probe answers in a row were neither a listed fingerprint nor a definite none.
+    - name: attempt_usable
+      type: bool
+      direction: input
+      description: The last fingerprint attempt reached the reader (it showed a finger prompt) and did not end in a device error within 2 s of the prompt.
+    - name: attempt_miss_streak_reached
+      type: bool
+      direction: input
+      description: At least 3 fingerprint attempts in a row were not usable.
+    - name: fingerprint_reader_unavailable
+      type: bool
+      direction: output
+      description: The lock service reports the fingerprint reader unavailable to the lock view.
+    - name: key_autorepeat
+      type: bool
+      direction: input
+      description: A key press in the password field is an auto-repeat of a held key.
+    - name: key_erases
+      type: bool
+      direction: input
+      description: The key is Backspace or Delete.
+    - name: key_press_dropped
+      type: bool
+      direction: output
+      description: The password field consumes the key press without editing the text.
 independence:
     declared: true
     reason: 'All formalized lock guarantees at both layers constrain pairwise-disjoint output variables (verified 2026-09-27: software 0/105 pairs, system 0/10 pairs share a consequent variable, matching the engine''s connected-component pruning). The two layers now hold per-layer vars files (split 2026-09-28): each layer declares exactly the variables its own requirements consume; 5 cross-layer variables (fingerprint_pam_removed, lock_state_queried, suspend_imminent, update_run_requested, user_lock_requested) are declared in both. Cross-requirement conflicts over outputs are structurally impossible.'

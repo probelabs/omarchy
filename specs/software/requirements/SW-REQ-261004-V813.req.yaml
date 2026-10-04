@@ -1,0 +1,34 @@
+id: SW-REQ-261004-V813
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when fingerprint_probe_answered the lock_service shall always satisfy fingerprint_auth_configured <=> (probe_lists_print | (!probe_says_none & fingerprint_was_configured))
+description: When the lock screen's enrollment probe finishes, the lock service shall treat fingerprint authentication as configured when the answer lists an enrolled fingerprint. It shall treat it as not configured when the answer says the user has no enrolled fingerprint, or the fingerprint PAM file or fprintd-list is missing. Any other answer, for example an fprintd that cannot be reached, shall leave the state unchanged. While fingerprint authentication is not configured after such an answer, the service shall run the probe again after the attempt backoff.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-T0XP
+component: lock
+rationale: ""
+tags: []
+variables: []
+traces:
+    satisfies:
+        - SYS-REQ-260912-T0XP
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-04T19:00:15Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-04T19:00:15Z"

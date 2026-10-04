@@ -88,6 +88,14 @@ project:
             - test/shell.d/base-test.sh
             - test/shell.d/fixtures/sudo-boundary-test.sh
             - test/shell.d/fixtures/lock-fingerprint-indicator/**
+            - test/shell.d/fixtures/lock-fingerprint-service/**
+            - test/shell.d/fixtures/lock-autorepeat/**
+            # - the fprintd resume hook and stop-timeout drop-in that
+            #   omarchy-apply-lock installs beside the fingerprint stack
+            #   (apply-lock-test.sh copies both; they stay outside the
+            #   production universe with the rest of default/systemd)
+            - default/systemd/system-sleep/fprintd-resume
+            - default/systemd/system/fprintd.service.d/10-stop-timeout.conf
             - test/shell.d/fixtures/lock-password-overflow/**
             - test/shell.d/fixtures/owe-lock/**
             - test/shell.d/fixtures/tray-menu-activation/**
@@ -199,7 +207,7 @@ project:
                 language: bash
                 command: >-
                     set -e; B=/usr/bin/bash; . test/junit/junit.sh; junit_begin lock-shell;
-                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-password-overflow lock-stranded-recovery lock-missing-pam; do junit_run "$B" "test/shell.d/$t-test.sh"; done;
+                    for t in apply-lock system-lock sleep-lock hyprland-session-locked lock-blank-fingerprint lock-fingerprint-indicator lock-fingerprint-retry lock-fingerprint-service lock-autorepeat lock-password-overflow lock-stranded-recovery lock-missing-pam; do junit_run "$B" "test/shell.d/$t-test.sh"; done;
                     if command -v flock >/dev/null 2>&1 && [ -d /proc ]; then junit_run "$B" test/shell.d/update-lock-test.sh; else junit_skip test/shell.d/update-lock-test.sh "requires Linux flock and /proc"; fi;
                     junit_end
             # menu-shell also runs every other test/shell.d/menu-*-test.sh,
@@ -226,6 +234,15 @@ project:
                 command: >-
                     set -e; B=/usr/bin/bash; . test/junit/junit.sh; junit_begin plugins-shell;
                     junit_run "$B" test/shell.d/emojis-test.sh;
+                    junit_end
+            # lock-node replays the lock screen's fingerprint retry model
+            # (shell/plugins/lock/FingerprintModel.js) under node:test for the
+            # js MC/DC engine (target lock-js-fingerprintmodel).
+            lock-node:
+                language: js
+                command: >-
+                    set -e; . test/junit/junit.sh; junit_begin lock-node;
+                    node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination="$JUNIT_PART" test/node/fingerprintmodel-replay.test.mjs || junit_fail $?;
                     junit_end
             menu-node:
                 language: js
@@ -339,7 +356,7 @@ project:
             # run executes only the commands its targets bind, so without this
             # list menu-reports (the issue-report reproducers) never reached
             # the report in a full audit.
-            commands: [lock-shell, menu-shell, plugins-shell, menu-live, menu-node, menu-reports, lock-qml]
+            commands: [lock-shell, lock-node, menu-shell, plugins-shell, menu-live, menu-node, menu-reports, lock-qml]
         slow_tests:
             enabled: true
             # A <testcase> in the combined report is a WHOLE test script or
@@ -464,6 +481,20 @@ project:
                   language: qml
                   scope: shell/plugins/lock/Service.qml
                   test_command: lock-qml
+                  min_decision_percent: 100
+                  min_condition_percent: 100
+                # The lock screen's fingerprint retry model (#7158): attempt
+                # pacing, probe classification, resume grace and the
+                # unavailable threshold. test/node/fingerprintmodel-replay.test.mjs
+                # replays the run_node_test body of the upstream
+                # test/shell.d/lock-fingerprint-retry-test.sh under node:test.
+                - id: lock-js-fingerprintmodel
+                  enabled: true
+                  language: js
+                  runner: node
+                  scope: shell/plugins/lock
+                  js_glob: FingerprintModel.js
+                  test_command: lock-node
                   min_decision_percent: 100
                   min_condition_percent: 100
                 # --- MENU system targets (menu dogfood Phase 4b) ---

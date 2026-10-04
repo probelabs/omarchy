@@ -72,6 +72,10 @@ variables:
       type: bool
       direction: output
       description: The held subcommand reports whether the caller holds the update lock.
+    - name: fingerprint_config_kept
+      type: bool
+      direction: output
+      description: The fingerprint PAM stack, the fprintd resume hook and the stop-timeout drop-in are left as they were, because the enrollment check failed.
 independence:
     declared: true
     reason: 'All formalized lock guarantees at both layers constrain pairwise-disjoint output variables (verified 2026-09-27: software 0/105 pairs, system 0/10 pairs share a consequent variable, matching the engine''s connected-component pruning). The two layers now hold per-layer vars files (split 2026-09-28): each layer declares exactly the variables its own requirements consume; 5 cross-layer variables (fingerprint_pam_removed, lock_state_queried, suspend_imminent, update_run_requested, user_lock_requested) are declared in both. Cross-requirement conflicts over outputs are structurally impossible.'

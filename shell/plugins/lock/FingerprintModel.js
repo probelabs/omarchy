@@ -16,6 +16,7 @@ var SLEEP_GAP_MS = 2000
 // Ignore transient misses while the asynchronous resume restart lands.
 var RESUME_GRACE_MS = 5000
 
+// Implements: SW-REQ-261004-296X
 function retryDelayMs(streak) {
   if (streak <= 0) return MATCH_RETRY_MS
   var delay = ERROR_RETRY_BASE_MS * Math.pow(2, streak - 1)
@@ -23,6 +24,7 @@ function retryDelayMs(streak) {
 }
 
 // Preserve the daemon idle window even under continuous user activity.
+// Implements: SW-REQ-261004-296X
 function shouldNudge(nowMs, lastNudgeMs, lastSettleMs, currentIntervalMs) {
   if (currentIntervalMs <= MATCH_RETRY_MS) return false
   var sinceNudge = nowMs - lastNudgeMs
@@ -36,6 +38,7 @@ function shouldNudge(nowMs, lastNudgeMs, lastSettleMs, currentIntervalMs) {
 
 
 // A failed probe is unknown, so it cannot disable authentication for the lock.
+// Implements: SW-REQ-261004-V813
 function classifyProbe(text) {
   var s = String(text || "").trim()
   if (/^[ \t]*-[ \t]*#[0-9]+:/m.test(s)) return "yes"
@@ -45,6 +48,7 @@ function classifyProbe(text) {
 }
 
 // Resume-time misses stay at the first tier while fprintd restarts.
+// Implements: SW-REQ-261004-296X
 function nextStreak(streak, usableAttempt, inResumeGrace) {
   if (usableAttempt) return 0
   if (inResumeGrace) return 1
@@ -52,10 +56,12 @@ function nextStreak(streak, usableAttempt, inResumeGrace) {
 }
 
 // Event-loop stalls may also open the grace window; retries remain paced.
+// Implements: SW-REQ-261004-296X
 function spannedSleep(elapsedMs, expectedMs) {
   return elapsedMs > expectedMs + SLEEP_GAP_MS
 }
 
+// Implements: SW-REQ-261004-296X
 function inResumeGrace(nowMs, resumedAtMs) {
   if (resumedAtMs <= 0) return false
   var elapsed = nowMs - resumedAtMs
@@ -63,10 +69,12 @@ function inResumeGrace(nowMs, resumedAtMs) {
 }
 
 // A few consecutive misses avoid reporting a single claim conflict.
+// Implements: SW-REQ-261004-296X
 function isUnavailable(streak) {
   return streak >= UNAVAILABLE_AFTER
 }
 
+//mcdc:ignore:tooling-limit the false arm is the QML path: Service.qml imports this file as a JavaScript resource, where module does not exist; node, the only runtime the js MC/DC engine instruments, always defines module for this CommonJS file (the node:test replay and the run_node_test pipe alike), so no instrumented run can reach that arm, while the exports arm is witnessed by every replayed assertion
 if (typeof module !== "undefined") {
   module.exports = {
     MATCH_RETRY_MS: MATCH_RETRY_MS,
