@@ -159,7 +159,9 @@ assert(states === 34, 'the picker lists every match in the ranked order, for eve
 // The list starts from emojis.json as parseEmojis reads it: the real file
 // gives every entry, and text that is not a JSON array gives no emoji.
 const search = requireFromRoot('shell/plugins/emojis/EmojiSearch.js')
+// SW-REQ-261004-H41S:error_handling:nominal -- the shipped emojis.json parses to every entry
 assertEqual(search.parseEmojis(fs.readFileSync(path.join(root, 'shell/plugins/emojis/emojis.json'), 'utf8')).length, data.length, 'the picker reads every entry of emojis.json')
+// SW-REQ-261004-H41S:error_handling:negative -- text that is not a JSON array gives an empty list, not an error
 assertDeepEqual([search.parseEmojis('{'), search.parseEmojis('{"e":"x"}'), search.parseEmojis('')], [[], [], []], 'text that is not a JSON array gives an empty list')
 
 // filterEmojis on its own: the separators of the upstream test, and a
