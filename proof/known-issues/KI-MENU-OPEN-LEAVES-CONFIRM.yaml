@@ -16,6 +16,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: It takes an unanswered uninstall question plus a summon, such as a script prompt that appears while you are in the Apps menu. Answering the question with Escape or Cancel, or closing the menu, clears it.
 remediation: 'Call cancelDelete() in open(), where every summon enters, when a question is pending. PR #14054 does this.'
+notes:
+    - 'Upstream: original #14052 (ours, 2026-10-02); open fix PR #14054 (ours).'
 customer_impact: If something summons the menu while an uninstall question is open, the question stays on top of the new prompt. The dialog preselects Uninstall, so the Enter you meant for the prompt uninstalls the app. Omarchy deletes your own, web-app and TUI launchers with no further prompt; for a package, it opens the uninstall terminal. The prompt's caller gets a cancel, so the action behind it never runs.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -69,6 +71,30 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-open-leaves-confirm.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#14052
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/14052
+    reference: '#14052'
+    reported_at: "2026-10-02"
+    reported_by: human:buger
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: 'Open on 2026-10-04 with no maintainer or omarchybot response. Our fix PR #14054 is open and not merged.'
+        response_url: https://github.com/omacom/omarchy/issues/14052
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -86,7 +112,7 @@ poc_quality:
         quantitative_impact: one Enter removes one launcher file, and the prompt's caller exits 1 with no value instead of the picked row.
         control_test: Escape on the confirmation keeps the launcher. A select prompt with no confirmation open returns the picked value with exit 0. With PR #14054 merged, the summon dismisses the confirmation and the launcher stays.
         current_deployment_relevance: on this baseline (upstream quattro product code, whose Menu.qml has not changed since 821ae589), open(), openDmenu(), openRoute() and openExistingMenu() clear neither deleteConfirmOpen nor deleteTarget (anchor CNF1).
-        honest_severity: medium. The impact is an unwanted uninstall that deletes user, web-app and TUI launchers with no further prompt. It needs a summon that arrives while an uninstall question is open.
+        honest_severity: medium - the impact is an unwanted uninstall that deletes user, web-app and TUI launchers with no further prompt. It needs a summon that arrives while an uninstall question is open.
         reproducible: one deterministic command, under one second, node and perl only. The live run was repeated for a select prompt, an input prompt and a route summon.
         no_inflation: the claims are limited to the demonstrated uninstall and the cancelled prompt. No privilege or remote claim is made.
         operational_path_verified: in the live shell (Quickshell 0.3.1 on headless sway, the tree's own shell, keys sent with wtype), Apps menu, Delete, an omarchy-menu-select prompt and Enter removed demo-notes.desktop, and the caller printed exit=1.
@@ -94,6 +120,11 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker gains anything; the trigger is the user''s own uninstall question and a summon'
         reachability_verified: 'local-behavioral defect: the trigger is a summon inside the user''s own session; there is no ingress layer to traverse'
         untrusted_attacker: 'local-behavioral defect: no untrusted party supplies the input'
+submission_validation:
+    natspec_review: Menu.qml clears deleteConfirmOpen and deleteTarget only in onOpenedChanged, with no comment about summons. docs/menu.md mentions the uninstall support of the apps provider, not a confirmation that outlives a summon. Nothing documents the carry-over as intended.
+    commit_origin: 32b642e08 (2026-05-25, Add launcher uninstall confirmation) added the confirmation to the separate launcher. 7a9947a73 (2026-07-23, Combine the Omarchy menu and the launcher) moved it into Menu.qml, where open() serves every summon and does not clear it.
+    intended_path_verified: true
+    master_status: identical
 kill_domain: dialog_lifecycle
 affected_file:
     - shell/plugins/menu/MenuModel.js

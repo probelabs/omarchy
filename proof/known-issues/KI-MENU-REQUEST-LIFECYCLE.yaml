@@ -23,6 +23,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: 'Nothing bounds the wait. A superseded caller, or one whose menu process dies, keeps polling forever: 19 of 20 in a burst on quattro c05d9019. Later summons still work.'
 remediation: 'Finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only. #9056 (head b7bd59c4) answers a superseded request and fixes the busy-writer race; a deadline in omarchy-menu-select is still needed for a dead menu process.'
+notes:
+    - 'Upstream: original #7818 (2026-08-22) reports only the superseded-summon leg; duplicate #9057; open fix PRs #7826 and #9056; related open PR #9031.'
 customer_impact: Summoning a menu again before answering the previous one, for example by pressing Super+K several times, leaves the earlier caller waiting forever. Each one stays behind as a background process, and the action that opened it never completes. The same happens when the menu process dies while a caller waits. Later menus still open and work.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -84,6 +86,30 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#7818
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/7818
+    reference: '#7818'
+    reported_at: "2026-08-22"
+    reported_by: human:github/designgears
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: 'Open on 2026-10-04. omarchybot labelled #7818 bug on 2026-09-27 and verified fix PR #7826 on 2026-09-28. Fix PRs #7826 and #9056 are open and not merged.'
+        response_url: https://github.com/omacom/omarchy/pull/7826#issuecomment-5872170641
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -109,6 +135,11 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral correctness defect: the trigger is the user''s own repeated summon in their session; there is no ingress access-control or input-validation layer to traverse'
         untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: 'docs/menu.md (Select and input modes) says callers block on a tempfile handshake: the shell writes selectionFile and touches doneFile, and a cancel exits 1. A superseded request gets neither, so the code breaks the documented handshake.'
+    commit_origin: edfd68d48 (2026-05-14, Strip the bash-bin compatibility layer from Menu.qml) removed the release of the previous done file that openExistingMenu did in 0e135bbb7. abf0a68b5 (2026-05-19, Drop walker + elephant) added openDmenu and the resultProc write in finishRequest.
+    intended_path_verified: true
+    master_status: identical
 kill_domain: handshake
 affected_file:
     - shell/plugins/menu/MenuModel.js

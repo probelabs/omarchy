@@ -15,6 +15,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: DEBUG=1 on omarchy-menu-keybindings prints the failing require
 remediation: 'Isolate each bind registration from unrelated config code: run the dofile with a permissive mock (never-throwing comparisons), or scan binds via a per-require pcall boundary. Then one throwing module cannot drop unrelated binds'
+notes:
+    - 'Upstream: original fix PR #7564 (2026-08-20); later duplicate fix PR #13276; no issue tracks it.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -35,6 +37,30 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#7564
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/pull/7564
+    reference: '#7564'
+    reported_at: "2026-08-20"
+    reported_by: human:github/tobi
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: 'Open on 2026-10-04. omarchybot reproduced the scan abort on a worker built from the Omarchy ISO on 2026-09-28 and pushed two commits to this fix PR. Duplicate fix PR #13276 is also open.'
+        response_url: https://github.com/omacom/omarchy/pull/7564#issuecomment-5868344959
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -60,6 +86,11 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
         untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: config/hypr/hyprland.lua tells users to put personal overrides in hypr/bindings.lua, which it requires after default.hypr.omarchy. The header comment of bin/omarchy-menu-keybindings says the cache lets the menu show Lua binds. Nothing documents that one throwing require drops the later binds.
+    commit_origin: 350b9a33b (2026-05-10, Fix keybinds display) added the scan as one pcall(dofile, config). The trigger file default/hypr/qconsole.lua arrived in 83987718c (#7420, 2026-08-18); the comparison that throws on the upstream tip is from a59afb965 (2026-08-30).
+    intended_path_verified: true
+    master_status: identical
 kill_domain: error_propagation
 do_not_refile_as: menu shows wrong command for a Lua bind (that is the stale-cache or CSV-shift KI, not the scan abort); qconsole broken in the real compositor (the mock environment is scanner-specific; real Hyprland never runs this code)
 affected_file: bin/omarchy-menu-keybindings

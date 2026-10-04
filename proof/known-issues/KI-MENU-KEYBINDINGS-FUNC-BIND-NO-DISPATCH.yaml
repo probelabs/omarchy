@@ -15,6 +15,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: none - the rows are visible, selecting them silently does nothing
 remediation: Cache a dispatchable expression for function binds (emit the Lua body or register bind_commands entries for the shipped function binds). Then refuse to render rows whose recovered dispatcher is empty
+notes:
+    - 'Upstream: original fix PR #11851 (2026-09-14); no issue tracks it.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -35,6 +37,30 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#11851
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/pull/11851
+    reference: '#11851'
+    reported_at: "2026-09-14"
+    reported_by: human:github/vdvoorder
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: Open on 2026-10-04. omarchybot reproduced the defect on quattro and verified this fix PR on a worker on 2026-10-01. The verified label came off on 2026-10-02 when the head moved; it awaits the maintainer.
+        response_url: https://github.com/omacom/omarchy/pull/11851#issuecomment-5923606223
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -60,6 +86,11 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
         reachability_verified: 'local-behavioral correctness/reliability defect: the trigger is the user''s own session, config or process state - there is no ingress access-control or input-validation layer to traverse, and no adversary participates, so end-to-end attacker reachability is not applicable'
         untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: The header comment of bin/omarchy-menu-keybindings says the source-derived cache lets the menu still show and dispatch Lua binds. A function bind shows but does not dispatch, so the code contradicts its own comment. docs/menu.md has no keybindings section.
+    commit_origin: 3b2fc3a08 (2026-05-16, Bring back dispatch from keybindings menu) added the Lua bind cache. Its hl.bind mock records a kind and an arg only for dispatcher tables and strings, so a raw function bind caches an empty dispatcher.
+    intended_path_verified: true
+    master_status: identical
 kill_domain: functional_gap
 do_not_refile_as: all Lua binds fail to dispatch (exec-arg binds via o.bind_commands dispatch fine; only raw-function binds are hit)
 affected_file: bin/omarchy-menu-keybindings

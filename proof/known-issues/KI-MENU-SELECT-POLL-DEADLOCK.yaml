@@ -19,6 +19,8 @@ affected_api: bin/omarchy-menu-select (dmenu select protocol)
 reproducer_command: /bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
 introduced_in: inception
 defect_class: latent
+notes:
+    - 'Upstream: original fix PR #9031 (2026-08-29); no issue tracks it; related open PR #8696 waits on the done file instead of polling.'
 review_date: "2026-12-23"
 status: reviewed
 history:
@@ -109,6 +111,30 @@ history:
       by: agent:opencode-quattro
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#9031
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/pull/9031
+    reference: '#9031'
+    reported_at: "2026-08-29"
+    reported_by: human:github/markvogel
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: Open on 2026-10-04. omarchybot verified this fix PR on 2026-10-01 (labels bug and verified) and found nothing to change. It is not merged.
+        response_url: https://github.com/omacom/omarchy/pull/9031#issuecomment-5934574459
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -134,6 +160,11 @@ poc_quality:
         attacker_profitability: no attacker exists for this defect class; nothing is gained by any party, so profitability is not applicable
         reachability_verified: 'local-behavioral correctness defect: no ingress access-control or trust boundary to traverse; the poll runs inside the user''s own session script'
         untrusted_attacker: 'local-behavioral reliability defect: the trigger is peer-process death (Quickshell crash/compositor restart), not an adversary; no actor model applies'
+submission_validation:
+    natspec_review: docs/menu.md (Select and input modes) documents the done-file handshake and a cancel exit of 1, with no deadline. The header comment of bin/omarchy-menu-select covers option formats only. Nothing documents an unbounded wait when the menu process dies.
+    commit_origin: abf0a68b5 (2026-05-19, Drop walker + elephant) added the done_file poll to bin/omarchy-menu-select with no deadline and no liveness check.
+    intended_path_verified: true
+    master_status: identical
 source_claim:
     - CRS-0014/C01
     - CRS-260930-K02D/C01

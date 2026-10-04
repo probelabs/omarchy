@@ -19,6 +19,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: The defect needs a user or extension string with a comma directly before } or ]. The shipped default menu has no such string. An author can drop the comma or put a character between the comma and the closer
 remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim, as omacom/omarchy#13968 does (requirement SW-REQ-260927-66FW in the proof layer). The pass must still drop a trailing comma when comment lines and the closer come after it. The preservation tests pin that shape.
+notes:
+    - 'Upstream: original #13250 (ours, 2026-09-25); our fix PR #13255 closed unmerged; open fix PRs #13305 and #13968 (ours).'
 customer_impact: 'A menu label or action whose text has a comma directly before } or ] is silently changed: the comma is removed. The label "x, ]y" shows as "x ]y", and the action mv f{.bak,} runs as mv f{.bak}, a different command. No error is shown. The shipped menu has no such text; only entries you write yourself can hit this.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
@@ -65,6 +67,30 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#13250
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=fix_in_progress
+    - at: "2026-10-04T19:27:18Z"
+      by: agent:claude-code
+      action: edit
+      detail: note
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/13250
+    reference: '#13250'
+    reported_at: "2026-09-25"
+    reported_by: human:buger
+    response:
+        status: fix_in_progress
+        received_at: "2026-10-04"
+        text: 'Open on 2026-10-04. omarchybot, the maintainers'' triage bot, labelled #13250 bug on 2026-09-27. Fix PRs #13305 and #13968 (ours) are open and not merged.'
+        response_url: https://github.com/omacom/omarchy/issues/13250
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -90,6 +116,11 @@ poc_quality:
         attacker_profitability: 'local-behavioral defect: the user authors the config; no attacker gains anything'
         reachability_verified: 'local-behavioral defect: the trigger is the user''s own config file; there is no ingress layer to traverse'
         untrusted_attacker: 'local-behavioral defect: no untrusted party supplies the input'
+submission_validation:
+    natspec_review: docs/menu.md (JSONC paragraph) defines the format as JSON plus comments and trailing commas that the parser strips. It does not say that string values can change, and stripJsonc in MenuModel.js has no comment. Nothing documents the rewrite as intended.
+    commit_origin: 0e135bbb7 (2026-05-13, Integrate omarchy menu into shell) added the trailing-comma gsub to the bin/omarchy-menu jq pipeline. a960d2b1b (2026-05-14, Move omarchy-menu data and dispatch into the shell) ported it to the stripJsonc regex; 829c1fa4f moved it into MenuModel.js.
+    intended_path_verified: true
+    master_status: identical
 dedup_armor: 'Not a duplicate of KI-MENU-JSONC-STRIP-GAPS, KI-MENU-JSONC-ARRAY-ROOT, KI-MENU-JSONC-INLINE-COMMENT or KI-MENU-ITEMS-KEY-AMBIGUITY: this one is the comma pass rewriting string data while the parse succeeds; those are block comments, array roots, inline comment tails and the items wrapper key'
 kill_domain: parsing
 affected_file:
