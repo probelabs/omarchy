@@ -1,0 +1,15 @@
+id: REVIEW-261004-WW11
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-04T16:16:02Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Code-level MC/DC of this change, after quattro-proof gained a code_mcdc target for shell/plugins/emojis/EmojiSearch.js (menu-js-emojisearch): test/node/emojisearch-replay.test.mjs replays the run_node_test bodies of test/shell.d/emojis-test.sh, which this change extends, and menu-emoji-picker-test.sh. The decisions the js engine counts that this change adds or edits are all fully covered: !needle (36), at >= 0 && rank !== 0 (38), starts and ends in the group choice (42), rank < 0 || found < rank (43), rank < 0 (66) and groups[0].length >= max (68); the file as a whole measures 14/14 decisions and 18/18 conditions (ad hoc on the Mac, engine eeb5981c; the audit measures it again). The engine does not count three boolean expressions as decisions: the return of isWordChar (28: c >= "0", c <= "9", c === apostrophe, c === right single quote, c has a case) and the starts (39) and ends (41) assignments. A hand probe logged each of their conditions where it is evaluated, on the adapter inputs (both bodies and the null-limit case), and checked masking MC/DC: each condition has a pair of rows that differ in it, give different results, and agree on every other condition evaluated in both. isWordChar: c >= "0" by a space against 0, c <= "9" by a colon against 0, the apostrophe by a space against it, the right single quote by a colon against it, the case test by a letter against a colon. starts: at === 0 by a match at the start of the keywords against one after a letter, the character test by a match after a space against one after a letter; ends the same at the end. No product code was restructured for the measurement.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:27@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:35@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:39
+    - shell/plugins/emojis/EmojiSearch.js:41
+    - shell/plugins/emojis/EmojiSearch.js:49@filterEmojis
+    - test/node/emojisearch-replay.test.mjs:71
+    - test/shell.d/emojis-test.sh:5

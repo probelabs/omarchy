@@ -1,4 +1,4 @@
-// Verifies: SW-REQ-261004-JATY
+// Verifies: SW-REQ-261004-JATY, SW-REQ-261004-H41S
 // node:test adapter for the proof js MC/DC engine: replays the EmojiSearch.js
 // assertion bodies of test/shell.d/emojis-test.sh (the upstream test) and
 // test/shell.d/menu-emoji-picker-test.sh (the SW-REQ-261004-JATY witnesses)
