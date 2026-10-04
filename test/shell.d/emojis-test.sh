@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# Verifies: SW-REQ-261004-JATY, SW-REQ-261004-H41S
+
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 run_node_test <<'JS'
