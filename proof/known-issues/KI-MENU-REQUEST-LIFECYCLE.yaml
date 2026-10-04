@@ -13,7 +13,7 @@ evidence_manifests:
     - pocs/menu-qml-static.sh
     - proof/evidence/ki-menu-request-lifecycle.yaml
     - test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
-severity: medium
+severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
@@ -203,31 +203,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: append-note
-poc_quality:
-    real_infrastructure: true
-    quantitative_impact: true
-    control_test: true
-    untrusted_attacker: false
-    current_deployment_relevance: true
-    honest_severity: true
-    attacker_profitability: false
-    reproducible: true
-    no_inflation: true
-    operational_path_verified: true
-    reachability_verified: false
-    notes: |
-        real_infrastructure: test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh runs two real bin/omarchy-menu-select callers and feeds their summon payloads to the real Menu.qml request bodies (open, openDmenu, finishRequest, cancel), extracted verbatim at run time; only the omarchy-shell IPC and the QML scope are stubbed.
-        quantitative_impact: for Super+K, Super+K, Escape, 1 of 2 callers is answered; the superseded caller has no done file and polls forever. In the live shell a burst left 19 of 20 callers polling.
-        control_test: the same run's current caller is answered through the real cancel path and exits (cancel = no selection), so the harness can see an answered caller; only the superseded one is never answered.
-        current_deployment_relevance: open/openDmenu on this branch replace selectionFile/doneFile/requestActive without answering the earlier caller; the reproducer extracts the live bodies at run time.
-        honest_severity: medium - a second summon before the first is answered leaves the earlier caller polling forever, so the action behind it never runs and the process stays behind; that is the consequence KI-MENU-SELECT-POLL-DEADLOCK is graded medium for, on a commoner trigger (pressing a menu key again). Later menus still work and nothing else is lost.
-        reproducible: single command sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh, deterministic (event-driven waits), exits 1 while the defect is present (recorded known_issue_reproduced).
-        no_inflation: the claim is limited to the unanswered superseded caller and the selection lost on a busy result writer; no data loss is asserted.
-        operational_path_verified: the real callers drive the summon -> done-file path and the real Menu.qml bodies answer the current request, the same path the live shell run confirmed (omacom/omarchy#9057).
-    not_applicable:
-        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
-        reachability_verified: 'local-behavioral correctness defect: the trigger is the user''s own repeated summon in their session; there is no ingress access-control or input-validation layer to traverse'
-        untrusted_attacker: 'local-behavioral defect: no attacker exists for this defect class - nothing is gained by any party, so an untrusted-attacker model does not apply'
+    - at: "2026-10-04T18:25:41Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: 'set-severity=low,severity-justification=severity: low on this mirror (the baseline grades it medium). #9056 at b7bd59c4 fixes the two legs that make it medium on the baseline: a second summon now answers the superseded caller as cancelled (the #9057 reproducer exits 0 here, and a live burst of 20 leaves 0 callers waiting), and each answer is written by its own process, so a busy writer no longer drops a selection. What stays open here is the doneFile-only leg and the empty-selectionFile redirect variant, which have static evidence only; a caller whose menu process dies is graded under KI-MENU-SELECT-POLL-DEADLOCK.'
 kill_domain: handshake
 affected_file:
     - shell/plugins/menu/MenuModel.js
