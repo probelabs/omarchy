@@ -15,7 +15,7 @@
 # Verifies: SW-REQ-261004-DHZ3, SYS-REQ-261004-74P8
 # mcdc:witness-out-of-process
 #mcdc:ignore:defensive SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=T => FALSE -- once the origin link matches, sanitizeBody returns the image-stripped body without that link and the white space after it, and runs no other strip on it; a body that loses more needs that early return removed [reviewed: REVIEW-261003-SE8G]
-#mcdc:ignore:defensive SYS-REQ-261004-74P8: page_message_shown=F, web_notification_received=T => FALSE -- for a body that starts with the origin link, the card either drops only that link and the white space after it or keeps the body whole; a message that loses its start needs the early return in sanitizeBody removed [reviewed: REVIEW-261003-SE8G]
+#mcdc:ignore:defensive SYS-REQ-261004-74P8: page_message_shown=F, web_notification_received=T => FALSE -- for a Chromium web notification whose body starts with an origin link the cleanup recognises, sanitizeBody returns the body after that link and its white space at once and runs no other strip; a message that loses its first word needs that early return removed [reviewed: REVIEW-261003-SE8G]
 
 set -euo pipefail
 
@@ -56,7 +56,6 @@ notification 2 app="Chromium" body-line-shown=true card-text="e.g. bring the sli
 notification 3 app="Chromium" body-line-shown=true card-text="Two lines<br/>of message"
 notification 4 app="Chromium" body-line-shown=true card-text="indented reply"'
 
-  # MCDC SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=F => TRUE [no-action: the body has no origin link, so the link removal changes nothing; the card text is the body without its leading plain-text origin, and a second web address after that origin stays]
   'without a link, a Chromium body loses only its leading plain-text origin'
   notify-plain-origin.events
   'notification 1 app="Chromium" body-line-shown=true card-text="See you at 5"
@@ -101,11 +100,37 @@ notification 2 app="Chromium" body-line-shown=false card-text=""'
 for ((i = 0; i < ${#CASES[@]}; i += 3)); do
   description=${CASES[i]}
   expected=${CASES[i + 2]}
-  got=$(LC_ALL=C.UTF-8 node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" | grep -E '^notification [0-9]+ app=')
-  if [[ $got == "$expected" ]]; then
+  # A harness LOAD-ERROR, MISSING or ERROR line, or a non-zero exit, fails the
+  # case by name with the whole harness output.
+  out=$(LC_ALL=C.UTF-8 node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" 2>&1) && rc=0 || rc=$?
+  got=$(printf '%s\n' "$out" | grep -E '^notification [0-9]+ app=' || true)
+  if [[ $rc -eq 0 && $got == "$expected" ]]; then
     pass "$description"
   else
-    fail "$description" "expected: $expected
-got:      $got"
+    fail "$description" "harness exit: $rc
+expected: $expected
+got:      $got
+harness output:
+$out"
   fi
 done
+
+# The plain-text branch of sanitizeBody, asserted on its own result: without an
+# origin link, the leading plain-text origin chat.example.com:8123 and its blank
+# line go and the message after it stays whole, including a web address it
+# starts with.
+# MCDC SW-REQ-261004-DHZ3: chromium_sender=T, message_after_link_kept=F, origin_link_at_start=F => TRUE [no-action: no origin link, so the link replacement removes nothing; sanitizeBody returns the plain-text branch result asserted below: "See you at 5" and "github.com/omacom/omarchy can you review?", the message after the plain-text origin]
+description='without an origin link, sanitizeBody keeps the message after the plain-text origin'
+out=$(LC_ALL=C.UTF-8 node "$HARNESS" "$ROOT" "$CORPUS/notify-plain-origin.events" 2>&1) && rc=0 || rc=$?
+got=$(printf '%s\n' "$out" | grep -E '^notification [12] sanitizeBody=' || true)
+expected='notification 1 sanitizeBody="See you at 5"
+notification 2 sanitizeBody="github.com/omacom/omarchy can you review?"'
+if [[ $rc -eq 0 && $got == "$expected" ]]; then
+  pass "$description"
+else
+  fail "$description" "harness exit: $rc
+expected: $expected
+got:      $got
+harness output:
+$out"
+fi

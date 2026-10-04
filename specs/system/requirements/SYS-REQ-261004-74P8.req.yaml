@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when web_notification_received the notification_card shall immediately satisfy page_message_shown
-description: When a Chromium-based browser sends a web notification with the origin link before the message, the card shows the whole message, from its first word. The card knows the browser by the app name or the app icon. The card removes the origin link when the origin is a plain host name such as web.whatsapp.com. Its last label must have two or more letters. Any other origin stays before the message, such as localhost, an IP address or a host name with non-ASCII letters.
+description: A Chromium-based browser can send a web notification whose body starts with an origin link that the card recognises. Then the card removes that link and shows the whole message, from its first word. The card knows the browser by the app name or the app icon. It recognises a link to a plain host name such as web.whatsapp.com, whose last label has two or more letters. This requirement does not cover any other origin link. Such a link, for example to localhost, an IP address or a host name with non-ASCII letters, stays before the message.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -21,9 +21,9 @@ variables:
 traces:
     satisfies:
         - STK-REQ-261004-6HJ2
-    reviewed_at: "2026-10-03T23:06:08.671295Z"
+    reviewed_at: "2026-10-04T00:13:10.14698Z"
     reviewed_by: agent:claude-pr-new-E
-    reviewed_fingerprint: sha256:a2a8d5634de7aa60b2733b721aa4f79eb49566024c70e5ba2dfa79070fec7364
+    reviewed_fingerprint: sha256:9c313c09a38d76ffe5b95f2a0ad07ad94e843a7e3524445288f26f910608227a
     reviewed_targets:
         satisfies:
             STK-REQ-261004-6HJ2: req1:8b462e5b317a8968e197944d7f75e10b
@@ -126,6 +126,26 @@ traces:
             - test/bdiff/harness.mjs:364
             - test/bdiff/harness.mjs:380
             - test/bdiff/notifications-card-test.sh:15
+        - reviewed_at: "2026-10-04T00:13:10.14698Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'SYS-REQ-261004-74P8 states the system clause of the STK-REQ-261004-6HJ2 story for web notifications: the card shows the whole message from its first word, and removes an origin link whose text is a host name with a dot. The witnesses replay real notification bodies, including the exact Chromium 148 body, through the real NotificationLogic.js as NotificationCard.qml calls it.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-261004-6HJ2.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-space-anchor.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
 verification:
     assurance_level: C
     formalization_status: valid
@@ -138,7 +158,7 @@ history:
     created_by: agent:claude-pr-new-E
     created_at: "2026-10-03T21:29:16Z"
     last_modified_by: agent:claude-pr-new-E
-    last_modified_at: "2026-10-03T23:06:06Z"
+    last_modified_at: "2026-10-04T00:13:30Z"
 hazard_review:
     reviewed_at: "2026-10-03T21:38:10Z"
     reviewed_by: agent:claude-pr-new-E
@@ -173,7 +193,7 @@ interface:
     signature: org.freedesktop.Notifications.Notify(app_name, replaces_id, app_icon, summary, body, actions, hints, expire_timeout) -> id
     protocol: D-Bus method call on the session bus. The shell's notification server lists body, body-markup and body-hyperlinks in GetCapabilities.
     assumptions: For a web notification, Chromium sends its own name (or the name of another Chromium-based browser) as app_name, and a body made of the origin link, a blank line and the message.
-    guarantees: The card shows the whole message, from its first word. It drops an origin link whose text is a host name with a dot, and it keeps any other origin link.
+    guarantees: For a body that starts with an origin link the card recognises (a plain host name whose last label has two or more letters), the card drops that link and shows the whole message, from its first word. Any other origin link stays in the card.
     external_parties:
         - chromium
 lifecycle:
