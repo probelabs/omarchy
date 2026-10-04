@@ -9,7 +9,7 @@ upstream issues and pull requests against what the code is supposed to do.
 The proof layer lives in `proof/`, `specs/`, `test/`, `pocs/`, `review/`, `docs/proof/`, `proof.yaml` and this file.
 Outside those paths, the only differences from upstream are comments (such as `// Implements: <requirement>`
 markers), blank lines, QML `id:` attributes and one `.gitignore` line.
-`python3 review/check-clean-product-diff.py 393a43d HEAD` checks this.
+`python3 review/check-clean-product-diff.py 035ce29 HEAD` checks this.
 
 Upstream's own `README.md` is unchanged. GitHub shows this file instead because it is in `.github/`.
 
@@ -30,7 +30,11 @@ Audit results are stored as git notes next to the commits they describe (`refs/n
 
 ## Current state
 
-- **Upstream code covered:** `393a43d` (upstream `quattro` tip, merged into `quattro-proof`).
+- **Upstream code covered:** `035ce29` (upstream `quattro` tip, merged into `quattro-proof`). The merge brought
+  upstream's fingerprint enrollment and lock-screen recovery rework ([#7158](https://github.com/omacom/omarchy/pull/7158)),
+  which fixes three of our lock-screen findings: an empty or failed enrollment check no longer counts as an enrolled
+  fingerprint, in setup or on the lock screen, and a failed fingerprint start is retried. Each one's reproducer now passes on `035ce29` and
+  still fails on the previous upstream `393a43d`. See `review/upstream-035ce29f-research-delta.md`.
 - **Latest audit of this branch:** 0 errors, 0 warnings (ReqProof engine `eeb5981`, full run without cache).
   - The remaining notes are advisory: functions still waiting for property-based tests, and lint suggestions.
   - Test results are part of the run: every suite in `proof.yaml` writes one JUnit report
@@ -45,7 +49,7 @@ Audit results are stored as git notes next to the commits they describe (`refs/n
 
 ### Upstream issues found or checked
 
-Each issue reproduces on upstream `393a43d` unless stated otherwise, and has a known-issue record in
+Each issue reproduces on upstream `035ce29` unless stated otherwise, and has a known-issue record in
 `proof/known-issues/` and a reproducer in `test/reports/` or `pocs/`.
 
 | Upstream | Problem | Status |
@@ -73,7 +77,7 @@ git clone https://github.com/probelabs/omarchy && cd omarchy        # default br
 git fetch origin 'refs/notes/proof/*:refs/notes/proof/*'
 
 # 1. The product code is upstream's: every non-proof difference is an annotation.
-python3 review/check-clean-product-diff.py 393a43d HEAD
+python3 review/check-clean-product-diff.py 035ce29 HEAD
 
 # 2. The audit record of this commit (verdict, every check, test results).
 git notes --ref=proof/runs show HEAD | python3 -m json.tool | less

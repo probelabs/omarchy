@@ -41,4 +41,18 @@ The other 50 commits touch no menu or lock file.
 
 ## Known issues
 
-(filled in at the end of the round)
+Every lock known issue was re-run on the merge and on the previous baseline (upstream 393a43d4). A known issue is
+marked fixed only when its reproducer shows the defect absent on the merge and present on 393a43d4.
+
+| Known issue | Before | After | Deciding output (merge / 393a43d4) |
+|---|---|---|---|
+| KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN | open | fixed by #7158 | only an enrolled `- #N:` row installs fingerprint PAM / the substring gate installs it for an empty or failed probe |
+| KI-LOCK-FPRINT-PROBE-FAIL-OPEN | open | fixed by #7158 | zero enrollment reads fingerprintConfigured=false / true |
+| KI-LOCK-FPRINT-START-FAIL-NO-RETRY | reviewed | fixed by #7158 | a failed start arms the retry (1000 ms) / no retry armed |
+| other lock known issues (11) | open/reviewed | unchanged | reproduce on both; citations moved to the new lines |
+| KI-MENU-IMAGES-VIPS-NO-TIMEOUT | reviewed | unchanged | still no internal bound on vipsthumbnail; with the new shared pool a stalled still also holds back later stills |
+
+Four apply-lock reproducers now run a copy of the real helper end to end (they had depended on the old probe
+shape). Upstream references: the known issues that match an upstream report carry an `upstream_report` block or,
+where the submission gates do not apply, a notes sentence. KI-MENU-SEARCH-SCORE-RANKING no longer counts the
+app-first order as a defect: the code comment and upstream #6383 chose it.
