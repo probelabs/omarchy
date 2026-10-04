@@ -3,8 +3,8 @@ variables:
     - name: web_notification_received
       type: bool
       direction: input
-      description: A Chromium-based browser sent a web notification, with the origin of the page before the message.
+      description: 'A Chromium-based browser (by app name or app icon) sent a web notification whose body starts with an origin link that the cleanup recognises: the domain of origin_link_at_start in specs/software (an optional http://, https:// or www., ASCII labels, a last label of two or more letters, an optional port and path, nothing else in the link).'
     - name: page_message_shown
       type: bool
       direction: output
-      description: The card shows the message that the page sent, without the origin before it and with the first word of the message.
+      description: The card shows the whole message that the page sent, from its first word, without the origin link before it.
