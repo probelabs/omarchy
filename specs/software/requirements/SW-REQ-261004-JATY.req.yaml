@@ -31,15 +31,15 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-04T15:45:29.569706Z"
+    reviewed_at: "2026-10-04T08:10:07.001239Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:dfd668da89128531d915759a760142047068fceeb88beafedd493a3fb2de1cc8
     reviewed_targets:
         implemented_by:
-            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:6d54ef1d32ab38144359758b421c9447
-            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:6d54ef1d32ab38144359758b421c9447
-            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:6d54ef1d32ab38144359758b421c9447
-            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:6d54ef1d32ab38144359758b421c9447
+            shell/plugins/emojis/EmojiSearch.js:filterEmojis: file1:114ba2515038831081b9746415dc82aa
+            shell/plugins/emojis/EmojiSearch.js:keywordText: file1:114ba2515038831081b9746415dc82aa
+            shell/plugins/emojis/EmojiSearch.js:normalizedQuery: file1:114ba2515038831081b9746415dc82aa
+            shell/plugins/emojis/EmojiSearch.js:parseEmojis: file1:114ba2515038831081b9746415dc82aa
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -68,6 +68,19 @@ traces:
             - shell/plugins/emojis/EmojiSearch.js:21
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/node/emojisearch-replay.test.mjs:1
+            - test/shell.d/menu-emoji-picker-test.sh:33
+            - test/shell.d/menu-emoji-picker-test.sh:5
+        - reviewed_at: "2026-10-04T08:10:07.001239Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'This change ranks the matches (SW-REQ-261004-H41S) and keeps which emojis match: filterEmojis still skips an entry with no emoji, still keeps an emoji only when its lowercased keywords contain the trimmed, lowercased search text (matchRank returns -1 otherwise), and still stops at the limit, now applied to the ranked list. parseEmojis, normalizedQuery and keywordText are unchanged. The baseline requirement leaves the order and which emojis show past the limit outside it, so it still holds. Witnessed by test/shell.d/menu-emoji-picker-test.sh, which passes on this head (20 ok).'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/emojis/EmojiSearch.js:1
+            - shell/plugins/emojis/EmojiSearch.js:11
+            - shell/plugins/emojis/EmojiSearch.js:16
+            - shell/plugins/emojis/EmojiSearch.js:48
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-emoji-picker-test.sh:33
             - test/shell.d/menu-emoji-picker-test.sh:5
 verification:
