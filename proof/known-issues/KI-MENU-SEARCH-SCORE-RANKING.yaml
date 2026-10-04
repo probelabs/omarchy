@@ -1,6 +1,6 @@
 id: KI-MENU-SEARCH-SCORE-RANKING
-title: 'searchScore ranking anomalies: apps promoted in-tier, root exact-labels swamped, multi-term matches collapse'
-description: 'Executed probes: an app and a menu row with equal scores rank app-FIRST (the -5 within-tier nudge). That violates the contract in the code comment ''App rows sort after all menu items'' (F15d). An exact label at root scores base 2 while the identical exact label nested deeper scores base 0 (F15f). The root row therefore ranks below its nested twin, and the depth tie-break loses effect. A multi-term query that matchesQuery accepts across fields (one term on the label, one on the description) scores in the unmatched baseline band. That ranks it below a single-field pure match (F15e2 - measured 78000 for the accepted query).'
+title: 'searchScore ranking anomalies: root exact labels rank below nested twins, cross-field multi-term matches score as unmatched'
+description: searchScore in MenuModel.js has two ranking defects. An exact label at root scores base 2, and the same exact label deeper in the tree scores base 0 (F15f). The root row therefore ranks below its nested twin, because the depth tie-break adds only 25 per level against a gap of 2000. matchesQuery accepts a multi-term query that matches across fields, with one term in the label and one in the description. searchScore gives that row 78000, the same as a row that matches nothing (F15e2). It therefore ranks below every single-field match.
 affected_requirements:
     - SW-REQ-260922-SJ7P
 evidence_manifests:
@@ -17,7 +17,9 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: Ranking anomalies reorder results but never hide them; the wanted entry stays on the results list
-remediation: give multi-term queries an aggregation across per-term scores; make the root/nested exact-label bands consistent; reconcile the app nudge with the documented ordering
+remediation: Score a multi-term query from its per-term matches, so a cross-field match ranks with the other matches. Give root and nested exact labels the same base, so the depth tie-break orders them.
+notes:
+    - 'We withdrew the app-first leg (F15d): merged PR #6383 (merge commit 35ebe2df) ranks an app ahead of an equally matching menu row on purpose.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -46,6 +48,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-search-score-ranking.yaml
+    - at: "2026-10-04T19:28:33Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-title,set-description,set-remediation,note
 kill_domain: scoring
 affected_file:
     - shell/plugins/menu/MenuModel.js
