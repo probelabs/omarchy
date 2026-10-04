@@ -47,20 +47,20 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-provider-partial-commit.yaml
-    - at: "2026-10-04T19:33:23Z"
-      by: agent:claude-code
-      action: edit
-      detail: append-note
-    - at: "2026-10-04T19:47:32Z"
-      by: agent:claude-code
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-provider-partial-commit.yaml
     - at: "2026-10-02T13:00:46Z"
       by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-provider-partial-commit.yaml
     - at: "2026-10-02T14:52:30Z"
       by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-provider-partial-commit.yaml
+    - at: "2026-10-04T19:33:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
+    - at: "2026-10-04T19:47:32Z"
+      by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-provider-partial-commit.yaml
     - at: "2026-10-04T20:50:00Z"
