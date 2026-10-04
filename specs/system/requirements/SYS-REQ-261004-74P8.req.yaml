@@ -21,12 +21,12 @@ variables:
 traces:
     satisfies:
         - STK-REQ-261004-6HJ2
-    reviewed_at: "2026-10-04T00:13:10.14698Z"
+    reviewed_at: "2026-10-04T00:37:16.259816Z"
     reviewed_by: agent:claude-pr-new-E
     reviewed_fingerprint: sha256:9c313c09a38d76ffe5b95f2a0ad07ad94e843a7e3524445288f26f910608227a
     reviewed_targets:
         satisfies:
-            STK-REQ-261004-6HJ2: req1:8b462e5b317a8968e197944d7f75e10b
+            STK-REQ-261004-6HJ2: req1:8caa80fa073897f874ec34512c8c8268
     review_history:
         - reviewed_at: "2026-10-03T21:40:14.520467Z"
           reviewed_by: agent:claude-pr-new-E
@@ -146,6 +146,46 @@ traces:
             - test/bdiff/harness.mjs:364
             - test/bdiff/harness.mjs:380
             - test/bdiff/notifications-card-test.sh:15
+        - reviewed_at: "2026-10-04T00:36:46.741902Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'SYS-REQ-261004-74P8 states the system clause of the STK-REQ-261004-6HJ2 story for web notifications: the card shows the whole message from its first word, and removes an origin link whose text is a host name with a dot. The witnesses replay real notification bodies, including the exact Chromium 148 body, through the real NotificationLogic.js as NotificationCard.qml calls it.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-261004-6HJ2.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-space-anchor.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
+        - reviewed_at: "2026-10-04T00:37:16.259816Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'SYS-REQ-261004-74P8 states the system clause of the STK-REQ-261004-6HJ2 story for web notifications: the card shows the whole message from its first word, and removes an origin link whose text is a host name with a dot. The witnesses replay real notification bodies, including the exact Chromium 148 body, through the real NotificationLogic.js as NotificationCard.qml calls it.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-261004-6HJ2.req.yaml
+            - test/bdiff/corpus/lifecycle/notify-link-dotted-word.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-empty-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-origin-kept.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-other-browsers.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-plain-message.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-space-anchor.events:1
+            - test/bdiff/corpus/lifecycle/notify-link-url-first.events:1
+            - test/bdiff/corpus/lifecycle/notify-other-app.events:1
+            - test/bdiff/corpus/lifecycle/notify-plain-origin.events:1
+            - test/bdiff/harness.mjs:354
+            - test/bdiff/harness.mjs:364
+            - test/bdiff/harness.mjs:380
+            - test/bdiff/notifications-card-test.sh:15
 verification:
     assurance_level: C
     formalization_status: valid
@@ -158,7 +198,7 @@ history:
     created_by: agent:claude-pr-new-E
     created_at: "2026-10-03T21:29:16Z"
     last_modified_by: agent:claude-pr-new-E
-    last_modified_at: "2026-10-04T00:13:30Z"
+    last_modified_at: "2026-10-04T00:37:09Z"
 hazard_review:
     reviewed_at: "2026-10-03T21:38:10Z"
     reviewed_by: agent:claude-pr-new-E

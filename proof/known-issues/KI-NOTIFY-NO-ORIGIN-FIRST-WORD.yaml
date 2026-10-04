@@ -1,0 +1,31 @@
+id: KI-NOTIFY-NO-ORIGIN-FIRST-WORD
+title: A Chromium notification with no origin before the message loses a first word that looks like a web address
+description: |-
+    sanitizeBody in shell/plugins/notifications/NotificationLogic.js treats the body of a Chromium-based app with no origin link as a body with a plain-text origin. It removes a leading web address, a www. name or a dotted word, and the white space after it. That is right when Chromium sends the origin as plain text. When the body has no origin at all, the removed text is the first word of the message.
+
+    So a Chromium-based app that sends "Node.js 24 is out" with no origin in front shows "24 is out". "github.com/omacom/omarchy can you review?" shows as "can you review?". This is the same on upstream 393a43d4 and with PR #<PR>. That PR fixes only the body that starts with the origin link (KI-NOTIFY-WEB-MESSAGE-FIRST-WORD).
+affected_requirements:
+    - STK-REQ-261004-6HJ2
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+reproducer_command: bash pocs/notify-no-origin-first-word.sh
+tripwire_mutation: 'Return the body unchanged in sanitizeBody in shell/plugins/notifications/NotificationLogic.js when it has no origin link (drop the plain-text replacement): the red reproducer pocs/notify-no-origin-first-word.sh then exits 0 with every message kept whole.'
+introduced_in: dc4618c28cd6987e9fed876d64200ac9805ea447
+defect_class: new_defect
+disclosure: public
+minimization_status: minimized
+mitigation: The rest of the message still shows on the card. A message that starts with a plain word shows whole. A web page notification to the shell's server starts with the origin link, and there the first word stays.
+remediation: 'Not addressed by PR #<PR>. Without more information, such as the host of the page, the cleanup cannot tell a plain-text origin from a web address that starts a message.'
+owner: agent:claude-pr-new-E
+review_date: "2026-10-04"
+release_disposition: ship_with_known_issue
+status: open
+history:
+    - at: "2026-10-04T00:36:35Z"
+      by: agent:claude-pr-new-E
+      action: created
+dedup_armor: KI-NOTIFY-WEB-MESSAGE-FIRST-WORD is the body that starts with the origin link, where the link strip and the plain-text strip ran in a chain; that one is fixed. This one is the body with no origin link, where only the plain-text strip runs; it is open.
+kill_domain: text_cleanup
+affected_file: shell/plugins/notifications/NotificationLogic.js

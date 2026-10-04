@@ -5,7 +5,10 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: ""
-description: Users see the notifications that applications and web pages send. The shell shows each notification as a card with its title and its message, and it keeps a history of them. For a web notification, the card shows the message of the page. It does not show the address of the page that the browser adds before the message.
+description: |-
+    Users see the notifications that applications and web pages send. The shell shows each notification as a card with its title and its message. It also keeps a history of them. For a web notification from a page on a named host, the card shows the message of the page. It does not show the address of the page that the browser adds before the message.
+
+    One known exception stays open. A Chromium notification with no origin before the message can still lose a first word that looks like a web address (KI-NOTIFY-NO-ORIGIN-FIRST-WORD).
 formalization_strategy: informal
 informal_verification:
     method: ""
@@ -16,9 +19,9 @@ rationale: "A notification tells the user about a new message or event. A card t
 tags: []
 variables: []
 traces:
-    reviewed_at: "2026-10-03T23:06:09.013427Z"
+    reviewed_at: "2026-10-04T00:37:16.51268Z"
     reviewed_by: agent:claude-pr-new-E
-    reviewed_fingerprint: sha256:019932a1f926fa681c9691660bd06a6e2f9306e2ee02a8e9182f49149354be58
+    reviewed_fingerprint: sha256:5c8d6d3c70a8e7cc6d8bad3aa85302058b3bc5e2a79a8a25c5aa9a8a7e4b15d9
     reviewed_targets:
         implemented_by:
             shell/plugins/notifications/NotificationLogic.js:isChromiumDerived: file1:8aa013aac4714892a7b55a8d43c75936
@@ -58,6 +61,24 @@ traces:
             - shell/plugins/notifications/NotificationLogic.js:1
             - shell/plugins/notifications/NotificationLogic.js:2
             - test/bdiff/notifications-card-test.sh:34
+        - reviewed_at: "2026-10-04T00:36:47.008918Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'NotificationLogic.js is the logic of the notification cards and their history in the shell: body cleanup, glyphs, Do Not Disturb, popups and history rows. Its file-level Implements line (line 1) assigns the module to the notifications story; the functions that carry the web-notification rule trace to SW-REQ-261004-DHZ3. The acceptance criterion is witnessed by demonstration ME-261004-E1CR; notifications-card-test.sh carries the nominal evidence (a web notification keeps the whole message).'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:1
+            - shell/plugins/notifications/NotificationLogic.js:2
+            - test/bdiff/notifications-card-test.sh:34
+        - reviewed_at: "2026-10-04T00:37:16.51268Z"
+          reviewed_by: agent:claude-pr-new-E
+          method: inspection
+          rationale: 'NotificationLogic.js is the logic of the notification cards and their history in the shell: body cleanup, glyphs, Do Not Disturb, popups and history rows. Its file-level Implements line (line 1) assigns the module to the notifications story; the functions that carry the web-notification rule trace to SW-REQ-261004-DHZ3. The acceptance criterion is witnessed by demonstration ME-261004-E1CR; notifications-card-test.sh carries the nominal evidence (a web notification keeps the whole message).'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/notifications/NotificationLogic.js:1
+            - shell/plugins/notifications/NotificationLogic.js:2
+            - test/bdiff/notifications-card-test.sh:34
 verification:
     assurance_level: C
     formalization_status: none
@@ -70,7 +91,7 @@ history:
     created_by: agent:claude-pr-new-E
     created_at: "2026-10-03T21:29:04Z"
     last_modified_by: agent:claude-pr-new-E
-    last_modified_at: "2026-10-04T00:13:30Z"
+    last_modified_at: "2026-10-04T00:37:09Z"
 obligation_checklist:
     - nominal
 hazard_review:
@@ -101,6 +122,7 @@ acceptance_review:
     reviewed_by: agent:claude-pr-new-E
     disposition: reviewed
     notes: 'One AC: the whole message of a web notification from Chromium, from its first word, without the origin link. It is observable on the card. It is witnessed by demonstration ME-261004-E1CR: a real Chromium 148 sent the notification over D-Bus to the real shell, and a screenshot recorded each card. No audit test command can start a browser, so no automated acceptance test runs this path. SYS-REQ-261004-74P8 and SW-REQ-261004-DHZ3 carry the automated witnesses.'
+verification_state: failing
 stakeholder:
     persona: Omarchy user
     story: As an Omarchy user, I want to read the notifications that apps and web pages send. A web notification must show the whole message that the page sent.
@@ -118,4 +140,9 @@ lifecycle:
           from: draft
           to: review
           reason: 'Upstream fix for the first word of a Chromium web notification: requirement written for the behaviour the shell has with the change; spec conformance REVIEW-261003-SE8G; witnesses in test/bdiff/notifications-card-test.sh and the behaviour-diff notification inputs'
+          changed_by: agent:claude-pr-new-E
+        - date: "2026-10-04T00:37:15Z"
+          from: verification=not_started
+          to: verification=failing
+          reason: auto-derived [not_started→failing] signals=3; manual_evidence:ME-261004-E1CR=present | known_issue:KI-NOTIFY-NO-ORIGIN-FIRST-WORD=failing | tests_pass:test_results_artifact=stale
           changed_by: agent:claude-pr-new-E

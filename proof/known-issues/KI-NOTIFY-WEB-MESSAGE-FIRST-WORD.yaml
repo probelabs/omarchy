@@ -29,7 +29,7 @@ notes:
     - |-
       Fixed by PR #<PR>. sanitizeBody now returns the body as soon as the origin link replacement removed text, so the message after the link keeps its first word. Spec: SW-REQ-261004-DHZ3. The reproducer test/shell.d/notifications-test.sh fails with the sanitizeBody of 393a43d4 and passes with the fix.
 
-      Scope: the fix covers the body with the origin link, the form Chromium uses for a web page when the server takes hyperlinks. A body without an origin link still loses a leading web address and the white space after it, before and after the fix. That covers the plain-text origin form and a Chromium notification that comes without the origin. There the cleanup cannot tell a plain-text origin from a web address that starts a message. With the notification server of the shell, Chromium sends a web notification with the origin link. An origin link to localhost, an IP address or a host name with non-ASCII letters stays in the card, before and after the fix.
+      Scope: the fix covers the body with the origin link, the form Chromium uses for a web page when the server takes hyperlinks. A body without an origin link still loses a leading web address and the white space after it, before and after the fix. That covers the plain-text origin form and a Chromium notification that comes without the origin. There the cleanup cannot tell a plain-text origin from a web address that starts a message. The case without an origin is open as KI-NOTIFY-NO-ORIGIN-FIRST-WORD. With the notification server of the shell, Chromium sends a web notification with the origin link. An origin link to localhost, an IP address or a host name with non-ASCII letters stays in the card, before and after the fix.
 owner: agent:claude-pr-new-E
 review_date: "2026-10-04"
 release_disposition: fixed
@@ -54,5 +54,9 @@ history:
       by: agent:claude-pr-new-E
       action: edit
       detail: set-title,set-description,note
+    - at: "2026-10-04T00:36:45Z"
+      by: agent:claude-pr-new-E
+      action: edit
+      detail: note
 kill_domain: text_cleanup
 affected_file: shell/plugins/notifications/NotificationLogic.js

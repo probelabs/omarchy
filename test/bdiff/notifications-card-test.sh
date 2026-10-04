@@ -104,7 +104,7 @@ for ((i = 0; i < ${#CASES[@]}; i += 3)); do
   # case by name with the whole harness output.
   out=$(LC_ALL=C.UTF-8 node "$HARNESS" "$ROOT" "$CORPUS/${CASES[i + 1]}" 2>&1) && rc=0 || rc=$?
   got=$(printf '%s\n' "$out" | grep -E '^notification [0-9]+ app=' || true)
-  if [[ $rc -eq 0 && $got == "$expected" ]]; then
+  if (( rc == 0 )) && [[ $got == "$expected" ]]; then
     pass "$description"
   else
     fail "$description" "harness exit: $rc
@@ -125,7 +125,7 @@ out=$(LC_ALL=C.UTF-8 node "$HARNESS" "$ROOT" "$CORPUS/notify-plain-origin.events
 got=$(printf '%s\n' "$out" | grep -E '^notification [12] sanitizeBody=' || true)
 expected='notification 1 sanitizeBody="See you at 5"
 notification 2 sanitizeBody="github.com/omacom/omarchy can you review?"'
-if [[ $rc -eq 0 && $got == "$expected" ]]; then
+if (( rc == 0 )) && [[ $got == "$expected" ]]; then
   pass "$description"
 else
   fail "$description" "harness exit: $rc
