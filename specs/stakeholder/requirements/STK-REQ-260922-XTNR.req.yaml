@@ -16,17 +16,26 @@ rationale: 'The menu is the primary UX surface of omarchy and its top churn/bug 
 tags: []
 variables: []
 traces:
-    reviewed_at: "2026-10-03T20:00:44.012054056Z"
-    reviewed_by: agent:claude-pr-new-C
+    reviewed_at: "2026-10-04T20:48:58.142509Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:c8f0cea8d4dca8bc47b2f568d92d2ea0f3cf1fc48d174200d8d7279ea6d9346f
     reviewed_targets:
         implemented_by:
-            default/omarchy/omarchy-menu.jsonc: file1:1e11e45328513e518cf24a7f32908b6b
+            default/omarchy/omarchy-menu.jsonc: file1:7dbbda45160aadf39bf553efd4bdab40
     review_history:
         - reviewed_at: "2026-10-03T20:00:44.012054056Z"
           reviewed_by: agent:claude-pr-new-C
           method: inspection
           rationale: 'Engine a7a32809 reads annotations in .jsonc, so the baseline file-level Implements: STK-REQ-260922-XTNR on line 2 of default/omarchy/omarchy-menu.jsonc is now a traced target. The file is the Omarchy menu definition: the rows users reach system actions, settings and applications through, with when: guards that keep rows in step with system state. That is the menu XTNR describes. This PR changes one row in it (remove.theme gains a when: guard), in line with XTNR and traced to SW-REQ-261003-390Z at row level. The verifying tests are unchanged: menu-acceptance-test.sh (AC-001, AC-002) and menu-dispatcher-test.sh (nominal).'
+          source: proof trace review --citation
+          citations:
+            - default/omarchy/omarchy-menu.jsonc:2
+            - test/shell.d/menu-acceptance-test.sh:12
+            - test/shell.d/menu-dispatcher-test.sh:48
+        - reviewed_at: "2026-10-04T20:48:58.142509Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on quattro-proof 1e433732 (upstream quattro 035ce29f): the menu file is upstream''s (two new Microsoft service rows, #10367) plus this PR''s remove.theme change; the menu still reaches system actions, settings and applications through it.'
           source: proof trace review --citation
           citations:
             - default/omarchy/omarchy-menu.jsonc:2

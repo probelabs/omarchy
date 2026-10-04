@@ -29,14 +29,14 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-03T20:00:43.719005753Z"
-    reviewed_by: agent:claude-pr-new-C
+    reviewed_at: "2026-10-04T20:48:57.371937Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:a279d710f62520498f724f2ba6afee62b4a585608a3edd7422431c5e41c33b81
     reviewed_targets:
         implemented_by:
             bin/omarchy-theme-removable: file1:66d405f28593d84bc45c32ccec16c1f3
             bin/omarchy-theme-remove: file1:6f221416f11f17ae5a9d3fb125bfc659
-            default/omarchy/omarchy-menu.jsonc:remove.theme: file1:1e11e45328513e518cf24a7f32908b6b
+            default/omarchy/omarchy-menu.jsonc:remove.theme: file1:7dbbda45160aadf39bf553efd4bdab40
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -165,6 +165,32 @@ traces:
             - bin/omarchy-theme-removable:10
             - bin/omarchy-theme-remove:7
             - default/omarchy/omarchy-menu.jsonc:295
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dashed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-dotted.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-empty.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-filed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-folded.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-hidden.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-linked.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-missing.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-mixed.events:1
+            - test/bdiff/corpus/lifecycle/guard-remove-theme-worktree.events:1
+            - test/bdiff/harness.mjs:228
+            - test/bdiff/harness.mjs:267
+            - test/shell.d/menu-guards-test.sh:379
+            - test/shell.d/menu-guards-test.sh:6
+        - reviewed_at: "2026-10-04T20:48:57.371937Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on quattro-proof 1e433732 (upstream quattro 035ce29f): default/omarchy/omarchy-menu.jsonc in this mirror is upstream''s file (two new Install/Remove > Service > Microsoft rows from #10367) plus this PR''s remove.theme change; the remove.theme row still carries this requirement''s annotation and guard.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-theme-removable:10
+            - bin/omarchy-theme-remove:7
+            - default/omarchy/omarchy-menu.jsonc:296
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/bdiff/corpus/lifecycle/guard-remove-theme-cloned.events:1
             - test/bdiff/corpus/lifecycle/guard-remove-theme-copied.events:1
