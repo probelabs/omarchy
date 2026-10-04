@@ -11,6 +11,20 @@ import Quickshell.Services.Pam
 // inside the namespace), a real session lock via WlSessionLock, real
 // keystrokes into the locked surface via wtype, and PATH stubs for the
 // process-driven branches. Prints LOCK-QML-HARNESS-DONE on success.
+//
+// Verifies: SW-REQ-261004-V813, SW-REQ-261004-296X, SW-REQ-261004-VVN2
+//
+// Row dispositions (see proof mcdc show <REQ-ID> for the tables):
+//mcdc:ignore:defensive SW-REQ-261004-V813: fingerprint_auth_configured=F, fingerprint_probe_answered=T, fingerprint_was_configured=T, probe_lists_print=F, probe_says_none=F => FALSE -- applyFingerprintProbe returns before it assigns fingerprintConfigured when classifyProbe answers unknown and fingerprint is configured, so an answer that is neither a listed print nor a none cannot clear it [reviewed: REVIEW-261004-D4AD]
+//mcdc:ignore:defensive SW-REQ-261004-V813: fingerprint_auth_configured=F, fingerprint_probe_answered=T, fingerprint_was_configured=T, probe_lists_print=T, probe_says_none=T => FALSE -- classifyProbe tests for a ' - #N:' row before either none answer, so an answer that lists a print classifies yes even when another reader has none, and the service sets fingerprintConfigured to true [reviewed: REVIEW-261004-D4AD]
+//mcdc:ignore:defensive SW-REQ-261004-V813: fingerprint_auth_configured=T, fingerprint_probe_answered=T, fingerprint_was_configured=F, probe_lists_print=F, probe_says_none=F => FALSE -- an unknown answer while unconfigured returns before fingerprintConfigured is assigned, so it stays false [reviewed: REVIEW-261004-D4AD]
+//mcdc:ignore:defensive SW-REQ-261004-V813: fingerprint_auth_configured=T, fingerprint_probe_answered=T, fingerprint_was_configured=T, probe_lists_print=F, probe_says_none=T => FALSE -- a none answer with no listed print classifies no, and the service assigns fingerprintConfigured = (status === "yes"), which is false [reviewed: REVIEW-261004-D4AD]
+//mcdc:ignore:defensive SW-REQ-261004-296X: attempt_miss_streak_reached=F, attempt_usable=F, fingerprint_auth_configured=F, fingerprint_reader_unavailable=F, probe_miss_streak_reached=T => FALSE -- fingerprintUnavailable is a binding whose first disjunct is FingerprintModel.isUnavailable(fingerprintProbeStreak) (streak >= 3), so it is true whenever the probe streak reached 3 [reviewed: REVIEW-261004-5V8C]
+//mcdc:ignore:defensive SW-REQ-261004-296X: attempt_miss_streak_reached=F, attempt_usable=F, fingerprint_auth_configured=F, fingerprint_reader_unavailable=T, probe_miss_streak_reached=F => FALSE -- the binding is exactly its two disjuncts; with the probe streak below 3 and fingerprint unconfigured both are false, so the reader cannot be reported unavailable [reviewed: REVIEW-261004-5V8C]
+//mcdc:ignore:defensive SW-REQ-261004-296X: attempt_miss_streak_reached=T, attempt_usable=F, fingerprint_auth_configured=T, fingerprint_reader_unavailable=F, probe_miss_streak_reached=F => FALSE -- the binding's second disjunct is fingerprintConfigured && (!fingerprintAttemptReachedDevice || fingerprintAttemptFastError) && isUnavailable(fingerprintUnreachedStreak), which holds here, so the binding is true [reviewed: REVIEW-261004-5V8C]
+//mcdc:ignore:defensive SW-REQ-261004-VVN2: key_autorepeat=F, key_erases=F, key_press_dropped=T => FALSE -- Keys.onPressed consumes a key without editing only when event.isAutoRepeat && dropsAutoRepeat(key); the only other accepting arm (Escape, Ctrl+U) clears the field, which is an edit [reviewed: REVIEW-261004-F4WB]
+//mcdc:ignore:defensive SW-REQ-261004-VVN2: key_autorepeat=T, key_erases=F, key_press_dropped=F => FALSE -- dropsAutoRepeat is true for every key other than Backspace and Delete, and the handler then accepts the event and returns before the TextInput sees it [reviewed: REVIEW-261004-F4WB]
+//mcdc:ignore:defensive SW-REQ-261004-VVN2: key_autorepeat=T, key_erases=T, key_press_dropped=T => FALSE -- dropsAutoRepeat is false for Backspace and Delete, so the handler falls through and the TextInput erases [reviewed: REVIEW-261004-F4WB]
 import "plugins/lock" as LockPlugin
 
 Item {
@@ -49,15 +63,29 @@ Item {
     }
   }
 
+  // Helper commands run one at a time, in order: a Process that is still
+  // being reaped ignores a new start, so a direct restart could drop a
+  // fixture swap or a stub flip.
+  property var execQueue: []
+
   Process {
     id: shellExec
     command: ["true"]
     stdout: StdioCollector { waitForEnd: true }
+    onRunningChanged: {
+      if (!running) Qt.callLater(root.pumpExec)
+    }
+  }
+
+  function pumpExec() {
+    if (shellExec.running || execQueue.length === 0) return
+    shellExec.command = execQueue.shift()
+    shellExec.running = true
   }
 
   function exec(argv) {
-    shellExec.command = argv
-    shellExec.running = true
+    execQueue.push(argv)
+    pumpExec()
   }
 
   function stubState(name, value) {
@@ -74,8 +102,64 @@ Item {
     exec(["bash", "-c", "rm -f /etc/pam.d/" + target])
   }
 
+  // The short pause lets the compositor hand the client this run's keymap
+  // before the first key.
   function wtype(args) {
-    exec([Quickshell.env("MCDC_WTYPE")].concat(args))
+    exec([Quickshell.env("MCDC_WTYPE"), "-s", "150"].concat(args))
+  }
+
+  function check(condition, message) {
+    if (!condition) throw message
+  }
+
+  // Fingerprint handles inside the service, found once at startup (before
+  // any interval changes), among the service's own direct children.
+  property var fpRetry: null
+  property var fpReach: null
+  property var fpRecheck: null
+  property var fpSleepWatch: null
+  property var fpPam: null
+  property var probeProc: null
+  // Each exit of the enrollment probe is one answer the service applied
+  // (its own onExited handler runs before this counter's).
+  property int probeAnswers: 0
+  property int answersMark: 0
+  // Keys.onPressed on the lock surface's view wakes the lock on every
+  // press, auto-repeats included (counted through the service's re-arm);
+  // a typed character wakes it once more through onTextChanged.
+  property int keyWakes: 0
+
+  Connections {
+    target: root.probeProc
+    function onExited() { root.probeAnswers += 1 }
+  }
+
+  property var blankTimer: null
+
+  // Every wake the lock view asks for re-arms the idle-blank timer, so its
+  // armedAt stamp moves once per key press (repeats arrive ~40 ms apart).
+  Connections {
+    target: root.blankTimer
+    function onArmedAtChanged() { root.keyWakes += 1 }
+  }
+
+  function serviceChild(probe) {
+    var kids = service.data || []
+    for (var i = 0; i < kids.length; i++) {
+      if (probe(kids[i])) return kids[i]
+    }
+    return null
+  }
+
+  function serviceSecure() {
+    return JSON.parse(ipc.status()).secure === true
+  }
+
+  // A suspend as the lock sees it: the event loop does not run while the
+  // wall clock moves on (monotonic timers pause across suspend).
+  function stallEventLoop(ms) {
+    var until = Date.now() + ms
+    while (Date.now() < until) {}
   }
 
   // Service keeps its PAM contexts and the lock IPC object as internal ids;
@@ -145,6 +229,19 @@ Item {
 
   Component.onCompleted: {
     ipc = findChild(service, function (o) { return o.target === "lock" })
+    fpRetry = serviceChild(function (o) { return o instanceof Timer && o.interval === 250 && !o.repeat })
+    fpReach = serviceChild(function (o) { return o instanceof Timer && o.interval === 20000 && !o.repeat })
+    fpRecheck = serviceChild(function (o) { return o instanceof Timer && o.interval === 1000 && !o.repeat })
+    fpSleepWatch = serviceChild(function (o) { return o instanceof Timer && o.lastTickMs !== undefined })
+    fpPam = serviceChild(function (o) { return o.config === "omarchy-lock-fingerprint" })
+    blankTimer = serviceChild(function (o) { return o instanceof Timer && o.armedAt !== undefined })
+    probeProc = serviceChild(function (o) { return o.command !== undefined && String(o.command).indexOf("fprintd-list") >= 0 })
+    if (!fpRetry || !fpReach || !fpRecheck || !fpSleepWatch || !fpPam || !probeProc || !blankTimer) {
+      console.warn("LOCK-QML-HARNESS-FAIL fingerprint handles not found: retry=" + !!fpRetry + " reach=" + !!fpReach
+                   + " recheck=" + !!fpRecheck + " sleepWatch=" + !!fpSleepWatch + " pam=" + !!fpPam + " probe=" + !!probeProc + " blank=" + !!blankTimer)
+      Qt.quit()
+      return
+    }
 
     var t = 0
     function step(delay, fn) {
@@ -218,6 +315,25 @@ Item {
     step(100, function () {
       lockView.loadBackground = true
       lockView.backgroundPath = Quickshell.env("MCDC_FAKE_IMAGE")
+    })
+    // An unreachable reader: crossed-out icon plus the notice under the
+    // field; a reachable one keeps the plain icon and no notice.
+    step(100, function () {
+      lockView.fingerprintConfigured = true
+      lockView.fingerprintUnavailable = true
+      var notice = findChild(lockView, function (o) { return o.objectName === "fingerprintUnavailableNotice" })
+      var icon = findChild(lockView, function (o) { return o.objectName === "fingerprintIndicator" })
+      check(notice.visible, "an unavailable reader shows the notice")
+      check(icon.text === "󰺱", "an unavailable reader crosses the icon out")
+      lockView.fingerprintUnavailable = false
+      check(!notice.visible, "an available reader shows no notice")
+      check(icon.text === "󰈷", "an available reader shows the plain icon")
+    })
+
+    step(100, function () {
+      check(keyLockView.dropsAutoRepeat(Qt.Key_A), "auto-repeat of a letter is dropped")
+      check(!keyLockView.dropsAutoRepeat(Qt.Key_Backspace), "auto-repeat of Backspace still edits")
+      check(!keyLockView.dropsAutoRepeat(Qt.Key_Delete), "auto-repeat of Delete still edits")
     })
 
     // ---------- Service before PAM is configured ----------
@@ -383,6 +499,48 @@ Item {
       stubState("strand-mode", "")
       // the exit resolved the strand: the guard's first condition
       service.checkStrandedLock()
+    })
+    // ---------- held keys in the locked password field (SW-REQ-261004-VVN2) --
+    // wtype holds a key down on the real lock surface; the compositor's
+    // repeat info makes the Qt client deliver auto-repeat presses
+    // (isAutoRepeat) until the release. The typed text lands in the
+    // service's enteredPassword through the view's passwordTextEdited.
+    step(300, function () {
+      check(serviceSecure() && service.lockRequested, "the held-key cases run on a secure lock")
+      service.enteredPassword = ""
+      wtype(["-P", "x", "-p", "x"])
+    })
+    stepWait(400, function () { return service.enteredPassword.length > 0 }, "a tapped key should type on the lock")
+    step(100, function () {
+      // Verifies: SW-REQ-261004-VVN2
+      // MCDC SW-REQ-261004-VVN2: key_autorepeat=F, key_erases=F, key_press_dropped=F => TRUE
+      check(service.enteredPassword === "x", "a single press types its character")
+      service.enteredPassword = ""
+      keyWakes = 0
+      wtype(["-P", "x", "-s", "1500", "-p", "x"])
+    })
+    step(2200, function () {
+      var typed = service.enteredPassword
+      // the first press and at least three repeats woke the lock
+      check(keyWakes >= 4, "holding a key should deliver auto-repeat presses (saw " + keyWakes + " wakes)")
+      // Verifies: SW-REQ-261004-VVN2
+      // MCDC SW-REQ-261004-VVN2: key_autorepeat=T, key_erases=F, key_press_dropped=T => TRUE
+      check(typed === "x", "auto-repeats of a held key must not type (field holds " + typed.length + ")")
+      service.enteredPassword = "aaaaaaaaaaaaaaaaaaaaaaaa"
+      keyWakes = 0
+      wtype(["-k", "End", "-P", "BackSpace", "-s", "1500", "-p", "BackSpace"])
+    })
+    step(2200, function () {
+      var left = service.enteredPassword.length
+      check(keyWakes >= 4, "holding Backspace should deliver auto-repeat presses (saw " + keyWakes + " wakes)")
+      check(left < 23, "holding Backspace keeps erasing (field holds " + left + ")")
+      service.enteredPassword = "aaaaaaaaaaaaaaaaaaaaaaaa"
+      wtype(["-k", "Home", "-P", "Delete", "-s", "1500", "-p", "Delete"])
+    })
+    step(2200, function () {
+      var left = service.enteredPassword.length
+      check(left < 23, "holding Delete keeps erasing (field holds " + left + ")")
+      service.enteredPassword = ""
     })
     step(300, function () {
       // real keystrokes into the driver's focused lock surface
@@ -745,6 +903,319 @@ Item {
     })
     step(1200, function () {
       exec(["bash", "-c", "SWAYSOCK=" + Quickshell.env("MCDC_SWAYSOCK") + " " + Quickshell.env("MCDC_SWAYMSG") + " create_output"])
+    })
+
+    // ---------- fingerprint reader: probe answers, misses, prompts, sleep ----
+    // A real lock with the fprintd-list stub answering the enrollment probe
+    // and PAM fixtures standing in for the reader: nologin (an error
+    // message, never a prompt), prompt (two prompts, then waits for a
+    // finger), silent (never answers).
+    step(400, function () {
+      if (service.lockRequested || service.locked) service.finishUnlock()
+      pamSwap("omarchy-lock-fingerprint-nologin", "omarchy-lock-fingerprint")
+    })
+    step(300, function () {
+      stubState("fprintd", "unknown")
+    })
+    step(300, function () {
+      check(!service.fingerprintConfigured, "fingerprint should start unconfigured")
+      answersMark = probeAnswers
+      service.beginLock()
+      // Verifies: SW-REQ-261004-296X
+      // MCDC SW-REQ-261004-296X: attempt_miss_streak_reached=F, attempt_usable=F, fingerprint_auth_configured=F, fingerprint_reader_unavailable=F, probe_miss_streak_reached=F => TRUE
+      check(service.fingerprintProbeStreak === 0 && service.fingerprintUnreachedStreak === 0 && !service.fingerprintUnavailable,
+            "a fresh lock with no misses does not report the reader unavailable")
+    })
+    stepWait(300, function () { return probeAnswers > answersMark }, "the lock's enrollment probe should answer")
+    step(50, function () {
+      // Verifies: SW-REQ-261004-V813
+      // MCDC SW-REQ-261004-V813: fingerprint_auth_configured=F, fingerprint_probe_answered=T, fingerprint_was_configured=F, probe_lists_print=F, probe_says_none=F => TRUE
+      check(String(probeProc.stdout.text).indexOf("ListEnrolledFingers failed") >= 0, "the probe answered with a D-Bus failure")
+      check(!service.fingerprintConfigured && service.fingerprintProbeStreak === 1,
+            "an unreachable fprintd leaves fingerprint unconfigured and counts the miss")
+      check(fpRecheck.running && fpRecheck.interval === 1000, "an unknown answer re-probes after the first backoff")
+    })
+    // the recheck timer asks again after 1 s and 2 s
+    stepWait(2500, function () { return service.fingerprintProbeStreak >= 3 }, "three unknown answers should build the probe streak")
+    step(50, function () {
+      check(serviceSecure(), "the lock should be secure by now")
+      check(!service.fingerprintConfigured && service.fingerprintUnavailable,
+            "three unknown answers report the reader unavailable without inventing an enrollment")
+      // the preview view binds the same service state as the lock
+      // surface's (whose instance the session lock does not expose); show
+      // it for the check
+      service.previewVisible = true
+      var view = findChild(service, function (o) { return o.dropsAutoRepeat !== undefined })
+      var icon = findChild(view, function (o) { return o.objectName === "fingerprintIndicator" })
+      var notice = findChild(view, function (o) { return o.objectName === "fingerprintUnavailableNotice" })
+      check(view.fingerprintConfigured && view.fingerprintUnavailable, "the view is told the reader is unavailable")
+      check(icon.visible && icon.text === "󰺱", "the view crosses the icon out")
+      check(notice.visible, "the view explains the unavailable reader")
+      service.previewVisible = false
+      check(fpRecheck.running && fpRecheck.interval === 4000, "the third miss backs the probe off to 4 s")
+      stubState("fprintd", "yes")
+    })
+    step(300, function () {
+      // user activity shortens the probe backoff to the swipe interval
+      service.runWake()
+      check(fpRecheck.running && fpRecheck.interval === 250, "input promptly re-probes an unreachable fprintd")
+    })
+    stepWait(400, function () { return service.fingerprintConfigured }, "a listed print should enable fingerprint")
+    // the attempt meets the nologin reader: an error message, no prompt
+    stepWait(300, function () { return service.fingerprintUnreachedStreak >= 1 }, "an attempt that never prompts should count as a miss")
+    step(50, function () {
+      // Verifies: SW-REQ-261004-296X
+      // MCDC SW-REQ-261004-296X: attempt_miss_streak_reached=F, attempt_usable=F, fingerprint_auth_configured=T, fingerprint_reader_unavailable=F, probe_miss_streak_reached=F => TRUE
+      check(service.fingerprintUnreachedStreak < 3 && !service.fingerprintAttemptReachedDevice && !service.fingerprintUnavailable,
+            "a miss or two does not report the reader unavailable yet")
+      check(service.fingerprintProbeStreak === 0 && !fpRecheck.running, "a definitive answer clears the probe streak and its recheck")
+    })
+    stepWait(2500, function () { return service.fingerprintUnreachedStreak >= 3 }, "three misses in a row should build the attempt streak")
+    step(50, function () {
+      check(service.fingerprintConfigured && service.fingerprintUnavailable, "three unreached attempts report the reader unavailable")
+      check(fpRetry.running && fpRetry.interval >= 4000, "the third miss backs the attempt off to 4 s or more")
+      check(service.lockRequested, "misses never unlock")
+      stubState("fprintd", "no")
+    })
+    step(300, function () {
+      answersMark = probeAnswers
+      service.refreshFingerprintStatus()
+    })
+    stepWait(300, function () { return probeAnswers > answersMark }, "the none answer should arrive")
+    step(50, function () {
+      // Verifies: SW-REQ-261004-V813
+      // MCDC SW-REQ-261004-V813: fingerprint_auth_configured=F, fingerprint_probe_answered=T, fingerprint_was_configured=T, probe_lists_print=F, probe_says_none=T => TRUE
+      check(/has no fingers enrolled/.test(probeProc.stdout.text) && !/ - #[0-9]+:/.test(probeProc.stdout.text), "the probe answered none")
+      check(!service.fingerprintConfigured, "an empty enrollment disables fingerprint")
+      // Verifies: SW-REQ-261004-296X
+      // MCDC SW-REQ-261004-296X: attempt_miss_streak_reached=T, attempt_usable=F, fingerprint_auth_configured=F, fingerprint_reader_unavailable=F, probe_miss_streak_reached=F => TRUE
+      check(service.fingerprintUnreachedStreak >= 3 && !service.fingerprintAttemptReachedDevice && !service.fingerprintUnavailable,
+            "a reader with no enrolled print is not reported unavailable, whatever its misses")
+      check(!fpRetry.running && !service.fingerprintAuthenticating && !fpReach.running, "no enrollment stops the attempts")
+      pamSwap("omarchy-lock-fingerprint-prompt", "omarchy-lock-fingerprint")
+    })
+    step(300, function () {
+      stubState("fprintd", "yes")
+    })
+    step(300, function () {
+      service.refreshFingerprintStatus()
+    })
+    // re-ask on each poll: the stub flip may land after the first probe
+    stepWait(300, function () {
+      if (service.fingerprintConfigured) return true
+      console.warn("waiting for the listed print; last probe answer " + JSON.stringify(probeProc.stdout.text))
+      service.refreshFingerprintStatus()
+      return false
+    }, "the listed print should enable fingerprint again")
+    stepWait(100, function () { return service.fingerprintAttemptReachedDevice }, "the prompting reader should reach the device")
+    step(400, function () {
+      // Verifies: SW-REQ-261004-296X
+      // MCDC SW-REQ-261004-296X: attempt_miss_streak_reached=T, attempt_usable=T, fingerprint_auth_configured=T, fingerprint_reader_unavailable=F, probe_miss_streak_reached=F => TRUE
+      check(service.fingerprintConfigured && service.fingerprintUnreachedStreak >= 3 && service.fingerprintAttemptReachedDevice
+            && !service.fingerprintAttemptFastError && !service.fingerprintUnavailable,
+            "a finger prompt clears the unavailable report before the attempt ends")
+      check(service.fingerprintAuthenticating && fpPam.active && !fpReach.running, "a prompted attempt waits for a finger without the reach bound")
+      stubState("fprintd", "both")
+    })
+    step(300, function () {
+      answersMark = probeAnswers
+      service.refreshFingerprintStatus()
+    })
+    stepWait(300, function () { return probeAnswers > answersMark }, "the two-reader answer should arrive")
+    step(50, function () {
+      // Verifies: SW-REQ-261004-V813
+      // MCDC SW-REQ-261004-V813: fingerprint_auth_configured=T, fingerprint_probe_answered=T, fingerprint_was_configured=T, probe_lists_print=T, probe_says_none=T => TRUE
+      check(/has no fingers enrolled/.test(probeProc.stdout.text) && / - #[0-9]+:/.test(probeProc.stdout.text), "the probe answered for two readers")
+      check(service.fingerprintConfigured, "a print listed on one reader keeps fingerprint configured though another reader has none")
+      check(service.fingerprintAuthenticating && fpPam.active, "the attempt in flight carries on")
+      answersMark = probeAnswers
+    })
+    step(600, function () {
+      // Verifies: SW-REQ-261004-V813
+      // MCDC SW-REQ-261004-V813: fingerprint_auth_configured=T, fingerprint_probe_answered=F, fingerprint_was_configured=F, probe_lists_print=F, probe_says_none=F => TRUE [no-action: the probe-exit counter does not move across this 600 ms window, so no enrollment answer arrived, and fingerprintConfigured keeps the value the last answer gave]
+      check(probeAnswers === answersMark && service.fingerprintConfigured, "with no probe answer the configured state does not change")
+      stubState("fprintd", "unknown")
+    })
+    step(300, function () {
+      answersMark = probeAnswers
+      service.refreshFingerprintStatus()
+    })
+    stepWait(300, function () { return probeAnswers > answersMark }, "the unknown answer should arrive")
+    step(50, function () {
+      check(String(probeProc.stdout.text).indexOf("ListEnrolledFingers failed") >= 0, "the probe answered with a D-Bus failure")
+      check(service.fingerprintConfigured && service.fingerprintProbeStreak === 0 && !fpRecheck.running,
+            "an unknown answer keeps a known enrollment and leaves recovery to PAM")
+      check(fpSleepWatch.running && fpPam.active && service.fingerprintAttemptReachedDevice, "a prompted attempt is in flight before the sleep")
+    })
+    step(100, function () {
+      // suspend with the prompted attempt in flight: the watcher's next
+      // tick sees the wall-clock gap and restarts the attempt
+      stallEventLoop(3300)
+    })
+    stepWait(100, function () { return service.fingerprintResumedAtMs > 0 }, "the sleep watcher should notice the gap")
+    step(50, function () {
+      check(service.lockRequested, "resume never unlocks")
+      check(service.fingerprintUnreachedStreak === 0, "the reached attempt the sleep cut short counts as usable and clears the streak")
+    })
+    // the 250 ms retry starts a fresh prompted attempt
+    stepWait(300, function () { return fpPam.active && service.fingerprintAttemptReachedDevice }, "the attempt should restart after the sleep")
+    step(100, function () {
+      // the next attempt meets a reader that never answers
+      pamSwap("omarchy-lock-fingerprint-silent", "omarchy-lock-fingerprint")
+    })
+    step(300, function () {
+      // the reach bound's handler on a live conversation aborts it
+      service.timeoutFingerprintReach()
+      check(!fpPam.active && !service.fingerprintAuthenticating && !fpReach.running, "the reach bound closes a live attempt")
+      service.fingerprintResumedAtMs = 0
+    })
+    stepWait(1500, function () { return fpPam.active && !service.fingerprintAttemptReachedDevice }, "a silent attempt should be in flight")
+    step(100, function () {
+      check(fpReach.running, "an attempt that has not prompted runs under the reach bound")
+      // suspend with an unreached attempt in flight; on resume the
+      // conversation errors out before the watcher's tick
+      stallEventLoop(3300)
+      var before = service.fingerprintUnreachedStreak
+      service.settleFingerprintAttempt(true)
+      check(service.fingerprintResumedAtMs > 0, "an error after a sleep notes the resume itself")
+      check(service.fingerprintUnreachedStreak === 1, "a miss in the resume grace counts as the first (was " + before + ")")
+      check(fpPam.active && !service.fingerprintAuthenticating, "the errored conversation is still open")
+    })
+    stepWait(100, function () { return !fpPam.active }, "the watcher should close the leftover conversation")
+    step(300, function () {
+      check(service.lockRequested, "resume never unlocks")
+      stubState("fprintd", "no")
+    })
+    step(300, function () {
+      service.refreshFingerprintStatus()
+    })
+    stepWait(300, function () { return !service.fingerprintConfigured }, "the none answer should disable fingerprint")
+    step(200, function () {
+      service.finishUnlock()
+      stubState("fprintd", "unknown")
+    })
+    step(300, function () {
+      answersMark = probeAnswers
+      service.refreshFingerprintStatus()
+    })
+    stepWait(300, function () { return probeAnswers > answersMark }, "the unlocked unknown answer should arrive")
+    step(50, function () {
+      check(!fpRecheck.running, "an unknown probe outside the lock does not re-probe")
+      stubState("fprintd", "yes")
+    })
+    step(300, function () {
+      answersMark = probeAnswers
+      service.refreshFingerprintStatus()
+    })
+    stepWait(300, function () { return probeAnswers > answersMark }, "the unlocked listed answer should arrive")
+    step(50, function () {
+      check(service.fingerprintConfigured && !service.fingerprintAuthenticating, "a listed print outside the lock starts nothing")
+      stubState("fprintd", "no")
+    })
+
+    // ---------- fingerprint attempt bookkeeping with crafted state ----------
+    // The arms the reader fixtures cannot time (fast errors, prompt clocks,
+    // retry pacing, the resume grace) are driven by calling the service
+    // with crafted attempt state, as upstream's lock-fingerprint-service
+    // fixture does. No session lock is held, so startFingerprint never opens
+    // a conversation and every call below runs synchronously in this step.
+    step(300, function () {
+      check(!serviceSecure() && !fpPam.active, "the crafted walk runs with no lock and no conversation")
+      service.lockRequested = true
+      service.fingerprintConfigured = true
+      service.resetAuthenticationState()
+
+      // a listed print while a retry is pending leaves the retry in charge
+      service.armFingerprintRetry(250)
+      service.applyFingerprintProbe("Fingerprints for user test on Goodix:\n - #0: right-index-finger")
+      check(service.fingerprintConfigured && !service.fingerprintAuthenticating && fpRetry.running, "a pending retry owns the next attempt")
+      fpRetry.stop()
+
+      // nudges: nothing pending, a backed-off retry, then the cooldown
+      service.nudgeFingerprint()
+      check(!fpRetry.running, "input with no retry pending starts nothing")
+      service.fingerprintAuthenticating = true
+      service.nudgeFingerprint()
+      service.fingerprintAuthenticating = false
+      service.armFingerprintRetry(8000)
+      service.nudgeFingerprint()
+      check(fpRetry.interval === 250, "input advances a backed-off retry")
+      service.armFingerprintRetry(8000)
+      service.nudgeFingerprint()
+      check(fpRetry.interval === 8000, "continuous input cannot collapse every retry")
+      fpRetry.stop()
+
+      // a usable attempt with no misses before it
+      service.fingerprintAuthenticating = true
+      service.fingerprintAttemptReachedDevice = false
+      service.noteFingerprintReachedDevice()
+      service.noteFingerprintReachedDevice()
+      service.settleFingerprintAttempt()
+      check(service.fingerprintUnreachedStreak === 0 && fpRetry.interval === 250, "a reached attempt retries at the swipe interval")
+
+      // device errors: unreached, slow after the prompt, fast after it
+      service.fingerprintAuthenticating = true
+      service.fingerprintAttemptReachedDevice = false
+      service.settleFingerprintAttempt(true)
+      check(service.fingerprintUnreachedStreak === 1, "an error before any prompt is a miss")
+      service.fingerprintAuthenticating = true
+      service.fingerprintAttemptReachedDevice = true
+      service.fingerprintAttemptPromptedAtMs = Date.now() - 5000
+      service.settleFingerprintAttempt(true)
+      check(service.fingerprintUnreachedStreak === 0 && !service.fingerprintAttemptFastError, "an error long after the prompt is usable and recovers")
+      service.fingerprintAuthenticating = true
+      service.fingerprintAttemptReachedDevice = true
+      service.fingerprintAttemptPromptedAtMs = Date.now()
+      service.settleFingerprintAttempt(true)
+      check(service.fingerprintUnreachedStreak === 1 && service.fingerprintAttemptFastError, "an error right after the prompt is a miss")
+
+      // the streak crosses into unavailable at 3, and stays past it
+      service.fingerprintUnreachedStreak = 2
+      service.fingerprintAuthenticating = true
+      service.fingerprintAttemptReachedDevice = false
+      service.settleFingerprintAttempt()
+      check(service.fingerprintUnreachedStreak === 3 && service.fingerprintUnavailable, "the third miss reports unavailable")
+      service.fingerprintAuthenticating = true
+      service.settleFingerprintAttempt()
+      check(service.fingerprintUnreachedStreak === 4 && service.fingerprintUnavailable, "further misses keep it unavailable")
+
+      // resume: grace once, then inside it
+      service.fingerprintResumedAtMs = 0
+      service.noteFingerprintResumed()
+      var resumedAt = service.fingerprintResumedAtMs
+      check(resumedAt > 0 && service.fingerprintUnreachedStreak === 0, "a resume clears the pre-sleep misses")
+      service.fingerprintUnreachedStreak = 2
+      service.noteFingerprintResumed()
+      check(service.fingerprintResumedAtMs === resumedAt && service.fingerprintUnreachedStreak === 2, "a second resume inside the grace changes nothing")
+
+      // restart after sleep: an attempt in flight, a pending retry, neither
+      service.fingerprintAuthenticating = true
+      service.restartFingerprintAfterSleep()
+      check(!service.fingerprintAuthenticating && fpRetry.running, "a resume settles the attempt in flight")
+      service.armFingerprintRetry(8000)
+      service.restartFingerprintAfterSleep()
+      check(fpRetry.running && fpRetry.interval === 250, "a resume restarts a pending wait at the swipe interval")
+      fpRetry.stop()
+      service.restartFingerprintAfterSleep()
+      check(!fpRetry.running, "a resume with nothing pending starts nothing")
+
+      // a reach timeout with no conversation open
+      service.fingerprintAuthenticating = true
+      service.timeoutFingerprintReach()
+      check(!service.fingerprintAuthenticating, "the reach bound closes the attempt")
+
+      // completions: a match after misses unlocks; one with no lock settles
+      service.lockRequested = false
+      service.fingerprintAuthenticating = true
+      service.handleFingerprintFinished(PamResult.Success)
+      check(!service.fingerprintAuthenticating && !service.lockRequested, "a match with no lock requested only settles")
+      service.lockRequested = true
+      service.fingerprintUnreachedStreak = 2
+      service.handleFingerprintFinished(PamResult.Success)
+      check(!service.lockRequested && service.fingerprintUnreachedStreak === 0, "a match after misses unlocks")
+
+      service.fingerprintConfigured = false
+      service.resetAuthenticationState()
     })
 
     step(300, function () {

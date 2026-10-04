@@ -1,0 +1,12 @@
+id: REVIEW-261004-F4WB
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:43:47Z"
+subject: SW-REQ-261004-VVN2
+decision: approved
+comment: 'Read shell/plugins/lock/LockView.qml at upstream 035ce29f. The password TextInput Keys.onPressed handler wakes the lock, then accepts the event and returns when event.isAutoRepeat && dropsAutoRepeat(event.key); dropsAutoRepeat is key !== Qt.Key_Backspace && key !== Qt.Key_Delete. Accepting in Keys.onPressed stops the TextInput from seeing the press, so an auto-repeat of any key other than Backspace/Delete is consumed without editing, and every other press reaches the field (Escape and Ctrl+U are accepted too, but they clear the field, an edit). key_press_dropped therefore equals key_autorepeat && !key_erases; the three violation rows need the guard changed and are dispositioned defensive. Witnesses in test/qml/lock/shell.qml drive real key events into the locked surface through a wtype virtual keyboard on the private sway: a tapped x types one character; x held for 1.5 s delivers at least three auto-repeat presses (counted through the wake each press triggers) and the field still holds one x; holding Backspace and Delete keeps erasing.'
+citations:
+    - shell/plugins/lock/LockView.qml:78@dropsAutoRepeat
+    - shell/plugins/lock/LockView.qml:229
+    - test/qml/lock/shell.qml:516
+    - test/qml/lock/shell.qml:527

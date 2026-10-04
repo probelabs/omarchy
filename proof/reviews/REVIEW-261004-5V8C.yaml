@@ -1,0 +1,17 @@
+id: REVIEW-261004-5V8C
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:43:47Z"
+subject: SW-REQ-261004-296X
+decision: approved
+comment: 'Read shell/plugins/lock/Service.qml and FingerprintModel.js at upstream 035ce29f. fingerprintUnavailable is the binding isUnavailable(fingerprintProbeStreak) || (fingerprintConfigured && (!fingerprintAttemptReachedDevice || fingerprintAttemptFastError) && isUnavailable(fingerprintUnreachedStreak)), with isUnavailable(streak) = streak >= 3. fingerprintProbeStreak counts unknown probe answers and resets on a definitive one; fingerprintUnreachedStreak is advanced by settleFingerprintAttempt through nextStreak (0 after a usable attempt, 1 for a miss inside the resume grace, +1 otherwise). An attempt is usable when it reached the device (noteFingerprintReachedDevice on a non-error PAM message, which also stamps the prompt time) and did not end in a device error within FAST_ERROR_MS (2 s) of it, i.e. !(!reached || fastError). The binding is the formula term for term, so the three violation rows (probe streak reached but not reported, reported with neither streak, configured unusable streak reached but not reported) cannot occur and are dispositioned defensive. Witnesses in test/qml/lock/shell.qml on a real lock: a fresh lock with no misses (not reported); one or two misses against a reader that only sends an error message (not reported yet); three misses then a has-no-fingers answer (not reported once unconfigured); three misses then a reader that prompts, checked while the attempt is still in flight (the prompt clears the report).'
+citations:
+    - shell/plugins/lock/Service.qml:66
+    - shell/plugins/lock/Service.qml:430@settleFingerprintAttempt
+    - shell/plugins/lock/Service.qml:413@noteFingerprintReachedDevice
+    - shell/plugins/lock/FingerprintModel.js:73@isUnavailable
+    - shell/plugins/lock/FingerprintModel.js:52@nextStreak
+    - test/qml/lock/shell.qml:925
+    - test/qml/lock/shell.qml:968
+    - test/qml/lock/shell.qml:991
+    - test/qml/lock/shell.qml:1013
