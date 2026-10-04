@@ -5,8 +5,11 @@
 #   C04 (screensChanged clears blank intent, never re-arms the blank timer)
 #   C05 (empty readlink result wipes a good backgroundPath)
 #   C06 (in-place wallpaper overwrite keeps the stale poster)
-#   C07 (fingerprintPam.start()==false disables fingerprint with no retry)
 #   C08 (spontaneous compositor unlock drops the request and wakes displays)
+# C07 (a failed fingerprintPam.start() arms no retry) moved to the runtime
+# reproducer pocs/crs-260930-ttvk-c07.sh: upstream omacom/omarchy#7158 routes the
+# failed start through settleFingerprintAttempt, which arms the retry one call
+# deeper, so a text anchor on startFingerprint can no longer decide it.
 # Method: each assertion extracts the LIVE lines from shell/plugins/lock/
 # Service.qml and asserts the defect mechanism's code shape. Every assertion
 # is tied to the runtime scenario documented in the claim (traced end-to-end
@@ -61,11 +64,6 @@ chk C06 "running guard returns without queueing the new request" "if (posterProc
 sed -n '/id: posterProc/,/^  }/p' "$F" > "$T"
 chk C06 "onExited commits when sourcePath still equals backgroundPath (in-place overwrite)" "sourcePath !== root.backgroundPath" "$T"
 
-echo "== C07: startFingerprint false-arm arms no retry =="
-sed -n '/function startFingerprint/,/^  }/p' "$F" > "$T"
-chk C07 "false return only clears the flag" "if (!fingerprintPam.start()) {" "$T"
-if grep -q "fingerprintRetryTimer" "$T"; then echo "  [C07] ABSENT: retry armed (fix present?)"; fail=1; else echo "  [C07] PRESENT: fingerprintRetryTimer not armed on start() failure"; fi
-
 echo "== C08: spontaneous unlock branch drops the request without re-locking =="
 sed -n '/if (!locked && root.lockRequested)/,/^      }/p' "$F" > "$T"
 chk C08 "lockRequested cleared on external lock loss" "root.lockRequested = false" "$T"
@@ -98,5 +96,5 @@ if (( fail )); then
   echo "ANCHORED-EVIDENCE: one or more mechanisms no longer present in the live file - claims possibly fixed"
   exit 1
 fi
-echo "ANCHORED-EVIDENCE: all 7 QML mechanism claims match the live code (C01 C03 C04 C05 C06 C07 C08)"
+echo "ANCHORED-EVIDENCE: all 6 QML mechanism claims match the live code (C01 C03 C04 C05 C06 C08)"
 exit 0
