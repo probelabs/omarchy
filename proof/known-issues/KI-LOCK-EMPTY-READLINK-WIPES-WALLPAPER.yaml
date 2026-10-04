@@ -1,6 +1,6 @@
 id: KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER
 title: Failed/empty readlink result stored as backgroundPath, wiping a good lock-screen wallpaper
-description: readlinkProc's handler (shell/plugins/lock/Service.qml:690-704) takes lines[0] of the collector output with no non-empty guard. The embedded bash prints only after a successful readlink, so a missing currentBackgroundLink or a readlink error yields next = ''. The next !== backgroundPath branch then clears videoPosterPath, stores backgroundPath = '', and bumps backgroundVersion. A transient wallpaper race (theme switch) then blanks the lock background until a later refresh succeeds.
+description: readlinkProc's handler (shell/plugins/lock/Service.qml:691-705) takes lines[0] of the collector output with no non-empty guard. The embedded bash prints only after a successful readlink, so a missing currentBackgroundLink or a readlink error yields next = ''. The next !== backgroundPath branch then clears videoPosterPath, stores backgroundPath = '', and bumps backgroundVersion. A transient wallpaper race (theme switch) then blanks the lock background until a later refresh succeeds.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

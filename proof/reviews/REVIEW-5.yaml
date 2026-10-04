@@ -6,4 +6,4 @@ subject: SW-REQ-260912-41VV
 decision: approved
 comment: Fingerprint indicator visibility is bound to sensor configuration state; when no sensor is configured the indicator reserves no layout space, matching fingerprint_indicator_tracks_sensor in both polarities.
 citations:
-    - shell/plugins/lock/LockView.qml:33
+    - shell/plugins/lock/LockView.qml:34

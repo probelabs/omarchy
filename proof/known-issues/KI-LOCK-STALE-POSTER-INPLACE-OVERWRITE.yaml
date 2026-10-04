@@ -1,6 +1,6 @@
 id: KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE
 title: In-place video wallpaper overwrite during a running poster job keeps the stale poster frame
-description: refreshPoster drops the new request while posterProc is running (running guard, Service.qml:150) without queueing, and posterProc.onExited (714-721) commits whenever sourcePath === backgroundPath. An in-place overwrite (same path, new bytes) therefore keeps the poster hashed from the pre-overwrite stat. BackgroundVersion changes the URL but the jpeg bytes are stale, and the code schedules no second refresh.
+description: refreshPoster drops the new request while posterProc is running (running guard, Service.qml:150) without queueing, and posterProc.onExited (715-722) commits whenever sourcePath === backgroundPath. An in-place overwrite (same path, new bytes) therefore keeps the poster hashed from the pre-overwrite stat. BackgroundVersion changes the URL but the jpeg bytes are stale, and the code schedules no second refresh.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

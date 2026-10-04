@@ -6,4 +6,4 @@ subject: SW-REQ-260912-WJYM
 decision: approved
 comment: 'Stranded-lock path matches: probe exit 0 + no own lock + password PAM configured takes the session lock exactly once and writes the lock-stranded recovery journal entry; the once-only guard prevents re-entry, matching stranded_lock_recovered_once & recovery_logged.'
 citations:
-    - shell/plugins/lock/Service.qml:93
+    - shell/plugins/lock/Service.qml:105

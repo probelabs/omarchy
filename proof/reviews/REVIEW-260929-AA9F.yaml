@@ -6,4 +6,4 @@ subject: SW-REQ-260912-ND55
 decision: approved
 comment: 'Re-recorded after the MC/DC annotation campaign shifted lines (idleBlankTimer 590->601). Read the idleBlankTimer handler: it blanks via runBlank only when lockRequested && !authenticatingPassword, so a password check in flight holds the display while the armed fingerprint PAM alone never does; a wall-clock gap (armedAt older than interval+2000, the suspend-frozen countdown) re-arms the timer instead of blanking. All three response disjuncts are reachable, matching the (blank_displays | password_auth_in_flight | timer_rearmed_after_suspend) shape.'
 citations:
-    - shell/plugins/lock/Service.qml:601
+    - shell/plugins/lock/Service.qml:800

@@ -3,7 +3,7 @@ title: fingerprintPam.start() returning false disables fingerprint auth for the 
 description: |-
     Before upstream omacom/omarchy#7158, startFingerprint (shell/plugins/lock/Service.qml) cleared fingerprintAuthenticating when fingerprintPam.start() returned false, but armed no timer. Only handleFingerprintFinished and the PAM onError path restarted fingerprintRetryTimer. Neither runs when a conversation never began. A transient start failure therefore left fingerprint dead until an unrelated event re-ran startFingerprint.
 
-    #7158 (879d6583d, merged 2026-10-04) fixed it, and upstream quattro 035ce29f carries the fix. A failed start (Service.qml:399-404) now calls settleFingerprintAttempt and refreshFingerprintStatus. settleFingerprintAttempt (Service.qml:430-458) counts the miss and arms the retry with FingerprintModel.retryDelayMs.
+    #7158 (879d6583d, merged 2026-10-04) fixed it, and upstream quattro 035ce29f carries the fix. A failed start (Service.qml:399-404) now calls settleFingerprintAttempt and refreshFingerprintStatus. settleFingerprintAttempt (Service.qml:430-459) counts the miss and arms the retry with FingerprintModel.retryDelayMs.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

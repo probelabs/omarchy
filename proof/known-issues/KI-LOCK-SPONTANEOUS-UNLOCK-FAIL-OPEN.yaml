@@ -1,6 +1,6 @@
 id: KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
 title: Compositor-side lock loss with a request outstanding is treated as a finished unlock; no re-lock
-description: 'WlSessionLock.onLockStateChanged (shell/plugins/lock/Service.qml:500-507): when locked flips false while lockRequested still holds, the branch clears lockRequested and pendingSessionLock, resets auth state and calls runWake() with no queueSessionLock/beginLock. That locked flip is an ext-session-lock finish/acquire failure delivered by the compositor rather than finishUnlock. finishUnlock sets lockRequested=false BEFORE locked=false, so this branch only runs for an external drop. A spontaneous protocol-level unlock then fails open (session visible, no re-lock attempted), unlike the no-real-screen path which keeps retrying.'
+description: 'WlSessionLock.onLockStateChanged (shell/plugins/lock/Service.qml:501-508): when locked flips false while lockRequested still holds, the branch clears lockRequested and pendingSessionLock, resets auth state and calls runWake() with no queueSessionLock/beginLock. That locked flip is an ext-session-lock finish/acquire failure delivered by the compositor rather than finishUnlock. finishUnlock sets lockRequested=false BEFORE locked=false, so this branch only runs for an external drop. A spontaneous protocol-level unlock then fails open (session visible, no re-lock attempted), unlike the no-real-screen path which keeps retrying.'
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
@@ -104,7 +104,7 @@ poc_quality:
         real_infrastructure: pocs/lock-service-failopen-runtime.sh extracts the LIVE onLockStateChanged drop arm and finishUnlock body verbatim from shell/plugins/lock/Service.qml and executes them - the shipped code runs unmodified; only the compositor boundary (the lock-state transition) is staged as a property write, because a spontaneous ext-session-lock drop cannot be produced headlessly.
         quantitative_impact: the impact is a boolean fail-open - lockRequested cleared, runWake fired, zero re-lock calls - not a measurable quantity.
         control_test: the control run drives finishUnlock (the user-driven path) and asserts the safe ordering, so the drop arm provably never fires for a normal unlock; the static control asserts the same ordering in the live file (pocs/crs-260930-ttvk-qml-static.sh).
-        current_deployment_relevance: the !locked && root.lockRequested branch (Service.qml:500-507) is live on this branch and unchanged on upstream quattro 035ce29f; the harness extracts it at run time.
+        current_deployment_relevance: the !locked && root.lockRequested branch (Service.qml:501-508) is live on this branch and unchanged on upstream quattro 035ce29f; the harness extracts it at run time.
         honest_severity: medium - a spontaneous compositor-side lock loss exposes the session without re-lock; unusual trigger, no auth bypass claimed beyond the fail-open itself.
         reproducible: single command ./pocs/lock-service-failopen-runtime.sh, deterministic, about 100ms, exit 0 while the defect is present.
         no_inflation: claim limited to the demonstrated branch behavior.

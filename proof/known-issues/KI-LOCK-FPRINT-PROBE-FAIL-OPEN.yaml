@@ -3,7 +3,7 @@ title: 'Lock-service fingerprint probe fail-open: substring grep treats zero-enr
 description: |-
     Before upstream omacom/omarchy#7158, fingerprintCheckProc in shell/plugins/lock/Service.qml probed with 'fprintd-list "$USER" 2>/dev/null | grep -qi finger'. For an empty store, fprintd-list prints 'User NAME has no fingers enrolled for ...'. grep matched the substring, the probe echoed yes, and fingerprintConfigured became true. The lock screen then offered fingerprint auth to a user with zero prints, and every attempt failed. KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN has the same substring-oracle class at a different file and code site.
 
-    #7158 (879d6583d, merged 2026-10-04) fixed it, and upstream quattro 035ce29f carries the fix. The probe (Service.qml:726-731) now prints the raw 'LC_ALL=C fprintd-list' output. applyFingerprintProbe (Service.qml:162-186) classifies it with FingerprintModel.classifyProbe (FingerprintModel.js:42-48). Only an enrolled '- #N:' row reads as configured. An explicit empty enrollment reads as not configured.
+    #7158 (879d6583d, merged 2026-10-04) fixed it, and upstream quattro 035ce29f carries the fix. The probe (Service.qml:727-732) now prints the raw 'LC_ALL=C fprintd-list' output. applyFingerprintProbe (Service.qml:162-186) classifies it with FingerprintModel.classifyProbe (FingerprintModel.js:42-48). Only an enrolled '- #N:' row reads as configured. An explicit empty enrollment reads as not configured.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:

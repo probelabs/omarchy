@@ -6,5 +6,5 @@ subject: SW-REQ-260912-WJYM
 decision: approved
 comment: 'Re-recorded after the MC/DC annotation campaign shifted lines (checkStrandedLock 101->105, recoverStrandedLock 114->118). checkStrandedLock runs the probe once until resolved and short-circuits when the shell holds or requested a lock; recoverStrandedLock takes the session lock exactly once - the strandedLock=false reset guards re-entry - and only when the probe found no own lock and password PAM is configured, logging lock-stranded: recovering via logEvent before beginLock. Matches stranded_lock_recovered_once & recovery_logged.'
 citations:
-    - shell/plugins/lock/Service.qml:105
-    - shell/plugins/lock/Service.qml:118
+    - shell/plugins/lock/Service.qml:117
+    - shell/plugins/lock/Service.qml:130

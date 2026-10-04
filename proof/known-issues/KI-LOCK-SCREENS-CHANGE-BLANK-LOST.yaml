@@ -1,6 +1,6 @@
 id: KI-LOCK-SCREENS-CHANGE-BLANK-LOST
 title: Screen add/remove while locked clears the blank intent and never re-arms the idle blank timer
-description: onScreensChanged (shell/plugins/lock/Service.qml:864-874) sets displaysBlank = false (so a returning panel shows the wallpaper) but calls neither armBlankTimer nor runWake. After the one-shot idleBlankTimer has fired, nothing restarts the 5s countdown, and a newly added output falls back to displaysBlank in the DPMS map. So after any hotplug/unplug while locked, all displays stay awake until the next keypress re-runs the idle path.
+description: onScreensChanged (shell/plugins/lock/Service.qml:865-875) sets displaysBlank = false (so a returning panel shows the wallpaper) but calls neither armBlankTimer nor runWake. After the one-shot idleBlankTimer has fired, nothing restarts the 5s countdown, and a newly added output falls back to displaysBlank in the DPMS map. So after any hotplug/unplug while locked, all displays stay awake until the next keypress re-runs the idle path.
 affected_requirements:
     - SW-REQ-260912-ND55
 evidence_manifests:
@@ -90,7 +90,7 @@ poc_quality:
         real_infrastructure: pocs/crs-260930-ttvk-c04.sh extracts the live onScreensChanged body, runWake and armBlankTimer from shell/plugins/lock/Service.qml and runs them unmodified in node; only the lock and stranded-lock calls are recorded stubs, because a compositor hotplug cannot be driven headlessly. Upstream omacom/omarchy#8580 and an independent comment there reproduce the symptom on real hardware.
         quantitative_impact: after one screen change with the blank already fired, displaysBlank is false and 0 timers will blank the displays again; the runWake control arms 1.
         control_test: runWake, the keypress path, runs from the same state and must re-arm idleBlankTimer, or the reproducer exits 2.
-        current_deployment_relevance: onScreensChanged (Service.qml:864-874) is live on this branch and unchanged on upstream quattro 035ce29f; the reproducer extracts it at run time.
+        current_deployment_relevance: onScreensChanged (Service.qml:865-875) is live on this branch and unchanged on upstream quattro 035ce29f; the reproducer extracts it at run time.
         honest_severity: low - the session stays locked; only the idle blank is lost, so the displays stay lit until the next keypress.
         reproducible: single command ./pocs/crs-260930-ttvk-c04.sh, deterministic, under a second; exit 0 while the defect is present.
         no_inflation: the claim is limited to the lost blank; no unlock, exposure or crash is asserted.

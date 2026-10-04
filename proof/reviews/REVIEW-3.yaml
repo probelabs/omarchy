@@ -6,4 +6,4 @@ subject: SW-REQ-260912-ND55
 decision: approved
 comment: 'Idle-blank decision matches the disjunction: displays blank only when no password authentication is in flight; the armed fingerprint PAM path does not hold the display, and after resume the timer is rearmed. All three response disjuncts are reachable in the code''s timer handler.'
 citations:
-    - shell/plugins/lock/Service.qml:590
+    - shell/plugins/lock/Service.qml:789

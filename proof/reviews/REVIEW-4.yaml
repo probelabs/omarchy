@@ -6,4 +6,4 @@ subject: SW-REQ-260912-WBS3
 decision: approved
 comment: 'Password-dot scaling branch matches the formula: when text width exceeds the field, dot scale shrinks so the row stays inside; the edited text is reported to the service untruncated. Trigger password_text_overflows is the width comparison in the view.'
 citations:
-    - shell/plugins/lock/LockView.qml:37
+    - shell/plugins/lock/LockView.qml:38

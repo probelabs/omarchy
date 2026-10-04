@@ -6,5 +6,5 @@ subject: SW-REQ-260912-J8SX
 decision: approved
 comment: 'Re-recorded after the MC/DC annotation campaign shifted lines (beginLock 164->168, lockIpc lock 712->725; mcdc:ignore inserts above). Read beginLock() and the lockIpc lock() verb: beginLock refuses when passwordPamConfigured is false - it logs lock-denied: missing-pam and returns false without engaging the session lock; the IPC verb answers missing-pam on the same config check before beginLock can run, so with PAM configured the denial arm is not taken and the failed arm is structurally dead (mcdc:ignore:defensive). Matches lock_denied_missing_pam under lock_requested & !password_pam_configured.'
 citations:
-    - shell/plugins/lock/Service.qml:168
-    - shell/plugins/lock/Service.qml:725
+    - shell/plugins/lock/Service.qml:217
+    - shell/plugins/lock/Service.qml:924
