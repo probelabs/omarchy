@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when fingerprint_sensor_configured the lock_view shall always satisfy fingerprint_indicator_tracks_sensor
-description: When fingerprint authentication is available, the lock view shall show the fingerprint indicator next to the password field. When no fingerprint sensor is available, the lock view shall reserve no space for the indicator.
+description: When fingerprint authentication is available, the lock view shall show the fingerprint indicator next to the password field. When the lock service reports the reader unavailable (SW-REQ-261004-296X), the lock view shall show the indicator crossed out in the error colour and the notice "Fingerprint reader unavailable" under the field. When no fingerprint sensor is available, the lock view shall reserve no space for the indicator.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: An indicator without a working sensor invites a touch that can never authenticate. Space reserved for a missing sensor shifts the password field.
+rationale: 'An indicator without a working sensor invites a touch that can never authenticate. Space reserved for a missing sensor shifts the password field. Upstream #7158 added the unavailable state: a reader the shell cannot reach crosses out rather than disappears, and the notice carries the meaning the icon alone does not.'
 tags: []
 variables: []
 traces:
@@ -61,8 +61,8 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:51:16Z"
-    last_modified_by: agent:kimi-dogfood
-    last_modified_at: "2026-09-12T23:32:08Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-04T19:06:49Z"
 hazard_review:
     reviewed_at: "2026-10-01T21:26:12Z"
     reviewed_by: agent:claude-baseline-pass

@@ -1,6 +1,6 @@
 id: SW-REQ-261004-V813
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: ""
+rationale: "The lock screen's probe used to grep the fprintd-list answer for the word \"finger\". An empty enrollment on a reader with Fingerprint in its name (\"has no fingers enrolled for ... Fingerprint Sensor\") then read as enrolled (KI-LOCK-FPRINT-PROBE-FAIL-OPEN), and a probe that could not reach fprintd read as not enrolled and switched fingerprint authentication off. Upstream #7158 (FingerprintModel.classifyProbe, Service.applyFingerprintProbe) classifies the answer: only a listed print or a definite none changes the state, and an unknown answer is asked again with the attempt backoff."
 tags: []
 variables: []
 traces:
@@ -23,12 +23,46 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:15Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:00:15Z"
+    last_modified_at: "2026-10-04T19:07:04Z"
+hazard_review:
+    reviewed_at: "2026-10-04T19:06:41Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+            - malformed_input
+          not_applicable:
+            - concurrency_scale
+            - input_domain
+          rationale: 'Worst case: the lock screen offers a fingerprint path that can never succeed, or drops a working one because fprintd was briefly unreachable. error_handling: an unreachable fprintd, a D-Bus timeout or empty output read unknown and keep the state; while unconfigured the probe reruns after 1 s, 2 s, ... capped at 40 s (witnessed in lock-fingerprint-retry-test.sh and the lock harness). boundary: a print row must start a line and carry a numeric index; "no" and "has no fingers enrolled" read none. malformed_input: null, empty or garbled output reads unknown. input_domain not applicable: the probe output comes from the packaged fprintd-list run with LC_ALL=C for the session user. concurrency_scale not applicable: one probe process at a time (the running guard).'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: classifyProbe depends only on the answer text. totality: every answer maps to yes, no or unknown.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Two regular expressions and a string compare on decoded text.
+        - category: domain
+          disposition: not_applicable
+          rationale: Reads the session user's own enrollment through the packaged probe; no trust boundary is crossed.
+lifecycle:
+    change_history:
+        - date: "2026-10-04T19:07:04Z"
+          from: draft
+          to: review
+          reason: 'Baseline requirement for upstream behaviour merged in quattro 035ce29f (#7158 879d6583 / #7806 00cee6d3); authored by agent:claude-code under the owner''s delegation'
+          changed_by: agent:claude-code

@@ -1,6 +1,6 @@
 id: SW-REQ-261004-296X
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: ""
+rationale: "A reader that fprintd cannot claim (wedged after suspend, or held by another client) used to be retried every 250 ms for as long as the screen stayed locked, with no sign to the user. Upstream #7158 (FingerprintModel.js and Service.qml) backs off, keeps fprintd's 30 s idle exit free so a wedged claim can clear, reports the reader unavailable after 3 misses (the lock view crosses the icon out and says so, SW-REQ-260912-41VV), restarts after a resume, and bounds a claim that never prompts."
 tags: []
 variables: []
 traces:
@@ -23,12 +23,48 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:15Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:00:15Z"
+    last_modified_at: "2026-10-04T19:07:04Z"
+hazard_review:
+    reviewed_at: "2026-10-04T19:06:41Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+            - edge_case
+            - concurrency_scale
+          not_applicable:
+            - input_domain
+          rationale: "Worst case: the lock screen hammers a wedged reader forever, or shows \"Fingerprint reader unavailable\" for a reader that works, or never retries after a resume. error_handling: a device error, a start failure or a claim with no prompt within 20 s is a miss and backs off. boundary: the notice needs 3 misses in a row; the backoff caps at 40 s, above fprintd's 30 s idle exit; a device error within 2 s of a prompt is a miss. edge_case: a miss inside the 5 s resume grace stays at the first tier; a clock stepped backwards counts neither as a sleep nor as an idle stretch. concurrency_scale: onError and onCompleted can both fire for one attempt and the attempt settles once; a nudge never starts a second attempt while one runs. input_domain not applicable: the inputs are timer ticks, PAM signals and wall-clock times. All model rows are witnessed in lock-fingerprint-retry-test.sh (replayed for code-level MC/DC) and the service rows in the lock harness."
+        - category: property
+          disposition: reviewed
+          applied:
+            - monotonicity
+            - determinism
+          rationale: 'monotonicity: the retry delay never shrinks while the miss streak grows (witnessed for streaks 1..20). determinism: the model functions depend only on their arguments.'
+        - category: structural
+          disposition: reviewed
+          applied:
+            - overflow_safety
+          rationale: 'overflow_safety: Math.pow(2, streak - 1) grows without bound for long outages but is clamped by Math.min to the 40 s cap before it reaches a timer (witnessed for streak 50).'
+        - category: domain
+          disposition: not_applicable
+          rationale: Timing and display state of the lock screen only; authentication itself stays with pam_fprintd.
+lifecycle:
+    change_history:
+        - date: "2026-10-04T19:07:04Z"
+          from: draft
+          to: review
+          reason: 'Baseline requirement for upstream behaviour merged in quattro 035ce29f (#7158 879d6583 / #7806 00cee6d3); authored by agent:claude-code under the owner''s delegation'
+          changed_by: agent:claude-code

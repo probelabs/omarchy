@@ -4,8 +4,8 @@ status: review
 priority: shall
 category: functional
 req_type: guarantee
-fretish: when lock_auth_config_run the apply_lock shall always satisfy password_pam_installed & (fingerprint_pam_installed | fingerprint_pam_removed) & !(fingerprint_pam_installed & fingerprint_pam_removed)
-description: The system shall install the PAM password stack for the lock screen. The system shall install the PAM fingerprint stack only when the target user has an enrolled fingerprint, and shall remove it otherwise. When started as root, the helper shall restrict PATH to trusted system directories and shall invoke fprintd-list only by its packaged absolute path.
+fretish: when lock_auth_config_run the apply_lock shall always satisfy password_pam_installed & (fingerprint_pam_installed | fingerprint_pam_removed | fingerprint_config_kept) & !(fingerprint_pam_installed & fingerprint_pam_removed)
+description: The system shall install the PAM password stack for the lock screen. The system shall install the PAM fingerprint stack, with fprintd's resume recovery, only when the target user has an enrolled fingerprint, and shall remove them when the user has none. When the enrollment check fails, the system shall keep the existing fingerprint configuration. When started as root, the helper shall restrict PATH to trusted system directories and shall invoke fprintd-list only by its packaged absolute path.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -48,8 +48,8 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-12T19:42:00Z"
-    last_modified_by: agent:claude-quattro
-    last_modified_at: "2026-10-01T21:29:12Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-04T19:06:50Z"
 obligation_checklist:
     - atomic_write
 obligation_deferrals:

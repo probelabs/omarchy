@@ -1,6 +1,6 @@
 id: SW-REQ-261004-SP65
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-JW2J
 component: lock
-rationale: ""
+rationale: "Upstream #7158 (879d6583) stopped treating a failed enrollment probe as an empty enrollment. A transient fprintd failure during setup or an upgrade (fprintd not activatable, a D-Bus timeout) used to remove working fingerprint authentication and its recovery; now only a definite answer changes the configuration, and the helper says it could not check."
 tags: []
 variables: []
 traces:
@@ -23,12 +23,45 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T18:59:55Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T18:59:55Z"
+    last_modified_at: "2026-10-04T19:07:04Z"
+hazard_review:
+    reviewed_at: "2026-10-04T19:06:41Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+            - edge_case
+          rationale: "Worst case: a transient fprintd failure during setup or an upgrade removes working fingerprint authentication, or a failure is read as an enrollment and installs a stack for a user with no print. error_handling: any answer that is neither a listed print row nor fprintd's \"has no fingers enrolled\" keeps the PAM stack, the resume hook and the drop-in byte for byte and prints the could-not-check line (witnessed: \"an unknown enrollment probe preserves existing recovery files\"). boundary: the classifier is the anchored row match ( - #N:) and the fixed phrase; a header that mentions \"- #0:\" mid-line, a non-numeric index or a reader named Fingerprint do not count as enrolled. input_domain not applicable: the answer comes from the packaged /usr/bin/fprintd-list run as root, and only an anchored pattern and a fixed phrase are matched. concurrency_scale not applicable: one probe per helper run. edge_case not applicable beyond the boundary rows above."
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+          rationale: 'idempotency: rerunning the helper while fprintd keeps failing leaves the same files in place every time.'
+        - category: structural
+          disposition: not_applicable
+          rationale: A grep over the probe answer and a branch; no memory, encoding or format-string surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: Local root helper; the answer is read from a packaged binary, not from a user-writable source.
+lifecycle:
+    change_history:
+        - date: "2026-10-04T19:07:04Z"
+          from: draft
+          to: review
+          reason: 'Baseline requirement for upstream behaviour merged in quattro 035ce29f (#7158 879d6583 / #7806 00cee6d3); authored by agent:claude-code under the owner''s delegation'
+          changed_by: agent:claude-code

@@ -1,6 +1,6 @@
 id: SW-REQ-261004-YNBG
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-JW2J
 component: lock
-rationale: ""
+rationale: "Suspend can wedge fprintd's device claim (libfprint/fprintd#173). Upstream #7158 restarts fprintd from a system-sleep hook after resume and caps its stop time with a drop-in, and installs both beside the PAM fingerprint stack so setup and upgrades cannot leave fingerprint authentication configured without its recovery. The empty-enrollment branch removes them again."
 tags: []
 variables: []
 traces:
@@ -23,12 +23,45 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:14Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:00:14Z"
+    last_modified_at: "2026-10-04T19:07:04Z"
+hazard_review:
+    reviewed_at: "2026-10-04T19:06:41Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+            - edge_case
+          rationale: 'Worst case: fingerprint authentication is installed without the resume recovery, so the reader stays wedged after the first suspend and every fingerprint unlock fails. error_handling: install is run under set -e before the stack is written, so a missing hook or drop-in source stops the helper with no fingerprint stack (witnessed: "failed recovery installation cannot create fingerprint PAM", once per source). boundary: the removal branch removes the hook always and the drop-in only when present, reloading systemd only then, so a chroot install without systemd does not fail. input_domain not applicable: fixed source and destination paths. concurrency_scale not applicable: one helper run writes a fixed set of files. edge_case covered by the boundary rows.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - idempotency
+          rationale: 'idempotency: install -D and systemctl daemon-reload give the same files when rerun.'
+        - category: structural
+          disposition: not_applicable
+          rationale: install, rm and systemctl calls on fixed paths.
+        - category: domain
+          disposition: reviewed
+          rationale: The hook runs as root from systemd-sleep on every resume and only enqueues a try-restart of fprintd.service; it reads no user input. The drop-in only sets TimeoutStopSec=3s. Both are installed root-owned with fixed modes (0755, 0644).
+lifecycle:
+    change_history:
+        - date: "2026-10-04T19:07:04Z"
+          from: draft
+          to: review
+          reason: 'Baseline requirement for upstream behaviour merged in quattro 035ce29f (#7158 879d6583 / #7806 00cee6d3); authored by agent:claude-code under the owner''s delegation'
+          changed_by: agent:claude-code

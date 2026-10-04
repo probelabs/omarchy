@@ -1,6 +1,6 @@
 id: SW-REQ-261004-VVN2
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: ""
+rationale: "Waking a DPMS-blanked display can stall the compositor for seconds while the monitor modesets, so the wake key's release arrives late and client-side key repeat floods the password field with that character. Upstream #7806 (merged 00cee6d3) drops auto-repeated presses in the field; holding Backspace or Delete to clear stays useful."
 tags: []
 variables: []
 traces:
@@ -23,12 +23,43 @@ verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-04T19:06:41Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-04T19:00:15Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:00:15Z"
+    last_modified_at: "2026-10-04T19:07:04Z"
+hazard_review:
+    reviewed_at: "2026-10-04T19:06:41Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - boundary
+            - edge_case
+          not_applicable:
+            - error_handling
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a held wake key fills the field and the next Enter submits a wrong password, counting a failed attempt. boundary: Backspace and Delete repeats still edit; every other repeat is consumed. edge_case: the first, non-repeated press of any key still reaches the field and wakes the display. error_handling not applicable: no failure path. input_domain not applicable: key codes from the compositor, not data. concurrency_scale not applicable: one key event at a time.'
+        - category: property
+          disposition: not_applicable
+          rationale: A pure predicate over one key event.
+        - category: structural
+          disposition: not_applicable
+          rationale: Two key-code compares.
+        - category: domain
+          disposition: not_applicable
+          rationale: Input handling of the lock view only.
+lifecycle:
+    change_history:
+        - date: "2026-10-04T19:07:04Z"
+          from: draft
+          to: review
+          reason: 'Baseline requirement for upstream behaviour merged in quattro 035ce29f (#7158 879d6583 / #7806 00cee6d3); authored by agent:claude-code under the owner''s delegation'
+          changed_by: agent:claude-code
