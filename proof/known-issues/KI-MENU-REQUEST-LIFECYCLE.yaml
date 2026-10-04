@@ -207,6 +207,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: 'set-severity=low,severity-justification=severity: low on this mirror (the baseline grades it medium). #9056 at b7bd59c4 fixes the two legs that make it medium on the baseline: a second summon now answers the superseded caller as cancelled (the #9057 reproducer exits 0 here, and a live burst of 20 leaves 0 callers waiting), and each answer is written by its own process, so a busy writer no longer drops a selection. What stays open here is the doneFile-only leg and the empty-selectionFile redirect variant, which have static evidence only; a caller whose menu process dies is graded under KI-MENU-SELECT-POLL-DEADLOCK.'
+    - at: "2026-10-04T18:26:21Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
 kill_domain: handshake
 affected_file:
     - shell/plugins/menu/MenuModel.js
