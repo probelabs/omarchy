@@ -1,102 +1,102 @@
 checklist: upstream_refresh_v1
-updated_at: "2026-10-03T13:00:13Z"
+updated_at: "2026-10-04T20:37:25Z"
 steps:
     ac-sweep:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: No new or changed STKs; no acceptance block affected.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: No new or changed stakeholder requirement; STK-REQ-260912-XJ5D acceptance unchanged.
+        scope_key: lock
     annotations-heavy:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:35Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: No annotation-bearing code moved in the delta; the full uncached audit confirms.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:11Z"
+        confirmed_by: agent:claude-code
+        note: 'Code-level MC/DC: lock-qml-service 77/77 decisions 107/107 conditions, lock-qml-view 27/27 / 41/41 (harness extended), menu-bash-images 40/40 / 45/45, lock-js-fingerprintmodel 100/100; requirement-level witnesses for the new requirements.'
+        scope_key: lock
     config-migrate:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: No config migration for the delta. The same baseline move adds bin/omarchy-theme-remov* and shell/services/AppSearch.js to the verification scope (separate commit); the delta's files stay out of scope.
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: 'proof.yaml: lock-shell runs lock-fingerprint-retry, lock-fingerprint-service and lock-autorepeat; new lock-node command and code_mcdc target lock-js-fingerprintmodel (FingerprintModel.js, 100/100); scope adds the two new lock fixtures and the fprintd resume hook / stop-timeout drop-in that apply-lock-test copies; test_results commands add lock-node.'
     coverage:
         status: confirmed
-        confirmed_at: "2026-10-03T13:00:13Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'Full proof audit --no-cache (engine 8cac9cff) at cfe4da99, the merge of upstream 393a43d4 plus the scope and known-issue changes: 0 errors / 0 warnings / 1 info, 204 passed (run-08acca45). tests_pass green (the new menu-app-library test ran); mcdc_coverage 86 requirements, 316 witness rows, 0 uncovered; code-level MC/DC thresholds met; 243/243 code functions traced; 0 suspect links.'
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:25Z"
+        confirmed_by: agent:claude-code
+        note: 'Proof audit (engine eeb5981c) at e728d95c, the merge of upstream 035ce29f plus the proof work: 0 errors, 6 warnings (prose, hazard rationale, one unmodeled predicate, verification-state derivation, one evidence input_set, sibling disposition), all fixed in the following commits (run-e8ddcc49). tests_pass green; code-level MC/DC 100% decisions and conditions on every target (72 ignored decisions, each reviewed); mcdc_coverage 92 requirements, 349 witness rows, 0 uncovered; 268/268 code functions traced; 0 suspect links. The final uncached audit runs on the tip.'
+        scope_key: lock
     defect-review:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:35Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'No claims session warranted: no in-scope implementation changed.'
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:11Z"
+        confirmed_by: agent:claude-code
+        note: 'Every lock known issue re-run on the merge and on 393a43d4: KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN, KI-LOCK-FPRINT-PROBE-FAIL-OPEN and KI-LOCK-FPRINT-START-FAIL-NO-RETRY fixed by #7158 (absent on the merge, present on 393a43d4); the others reproduce; KI-MENU-IMAGES-VIPS-NO-TIMEOUT still reproduces and now also holds back later stills in the lazy pool.'
+        scope_key: lock
         check_results:
             - id: defect_review_current
               status: info
-              at: "2026-10-03T12:46:35Z"
+              at: "2026-10-04T20:37:11Z"
     delta-intake:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'Delta a85e29ab..393a43d4 (1 commit, #6951: pin root= earlier in omarchy-upgrade-to-quattro). Files: bin/omarchy-upgrade-to-quattro and its test; neither in the verification scope; menu and lock code byte-identical. Merged with no conflicts. Engine 0.1.0-dev+g8cac9cff8c34, catalog unchanged, no pin.'
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: 'Delta 393a43d4..035ce29f (60 commits). In scope: #7158 879d6583 (apply-lock, lock Service/LockView, new FingerprintModel.js, new lock tests), #7806 00cee6d3 (password field drops auto-repeat), #14117 2ba1015e/520e4bca/a8e09b9c (menu-images lazy thumbnail pool), 27a3feff (BarWidget property), #10367 035ce29f (two menu jsonc rows), 0e7d6c27 (fixtures). Merged with five conflicts (product files: upstream code + re-anchored annotations). Engine 0.1.0-dev+geeb5981c, catalog 1.11.0 unchanged.'
         verify_result:
             exit_code: 0
             passed: true
-            at: "2026-10-03T12:46:34Z"
+            at: "2026-10-04T20:37:10Z"
     hazard:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: Catalog unchanged; no hazard_review went stale; no new decision point in the audited surface.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: Hazard reviews recorded for the five new requirements and refreshed for Y0WT, S154 and VVN2's structural row against catalog 1.11.0; THMB/MH9B/43HQ hazard texts updated for the lazy pool.
+        scope_key: lock
     refresh-complete:
         status: confirmed
-        confirmed_at: "2026-10-03T13:00:13Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'Upstream refresh COMPLETE for delta a85e29ab..393a43d4 (1 commit, #6951, bin/omarchy-upgrade-to-quattro and its test; no menu or lock file changed). Same baseline move: KI-MENU-REMOVE-THEME-NO-THEMES landed; bin/omarchy-theme-remov* and shell/services/AppSearch.js entered the verification scope with SW-REQ-261003-C9GM for the app library list. Full uncached audit 0/0 (run-08acca45).'
+        confirmed_at: "2026-10-04T20:37:25Z"
+        confirmed_by: agent:claude-code
+        note: Upstream refresh to quattro 035ce29f complete; final audit run named in the run note of the quattro-proof tip.
     research-delta:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: Research doc review/upstream-393a43d4-research-delta.md. The upgrade script still calls configure_lock_authentication unchanged; no menu or lock contact; no known issue names a changed file.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: Research doc review/upstream-035ce29f-research-delta.md (per-commit scope table, requirement changes, verification additions, known-issue outcomes).
+        scope_key: lock
     residual:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:35Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'No new residual: the delta does not touch any residual''s code.'
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:11Z"
+        confirmed_by: agent:claude-code
+        note: No new residual; the fixed fingerprint KIs' siblings are dispositioned as distinct in dedup_armor.
+        scope_key: lock
     skeleton-patch:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: No skeleton adds or retires for the delta.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: 'New SW requirements SW-REQ-261004-SP65, -YNBG (apply-lock), -V813, -296X, -VVN2 (lock service/view); revised SYS-REQ-260912-JW2J (FRETish: exactly one fingerprint step), SW-REQ-260912-Y0WT/S154/41VV text; SW-REQ-260922-SJ7P text corrected (apps outrank an equal menu row). Recorded by agent:claude-code under the owner''s delegation.'
+        scope_key: lock
     spec-review-delta:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: No requirement text changed by the delta. proof validate and proof lint clean after the merge.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: Spec conformance reviews REVIEW-261004-AL7K/SP6R/YN8R (apply-lock), D4AD/5V8C/F4WB (lock service/view), XRKV/KNQ7/2L3H (menu-images); older lock reviews' citations re-stamped to the moved lines; proof validate and the spec lints clean.
+        scope_key: lock
     surface-matrix:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'Zero new GAPs: the delta touches no menu or lock entrypoint or boundary.'
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: 'No new entry point or trust boundary: the new code runs inside the existing lock IPC and apply-lock paths; the fprintd resume hook is installed root-owned with fixed modes and only enqueues a service restart.'
+        scope_key: lock
     threat_surface_synthesis:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:35Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: No new surfaces; existing surfaces unchanged in posture.
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:11Z"
+        confirmed_by: agent:claude-code
+        note: No new surface; the resume hook and the probe answer are root-run packaged inputs; posture unchanged.
+        scope_key: lock
         check_results:
             - id: spec_lint_threat_surface_present
               status: pass
-              at: "2026-10-03T12:46:35Z"
+              at: "2026-10-04T20:37:11Z"
     traces-light:
         status: confirmed
-        confirmed_at: "2026-10-03T12:46:34Z"
-        confirmed_by: agent:claude-quattro-proof
-        note: 'proof trace suspect: 0 links after the merge; no annotated file changed in the delta.'
-        scope_key: menu
+        confirmed_at: "2026-10-04T20:37:10Z"
+        confirmed_by: agent:claude-code
+        note: 'Implements annotations on every new function (Service.qml, LockView.qml, FingerprintModel.js, apply-lock arms, menu-images blocks); evidence-backed trace reviews re-recorded for every suspect requirement; proof trace suspect: 0.'
+        scope_key: lock
