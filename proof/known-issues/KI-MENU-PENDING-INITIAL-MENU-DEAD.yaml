@@ -25,6 +25,7 @@ remediation: 'Fixed upstream on #14055 (SW-REQ-261002-DK0D). A route that fell b
 notes:
     - 'Fixed by the upstream change on pr-B (43d787d4, "Open a menu route summoned during startup once the menu files load"): openExistingMenu keeps the route pending only when it fell back to root, and rebuildItemsFromSources opens it through openRoute once a load makes it resolve, while the menu still shows root with nothing typed (SW-REQ-261002-DK0D). Reproducer: bash test/shell.d/menu-startup-route-test.sh (red: fails on 821ae589, passes with the fix). The PIM1 anchor left pocs/menu-qml-static.sh.'
     - 'Follow-up 48405669 ("Wait for both menu files before opening a route summoned during startup"), after review of #14055: the replay now waits until the default file has loaded and the user file has loaded or failed, so it sees the user overrides; it tries the route once and clears pendingInitialMenu whatever the outcome; setFilter and setActiveMenu clear it; a summon after both files answered never waits. The reproducer stays bash test/shell.d/menu-startup-route-test.sh (27 checks; red on 821ae589, all pass on 48405669).'
+    - 'Upstream: original #14053 (ours, 2026-10-02); open fix PR #14055 (ours).'
 customer_impact: A menu key pressed while the shell is starting opens the main menu instead of the menu you asked for. This happens right after login, or after omarchy-restart-shell, which omarchy update runs. An action shortcut such as Super+Ctrl+R also opens the main menu, and its action never runs. Pressing it again a second later works.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -50,12 +51,32 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-02T13:00:21Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-description,set-reproducer-command,set-tripwire-mutation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest,add-evidence-manifest
+    - at: "2026-10-02T13:08:27Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-description
+    - at: "2026-10-02T13:15:54Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-remediation
+    - at: "2026-10-02T14:48:19Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-tripwire-mutation,set-remediation,append-note
     - at: "2026-10-02T22:05:53Z"
       by: agent:claude-quattro-proof
       action: edit
       detail: set-description,set-remediation,set-customer-impact
     - at: "2026-10-02T22:06:29Z"
       by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-03T06:49:26Z"
+      by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
     - at: "2026-10-04T19:27:18Z"
@@ -76,26 +97,6 @@ history:
       detail: status=pending
     - at: "2026-10-04T19:47:32Z"
       by: agent:claude-code
-      action: refresh-evidence
-      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
-    - at: "2026-10-02T13:00:21Z"
-      by: agent:claude-pr-B
-      action: edit
-      detail: set-description,set-reproducer-command,set-tripwire-mutation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest,add-evidence-manifest
-    - at: "2026-10-02T13:08:27Z"
-      by: agent:claude-pr-B
-      action: edit
-      detail: set-description
-    - at: "2026-10-02T13:15:54Z"
-      by: agent:claude-pr-B
-      action: edit
-      detail: set-remediation
-    - at: "2026-10-02T14:48:19Z"
-      by: agent:claude-pr-B
-      action: edit
-      detail: set-tripwire-mutation,set-remediation,append-note
-    - at: "2026-10-03T06:49:26Z"
-      by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
 upstream_report:
