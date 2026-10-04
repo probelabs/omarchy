@@ -199,7 +199,7 @@ variables:
     - name: better_match_ranks_first
       type: bool
       direction: output
-      description: Exact beats prefix beats substring beats name beats description; apps demote within a tier; ties break by depth then order.
+      description: Exact beats prefix beats substring beats name beats description; within a tier apps rank ahead of menus and links; ties break by depth then order.
     - name: matches_span_menus
       type: bool
       direction: input
