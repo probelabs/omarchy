@@ -3,7 +3,9 @@ title: Imported bash functions bypass the trusted-PATH pin in apply-lock's root 
 description: |-
     The EUID==0 branch (bin/omarchy-apply-lock:15) replaces PATH but keeps the rest of the inherited environment. Bash imports exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into its function table, and bash looks a name up as a function before it searches PATH. An imported grep therefore runs instead of /usr/bin/grep in the fingerprint gate (line 48). An imported command_not_found_handle that returns 0 makes 'if omarchy-shell lock status' (line 62) true when the binary is absent (chroot install). SW-REQ-260912-EKJP (trusted_path_only) does not hold for functions: the root branch can still run commands from its environment instead of the pinned ones.
 
-    No privilege boundary is crossed. Every route into the root branch either drops imported functions or hands over an environment that root already controls. sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17). pkexec starts the helper in a minimal environment. The installer and the upgrade, when they run as root, pass their own environment. Only a process that already runs as root can plant the functions. When a normal user runs the helper, grep runs as that user and only steers that user's own fingerprint setup. The defect is a gap in defence-in-depth hardening.
+    The defect crosses no privilege boundary. Every route into the root branch drops imported functions or hands over an environment that root already controls. sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17). pkexec starts the helper in a minimal environment. The installer and the upgrade, when they run as root, pass their own environment.
+
+    Only a process that already runs as root can plant the functions. When a normal user runs the helper, grep runs as that user and only steers that user's own fingerprint setup. The defect is a gap in defence-in-depth hardening.
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
@@ -18,7 +20,7 @@ tripwire_mutation: 'Unset imported bash functions under EUID 0 in bin/omarchy-ap
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: 'Every route into the root branch drops imported functions or passes an environment root already controls: sudo removes variables whose value starts with "()", pkexec starts the helper in a minimal environment, and the installer and the upgrade pass their own root environment. Planting the functions therefore needs root already.'
+mitigation: sudo removes variables whose value starts with "()", and pkexec starts the helper in a minimal environment. The installer and the upgrade pass their own root environment. Only a process that already runs as root can plant the functions.
 remediation: 'Unset imported functions before any decision point: eval ''unset -f $(compgen -A function)'' under EUID 0. Alternatively run the body via env -i bash --noprofile --norc. Use ''command'' for the pinned lookups'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -76,6 +78,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-10-04T18:29:39Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-description,set-mitigation
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

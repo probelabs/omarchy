@@ -16,7 +16,7 @@ tripwire_mutation: 'Re-check passwordPamConfigured inside requestSessionLock (sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: 'Fingerprint unlock (if configured) still works; otherwise recover from a TTY. The trigger needs the root-owned /etc/pam.d/omarchy-lock-password to disappear inside the 500 ms window after a lock request, and the lock fails closed: nothing is exposed.'
+mitigation: 'Fingerprint unlock (if configured) still works; otherwise recover from a TTY. The trigger needs the root-owned /etc/pam.d/omarchy-lock-password to disappear inside the 500 ms window after a lock request, and the lock fails closed: it exposes nothing.'
 remediation: Re-check passwordPamConfigured in requestSessionLock before sessionLock.locked = true and stand the lock back down (with the missing-pam notification) when it went false. Treat a PAM flip while lockRequested as a teardown trigger
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
@@ -70,6 +70,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+    - at: "2026-10-04T18:29:39Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-mitigation
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false

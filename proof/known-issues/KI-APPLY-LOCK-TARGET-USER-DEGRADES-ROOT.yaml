@@ -1,6 +1,6 @@
 id: KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
-title: Failed PKEXEC_UID/user mapping silently degrades target_user to root, so the fingerprint decision is made for the wrong account
-description: 'target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd enrollment probe (line 48) then asks about the wrong account (root unless $USER maps elsewhere). The password PAM stack does not depend on the account, so only the fingerprint decision is wrong: an installing user with enrolled prints gets no fingerprint PAM until the helper runs again with the right account.'
+title: Unmappable PKEXEC_UID degrades target_user to root, so the fingerprint probe asks about the wrong account
+description: target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd enrollment probe (line 48) then asks about the wrong account (root unless $USER maps elsewhere). The password PAM stack does not depend on the account, so only the fingerprint decision is wrong. An installing user with enrolled prints gets no fingerprint PAM until the helper runs again with the right account.
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
@@ -47,6 +47,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+    - at: "2026-10-04T18:29:39Z"
+      by: agent:claude-quattro-proof
+      action: edit
+      detail: set-title,set-description
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
