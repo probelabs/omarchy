@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
-    reviewed_at: "2026-10-02T16:44:31.765013Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-04T20:22:52.413124Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:a1e2adef8ba0d8e38e0bef9e877664d69d4efe26d1e64d5eb6de56be02c4b08e
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onTriggered: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:recoverStrandedLock: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onTriggered: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:recoverStrandedLock: file1:d0d70fa4f09f29e6c5e801280757bebd
         satisfies:
             SYS-REQ-260912-FRG0: req1:72431d69149a9c2f85ee97b2bfab8e2c
     review_history:
@@ -82,6 +82,17 @@ traces:
             - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
             - test/shell.d/lock-stranded-recovery-test.sh:19
             - test/shell.d/lock-stranded-recovery-test.sh:31
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-10-04T20:22:52.413124Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f: checkStrandedLock and recoverStrandedLock are unchanged; lines moved.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:117
+            - shell/plugins/lock/Service.qml:130
+            - shell/plugins/lock/Service.qml:806
+            - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
             - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C

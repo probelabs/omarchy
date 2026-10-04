@@ -24,12 +24,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-01T09:52:36.6465649Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-04T20:22:56.309531Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:b27c5433b7ec52fbcdf13bfdfdc4ca30f96495c6d153c32482f1c83f4fa0730a
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-images: file1:692f82462ffe12db1dd0cc98728d9e76
+            bin/omarchy-menu-images: file1:3e03c1fc44c57eb9d0b110da3d8fc11c
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -64,6 +64,18 @@ traces:
             - bin/omarchy-menu-images:6
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-images-test.sh:5
+        - reviewed_at: "2026-10-04T20:22:56.309531Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f (#14117): lazy stills now go to one shared queue drained by one background pool per rows cache (half the cores, one to two, lowered priority); eager opens and videos fan out as before. Description and hazard review revised; spec conformance REVIEW-261004-XRKV.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-images:365
+            - bin/omarchy-menu-images:6
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-images-test.sh:336
+            - test/shell.d/menu-images-test.sh:5
+            - test/shell.d/menu-images-test.sh:655
 verification:
     assurance_level: C
     formalization_status: valid

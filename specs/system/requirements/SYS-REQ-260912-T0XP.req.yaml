@@ -19,62 +19,62 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-02T16:44:41.044436Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-04T20:22:50.714386Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:3f77f2a80c0200f078baeed027d27f972b19dedd247714a44695c2aee3c41740
     reviewed_targets:
         implemented_by:
             bin/omarchy-system-lock: file1:c73a5cfa8c9660a364538063c5adbda8
-            shell/plugins/lock/LockView.qml: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:clearFailureRequested: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:forcePasswordFocus: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:onAccepted: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:onInputEnabledChanged: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:submitPassword: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:Component.onCompleted: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:applyMonitorDpms: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:armBlankTimer: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:finishUnlock: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:handleFingerprintFinished: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:handlePasswordFailure: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:hasRealScreen: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:logEvent: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onAuthenticatingPasswordChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onClearFailureRequested: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onClicked: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onCompleted: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onError: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onExited: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onFileChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onLoadFailed: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onLoaded: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onLockStateChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onPamMessage: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onPasswordPamConfiguredChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onPasswordTextEdited: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onResponseRequiredChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onRunningChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onScreensChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onSecureStateChanged: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onStreamFinished: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onSubmitPassword: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onTriggered: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:onWakeRequested: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:queueSessionLock: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:realScreenCount: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:rearm: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:refreshBackground: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:refreshFingerprintStatus: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:refreshPoster: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:requestSessionLock: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:resetAuthenticationState: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:respondToPasswordPrompt: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:runBlank: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:runWake: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:screenBlank: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:startFingerprint: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:submitPassword: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/LockView.qml: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:clearFailureRequested: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:forcePasswordFocus: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:onAccepted: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:onInputEnabledChanged: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:submitPassword: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/Service.qml: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:Component.onCompleted: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:applyMonitorDpms: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:armBlankTimer: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:finishUnlock: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:handleFingerprintFinished: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:handlePasswordFailure: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:hasRealScreen: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:logEvent: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onAuthenticatingPasswordChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onClearFailureRequested: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onClicked: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onCompleted: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onError: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onExited: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onFileChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onLoadFailed: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onLoaded: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onLockStateChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onPamMessage: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onPasswordPamConfiguredChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onPasswordTextEdited: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onResponseRequiredChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onRunningChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onScreensChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onSecureStateChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onStreamFinished: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onSubmitPassword: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onTriggered: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onWakeRequested: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:queueSessionLock: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:realScreenCount: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:rearm: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:refreshBackground: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:refreshFingerprintStatus: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:refreshPoster: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:requestSessionLock: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:resetAuthenticationState: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:respondToPasswordPrompt: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:runBlank: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:runWake: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:screenBlank: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:startFingerprint: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:submitPassword: file1:d0d70fa4f09f29e6c5e801280757bebd
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -192,6 +192,73 @@ traces:
             - shell/plugins/lock/Service.qml:84
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/system-lock-test.sh:44
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-04T20:22:50.714386Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f (#7158, #7806): shell/plugins/lock/Service.qml gained the fingerprint pacing, probe classification, reach timeout and sleep watcher (FingerprintModel.js; SW-REQ-261004-V813/296X) and LockView.qml the auto-repeat drop and the unavailable notice (SW-REQ-261004-VVN2, SW-REQ-260912-41VV). The on-demand lock path itself is unchanged: the IPC lock verb, beginLock, the session lock, finishUnlock and the wake/blank timers implement T0XP as before; the new functions carry their own requirements. Verified by the lock harness and the lock suites.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:8
+            - shell/plugins/lock/LockView.qml:221
+            - shell/plugins/lock/LockView.qml:54
+            - shell/plugins/lock/LockView.qml:58
+            - shell/plugins/lock/LockView.qml:6
+            - shell/plugins/lock/LockView.qml:63
+            - shell/plugins/lock/LockView.qml:92
+            - shell/plugins/lock/Service.qml:139
+            - shell/plugins/lock/Service.qml:144
+            - shell/plugins/lock/Service.qml:155
+            - shell/plugins/lock/Service.qml:188
+            - shell/plugins/lock/Service.qml:195
+            - shell/plugins/lock/Service.qml:238
+            - shell/plugins/lock/Service.qml:254
+            - shell/plugins/lock/Service.qml:260
+            - shell/plugins/lock/Service.qml:321
+            - shell/plugins/lock/Service.qml:328
+            - shell/plugins/lock/Service.qml:335
+            - shell/plugins/lock/Service.qml:354
+            - shell/plugins/lock/Service.qml:372
+            - shell/plugins/lock/Service.qml:378
+            - shell/plugins/lock/Service.qml:390
+            - shell/plugins/lock/Service.qml:461
+            - shell/plugins/lock/Service.qml:478
+            - shell/plugins/lock/Service.qml:489
+            - shell/plugins/lock/Service.qml:531
+            - shell/plugins/lock/Service.qml:533
+            - shell/plugins/lock/Service.qml:535
+            - shell/plugins/lock/Service.qml:537
+            - shell/plugins/lock/Service.qml:574
+            - shell/plugins/lock/Service.qml:584
+            - shell/plugins/lock/Service.qml:586
+            - shell/plugins/lock/Service.qml:589
+            - shell/plugins/lock/Service.qml:599
+            - shell/plugins/lock/Service.qml:615
+            - shell/plugins/lock/Service.qml:620
+            - shell/plugins/lock/Service.qml:656
+            - shell/plugins/lock/Service.qml:68
+            - shell/plugins/lock/Service.qml:690
+            - shell/plugins/lock/Service.qml:714
+            - shell/plugins/lock/Service.qml:747
+            - shell/plugins/lock/Service.qml:778
+            - shell/plugins/lock/Service.qml:789
+            - shell/plugins/lock/Service.qml:794
+            - shell/plugins/lock/Service.qml:827
+            - shell/plugins/lock/Service.qml:83
+            - shell/plugins/lock/Service.qml:835
+            - shell/plugins/lock/Service.qml:849
+            - shell/plugins/lock/Service.qml:854
+            - shell/plugins/lock/Service.qml:864
+            - shell/plugins/lock/Service.qml:878
+            - shell/plugins/lock/Service.qml:88
+            - shell/plugins/lock/Service.qml:890
+            - shell/plugins/lock/Service.qml:892
+            - shell/plugins/lock/Service.qml:894
+            - shell/plugins/lock/Service.qml:9
+            - shell/plugins/lock/Service.qml:900
+            - shell/plugins/lock/Service.qml:910
+            - shell/plugins/lock/Service.qml:96
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C

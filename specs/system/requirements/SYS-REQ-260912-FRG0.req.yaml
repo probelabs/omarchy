@@ -19,17 +19,17 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-02T16:44:40.625944Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-04T20:22:51.264878Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:09b910367c950a5d23bb4b015ae116f9d9ca20931b96302f52194bdc3b41cc38
     reviewed_targets:
         implemented_by:
             bin/omarchy-hyprland-session-locked: file1:29c131c6b9f0363e3de279c1859e3bdb
-            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:hidePreview: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:isLocked: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:preview: file1:fd48ab150687078d0ba561d327da9800
-            shell/plugins/lock/Service.qml:status: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/Service.qml: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:hidePreview: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:isLocked: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:preview: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:status: file1:d0d70fa4f09f29e6c5e801280757bebd
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -91,6 +91,21 @@ traces:
             - shell/plugins/lock/Service.qml:754
             - shell/plugins/lock/Service.qml:762
             - shell/plugins/lock/Service.qml:8
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/hyprland-session-locked-test.sh:7
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-10-04T20:22:51.264878Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f: the lock IPC status verb now also reports fingerprintUnavailable; isLocked and status still answer the session-lock state from the same properties. Lines moved with the upstream additions.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-hyprland-session-locked:6
+            - shell/plugins/lock/Service.qml:9
+            - shell/plugins/lock/Service.qml:931
+            - shell/plugins/lock/Service.qml:936
+            - shell/plugins/lock/Service.qml:954
+            - shell/plugins/lock/Service.qml:962
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/hyprland-session-locked-test.sh:7
             - test/shell.d/lock-stranded-recovery-test.sh:7

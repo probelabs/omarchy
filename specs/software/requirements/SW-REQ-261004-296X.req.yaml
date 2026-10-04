@@ -24,6 +24,65 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-10-04T20:22:55.272259Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:344fec6b7b609eb2eb0c43f7fc52f36e8f9c6f555d3007421bf928361441404a
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/lock/FingerprintModel.js:inResumeGrace: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/FingerprintModel.js:isUnavailable: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/FingerprintModel.js:nextStreak: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/FingerprintModel.js:retryDelayMs: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/FingerprintModel.js:shouldNudge: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/FingerprintModel.js:spannedSleep: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/Service.qml: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:armFingerprintRetry: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:handleFingerprintFinished: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:noteFingerprintReachedDevice: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:noteFingerprintResumed: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:nudgeFingerprint: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onPamMessage: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onRunningChanged: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onTriggered: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:restartFingerprintAfterSleep: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:settleFingerprintAttempt: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:startFingerprint: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:timeoutFingerprintReach: file1:d0d70fa4f09f29e6c5e801280757bebd
+        satisfies:
+            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
+    review_history:
+        - reviewed_at: "2026-10-04T20:22:55.272259Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'New requirement for upstream #7158: FingerprintModel.js (retryDelayMs, shouldNudge, nextStreak, spannedSleep, inResumeGrace, isUnavailable) and the Service.qml settle/nudge/resume/reach-timeout functions and timers implement the pacing and the unavailable report. Satisfies SYS-REQ-260912-T0XP. Witnessed by the lock harness and test/node/fingerprintmodel-replay.test.mjs; spec conformance REVIEW-261004-5V8C.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/FingerprintModel.js:19
+            - shell/plugins/lock/FingerprintModel.js:27
+            - shell/plugins/lock/FingerprintModel.js:51
+            - shell/plugins/lock/FingerprintModel.js:59
+            - shell/plugins/lock/FingerprintModel.js:64
+            - shell/plugins/lock/FingerprintModel.js:72
+            - shell/plugins/lock/Service.qml:270
+            - shell/plugins/lock/Service.qml:292
+            - shell/plugins/lock/Service.qml:299
+            - shell/plugins/lock/Service.qml:309
+            - shell/plugins/lock/Service.qml:390
+            - shell/plugins/lock/Service.qml:412
+            - shell/plugins/lock/Service.qml:421
+            - shell/plugins/lock/Service.qml:429
+            - shell/plugins/lock/Service.qml:461
+            - shell/plugins/lock/Service.qml:610
+            - shell/plugins/lock/Service.qml:65
+            - shell/plugins/lock/Service.qml:667
+            - shell/plugins/lock/Service.qml:681
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/node/fingerprintmodel-replay.test.mjs:1
+            - test/qml/lock/shell.qml:1012
+            - test/qml/lock/shell.qml:15
+            - test/qml/lock/shell.qml:924
+            - test/qml/lock/shell.qml:967
+            - test/qml/lock/shell.qml:990
 verification:
     assurance_level: C
     formalization_status: valid

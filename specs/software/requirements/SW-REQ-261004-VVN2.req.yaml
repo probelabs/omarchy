@@ -19,6 +19,28 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-10-04T20:22:55.809594Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:4678e556c864ba7a5f700aff30f52fa433e4d83d514a05445865642e3d6cd5cb
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/lock/LockView.qml:Keys.onPressed: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:dropsAutoRepeat: file1:20fed47979a54c4858b0e50ef7ac7452
+        satisfies:
+            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
+    review_history:
+        - reviewed_at: "2026-10-04T20:22:55.809594Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'New requirement for upstream #7806: LockView.dropsAutoRepeat and the early return in Keys.onPressed consume auto-repeated presses except Backspace and Delete. Satisfies SYS-REQ-260912-T0XP. Witnessed by the lock harness; spec conformance REVIEW-261004-F4WB.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:228
+            - shell/plugins/lock/LockView.qml:77
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/qml/lock/shell.qml:15
+            - test/qml/lock/shell.qml:515
+            - test/qml/lock/shell.qml:526
 verification:
     assurance_level: C
     formalization_status: valid

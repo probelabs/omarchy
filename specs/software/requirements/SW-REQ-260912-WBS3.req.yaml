@@ -19,18 +19,18 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-02T16:44:31.463066Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-04T20:22:53.566177Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:10ef9988f240b45bd910270e9230a798bb0d2d142144566df155ec4b5da284fc
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/LockView.qml: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:Component.onCompleted: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:clearPassword: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:onPasswordTextChanged: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:onTextChanged: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:passwordTextEdited: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:syncPasswordText: file1:be671342a01f19c36817051cd641d615
+            shell/plugins/lock/LockView.qml: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:Component.onCompleted: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:clearPassword: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:onPasswordTextChanged: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:onTextChanged: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:passwordTextEdited: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:syncPasswordText: file1:20fed47979a54c4858b0e50ef7ac7452
         satisfies:
             SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
@@ -71,6 +71,21 @@ traces:
             - shell/plugins/lock/LockView.qml:72
             - shell/plugins/lock/LockView.qml:80
             - shell/plugins/lock/LockView.qml:86
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-password-overflow-test.sh:7
+        - reviewed_at: "2026-10-04T20:22:53.566177Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f (#7806): LockView.qml''s password-field handlers are unchanged except that Keys.onPressed now consumes auto-repeated non-erase keys before they edit the text (SW-REQ-261004-VVN2); the dot scaling and edit reporting are as before.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:212
+            - shell/plugins/lock/LockView.qml:39
+            - shell/plugins/lock/LockView.qml:56
+            - shell/plugins/lock/LockView.qml:68
+            - shell/plugins/lock/LockView.qml:82
+            - shell/plugins/lock/LockView.qml:90
+            - shell/plugins/lock/LockView.qml:96
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-password-overflow-test.sh:7
 verification:

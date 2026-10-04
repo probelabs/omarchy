@@ -19,6 +19,35 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-10-04T20:22:54.702578Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:f1d24392d0a6b9df401433f6e0449ca6aa364dbdbd0cbc2c08c1c48651381277
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/lock/FingerprintModel.js:classifyProbe: file1:6056949790189bb09bd6850086c0ba2c
+            shell/plugins/lock/Service.qml:applyFingerprintProbe: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onExited: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:onTriggered: file1:d0d70fa4f09f29e6c5e801280757bebd
+        satisfies:
+            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
+    review_history:
+        - reviewed_at: "2026-10-04T20:22:54.702578Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'New requirement for upstream #7158: FingerprintModel.classifyProbe and Service.applyFingerprintProbe classify the probe answer (listed print, definite none, unknown); the probe process prints the raw answer; the recheck timer asks again with the backoff. Satisfies SYS-REQ-260912-T0XP. Witnessed by the lock harness and test/node/fingerprintmodel-replay.test.mjs; spec conformance REVIEW-261004-D4AD.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/FingerprintModel.js:41
+            - shell/plugins/lock/Service.qml:161
+            - shell/plugins/lock/Service.qml:730
+            - shell/plugins/lock/Service.qml:740
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/node/fingerprintmodel-replay.test.mjs:1
+            - test/qml/lock/shell.qml:1026
+            - test/qml/lock/shell.qml:1034
+            - test/qml/lock/shell.qml:15
+            - test/qml/lock/shell.qml:931
+            - test/qml/lock/shell.qml:986
 verification:
     assurance_level: C
     formalization_status: valid

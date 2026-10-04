@@ -19,16 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-02T16:44:31.12891Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-04T20:22:52.980929Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:acfb8573e2a8aed78be868c02bdd4cd45d17441df3b6c22c283615ab65053bda
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/LockView.qml:Keys.onPressed: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:onClicked: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:onPositionChanged: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/LockView.qml:wakeRequested: file1:be671342a01f19c36817051cd641d615
-            shell/plugins/lock/Service.qml: file1:fd48ab150687078d0ba561d327da9800
+            shell/plugins/lock/LockView.qml:Keys.onPressed: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:onClicked: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:onPositionChanged: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/LockView.qml:wakeRequested: file1:20fed47979a54c4858b0e50ef7ac7452
+            shell/plugins/lock/Service.qml: file1:d0d70fa4f09f29e6c5e801280757bebd
         satisfies:
             SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
@@ -93,6 +93,19 @@ traces:
             - shell/plugins/lock/LockView.qml:218
             - shell/plugins/lock/LockView.qml:59
             - shell/plugins/lock/Service.qml:601
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-blank-fingerprint-test.sh:7
+        - reviewed_at: "2026-10-04T20:22:52.980929Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review after the merge of upstream quattro 035ce29f: the idle blank timer and the wake handlers are unchanged; runWake now also nudges a backed-off fingerprint retry (SW-REQ-261004-296X), which does not touch the blank decision. LockView.qml''s Keys.onPressed still wakes first; it now drops auto-repeats (SW-REQ-261004-VVN2) after the wake.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:165
+            - shell/plugins/lock/LockView.qml:167
+            - shell/plugins/lock/LockView.qml:228
+            - shell/plugins/lock/LockView.qml:60
+            - shell/plugins/lock/Service.qml:800
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-blank-fingerprint-test.sh:7
 verification:
