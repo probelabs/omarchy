@@ -14,6 +14,7 @@ BarWidget {
     bar: root.bar
     text: "\ue900"
     fontFamily: "omarchy"
+    centerFigures: false
     horizontalMargin: 7.5
     // Implements: SW-REQ-260922-T257
     // (left-click executes the toggle IPC at route root)

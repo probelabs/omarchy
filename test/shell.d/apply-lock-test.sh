@@ -78,12 +78,16 @@ patched_helper="$test_tmp/omarchy-apply-lock-patched"
 absolute_only_helper="$test_tmp/omarchy-apply-lock-absolute-only"
 root_path_only_helper="$test_tmp/omarchy-apply-lock-root-path-only"
 unprotected_helper="$test_tmp/omarchy-apply-lock-unprotected"
+hook_source="$test_tmp/fprintd-resume-source"
+cp "$ROOT/default/systemd/system-sleep/fprintd-resume" "$hook_source"
+timeout_source="$test_tmp/fprintd-stop-timeout-source"
+cp "$ROOT/default/systemd/system/fprintd.service.d/10-stop-timeout.conf" "$timeout_source"
 target_user=omarchy-regression-user
 mkdir -p "$poison_bin" "$trusted_root_bin"
 
 # The runtime copy pins to this isolated root path. It contains every bare
 # command the exercised helper needs, but deliberately no fprintd-list.
-for helper in grep rm tee; do
+for helper in grep rm tee install rmdir dirname; do
   ln -s "/usr/bin/$helper" "$trusted_root_bin/$helper"
 done
 
@@ -97,7 +101,8 @@ cat >"$trusted_fprintd" <<'EOF'
 
 printf '%s\n' "$EUID" >"$TEST_TRUSTED_UID"
 printf '%s\n' "$*" >"$TEST_TRUSTED_ARGS"
-echo "Fingerprints are enrolled"
+printf '%s\n' "${TEST_FPRINTD_OUTPUT:- - #0: right-index-finger}"
+exit "${TEST_FPRINTD_STATUS:-0}"
 EOF
 
 cat >"$poison_bin/fprintd-list" <<'EOF'
@@ -105,7 +110,8 @@ cat >"$poison_bin/fprintd-list" <<'EOF'
 
 printf '%s\n' "$EUID" >"$TEST_ATTACK_MARKER"
 printf '%s\n' "$*" >"$TEST_ATTACK_ARGS"
-echo "Fingerprints are enrolled"
+printf '%s\n' "${TEST_FPRINTD_OUTPUT:- - #0: right-index-finger}"
+exit "${TEST_FPRINTD_STATUS:-0}"
 EOF
 
 chmod +x "$trusted_fprintd" "$poison_bin/fprintd-list"
@@ -119,7 +125,11 @@ prepare_helper() {
     -v trusted_root_bin="$trusted_root_bin" \
     -v trusted_fprintd="$trusted_fprintd" \
     -v keep_root_path="$keep_root_path" \
-    -v use_absolute_fprintd="$use_absolute_fprintd" '
+    -v use_absolute_fprintd="$use_absolute_fprintd" \
+    -v hook_src="$hook_source" \
+    -v hook_dst="$test_tmp/system-sleep/fprintd-resume" \
+    -v timeout_src="$timeout_source" \
+    -v timeout_dst="$test_tmp/fprintd.service.d/10-stop-timeout.conf" '
     {
       line = $0
       gsub("/etc/pam\\.d/omarchy-lock-password", "\"" password_pam "\"", line)
@@ -133,20 +143,40 @@ prepare_helper() {
         print "  export PATH=\"" trusted_root_bin "\""
         next
       }
-      if (line == "if [[ -x /usr/bin/fprintd-list ]] &&") {
+      if (line == "if [[ -x /usr/bin/fprintd-list ]]; then") {
         if (use_absolute_fprintd == 1) {
-          print "if [[ -x \"" trusted_fprintd "\" ]] &&"
+          print "if [[ -x \"" trusted_fprintd "\" ]]; then"
         } else {
-          print "if command -v fprintd-list >/dev/null 2>&1 &&"
+          print "if command -v fprintd-list >/dev/null 2>&1; then"
         }
         next
       }
-      if (line == "  /usr/bin/fprintd-list \"$target_user\" 2>/dev/null | grep -qi finger; then") {
+      if (line == "  fingerprint_status=$(/usr/bin/fprintd-list \"$target_user\" 2>&1 || true)") {
         if (use_absolute_fprintd == 1) {
-          print "  \"" trusted_fprintd "\" \"$target_user\" 2>/dev/null | grep -qi finger; then"
+          print "  fingerprint_status=$(\"" trusted_fprintd "\" \"$target_user\" 2>&1 || true)"
         } else {
-          print "  fprintd-list \"$target_user\" 2>/dev/null | grep -qi finger; then"
+          print "  fingerprint_status=$(fprintd-list \"$target_user\" 2>&1 || true)"
         }
+        next
+      }
+      if (line == "resume_hook_src=\"$OMARCHY_PATH/default/systemd/system-sleep/fprintd-resume\"") {
+        print "resume_hook_src=\"" hook_src "\""
+        next
+      }
+      if (line == "resume_hook_dst=/usr/lib/systemd/system-sleep/fprintd-resume") {
+        print "resume_hook_dst=\"" hook_dst "\""
+        next
+      }
+      if (line == "stop_timeout_src=\"$OMARCHY_PATH/default/systemd/system/fprintd.service.d/10-stop-timeout.conf\"") {
+        print "stop_timeout_src=\"" timeout_src "\""
+        next
+      }
+      if (line == "stop_timeout_dst=/etc/systemd/system/fprintd.service.d/10-stop-timeout.conf") {
+        print "stop_timeout_dst=\"" timeout_dst "\""
+        next
+      }
+      if (line == "  as_root systemctl daemon-reload" || line == "    as_root systemctl daemon-reload") {
+        print "  :"
         next
       }
       if (line == "if omarchy-shell lock status >/dev/null 2>&1; then") {
@@ -168,6 +198,9 @@ prepare_helper "$unprotected_helper" 0 0
 for helper in "$patched_helper" "$absolute_only_helper" "$root_path_only_helper" "$unprotected_helper"; do
   if grep -F '/etc/pam.d/' "$helper" >/dev/null ||
     grep -F '/usr/bin/fprintd-list' "$helper" >/dev/null ||
+    grep -F '/usr/lib/systemd/system-sleep' "$helper" >/dev/null ||
+    grep -F '/etc/systemd/system/' "$helper" >/dev/null ||
+    grep -F 'systemctl daemon-reload' "$helper" >/dev/null ||
     grep -F 'omarchy-shell lock status' "$helper" >/dev/null; then
     fail "the isolated root fixture redirects every live-system lock-helper target"
   fi
@@ -193,6 +226,10 @@ grep -Fx '0' "$trusted_uid" >/dev/null || fail "the trusted fprintd-list probe r
 grep -Fx "$target_user" "$trusted_args" >/dev/null || fail "the trusted fprintd-list probe receives the target user"
 [[ -s $password_pam && -s $fingerprint_pam ]] ||
   fail "the isolated root lock-helper run writes both scratch PAM fixtures"
+[[ -x $test_tmp/system-sleep/fprintd-resume ]] ||
+  fail "the lock helper installs the resume hook beside the fingerprint PAM file"
+[[ -f $test_tmp/fprintd.service.d/10-stop-timeout.conf ]] ||
+  fail "the lock helper installs the stop-timeout drop-in beside the resume hook"
 # MCDC SW-REQ-260912-EKJP: running_as_root=T, trusted_path_only=T => TRUE
 # MCDC SW-REQ-260912-S154: fingerprint_enrollment_queried=T, fprintd_absolute_path_only=T => TRUE
 # MCDC SW-REQ-260912-Y0WT: fingerprint_not_enrolled=F, fingerprint_pam_removed=F => TRUE [no-action: the trusted probe reports an enrolled print and the -s fingerprint_pam assertion proves the removal path never fires]
@@ -226,17 +263,63 @@ grep -Fx "$target_user" "$attack_args" >/dev/null ||
 # MCDC SW-REQ-260912-S154: fingerprint_enrollment_queried=T, fprintd_absolute_path_only=F => FALSE
 pass "the root lock-helper matrix rejects the vulnerable PATH lookup"
 
-# The not-enrolled path: the trusted probe reports no prints, so the helper
-# keeps the password stack and removes the fingerprint stack.
+# A failed probe must retain the recovery machinery needed by a later resume.
+run_as_root "$patched_helper" "restore the enrolled fingerprint fixture"
+cp "$fingerprint_pam" "$test_tmp/saved-pam"
+cp "$test_tmp/system-sleep/fprintd-resume" "$test_tmp/saved-hook"
+cp "$test_tmp/fprintd.service.d/10-stop-timeout.conf" "$test_tmp/saved-timeout"
+TEST_FPRINTD_OUTPUT="Impossible to get devices: Could not activate remote peer" TEST_FPRINTD_STATUS=1 \
+  run_as_root "$patched_helper" "an unavailable daemon preserves fingerprint authentication"
+for pair in "$fingerprint_pam:saved-pam" "$test_tmp/system-sleep/fprintd-resume:saved-hook" "$test_tmp/fprintd.service.d/10-stop-timeout.conf:saved-timeout"; do
+  cmp -s "${pair%:*}" "$test_tmp/${pair##*:}" || fail "an unknown enrollment probe preserves existing recovery files"
+done
+pass "an unknown enrollment probe preserves existing recovery files"
+
+# The device name and empty-enrollment prose both contain the word "finger".
+TEST_FPRINTD_OUTPUT="User alice has no fingers enrolled for Goodix MOC Fingerprint Sensor." \
+  run_as_root "$patched_helper" "an empty enrollment clears fingerprint authentication"
+[[ -s $password_pam ]] || fail "password authentication remains configured without fingerprints"
+[[ ! -e $fingerprint_pam && ! -e $test_tmp/system-sleep/fprintd-resume && ! -e $test_tmp/fprintd.service.d/10-stop-timeout.conf ]] ||
+  fail "empty enrollment removes fingerprint PAM and resume recovery files"
+pass "empty enrollment removes fingerprint authentication and its resume recovery"
+
+# Never enable fingerprint PAM before both recovery files are installed.
+for source in "$hook_source" "$timeout_source"; do
+  reset_runtime_files
+  mv "$source" "$source.saved"
+  if PATH="$poison_bin:/usr/bin:/bin" OMARCHY_INSTALL_USER="$target_user" \
+    "${root_runner[@]}" /bin/bash "$patched_helper" >"$test_tmp/failed-install" 2>&1; then
+    fail "missing recovery source must fail installation"
+  fi
+  [[ ! -e $fingerprint_pam ]] || fail "failed recovery installation cannot create fingerprint PAM"
+  mv "$source.saved" "$source"
+done
+pass "failed recovery installation cannot create fingerprint PAM"
+
+run_as_root "$patched_helper" "restore enrollment before removing fprintd-list"
+rm -f "$trusted_fprintd"
+run_as_root "$patched_helper" "a missing fingerprint package clears fingerprint authentication"
+[[ ! -e $fingerprint_pam && ! -e $test_tmp/system-sleep/fprintd-resume && ! -e $test_tmp/fprintd.service.d/10-stop-timeout.conf ]] ||
+  fail "a missing fprintd-list removes fingerprint PAM and resume recovery files"
+pass "a missing fprintd-list removes fingerprint authentication and its resume recovery"
+
+# The not-enrolled path: after an enrolled run, the trusted probe reports that
+# the user has no enrolled finger, so the helper keeps the password stack and
+# removes the fingerprint stack. (The test above removed the trusted probe.)
 reset_runtime_files
 cat >"$trusted_fprintd" <<'EOF'
 #!/bin/bash
 
 printf '%s\n' "$EUID" >"$TEST_TRUSTED_UID"
 printf '%s\n' "$*" >"$TEST_TRUSTED_ARGS"
-echo "no prints on file"
+printf '%s\n' "${TEST_FPRINTD_OUTPUT:- - #0: right-index-finger}"
+exit "${TEST_FPRINTD_STATUS:-0}"
 EOF
-run_as_root "$patched_helper" "the lock helper runs against a user with no enrolled prints"
+chmod +x "$trusted_fprintd"
+run_as_root "$patched_helper" "seed an enrolled fingerprint configuration"
+[[ -s $fingerprint_pam ]] || fail "the enrolled run writes the fingerprint PAM fixture"
+TEST_FPRINTD_OUTPUT="User $target_user has no fingers enrolled for Synaptics Sensor." \
+  run_as_root "$patched_helper" "the lock helper runs against a user with no enrolled prints"
 grep -Fx "$target_user" "$trusted_args" >/dev/null || fail "the not-enrolled probe still receives the target user"
 [[ -s $password_pam ]] ||
   fail "the not-enrolled run still writes the password PAM fixture"
