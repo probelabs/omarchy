@@ -1,0 +1,20 @@
+id: REVIEW-261004-5ZAN
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-04T00:31:15Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Re-review after an independent review of the mirror (product 1f764b03 unchanged). (1) The description now states the edge rule exactly as matchRank applies it: a match is whole when the keyword characters just before and after it end a word (or the keywords start or end there), a keyword start when only the character before does; only keyword characters count, so the search text : beard inside man: beard follows the n and is inside. It also says that a letter is a character with a case, so combining marks and scripts without case (Chinese, Thai) end a word, and that the shipped keywords are English. Checked in node: '': beard'' and ''-'' rank as inside, a Thai letter before ok ends a word, a combining acute after cafe ends a word. (2) The witness no longer re-implements the rule: per search text it lists golden emojis per group, read off the keywords (ok hand before broken heart, teacup before tears before steam, ...), and checks that the picker holds them in that order with every group before the next; counts are checked against the plain contains rule (the same matches as before the fix); the number of states comes from the corpus files and the harness lines are read by their labels. Mutants that drop the apostrophe rule, take the a1e56f38 rule, swap the start and inside groups, keep the first occurrence instead of the best, or count only a to z as letters each fail the witness. (3) error_handling, inherited from SYS-REQ-260922-6642 (loud, exit-coded refusal), is suppressed on H41S with the reason: the picker runs no script and shows an empty list when emojis.json does not parse; the refusal belongs to omarchy-menu-emoji-insert. The guarantee-violation row stays structurally unreachable.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:27@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:28
+    - shell/plugins/emojis/EmojiSearch.js:35@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:49@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:71
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:59
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:144
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:151
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:183
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:194
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:203
+    - test/bdiff/corpus/lifecycle/seq-emoji-man.events:1
