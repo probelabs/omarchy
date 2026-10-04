@@ -29,9 +29,11 @@ STAGE_B=$(mktemp -d /tmp/omarchy-lock-mcdc-b.XXXXXX)
 RT=$(mktemp -d /tmp/omarchy-lock-mcdc-rt.XXXXXX)
 chmod 700 "$RT"
 SWAY_PID=""
+KBD_PID=""
 
 cleanup() {
   if [[ -n ${MCDC_KEEP:-} ]]; then return; fi
+  if [[ -n $KBD_PID ]]; then kill "$KBD_PID" 2>/dev/null || true; fi
   if [[ -n $SWAY_PID ]]; then kill "$SWAY_PID" 2>/dev/null || true; fi
   rm -rf "$STAGE_A" "$STAGE_B" "$RT"
 }
@@ -111,6 +113,13 @@ fi
 
 mkdir -p "$RT/pam.d"
 
+# With no input devices the seat has a keyboard only while a virtual
+# keyboard is connected. A short wtype run alone connects, types and leaves
+# before the shell has bound the new wl_keyboard, so its keys go nowhere;
+# an idle wtype kept open for the whole phase holds the capability up.
+WAYLAND_DISPLAY="$WAY" XDG_RUNTIME_DIR="$RT" "$WTYPE" -s 600000 &
+KBD_PID=$!
+
 rc=0
 
 # phase A: full decision walk under the private PAM namespace
@@ -122,6 +131,9 @@ MCDC_FAKE_IMAGE="$RT/fake-image.png" \
 USER=${USER:-buger} \
 unshare -Urm bash "$HARNESS/inner.sh" "$STAGE_A" "$RT" "$WAY" A | tee "$RT/out-a.log"
 if (( ${PIPESTATUS[0]} != 0 )); then rc=1; fi
+
+kill "$KBD_PID" 2>/dev/null || true
+KBD_PID=""
 
 # phase B: its own compositor with zero outputs — Quickshell then exposes a
 # placeholder screen (empty name, zero extents), which covers the
