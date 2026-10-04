@@ -1,0 +1,17 @@
+id: REVIEW-261004-9G63
+kind: spec_conformance
+reviewer: agent:claude-pr-new-F
+reviewed_at: "2026-10-04T00:49:42Z"
+subject: SW-REQ-261004-H41S
+decision: approved
+comment: 'Re-review after the second independent review of the mirror (product 1f764b03 unchanged). The hyphen witness now discriminates: rex matched one emoji and passed at the base too, so its input is replaced by mail, where e-mail holds mail as a whole word only because a hyphen ends a word; the fix lists it first, the base listed the love letter (email) first. The one-letter case now checks the shown set: read from the description, every whole and every start match of e, then inside matches in file order, up to 1000; the harness set digest equals it and differs from the first 1000 matches in file order. Cases that print the same at the base are labelled as controls, and the snapshot counts are labelled as a snapshot of the shipped data. A mutant that applies the limit before the ranking, one without the curly apostrophe, and one that ends a word only at a space each fail the witness. The description and the guarantee-violation disposition are unchanged.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:27@isWordChar
+    - shell/plugins/emojis/EmojiSearch.js:35@matchRank
+    - shell/plugins/emojis/EmojiSearch.js:49@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:71
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:125
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:218
+    - test/shell.d/menu-emoji-search-bdiff-test.sh:220
+    - test/bdiff/corpus/lifecycle/seq-emoji-mail.events:1
+    - test/bdiff/corpus/lifecycle/seq-emoji-letter.events:1

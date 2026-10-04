@@ -9,7 +9,7 @@
 # node:vm, and records the emoji that Enter hands to omarchy-menu-emoji-insert.
 
 # Verifies: SW-REQ-261004-H41S
-#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261004-5ZAN]
+#mcdc:ignore:defensive SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=F => FALSE -- filterEmojis has one path for a search text that is not empty: matchRank puts every match in the whole-word, keyword-start or inside group as it reads emojis.json, and it returns the three groups joined, cut at the limit; a list out of that order needs the single file-order list of upstream 393a43d4 back [reviewed: REVIEW-261004-9G63]
 # mcdc:witness-out-of-process
 
 set -euo pipefail
@@ -53,6 +53,10 @@ const insert = emoji => `enter $OMARCHY_PATH/bin/omarchy-menu-emoji-insert ${emo
 
 // Each case: description, input, the lines the harness prints after the
 // picker opens (what it lists after each step, and what Enter picks).
+// The counts and the first 12 emojis are a snapshot of the shipped
+// emojis.json, like the upstream test's check of ok, key, tea, fr and ear:
+// a change to the data changes them. Cases marked "control" print the same
+// at the base, where the old search runs; the others differ there.
 const cases = [
   // Reproduces: KI-MENU-EMOJI-SEARCH-INSIDE-WORD
   // MCDC SW-REQ-261004-H41S: emoji_query_typed=T, emoji_results_ranked=T => TRUE
@@ -106,24 +110,24 @@ const cases = [
     'shown query="e" count=1000 first=📧 cursor=0',
     'top 📧 😃 😄 😁 😊 😍 🤩 😚 😙 😜 😝 🫢',
     insert('📧')]],
-  ['a phrase of several words still finds its emoji', 'seq-emoji-phrase.events', [
+  ['control: a phrase of several words still finds its emoji, as before', 'seq-emoji-phrase.events', [
     'shown query="face with tears" count=1 first=😂 cursor=0',
     'top 😂',
     insert('😂')]],
-  ['a search text that matches nothing lists nothing, and Enter picks nothing', 'seq-emoji-none.events', [
+  ['control: a search text that matches nothing lists nothing, and Enter picks nothing, as before', 'seq-emoji-none.events', [
     'shown query="zzqx" count=0 first=- cursor=-',
     'top -',
     'enter - opened=true']],
-  ['whole keywords that already come first keep their order', 'seq-emoji-cat.events', [
+  ['control: whole keywords that already come first keep their order, as before', 'seq-emoji-cat.events', [
     'shown query="cat" count=20 first=😺 cursor=0',
     'top 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🐱 🐈 🐈‍⬛',
     insert('😺')]],
-  ['a hyphen ends a keyword: rex finds the T-Rex', 'seq-emoji-rex.events', [
-    'shown query="rex" count=1 first=🦖 cursor=0',
-    'top 🦖',
-    insert('🦖')]],
+  ['a hyphen ends a word: mail lists e-mail first, before the email of the love letter', 'seq-emoji-mail.events', [
+    'shown query="mail" count=7 first=📧 cursor=0',
+    'top 📧 📬 📭 📫 📪 💌 ✉️',
+    insert('📧')]],
   // MCDC SW-REQ-261004-H41S: emoji_query_typed=F, emoji_results_ranked=F => TRUE [no-action: with no search text the picker lists the first 1000 emojis of emojis.json in file order; the check below compares the whole list, by its order digest, with the file]
-  ['with no search text the picker lists emojis.json in file order, and Enter picks the first', 'seq-emoji-empty.events', [
+  ['control: with no search text the picker lists emojis.json in file order, and Enter picks the first, as before', 'seq-emoji-empty.events', [
     insert('😀')]],
 ]
 
@@ -169,7 +173,7 @@ const golden = {
   e: [['📧'], ['😃', '😄', '😁'], ['😀', '😆', '😅']], // e-mail | eyes x3 | grinning, satisfied, sweat
   o: [['🎃', '⭕', '🅾️'], ['🤣', '😂', '😛'], ['😃', '😄', '😅']], // jack-o-lantern; o; o button | on, of, out | joy, joy, hot
   cat: [['😺', '😸', '😹'], [], ['🍹', '🎓', '🔔']], // cat x3 | - | vacation, education, notification
-  rex: [['🦖'], [], []], // t-rex
+  mail: [['📧', '📬', '📭'], ['📫', '📪'], ['💌', '✉️']], // e-mail; mailbox_with_mail; mailbox_with_no_mail | mailbox x2 | email x2
 }
 for (const [query, groups] of Object.entries(golden)) {
   const list = search.filterEmojis(data, query, 1000).map(item => item.e)
@@ -198,6 +202,22 @@ assertDeepEqual(search.filterEmojis([{ e: 'start', k: 'okay' }, { e: 'later', k:
 assertDeepEqual(search.filterEmojis([{ e: 'inside', k: 'x100' }, { e: 'start', k: '100 points' }, { e: 'whole', k: 'number 10' }], '10').map(item => item.e), ['whole', 'start', 'inside'], 'digits are part of a word')
 
 const digest = list => crypto.createHash('sha256').update(list.join('\n')).digest('hex').slice(0, 12)
+
+// The one case where the shown set changes: e matches more than 1000 emojis,
+// and the picker shows the first 1000 of the ranked list. Read from the
+// requirement: split the keywords into words (letters with a case, digits and
+// apostrophes); e is a whole word, or starts a word, or sits inside one. The
+// shown set is every whole and every start match, then inside matches in file
+// order up to 1000.
+const words = text => text.toLowerCase().split(/[^0-9'’\p{Lu}\p{Ll}\p{Lt}]+/u)
+const eWhole = data.filter(item => words(item.k).includes('e'))
+const eStart = data.filter(item => !eWhole.includes(item) && words(item.k).some(word => word.startsWith('e')))
+const eInside = data.filter(item => !eWhole.includes(item) && !eStart.includes(item) && item.k.toLowerCase().includes('e'))
+const eShown = eWhole.concat(eStart, eInside).slice(0, 1000).map(item => item.e)
+const letter = parse(outputs['seq-emoji-letter.events']).states.find(state => state.query === 'e')
+assertEqual(letter.digest.split(' set=')[1], digest(eShown.slice().sort()), 'one letter shows every whole and start match, then inside matches in file order, up to 1000')
+const firstInFile = data.filter(item => item.k.toLowerCase().includes('e')).slice(0, 1000).map(item => item.e)
+assert(digest(firstInFile.slice().sort()) !== digest(eShown.slice().sort()), 'for one letter the shown set differs from the first 1000 matches in file order')
 const fileOrder = data.filter(item => item && item.e).slice(0, 1000).map(item => item.e)
 const opening = parse(outputs['seq-emoji-empty.events']).states[0]
 assertEqual(opening.query === '' && opening.digest, `digest order=${digest(fileOrder)} set=${digest(fileOrder.slice().sort())}`, 'with no search text the list is the first 1000 emojis of emojis.json, in file order')
