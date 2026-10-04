@@ -82,6 +82,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: set-description,set-mitigation
+    - at: "2026-10-04T18:30:00Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

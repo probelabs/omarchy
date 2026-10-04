@@ -51,6 +51,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: set-title,set-description
+    - at: "2026-10-04T18:30:00Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

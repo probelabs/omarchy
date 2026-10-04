@@ -74,6 +74,10 @@ history:
       by: agent:claude-quattro-proof
       action: edit
       detail: set-mitigation
+    - at: "2026-10-04T18:30:00Z"
+      by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false
