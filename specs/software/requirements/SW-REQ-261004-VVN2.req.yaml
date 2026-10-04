@@ -74,7 +74,7 @@ hazard_review:
           rationale: A pure predicate over one key event.
         - category: structural
           disposition: not_applicable
-          rationale: Two key-code compares.
+          rationale: 'Two key-code compares on one event: no buffer, numeric, encoding or format-string surface.'
         - category: domain
           disposition: not_applicable
           rationale: Input handling of the lock view only.

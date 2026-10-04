@@ -1,5 +1,5 @@
 id: KI-MENU-SEARCH-SCORE-RANKING
-title: 'searchScore ranking anomalies: root exact labels rank below nested twins, cross-field multi-term matches score as unmatched'
+title: 'searchScore ranking: root exact labels rank below nested twins; cross-field multi-term matches score as unmatched'
 description: searchScore in MenuModel.js has two ranking defects. An exact label at root scores base 2, and the same exact label deeper in the tree scores base 0 (F15f). The root row therefore ranks below its nested twin, because the depth tie-break adds only 25 per level against a gap of 2000. matchesQuery accepts a multi-term query that matches across fields, with one term in the label and one in the description. searchScore gives that row 78000, the same as a row that matches nothing (F15e2). It therefore ranks below every single-field match.
 affected_requirements:
     - SW-REQ-260922-SJ7P
@@ -60,6 +60,14 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-search-score-ranking.yaml
+    - at: "2026-10-04T20:35:26Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-title
+    - at: "2026-10-04T20:35:32Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-title
 kill_domain: scoring
 affected_file:
     - shell/plugins/menu/MenuModel.js

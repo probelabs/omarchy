@@ -1,5 +1,5 @@
 id: KI-MENU-IMAGES-VIPS-NO-TIMEOUT
-title: vipsthumbnail still-image lane has no timeout; a stalled conversion wedges its lane and, in lazy mode, the shared thumbnail pool
+title: vipsthumbnail still-image lane has no timeout; a stalled conversion wedges its lane and, when lazy, the shared pool
 description: |-
     generate_thumbnail sends still images to env VIPS_CONCURRENCY=1 vipsthumbnail without a timeout (bin/omarchy-menu-images:199). The video lane wraps ffmpegthumbnailer in timeout -k 5 10. A still that stalls vips holds its lane forever. A corrupt or pathological file, or a path on a stalled mount, can cause the stall. An eager open, without --lazy-thumbnails or with --cache-only, waits for its whole fan-out before the picker opens. So one stalled still blocks that open.
 
@@ -60,6 +60,14 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-images-vips-no-timeout.yaml
+    - at: "2026-10-04T20:35:26Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-title
+    - at: "2026-10-04T20:35:32Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-title
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

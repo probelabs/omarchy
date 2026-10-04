@@ -84,11 +84,14 @@ verification:
         reviewer: agent:opencode
         reviewed_at: "2026-09-30T00:40:00Z"
         ai_generated: true
+    not_modeled:
+        - predicate: image_jobs > 2
+          reason: 'Pool width cap in drain_pending_thumbnails (#14117): a lazy still queue runs on half the cores, at least one and at most two converters. The requirement states that a queued still gets its thumbnail, not how many converters run at once, so the cap belongs to the mechanism behind thumbnail_generated, not to a FRETish variable.'
 history:
     created_by: agent:opencode
     created_at: "2026-09-30T00:16:34Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-04T19:30:30Z"
+    last_modified_at: "2026-10-04T20:35:42Z"
 obligation_checklist:
     - external_call_timeout_bounded
 obligation_deferrals:
