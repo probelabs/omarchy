@@ -431,6 +431,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: The order of the emojis inside the picker window only. No trust boundary, privilege, network, crypto or process surface; the insert helper and its clipboard use are outside this requirement.
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-10-03T21:25:29Z"
@@ -438,3 +439,8 @@ lifecycle:
           to: review
           reason: '[pr-new-F] upstream fix for the emoji search order: requirement authored for the behaviour the change adds; spec conformance REVIEW-261003-NYQY; executing witnesses in test/shell.d/menu-emoji-search-bdiff-test.sh'
           changed_by: agent:claude-pr-new-F
+        - date: "2026-10-04T17:30:49Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=12; review_record:REVIEW-261003-3AHV=present | review_record:REVIEW-261003-6GBP=present | review_record:REVIEW-261003-APYX=present | review_record:REVIEW-261003-HBN4=present | review_record:REVIEW-261003-KMT9=present | review_record:REVIEW-261003-NYQY=present | review_record:REVIEW-261003-SW55=present | review_record:REVIEW-261004-5ZAN=present | review_record:REVIEW-261004-9G63=present | review_record:REVIEW-261004-WW11=present | known_issue:KI-MENU-EMOJI-SEARCH-INSIDE-WORD=none | tests_pass:test_status=passing
+          changed_by: agent:claude-test-results
