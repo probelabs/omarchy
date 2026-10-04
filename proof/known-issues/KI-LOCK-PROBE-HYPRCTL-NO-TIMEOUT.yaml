@@ -20,6 +20,8 @@ defect_class: latent
 minimization_status: minimized
 mitigation: This defect never unlocks the session. A stalled probe only delays stranded-lock recovery, and the Hyprland failsafe lock screen stays in place. When the compositor IPC answers again, the next probe returns a real verdict. To recover by hand, kill the stuck hyprctl process, or switch to a TTY and restart the lock.
 remediation: 'Bound the IPC call in bin/omarchy-hyprland-session-locked, for example `monitors=$(timeout 2 hyprctl -j monitors 2>/dev/null) || exit 2`. A stalled compositor then maps to the existing exit 2 (undetermined), which callers already handle. Then remove the SW-REQ-260912-EH0K external_call_timeout_bounded deferral and add a witness for the bounded path. Close criterion: pocs/eh0k-hyprctl-monitors-no-timeout.sh flips red, because the stall arm returns exit 2 inside the watchdog.'
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The probe is unchanged, and pocs/eh0k-hyprctl-monitors-no-timeout.sh still reproduces the stall there and on upstream quattro 393a43d4. Upstream omacom/omarchy#6888 reports a stranded-lock recovery that never completes, but from a sessionLock.secure early return.'
 owner: agent:claude-quattro
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -56,6 +58,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-lock-probe-hyprctl-no-timeout.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

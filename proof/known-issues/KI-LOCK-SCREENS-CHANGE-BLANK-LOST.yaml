@@ -1,6 +1,6 @@
 id: KI-LOCK-SCREENS-CHANGE-BLANK-LOST
 title: Screen add/remove while locked clears the blank intent and never re-arms the idle blank timer
-description: onScreensChanged (shell/plugins/lock/Service.qml:666-674) sets displaysBlank = false (so a returning panel shows the wallpaper) but calls neither armBlankTimer nor runWake. After the one-shot idleBlankTimer has fired, nothing restarts the 5s countdown, and a newly added output falls back to displaysBlank in the DPMS map. So after any hotplug/unplug while locked, all displays stay awake until the next keypress re-runs the idle path.
+description: onScreensChanged (shell/plugins/lock/Service.qml:864-874) sets displaysBlank = false (so a returning panel shows the wallpaper) but calls neither armBlankTimer nor runWake. After the one-shot idleBlankTimer has fired, nothing restarts the 5s countdown, and a newly added output falls back to displaysBlank in the DPMS map. So after any hotplug/unplug while locked, all displays stay awake until the next keypress re-runs the idle path.
 affected_requirements:
     - SW-REQ-260912-ND55
 evidence_manifests:
@@ -8,11 +8,13 @@ evidence_manifests:
 severity: low
 severity_basis: risk
 risk: correctness
-reproducer_command: ./pocs/crs-260930-ttvk-qml-static.sh
+reproducer_command: ./pocs/crs-260930-ttvk-c04.sh
 introduced_in: inception
 defect_class: latent
 mitigation: any keypress restarts the cycle
 remediation: After clearing displaysBlank in onScreensChanged, re-arm the idle blank timer (or runWake-then-arm) so the power path resumes
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f, where onScreensChanged is unchanged. The new runtime reproducer pocs/crs-260930-ttvk-c04.sh runs the live handler, runWake and armBlankTimer in node. It exits 0 (defect present) on 035ce29f and on upstream quattro 393a43d4. Upstream omacom/omarchy#8580 reports this defect. PR #8581 re-arms the blank timer, and PR #13129 debounces amdgpu HDMI hotplug instead. #13812 reports the same symptom family. All four are open.'
 review_date: "2026-09-30"
 status: reviewed
 history:
@@ -43,6 +45,60 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-screens-change-blank-lost.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,set-reproducer-command,append-note
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#8580
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=acknowledged
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/8580
+    reference: '#8580'
+    reported_at: "2026-08-27"
+    reported_by: human:github/bmcswee
+    response:
+        status: acknowledged
+        received_at: "2026-09-28"
+        text: 'Another open pull request is the better fix for #8580: #13129. [...] Waiting on the maintainer to choose between this and #13129.'
+        response_url: https://github.com/omacom/omarchy/pull/8581#issuecomment-5877597870
+submission_validation:
+    natspec_review: The handler comment says a returning panel must give up the blank state, or the wallpaper stays frozen until the next keypress. No comment says the idle blank should resume afterwards.
+    commit_origin: 1e7bb6655 "Recover a session lock stranded by a dead shell (#6692)" (2026-08-11) added onScreensChanged with no blank re-arm. 41b6cc696 (#6792, 2026-09-06) added the displaysBlank = false clear.
+    intended_path_verified: true
+    master_status: 'identical: onScreensChanged is unchanged on upstream quattro 035ce29f. PR omacom/omarchy#8581 and #13129 are open.'
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/crs-260930-ttvk-c04.sh extracts the live onScreensChanged body, runWake and armBlankTimer from shell/plugins/lock/Service.qml and runs them unmodified in node; only the lock and stranded-lock calls are recorded stubs, because a compositor hotplug cannot be driven headlessly. Upstream omacom/omarchy#8580 and an independent comment there reproduce the symptom on real hardware.
+        quantitative_impact: after one screen change with the blank already fired, displaysBlank is false and 0 timers will blank the displays again; the runWake control arms 1.
+        control_test: runWake, the keypress path, runs from the same state and must re-arm idleBlankTimer, or the reproducer exits 2.
+        current_deployment_relevance: onScreensChanged (Service.qml:864-874) is live on this branch and unchanged on upstream quattro 035ce29f; the reproducer extracts it at run time.
+        honest_severity: low - the session stays locked; only the idle blank is lost, so the displays stay lit until the next keypress.
+        reproducible: single command ./pocs/crs-260930-ttvk-c04.sh, deterministic, under a second; exit 0 while the defect is present.
+        no_inflation: the claim is limited to the lost blank; no unlock, exposure or crash is asserted.
+        operational_path_verified: the runWake control drives the intended re-arm path of the same functions.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus revenue cannot be framed and is not applicable'
+        reachability_verified: 'local-behavioral power defect: the trigger is an output hotplug in the user''s own session; there is no ingress access-control or input-validation layer to traverse'
+        untrusted_attacker: 'local-behavioral defect: nothing is gained by any party, so an untrusted-attacker model does not apply'
 kill_domain: state_loss
 do_not_refile_as: blank never engages (the initial idle path works; only the post-screens-change re-arm is missing)
 source_claim: CRS-260930-TTVK/C04

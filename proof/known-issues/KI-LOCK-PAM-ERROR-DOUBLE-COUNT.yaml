@@ -1,6 +1,6 @@
 id: KI-LOCK-PAM-ERROR-DOUBLE-COUNT
 title: Abnormal PAM error increments failedAttempts twice (onError and onCompleted both run handlePasswordFailure)
-description: Quickshell's PamContext documents error as followed by completed(PamResult.Error). Service.qml wires onError -> handlePasswordFailure (436-437) AND onCompleted's else branch -> handlePasswordFailure (432). The failedAttempts += 1 at 283 has no per-transaction latch, so one abnormal PAM failure counts as two. The failure message then rewrites itself (Authentication failed (n) then (n+1)). Normal wrong passwords take only the completed path and count once.
+description: Quickshell's PamContext documents error as followed by completed(PamResult.Error). Service.qml wires onError -> handlePasswordFailure (599-600) AND onCompleted's else branch -> handlePasswordFailure (595). The failedAttempts += 1 at 385 has no per-transaction latch, so one abnormal PAM failure counts as two. The failure message then rewrites itself (Authentication failed (n) then (n+1)). Normal wrong passwords take only the completed path and count once.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
@@ -15,6 +15,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: 'cosmetic: counter and message; no auth-bypass'
 remediation: Handle the failure in onCompleted only (it receives the Error result), or latch the transaction so the error/completed pair increments once
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The C03 anchors in pocs/crs-260930-ttvk-qml-static.sh hold there and on upstream quattro 393a43d4. The line citations moved with #7158.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -35,6 +37,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-pam-error-double-count.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,append-note
 kill_domain: double_count
 do_not_refile_as: wrong password counts twice (the wrong-password PamResult.Failure path does not take onError and counts once)
 affected_file: shell/plugins/lock/Service.qml

@@ -1,7 +1,7 @@
 id: KI-APPLY-LOCK-EXPORTED-FUNCTIONS-ROOT
 title: Imported bash functions bypass the trusted-PATH pin in apply-lock's root branch
 description: |-
-    The EUID==0 branch (bin/omarchy-apply-lock:15) replaces PATH but keeps the rest of the inherited environment. Bash imports exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into its function table, and bash looks a name up as a function before it searches PATH. An imported grep therefore runs instead of /usr/bin/grep in the fingerprint gate (line 48). An imported command_not_found_handle that returns 0 makes 'if omarchy-shell lock status' (line 62) true when the binary is absent (chroot install). SW-REQ-260912-EKJP (trusted_path_only) does not hold for functions: the root branch can still run commands from its environment instead of the pinned ones.
+    The EUID==0 branch (bin/omarchy-apply-lock:15) replaces PATH but keeps the rest of the inherited environment. Bash imports exported functions (BASH_FUNC_grep%%, BASH_FUNC_command_not_found_handle%%, ...) into its function table, and bash looks a name up as a function before it searches PATH. An imported grep therefore runs instead of /usr/bin/grep in the fingerprint gate (lines 62 and 72). An imported command_not_found_handle that returns 0 makes 'if omarchy-shell lock status' (line 88) true when the binary is absent (chroot install). SW-REQ-260912-EKJP (trusted_path_only) does not hold for functions: the root branch can still run commands from its environment instead of the pinned ones.
 
     The defect crosses no privilege boundary. Every route into the root branch drops imported functions or hands over an environment that root already controls. sudo removes variables whose value starts with "()" (sudoers(5), sudo 1.9.17). pkexec starts the helper in a minimal environment. The installer and the upgrade, when they run as root, pass their own environment.
 
@@ -22,6 +22,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: sudo removes variables whose value starts with "()", and pkexec starts the helper in a minimal environment. The installer and the upgrade pass their own root environment. Only a process that already runs as root can plant the functions.
 remediation: 'Unset imported functions before any decision point: eval ''unset -f $(compgen -A function)'' under EUID 0. Alternatively run the body via env -i bash --noprofile --norc. Use ''command'' for the pinned lookups'
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The old reproducer extracted fixed line numbers and broke when #7158 moved the gate. The rewritten reproducer runs the real helper in a user namespace, so EUID is 0 and the root branch runs. Both vectors fire on 035ce29f and on upstream quattro 393a43d4. The clean-environment control shows the pinned PATH and no marker.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -86,6 +88,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-exported-functions-root.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,append-note
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -99,12 +105,12 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: the PoC extracts the LIVE decision expressions (bin/omarchy-apply-lock lines 48 and 62) verbatim and runs them under the hostile inherited environment - no reimplementation.
+        real_infrastructure: pocs/crs-260930-g166-c07-c09.sh runs a scratch copy of the real bin/omarchy-apply-lock end to end inside an unprivileged user namespace (unshare -r), so EUID is 0 and the root branch pins PATH; the copy differs only by retargeted absolute paths, checked by reverse substitution. The functions reach the helper through its environment, as a caller would pass them.
         quantitative_impact: both vectors leave a filesystem marker proving that code from the helper's inherited environment ran at the root branch's decision points (grep hijack in the fingerprint gate; command_not_found_handle returning 0 with the binary absent); the clean-environment control leaves no marker and reads the gate correctly.
-        control_test: same extracted condition under a clean environment with an enrolled fprintd-list stub evaluates TRUE via the pinned /usr/bin/grep (pocs/crs-260930-g166-c07-c09.sh control arm).
-        current_deployment_relevance: the pin at bin/omarchy-apply-lock:15 replaces PATH but not the environment on this branch today; the PoC extracts the live lines at run time.
+        control_test: the same root run in a clean environment shows EUID 0 and the pinned PATH at the probe, leaves no marker, and does not claim the configuration with omarchy-shell absent.
+        current_deployment_relevance: the pin at bin/omarchy-apply-lock:15 replaces PATH but not the environment on this branch today; the reproducer runs the helper that ships.
         honest_severity: low - the defect is real (code from the inherited environment runs at both decision points of the root branch), but planting that code there already needs root: sudo removes "()"-valued variables, pkexec starts the helper in a minimal environment, and root callers pass their own environment. A defence-in-depth gap with no privilege gain.
-        reproducible: single command ./pocs/crs-260930-g166-c07-c09.sh, deterministic, runs in well under a minute.
+        reproducible: single command ./pocs/crs-260930-g166-c07-c09.sh, deterministic, under a second; needs unprivileged user namespaces (exit 2 without them).
         no_inflation: the claim is limited to code from the inherited environment running at the two decision points; no privilege gain, persistence or escalation is asserted.
         operational_path_verified: the control arm exercises the intended path (pinned lookup, correct gate decision) and shows it intact in a clean environment.
     not_applicable:

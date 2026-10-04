@@ -1,6 +1,6 @@
 id: KI-LOCK-EMPTY-READLINK-WIPES-WALLPAPER
 title: Failed/empty readlink result stored as backgroundPath, wiping a good lock-screen wallpaper
-description: readlinkProc's handler (shell/plugins/lock/Service.qml:499-507) takes lines[0] of the collector output with no non-empty guard. The embedded bash prints only after a successful readlink, so a missing currentBackgroundLink or a readlink error yields next = ''. The next !== backgroundPath branch then clears videoPosterPath, stores backgroundPath = '', and bumps backgroundVersion. A transient wallpaper race (theme switch) then blanks the lock background until a later refresh succeeds.
+description: readlinkProc's handler (shell/plugins/lock/Service.qml:690-704) takes lines[0] of the collector output with no non-empty guard. The embedded bash prints only after a successful readlink, so a missing currentBackgroundLink or a readlink error yields next = ''. The next !== backgroundPath branch then clears videoPosterPath, stores backgroundPath = '', and bumps backgroundVersion. A transient wallpaper race (theme switch) then blanks the lock background until a later refresh succeeds.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
@@ -13,6 +13,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: next refreshBackground with a good link restores it
 remediation: Keep the previous backgroundPath (and signature) when the readlink output is empty, and retry via a short timer instead of committing the empty result
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The C05 anchors in pocs/crs-260930-ttvk-qml-static.sh hold there and on upstream quattro 393a43d4. The line citations moved with #7158. Upstream omacom/omarchy#7416 and #11964 report other lock-background defects with different causes.'
 review_date: "2026-09-30"
 status: reviewed
 history:
@@ -43,6 +45,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-empty-readlink-wipes-wallpaper.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,append-note
 kill_domain: state_loss
 do_not_refile_as: wallpaper never refreshes (the success path works; the failure path destroys prior state instead of keeping it)
 source_claim: CRS-260930-TTVK/C05

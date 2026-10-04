@@ -1,6 +1,6 @@
 id: KI-LOCK-PAM-FLIP-ENGAGES-LOCK
 title: Lock engages when password PAM disappears during the stabilize window; the stranded watchdog stands down
-description: The missing-pam gate (lockIpc.lock, shell/plugins/lock/Service.qml:741-746) checks passwordPamConfigured once. BeginLock then schedules requestSessionLock through the 500ms stabilize delay, and requestSessionLock (87-99) re-checks only lockRequested/sessionLock state - never PAM. A FileView reload whose onLoadFailed lands inside that window (config removed / TTY-cleared failsafe) flips the flag after the gate. That happens before line 99 sets sessionLock.locked = true. onPasswordPamConfiguredChanged early-returns on the false transition, and checkStrandedLock explicitly stands down once the code sets lockRequested ('a lock this shell took is nobody's orphan'). So the session locks with no password PAM behind it and nothing releases it.
+description: The missing-pam gate (lockIpc.lock, shell/plugins/lock/Service.qml:922-928) checks passwordPamConfigured once. BeginLock then schedules requestSessionLock through the 500ms stabilize delay, and requestSessionLock (97-112) re-checks only lockRequested/sessionLock state - never PAM. A FileView reload whose onLoadFailed lands inside that window (config removed / TTY-cleared failsafe) flips the flag after the gate. That happens before line 111 sets sessionLock.locked = true. onPasswordPamConfiguredChanged early-returns on the false transition, and checkStrandedLock explicitly stands down once the code sets lockRequested ('a lock this shell took is nobody's orphan'). So the session locks with no password PAM behind it and nothing releases it.
 affected_requirements:
     - SW-REQ-260912-J8SX
     - SYS-REQ-260912-T0XP
@@ -12,12 +12,14 @@ risk: availability
 cve_surface: none
 affected_api: shell/plugins/lock/Service.qml (session lock lifecycle, missing-pam gate)
 reproducer_command: ./pocs/lock-service-failopen-runtime.sh
-tripwire_mutation: 'Re-check passwordPamConfigured inside requestSessionLock (shell/plugins/lock/Service.qml:87-99) and stand the lock back down on the false transition: the anchored C01 assertions in pocs/crs-260930-ttvk-qml-static.sh flip from PRESENT to ABSENT and the script exits 1'
+tripwire_mutation: 'Re-check passwordPamConfigured inside requestSessionLock (shell/plugins/lock/Service.qml:97-112) and stand the lock back down on the false transition: the anchored C01 assertions in pocs/crs-260930-ttvk-qml-static.sh flip from PRESENT to ABSENT and the script exits 1'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: 'Fingerprint unlock (if configured) still works; otherwise recover from a TTY. The trigger needs the root-owned /etc/pam.d/omarchy-lock-password to disappear inside the 500 ms window after a lock request, and the lock fails closed: it exposes nothing.'
 remediation: Re-check passwordPamConfigured in requestSessionLock before sessionLock.locked = true and stand the lock back down (with the missing-pam notification) when it went false. Treat a PAM flip while lockRequested as a teardown trigger
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. pocs/lock-service-failopen-runtime.sh exits 0 (defect present) there and on upstream quattro 393a43d4. The line citations moved with #7158. Upstream omacom/omarchy#10299 reports a different lockRequested defect: a stalled lock latches the request.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -78,6 +80,10 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-lock-pam-flip-engages-lock.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,set-tripwire-mutation,append-note
 poc_quality:
     real_infrastructure: true
     quantitative_impact: false

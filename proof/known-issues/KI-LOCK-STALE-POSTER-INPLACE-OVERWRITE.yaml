@@ -1,6 +1,6 @@
 id: KI-LOCK-STALE-POSTER-INPLACE-OVERWRITE
 title: In-place video wallpaper overwrite during a running poster job keeps the stale poster frame
-description: refreshPoster drops the new request while posterProc is running (running guard, Service.qml:138) without queueing, and posterProc.onExited (523-527) commits whenever sourcePath === backgroundPath. An in-place overwrite (same path, new bytes) therefore keeps the poster hashed from the pre-overwrite stat. BackgroundVersion changes the URL but the jpeg bytes are stale, and the code schedules no second refresh.
+description: refreshPoster drops the new request while posterProc is running (running guard, Service.qml:150) without queueing, and posterProc.onExited (714-721) commits whenever sourcePath === backgroundPath. An in-place overwrite (same path, new bytes) therefore keeps the poster hashed from the pre-overwrite stat. BackgroundVersion changes the URL but the jpeg bytes are stale, and the code schedules no second refresh.
 affected_requirements:
     - SYS-REQ-260912-T0XP
 evidence_manifests:
@@ -13,6 +13,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: another wallpaper change or re-lock regenerates it
 remediation: Queue (or re-arm) the poster request when the running guard fires. Then compare the stat signature - not just the path - in onExited before committing
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The C06 anchors in pocs/crs-260930-ttvk-qml-static.sh hold there and on upstream quattro 393a43d4. The line citations moved with #7158.'
 review_date: "2026-09-30"
 status: reviewed
 history:
@@ -43,6 +45,10 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-lock-stale-poster-inplace-overwrite.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,append-note
 kill_domain: stale_state
 do_not_refile_as: poster never regenerates on wallpaper CHANGE (a path change takes the mismatch arm and re-runs; only the same-path overwrite is dropped)
 source_claim: CRS-260930-TTVK/C06

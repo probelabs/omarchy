@@ -1,6 +1,9 @@
 id: KI-APPLY-LOCK-TARGET-USER-DEGRADES-ROOT
 title: Unmappable PKEXEC_UID degrades target_user to root, so the fingerprint probe asks about the wrong account
-description: target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd enrollment probe (line 48) then asks about the wrong account (root unless $USER maps elsewhere). The password PAM stack does not depend on the account, so only the fingerprint decision is wrong. An installing user with enrolled prints gets no fingerprint PAM until the helper runs again with the right account.
+description: |-
+    target_user resolution (bin/omarchy-apply-lock:18-22) has no pipefail and no abort on a failed getent. With OMARCHY_INSTALL_USER and SUDO_USER unset and PKEXEC_UID unmappable, cut yields the empty string and line 22 falls back to $USER - root under pkexec/env -i. The fprintd enrollment probe (line 56) then asks about the wrong account (root unless $USER maps elsewhere). The password PAM stack does not depend on the account, so only the fingerprint decision is wrong.
+
+    Since upstream omacom/omarchy#7158, the empty enrollment of root takes the remove branch (lines 72-80). The helper then deletes the fingerprint stack and resume hook of the installing user. That user has no fingerprint unlock until the helper runs again with the right account.
 affected_requirements:
     - SW-REQ-260912-EKJP
 evidence_manifests:
@@ -15,6 +18,8 @@ defect_class: latent
 minimization_status: candidate
 mitigation: callers set OMARCHY_INSTALL_USER explicitly (install scripts do; ad-hoc pkexec callers do not always set it)
 remediation: Abort with a diagnostic when the mapping yields an empty target_user instead of falling back to $USER; never configure PAM for uid 0
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. The rewritten reproducer runs the real helper with a failing getent and records the account that the probe asks about. On 035ce29f and on upstream quattro 393a43d4, the probe asks about root. On 035ce29f, the helper then removes the fingerprint stack of the installing user. Upstream omacom/omarchy#9569 and #9572 report the same root-under-pkexec class in removal scripts, not in this helper.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -55,6 +60,14 @@ history:
       by: agent:claude-quattro-proof
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-target-user-degrades-root.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,append-note
+    - at: "2026-10-04T19:37:43Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -68,10 +81,10 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: the PoC evals the live target_user resolution block (bin/omarchy-apply-lock lines 18-22) verbatim with a failing getent stub on PATH.
-        quantitative_impact: 2 of 2 unmapped-uid cases degrade target_user to root; the control case with an explicit OMARCHY_INSTALL_USER resolves to that user.
+        real_infrastructure: pocs/crs-260930-g166-c05-c06.sh runs a scratch copy of the real bin/omarchy-apply-lock end to end with a failing getent on PATH; the copy differs only by retargeted absolute paths, checked by reverse substitution. The fprintd-list stub records the account it is asked about.
+        quantitative_impact: with PKEXEC_UID unmappable and USER=root, the probe asks about root instead of the installing user; on upstream quattro 035ce29f the helper then removes that user's fingerprint stack. The explicit-install-user control asks about the installing user.
         control_test: the explicit-install-user case in pocs/crs-260930-g166-c05-c06.sh shows the intended mapping path intact.
-        current_deployment_relevance: the resolution block is live on this branch; extracted at run time.
+        current_deployment_relevance: the resolution block (lines 18-22) and the probe (line 56) are live on this branch; the reproducer runs the helper that ships.
         honest_severity: low - only the fprintd enrollment probe runs for the wrong account; the password PAM stack is the same for every account, so the worst case is fingerprint unlock left unconfigured for a user with enrolled prints. No privilege gain.
         reproducible: single command ./pocs/crs-260930-g166-c05-c06.sh, deterministic, sub-second.
         no_inflation: claims limited to the demonstrated wrong-account resolution and the fingerprint decision it feeds.

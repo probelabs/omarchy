@@ -15,6 +15,8 @@ introduced_in: inception
 defect_class: latent
 mitigation: 'Verify a suspicious lock before walking away: run omarchy-hyprland-session-locked (exit 0 locked, 1 unlocked) or look at the lock surface. Re-trigger the failure deliberately in a terminal, where omarchy-system-lock shows the callee stderr directly.'
 remediation: 'bin/omarchy-system-lock must propagate the omarchy-shell lock exit instead of exiting 0. The lock component (SYS-REQ-260912-T0XP family) owns engagement and failure surfacing per the WC89 obligation_delegations record. Raise a visible failure surface (desktop notification with a non-zero CLI exit); the menu side stays fire-and-forget by design. Close criterion: pocs/wc89-silent-lock-exit0.sh flips red, with both failure arms exiting non-zero.'
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f, where bin/omarchy-system-lock is unchanged. pocs/wc89-silent-lock-exit0.sh exits 0 on every arm there and on upstream quattro 393a43d4. Upstream omacom/omarchy#9734 reported the same mechanism, but its reporter closed it as not planned after retracting the timeline.'
 review_date: "2026-12-30"
 status: reviewed
 history:
@@ -37,6 +39,35 @@ history:
       by: agent:opencode-quattro
       action: refresh-evidence
       detail: proof/evidence/ki-260930-2fbe.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=#9429
+    - at: "2026-10-04T19:33:55Z"
+      by: agent:claude-code
+      action: upstream-response
+      detail: status=acknowledged
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/pull/9429
+    reference: '#9429'
+    reported_at: "2026-08-31"
+    reported_by: human:github/VykosMolt
+    response:
+        status: acknowledged
+        received_at: "2026-10-01"
+        text: Reviewed at 3fa17d4850dd3dae4bdf038ade03b90c67ef1596. The bug is real, and this fixes it.
+        response_url: https://github.com/omacom/omarchy/pull/9429#issuecomment-5937550640
+submission_validation:
+    natspec_review: bin/omarchy-system-lock has only its summary header ("Lock the computer and turn off the display"). No comment covers the exit status. The lock IPC answers ok, missing-pam or failed (Service.qml:922-928), and the script discards the answer.
+    commit_origin: 7ea4e1ab0 "Switch hyprlock to QS" (2026-05-19) introduced `omarchy-shell lock lock >/dev/null` with no exit check.
+    intended_path_verified: true
+    master_status: 'identical: bin/omarchy-system-lock is byte-identical on upstream quattro 393a43d4 and 035ce29f. PR omacom/omarchy#9429 fixes it and is open.'
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

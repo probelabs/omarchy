@@ -31,6 +31,8 @@ remediation: |-
     Write each stack to a sibling temp file in /etc/pam.d. Then rename the temp file over the live path. The rename stays on one filesystem, so it is atomic. For example, `as_root tee /etc/pam.d/omarchy-lock-password.tmp` followed by `as_root mv -f /etc/pam.d/omarchy-lock-password.tmp /etc/pam.d/omarchy-lock-password`.
 
     Do the same for omarchy-lock-fingerprint, and optionally fsync before the rename. Then remove the atomic_write deferrals on SYS-REQ-260912-JW2J and SW-REQ-260912-Y0WT and add witnesses. Close criterion: pocs/apply-lock-pam-torn-write.sh flips red, because the interrupted write leaves the previous complete stack on the live path.
+notes:
+    - '2026-10-04: re-checked on upstream quattro 035ce29f. Since #7158, the fingerprint branch installs the resume hook and drop-in and reloads systemd before its tee. The harness now retargets those paths too and records systemctl. Both arms still leave a torn live stack on 035ce29f and on upstream quattro 393a43d4.'
 owner: agent:claude-quattro
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
@@ -59,6 +61,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-pam-nonatomic-write.yaml
+    - at: "2026-10-04T19:33:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -72,11 +78,11 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: pocs/apply-lock-pam-torn-write.sh runs a scratch copy of the real bin/omarchy-apply-lock in which only the /etc/pam.d/ prefix and the absolute /usr/bin/fprintd-list gate are retargeted into a temp dir; reverse substitution must reproduce the product file byte for byte or the harness aborts. The tee that writes the file is the real one; sudo, fprintd-list and omarchy-shell are stubs.
+        real_infrastructure: pocs/apply-lock-pam-torn-write.sh runs a scratch copy of the real bin/omarchy-apply-lock in which only the absolute paths (/etc/pam.d/, /usr/bin/fprintd-list and the resume-recovery destinations) are retargeted into a temp dir; reverse substitution must reproduce the product file byte for byte or the harness aborts. The tee that writes the file is the real one; sudo, fprintd-list and omarchy-shell are stubs.
         quantitative_impact: after a SIGKILL during the write the live file is exactly the first 60 bytes of the new stack (of 549 bytes for the password stack, 122 for the fingerprint stack), the seeded previous stack is gone, and the inode is unchanged; the torn password stack carries no pam_unix line.
         control_test: an uninterrupted run writes both stacks byte-identical to the heredocs in the product file, and the sudo stub log shows both as_root writes reached the retargeted live paths.
         operational_path_verified: both write sites are driven through the real as_root wrapper, including the fingerprint branch gated on an enrolled finger.
-        current_deployment_relevance: lines 34 and 50 of bin/omarchy-apply-lock carry the in-place tee writes on this branch today.
+        current_deployment_relevance: lines 34 and 67 of bin/omarchy-apply-lock carry the in-place tee writes on this branch today.
         honest_severity: medium - high impact (password unlock can fail until the helper re-runs) times low likelihood (an interruption inside a sub-millisecond write window at install or upgrade time); the freeze-and-kill harness widens the window deterministically, it does not claim the window is wide in practice.
         reproducible: deterministic, three arms, under 1s; byte comparison and inode equality decide every assertion; nothing outside a temp dir is touched and the run refuses to start as root.
         no_inflation: claims limited to the demonstrated torn live file after an interrupted write; no privilege, bypass or remote claims.
