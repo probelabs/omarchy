@@ -5,15 +5,14 @@ results:
       command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-04T19:47:34Z"
+      executed_at: "2026-10-04T20:36:30Z"
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-SEARCH-SCORE-RANKING` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Captured by `proof evidence capture KI-MENU-SEARCH-SCORE-RANKING` from the KnownIssue''s reproducer command: node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - ../shell/plugins/menu/MenuModel.js
-        - pocs/menu-probes.js
-        - 'Re-commanded by `proof evidence refresh`: this row runs KI-MENU-SEARCH-SCORE-RANKING''s CURRENT reproducer command (node pocs/menu-probes3.js ../shell/plugins/menu/MenuModel.js). The command previously stored in this manifest was: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js'
+        - pocs/menu-probes3.js
       freshness_hashes:
-        pocs/menu-probes.js: sha256:776d23990bd6fc3e6894b6db6cf9da3bb8ca8779f618713b2d6e22aa98a9caa5
-        proof/known-issues/KI-MENU-SEARCH-SCORE-RANKING.yaml: ki-content-v1:sha256:31e978b89b0c7921fa5b6195112c147bb4601ec0c8aa5f39b3beaa93d05a58e0
+        pocs/menu-probes3.js: sha256:54d3e82a505eea86ba5e8628c1d6c27ac962791793783895667b1efcecdb9164
+        proof/known-issues/KI-MENU-SEARCH-SCORE-RANKING.yaml: ki-content-v1:sha256:5f3975c1a1e66f08c9bdec06ff17ec844ebbe9b2c71e6676ab6e7438b4edc1d0
       known_issues:
         - KI-MENU-SEARCH-SCORE-RANKING
       config:

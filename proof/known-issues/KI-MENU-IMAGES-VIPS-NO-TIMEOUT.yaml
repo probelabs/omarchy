@@ -68,6 +68,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-title
+    - at: "2026-10-04T20:36:29Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-images-vips-no-timeout.yaml
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true

@@ -5,13 +5,14 @@ results:
       command: ./pocs/crs-260930-ttvk-c07.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-04T20:23:30Z"
+      executed_at: "2026-10-04T20:36:20Z"
+      revision: b3d6aa39161a37a6f216742a4e7798b26b8054f9
       input_set:
         - 'Reproducer contract changed on 2026-10-04: ./pocs/crs-260930-ttvk-c07.sh is now a RED reproducer. It asserts the correct behavior: exit 0 = defect absent, exit 1 = defect present, exit 2 = control failed. Upstream omacom/omarchy#7158 (879d6583d) fixed the defect, so the expected result on upstream quattro 035ce29f is pass, read as known_issue_not_reproduced; on upstream quattro 393a43d4 the same script exits 1. Re-stamp with: proof evidence capture KI-LOCK-FPRINT-START-FAIL-NO-RETRY --red-reproducer.'
         - pocs/crs-260930-ttvk-c07.sh
       freshness_hashes:
         pocs/crs-260930-ttvk-c07.sh: sha256:02cd827b2f5a2e64f37b4b0d5cc99ef7b95475fe6c12f8b9016b541f5be268df
-        proof/known-issues/KI-LOCK-FPRINT-START-FAIL-NO-RETRY.yaml: ki-content-v1:sha256:9384e53dd793cafef83dc940f8cde82263da127c7cd7dedd06b03578e759f95d
+        proof/known-issues/KI-LOCK-FPRINT-START-FAIL-NO-RETRY.yaml: ki-content-v1:sha256:5236ecd078974c27565f8fddb0c418a52d55f3b7062a39e19c9680b9ef3066c0
       known_issues:
         - KI-LOCK-FPRINT-START-FAIL-NO-RETRY
       config:

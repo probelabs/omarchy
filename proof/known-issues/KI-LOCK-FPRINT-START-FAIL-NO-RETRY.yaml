@@ -60,6 +60,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-dedup-armor
+    - at: "2026-10-04T20:36:19Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-fprint-start-fail-no-retry.yaml
 dedup_armor: 'KI-MENU-CLI-EXIT-CODE-WRITE-RACES is a distinct menu CLI defect: a failed usage write changes the exit code. KI-MENU-CLI-JQ-FAIL-LOOKS-SUCCESS is distinct: the menu CLI execs the IPC after a failed jq build. KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT is distinct: a throwing require aborts the keybindings scan. KI-MENU-KEYBINDINGS-SENDKEY-UP-FAIL-STUCK is distinct: a refused key-up leaves a key stuck down. KI-MENU-KEYBINDINGS-STDERR-FAILS-DISPATCH is distinct: a dispatch warning on stderr reads as a refusal. Each lives in a different menu script, and the lock fix (#7158) does not touch them.'
 kill_domain: error_propagation
 do_not_refile_as: fingerprint fails after a wrong print (that path re-arms via handleFingerprintFinished; only a failed START is dead)
