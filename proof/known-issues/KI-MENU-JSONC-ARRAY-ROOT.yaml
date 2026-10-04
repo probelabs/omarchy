@@ -21,6 +21,7 @@ mitigation: The trigger is a menu file with an array root, which the documented 
 remediation: Fixed by omacom/omarchy#13968 (Array.isArray in the root guard; SW-REQ-260928-BMFE).
 notes:
     - 'Fixed on pr/13968 by omacom/omarchy#13968: parseMenuJsonc returns no rows when Array.isArray(parsed), like the scalar and null roots. Spec: SW-REQ-260928-BMFE (DEFECT-260928-4NG9). Report test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh exits 0; the in-suite tests tagged Reproduces now assert no rows and guard against a return.'
+    - 'Upstream: our issue #13492 (2026-09-28). Our fix PR #13511 was closed unmerged. Open fix PRs: #13681, #13803 and our #13968.'
 customer_impact: If a menu file's top level is a list instead of an object, the menu silently reads the list as entries. Items with an action appear under their own labels, items without one stay hidden, and no error says the file has the wrong shape. The shipped menu is not affected; only a hand-edited file written as a list hits this.
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
@@ -47,6 +48,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-array-root.yaml
+    - at: "2026-10-01T22:39:22Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
     - at: "2026-10-02T15:03:58Z"
       by: agent:claude-baseline-pass
       action: edit
@@ -63,10 +68,6 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-array-root.yaml
-    - at: "2026-10-01T22:39:22Z"
-      by: agent:claude-pr-13968
-      action: edit
-      detail: set-remediation,append-note,set-status=fixed
 dedup_armor: 'Not a duplicate of KI-MENU-ITEMS-KEY-AMBIGUITY, KI-MENU-JSONC-COMMA-IN-STRING, KI-MENU-JSONC-INLINE-COMMENT or KI-MENU-JSONC-STRIP-GAPS: this one is an array root read by index as entries with ids 0, 1, …; those are the items wrapper key, string rewriting, inline comment tails and block comments'
 kill_domain: parsing
 affected_file:
