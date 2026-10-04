@@ -84,7 +84,7 @@ obligation_deferrals:
       reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:19Z"
-    reviewed_by: agent:claude-baseline-pass
+    reviewed_by: agent:claude-code
     reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
@@ -97,7 +97,7 @@ hazard_review:
             - input_domain
           suppressed:
             - error_handling
-          rationale: 'Worst case: a signature collision makes a stale cache look fresh and the picker shows rows that no longer match the directory - deleted or re-saved images listed, thumbnails wrong. The fast tier hashes directory mtimes plus per-image size:mtime; a repaired-in-place file that keeps mtime defeats the fast tier, which is why the slow tier re-checks on the fast-signature miss and the rebuild path drops in-place-repaired rows from cacheability outright (rows_cacheable=false). boundary: the three-tier partition (fast cmp, slow cmp, full rebuild) is exact and each tier transition is defined; the stat-race on a vanishing image drops that one row via continue instead of aborting. edge_case: the fast-signature promotion write on the slow-tier hit (line 296) is in-place rather than temp-renamed and sits outside the cache lock - a torn write only fails the next fast cmp and re-enters the slow tier, which recomputes from the authoritative signature file: one redundant rebuild, then self-heals. error_handling is dispositioned by the standing kimi-dogfood suppression (explicit per-call guards instead of set -e aborts). Catalog 1.11.0 re-review: input_domain not applicable, it scans file names and signatures, not file contents. concurrency_scale applied, the rows cache rewrite is shared state across invocations and concurrent opens.'
+          rationale: 'Worst case: a signature collision makes a stale cache look fresh and the picker shows rows that no longer match the directory - deleted or re-saved images listed, thumbnails wrong. The fast tier hashes directory mtimes plus per-image size:mtime; a repaired-in-place file that keeps mtime defeats the fast tier, which is why the slow tier re-checks on the fast-signature miss and the rebuild path drops in-place-repaired rows from cacheability outright (rows_cacheable=false). boundary: the three-tier partition (fast cmp, slow cmp, full rebuild) is exact and each tier transition is defined; the stat-race on a vanishing image drops that one row via continue instead of aborting. edge_case: the fast-signature promotion write on the slow-tier hit (the printf to rows_fast_signature_file in the full-signature reuse branch) is in-place rather than temp-renamed and sits outside the cache lock - a torn write only fails the next fast cmp and re-enters the slow tier, which recomputes from the authoritative signature file: one redundant rebuild, then self-heals. error_handling is dispositioned by the standing kimi-dogfood suppression (explicit per-call guards instead of set -e aborts). Catalog 1.11.0 re-review: input_domain not applicable, it scans file names and signatures, not file contents. concurrency_scale applied, the rows cache rewrite is shared state across invocations and concurrent opens.'
         - category: property
           disposition: reviewed
           applied:

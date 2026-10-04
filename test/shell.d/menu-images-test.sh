@@ -41,6 +41,18 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# Under an MC/DC measurement the menu is an instrumented copy that carries its
+# trace recorder above its own first line. Its thumbnail generators run in
+# xargs bash -c children, which import the exported functions but not the
+# recorder. BASH_ENV hands the recorder to each child bash, so the children
+# convert and record as the menu itself would. Plain runs are unchanged.
+if [[ -n ${PROOF_MCDC_TRACE_DIR:-} ]] &&
+  sed -n 2p "$ROOT/bin/omarchy-menu-images" | grep -q '^# ReqProof Bash MC/DC runtime recorder' &&
+  grep -q '^# omarchy:summary=' "$ROOT/bin/omarchy-menu-images"; then
+  awk 'NR == 1 { next } /^# omarchy:summary=/ { exit } { print }' "$ROOT/bin/omarchy-menu-images" >"$tmp/mcdc-recorder.sh"
+  export BASH_ENV="$tmp/mcdc-recorder.sh"
+fi
+
 cache_home="$tmp/cache"
 images="$tmp/images"
 media="$tmp/media"
@@ -86,7 +98,7 @@ while (( $# > 0 )); do
 done
 
 if [[ -f ${FFMPEG_FAIL_FILE:-} ]] && grep -Fxq "$image" "$FFMPEG_FAIL_FILE"; then
-  exit 1
+  exit "${FFMPEG_FAIL_STATUS:-1}"
 fi
 
 [[ -z ${FFMPEG_CALLS_FILE:-} ]] || printf '%s\n' "$image" >>"$FFMPEG_CALLS_FILE"
@@ -109,13 +121,34 @@ thumbnail_hash() {
   printf '%s\t%s' "$1" "$signature" | md5sum | cut -d ' ' -f 1
 }
 
-# Lazy rows hand generation to background jobs inside the menu process itself,
+# Lazy rows hand generation to one detached worker pool that outlives the menu,
 # so the run answers before the pixels land; wait them out.
 wait_for_thumbnails() {
   local expected="$1"
 
   for _ in {1..200}; do
     (( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) >= expected )) && return 0
+    sleep 0.05
+  done
+  return 1
+}
+
+# The pool outlives the lazy run that started it. It is idle once no queue
+# file waits and no pool holds its lock, so a scenario waits for that before
+# it clears the cache under a running converter. The lock is probed only
+# once the queue is empty, so the probe never turns a starting pool away.
+wait_for_pools() {
+  local path idle
+
+  for _ in {1..200}; do
+    idle=true
+    for path in "$cache_dir"/*.rows.thumbnails.pending; do
+      if [[ -e $path ]]; then idle=false; fi
+    done
+    for path in "$cache_dir"/*.rows.thumbnails.lock; do
+      if [[ $idle == true && -e $path ]] && ! flock -n "$path" true; then idle=false; fi
+    done
+    if [[ $idle == true ]]; then return 0; fi
     sleep 0.05
   done
   return 1
@@ -137,13 +170,13 @@ for image in "$images"/*; do
 done
 printf 'partial' >"$stale_tmp"
 
-# A picker opens lazily: the rows answer with the media files while generation
-# runs inside the menu process. The aged legacy locks are the picker's own to
+# A picker opens lazily: the rows answer with the media files while the
+# detached pool generates. The aged legacy locks are the generators' own to
 # reap, and the partial thumbnails a killed generator left behind go with them.
 rows=$(run_images --print-rows --lazy-thumbnails "$images")
 
 (( $(wc -l <<<"$rows") == 3 )) || fail "the lazy menu offers every image while thumbnails generate" "$rows"
-wait_for_thumbnails 3 || fail "the lazy menu generates every thumbnail in-process" "$(ls "$cache_dir")"
+wait_for_thumbnails 3 || fail "the lazy menu's pool generates every thumbnail" "$(ls "$cache_dir")"
 (( $(find "$cache_dir" -maxdepth 1 -name '*.jpg' -type f | wc -l) == 3 )) ||
   fail "image menu recovers thumbnails from stranded locks"
 (( $(find "$cache_dir" -maxdepth 1 -name '*.jpg.lock' -type d | wc -l) == 0 )) ||
@@ -183,6 +216,7 @@ pass "image menu keeps the rows across a full-signature reuse"
 # A legacy generator that started recently may still own its lock, so its
 # thumbnail is left entirely alone while the others are served from the cache
 # entries the earlier run already published.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_dir"
 locked_hash=$(thumbnail_hash "$images/two.png")
@@ -209,6 +243,7 @@ run_images --print-rows --lazy-thumbnails "$images" >/dev/null
   fail "a fresh legacy lock survives a lazy run" "$(ls "$cache_dir")"
 pass "image menu respects a live legacy generator's lock"
 
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 printf '%s\n' "$images/two.png" >"$tmp/failures"
@@ -222,8 +257,8 @@ VIPSTHUMBNAIL_FAIL_FILE="$tmp/failures" run_images --cache-only "$images"
 pass "image menu leaves failed thumbnail batches uncached"
 
 rm "$tmp/failures"
-# The next open retries the thumbnail that failed: a lazy open generates it
-# in-process, and the cache-only pass that follows caches the complete rows.
+# The next open retries the thumbnail that failed: a lazy open queues it for
+# the pool, and the cache-only pass that follows caches the complete rows.
 run_images --print-rows --lazy-thumbnails "$images" >/dev/null
 wait_for_thumbnails 3 || fail "the lazy menu retries a previously failed thumbnail"
 run_images --cache-only "$images"
@@ -251,12 +286,14 @@ VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" run_images --cache-only "$images"
 # MCDC SW-REQ-260922-MH9B: rows_rebuilt_and_cached=F, signature_mismatch=F => TRUE [no-action: the vipsthumbnail spy log is empty across the whole run -- no rebuild happens while the signature matches]
 pass "image menu reuses cached rows for unchanged directories"
 
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 : >"$tmp/calls"
 
-# The delay keeps both runs inside the generation window so the second run's
-# generators reach the lock while the first still holds it.
+# The delay keeps both runs inside the generation window. Both runs queue the
+# same three jobs for the shared pool, so the duplicate jobs reach each
+# thumbnail's lock while the first generator still holds it.
 pids=()
 for run in 1 2; do
   VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" VIPSTHUMBNAIL_DELAY=0.25 \
@@ -279,13 +316,14 @@ wait_for_thumbnails 3 || fail "the released locks let every thumbnail regenerate
 (( $(wc -l <"$tmp/calls") == 6 )) || fail "image menu releases thumbnail locks after generation" "$(cat "$tmp/calls")"
 pass "image menu owns locks for exactly one generator lifetime"
 
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 
 # Rows are what the shell holds onto, so printing them hands back one row per
 # image with its generated thumbnail behind it.
 run_images --print-rows --lazy-thumbnails "$images" >/dev/null
-wait_for_thumbnails 3 || fail "the lazy menu generates the rows it prints"
+wait_for_thumbnails 3 || fail "the lazy menu's pool generates the rows it prints"
 rows=$(run_images --print-rows "$images")
 
 (( $(wc -l <<<"$rows") == 3 )) || fail "image menu prints one row per image"
@@ -295,12 +333,28 @@ while IFS=$'\t' read -r row_image row_thumbnail; do
 done <<<"$rows"
 pass "image menu prints its rows for the shell to hold"
 
+# A queue lock the menu cannot open leaves its jobs unpublished. The menu
+# still answers with every row and exits cleanly, but starts no pool.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
+rm -rf "$cache_home"
+mkdir -p "$cache_dir"
+mkdir "$cache_dir/$cache_key.rows.thumbnails.queue.lock"
+: >"$tmp/calls"
+rows=$(VIPSTHUMBNAIL_CALLS_FILE="$tmp/calls" run_images --print-rows --lazy-thumbnails "$images" 2>/dev/null) ||
+  fail "an unopenable queue lock still lets the lazy menu answer"
+(( $(wc -l <<<"$rows") == 3 )) || fail "an unopenable queue lock keeps every lazy row" "$rows"
+[[ ! -e $cache_dir/$cache_key.rows.thumbnails.pending ]] ||
+  fail "an unopenable queue lock publishes no jobs" "$(ls "$cache_dir")"
+[[ ! -s $tmp/calls ]] || fail "an unopenable queue lock starts no converter" "$(cat "$tmp/calls")"
+pass "an unopenable queue lock keeps the rows and starts no pool"
+
 # A directory with a video exercises the other half of the queue: pictures go
 # lazy, the video is queued for the fan-out, and the rows never block on it.
 printf 'still' >"$media/pic.png"
 printf 'video' >"$media/clip.mp4"
 pic_hash=$(thumbnail_hash "$media/pic.png")
 video_hash=$(thumbnail_hash "$media/clip.mp4")
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 
@@ -310,15 +364,10 @@ grep -q "^$media/pic.png" <<<"$rows" ||
 while IFS=$'\t' read -r row_image row_thumbnail; do
   [[ -f $row_thumbnail ]] || fail "every offered row points at a readable file" "$rows"
 done <<<"$rows"
-wait_for_thumbnails 1 || fail "the lazy menu generates the picture in-process"
+[[ -f $cache_dir/$video_hash.jpg ]] ||
+  fail "the fan-out generates the video thumbnail before the rows print" "$(ls "$cache_dir")"
+wait_for_thumbnails 2 || fail "the lazy menu's pool generates the picture"
 [[ -f $cache_dir/$pic_hash.jpg ]] || fail "the picture's thumbnail lands in the cache"
-# The video's pixels can only come from the fan-out child, which the
-# instrumentation cannot follow (see the ignore on generate_thumbnail), so its
-# presence is only asserted in the plain run.
-if [[ -z ${PROOF_MCDC_TRACE_DIR:-} ]]; then
-  [[ -f $cache_dir/$video_hash.jpg ]] ||
-    fail "the fan-out generates the video thumbnail" "$(ls "$cache_dir")"
-fi
 # SW-REQ-260929-REJT:error_handling:nominal
 # SW-REQ-260929-REJT:malformed_input:nominal
 # MCDC SW-REQ-260929-REJT: rejection_marker_recorded=F, media_rejected=F => TRUE [no-action: both files convert, no marker is written or honored, and every row offers its pixels -- no refusal happens]
@@ -337,15 +386,14 @@ pass "a queued video that already has its thumbnail queues nothing"
 rm -f "$cache_dir/$video_hash.jpg"
 touch -d '2 days ago' "$media"
 OMP_NUM_THREADS=1 run_images --print-rows --lazy-thumbnails "$media" >/dev/null
-if [[ -z ${PROOF_MCDC_TRACE_DIR:-} ]]; then
-  [[ -f $cache_dir/$video_hash.jpg ]] ||
-    fail "a single video lane still drains the queue" "$(ls "$cache_dir")"
-fi
+[[ -f $cache_dir/$video_hash.jpg ]] ||
+  fail "a single video lane still drains the queue" "$(ls "$cache_dir")"
 pass "a single video lane still drains the queue"
 
 # A video the converter rejected is remembered, so it costs nothing on the
 # next open and the rows stay uncached over its absence.
 media_cache_key=$(printf '%s' "$media" | md5sum | cut -d ' ' -f 1)
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_dir"
 : >"$cache_dir/$video_hash.jpg.failed"
@@ -360,8 +408,44 @@ grep -q "^$media/pic.png" <<<"$rows" ||
 # MCDC SW-REQ-260929-REJT: rejection_marker_recorded=T, media_rejected=T => TRUE
 pass "a rejected video keeps no row and leaves the rows uncached"
 
+# The marker comes from the converter itself: a refused video records one, so
+# the next open drops its row without running the converter again.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
+rm -rf "$cache_home"
+mkdir -p "$cache_dir"
+printf '%s\n' "$media/clip.mp4" >"$tmp/video-failures"
+rows=$(FFMPEG_FAIL_FILE="$tmp/video-failures" run_images --print-rows --lazy-thumbnails "$media")
+! grep -q "^$media/clip.mp4" <<<"$rows" || fail "a refused video offers no row" "$rows"
+[[ -f $cache_dir/$video_hash.jpg.failed ]] ||
+  fail "a refused video leaves a rejection marker" "$(ls "$cache_dir")"
+: >"$tmp/ffmpeg-calls"
+FFMPEG_CALLS_FILE="$tmp/ffmpeg-calls" run_images --print-rows --lazy-thumbnails "$media" >/dev/null
+[[ ! -s $tmp/ffmpeg-calls ]] ||
+  fail "a recorded rejection spares the converter on the next open" "$(cat "$tmp/ffmpeg-calls")"
+pass "a refused video records its rejection and is skipped on the next open"
+
+# A timeout (124) or a kill (137) is no verdict on the file: the row drops for
+# this open, but no marker is left, so the next open tries again.
+for status in 124 137; do
+  wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
+  rm -rf "$cache_home"
+  mkdir -p "$cache_dir"
+  rows=$(FFMPEG_FAIL_FILE="$tmp/video-failures" FFMPEG_FAIL_STATUS="$status" \
+    run_images --print-rows --lazy-thumbnails "$media")
+  ! grep -q "^$media/clip.mp4" <<<"$rows" || fail "a video stopped with $status offers no row" "$rows"
+  [[ ! -e $cache_dir/$video_hash.jpg.failed ]] ||
+    fail "a video stopped with $status leaves no rejection marker" "$(ls "$cache_dir")"
+  : >"$tmp/ffmpeg-calls"
+  FFMPEG_CALLS_FILE="$tmp/ffmpeg-calls" run_images --print-rows --lazy-thumbnails "$media" >/dev/null
+  grep -Fxq "$media/clip.mp4" "$tmp/ffmpeg-calls" ||
+    fail "a video stopped with $status is retried on the next open" "$(cat "$tmp/ffmpeg-calls")"
+done
+rm -f "$tmp/video-failures" "$tmp/ffmpeg-calls"
+pass "a timed-out or killed video converter leaves the video to retry"
+
 # A converter that fails under a lazy open leaves nothing behind: no partial
 # file, no thumbnail, and no failure marker, since only videos get one.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 faildir="$tmp/faildir"
@@ -372,7 +456,7 @@ printf '%s\n' "$faildir/doomed.png" >"$tmp/failures"
 rows=$(VIPSTHUMBNAIL_FAIL_FILE="$tmp/failures" run_images --print-rows --lazy-thumbnails "$faildir")
 grep -q "^$faildir/doomed.png" <<<"$rows" ||
   fail "a failing picture still offers itself lazily" "$rows"
-wait_for_thumbnails 0 || true
+wait_for_pools || fail "the failed lazy converter's pool finishes"
 (( $(find "$cache_dir" -maxdepth 1 \( -name '*.jpg' -o -name '*.failed' \) | wc -l) == 0 )) ||
   fail "a failed lazy converter leaves nothing behind" "$(ls "$cache_dir")"
 rm -rf "$faildir" "$tmp/failures"
@@ -380,6 +464,7 @@ pass "a failed lazy converter leaves nothing behind"
 
 # The flag surface: every documented flag is accepted, and the ones that shape
 # the menu take effect without disturbing the rows.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 
@@ -415,6 +500,7 @@ pass "the selected image resolves by directory, content, or not at all"
 
 # A directory prepared without generating anything leaves the picture's
 # thumbnail out of the cache: prepare answers without spending a converter.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 run_images --print-rows --prepare-only --lazy-thumbnails "$media" >/dev/null
@@ -424,6 +510,7 @@ pass "a prepared directory offers its media without generating anything"
 
 # Several directories at once are all scanned, and one that does not exist is
 # skipped rather than fatal.
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 extra="$tmp/extra-media"
@@ -474,6 +561,7 @@ run_picker() {
     "$ROOT/bin/omarchy-menu-images" "$@"
 }
 
+wait_for_pools || fail "the lazy thumbnail pool finishes before the cache is cleared"
 rm -rf "$cache_home"
 mkdir -p "$cache_home"
 

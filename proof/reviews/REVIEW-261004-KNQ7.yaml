@@ -1,0 +1,17 @@
+id: REVIEW-261004-KNQ7
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:31:44Z"
+subject: SW-REQ-260922-MH9B
+decision: approved
+comment: 'Read the rebuild path of bin/omarchy-menu-images at upstream 035ce29f with this branch''s comment-only annotations. A full-signature match reuses the rows and rewrites the fast signature in place (lines 339-341). Otherwise the rebuild runs thumbnail_for for each scanned file (342-362), drains the queues (364), and drops rows whose thumbnail is missing (366-381). It then publishes rows, signature and fast signature under the rows lock through temp files and renames, or removes all three when the rows are not cacheable (389-402). Upstream #14117 changed only how drain_pending_thumbnails runs lazy stills. A lazy row still clears rows_cacheable (248, 354), so a lazy rebuild never caches incomplete rows. The hazard review named the fast-signature promotion write by line 296, which the upstream change moved; it now names the write by its construct. Witnesses in test/shell.d/menu-images-test.sh: the stale-cache rebuild (188-203), the full-signature reuse (205-214) and the warm reuse (275-287).'
+citations:
+    - bin/omarchy-menu-images:339
+    - bin/omarchy-menu-images:341
+    - bin/omarchy-menu-images:342
+    - bin/omarchy-menu-images:364
+    - bin/omarchy-menu-images:366
+    - bin/omarchy-menu-images:389
+    - test/shell.d/menu-images-test.sh:195
+    - test/shell.d/menu-images-test.sh:209
+    - test/shell.d/menu-images-test.sh:279

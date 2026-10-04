@@ -1,0 +1,13 @@
+id: REVIEW-261004-2L3H
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-04T19:31:44Z"
+subject: SW-REQ-260922-43HQ
+decision: approved
+comment: 'Read the fast-signature path of bin/omarchy-menu-images at upstream 035ce29f with this branch''s comment-only annotations. The script builds the v3 fast signature from the path and mtime of each image directory (lines 122-132). When the rows file and the fast signature exist and cmp finds them equal, it loads the rows and sets rows_cache_hit before any file scan (134-136). Both later branches require rows_cache_hit to be false (339, 342), so a hit never rescans, regenerates or rewrites. Upstream #14117 did not touch this path. The rationale cited lines 116-123 and a compare at line 124, which did not match the file; it now cites the build and the compare. Witness in test/shell.d/menu-images-test.sh: the warm reuse run spies on vipsthumbnail and finds no call (275-287).'
+citations:
+    - bin/omarchy-menu-images:124
+    - bin/omarchy-menu-images:129
+    - bin/omarchy-menu-images:134
+    - bin/omarchy-menu-images:339
+    - test/shell.d/menu-images-test.sh:279

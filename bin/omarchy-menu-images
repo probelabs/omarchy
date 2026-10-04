@@ -105,7 +105,7 @@ if [[ -n $current_image ]]; then
       break
     elif [[ -d $dir ]]; then
       selected_list_image=$(find -L "$dir" -maxdepth 1 -type f -samefile "$current_image" -print -quit 2>/dev/null)
-      # mcdc:ignore:tooling-limit the found arm is a bare break, and the decision record lands after that control transfer, so the row can never be emitted; the arm is behaviorally exercised by the resolve-by-content scenario, where the samefile search answers with the row to lead with
+      # mcdc:ignore:tooling-limit the found arm ends in a bare break, which the engine records as a second condition that is always true, so that condition never has an independence pair; both arms are behaviorally exercised by the resolve-by-content scenario, where the samefile search answers with the row to lead with
       [[ -n $selected_list_image ]] && break
     fi
   done
@@ -141,7 +141,7 @@ else
 
       while IFS= read -r -d '' image; do
         image_files+=("$image")
-        # mcdc:ignore:tooling-limit stat can only fail here if the file vanishes between the find above and this stat, a race the harness cannot stage deterministically, and the skip arm is a bare continue whose decision record lands after that control transfer; missing signatures are behaviorally covered by every rebuild
+        # mcdc:ignore:tooling-limit stat can only fail here if the file vanishes between the find above and this stat, a race the harness cannot stage deterministically, and the skip arm is a bare continue, which the engine records as a second condition that is always true, so the outcome is constant; missing signatures are behaviorally covered by every rebuild
         image_signature=$(stat -Lc '%s:%Y' "$image") || continue
         rows_signature+="$image:$image_signature"$'\n'
       done < <(find -L "$dir" -maxdepth 1 -type f \
@@ -177,21 +177,20 @@ generate_thumbnail() {
     rmdir "$lock" 2>/dev/null
   fi
 
-  # mcdc:ignore:tooling-limit the refused arm is a bare return, and the decision record lands after that control transfer, so the row can never be emitted; the arm is behaviorally exercised by the fresh-legacy-lock scenario, where the lock is still a directory
+  # mcdc:ignore:tooling-limit the refused arm is a bare return, which the engine records as a second condition carrying the failed open's status, so that condition is always false and never has an independence pair; the arm is behaviorally exercised by the fresh-legacy-lock scenario, where the lock is still a directory
   exec {lock_fd}>"$lock" || return
-  # mcdc:ignore:tooling-limit the timed-out arm is a bare return, and the decision record lands after that control transfer, so the row can never be emitted; staging it would need a lock holder that outlasts the 30 second wait, and serialization under contention is behaviorally tested by the concurrent-runs scenario
+  # mcdc:ignore:tooling-limit the timed-out arm needs a lock holder that outlasts the 30 second wait, which the harness cannot stage in a bounded run, and its bare return is recorded as a second condition that is always false, so it never has an independence pair; serialization under contention is behaviorally tested by the concurrent-runs scenario
   flock -w 30 "$lock_fd" || return
 
   # A generator killed mid-write leaves its partial $thumbnail.<pid>.jpg
   # behind. Only the lock holder writes these, so any found now are stale.
   rm -f "$thumbnail".*.jpg
 
-  # mcdc:ignore:tooling-limit the already-generated arm is a bare return, and the decision record lands after that control transfer, so the row can never be emitted; the arm is behaviorally exercised by the concurrent-runs scenario, where the second generator finds the thumbnail the first one moved into place
+  # mcdc:ignore:tooling-limit the already-generated arm is a bare return after a successful test, which the engine records as a second condition that is always true, so that condition never has an independence pair; the arm is behaviorally exercised by the concurrent-runs scenario, where the duplicate job finds the thumbnail the first generator moved into place
   [[ -f $thumbnail ]] && return
 
   # Callers fan out one generator per file, so keep each image conversion
   # single-threaded. ffmpegthumbnailer provides a still preview for videos.
-  # mcdc:ignore:tooling-limit a video only reaches this generator through the drain_pending_thumbnails fan-out, whose xargs bash -c children import the exported probe-wrapped function without the probe runtime and so can never record an observation under instrumentation; the video command selection is behaviorally exercised by the video-queue scenarios
   if is_video_path "$image"; then
     # Videos are generated before the picker opens, so one unreadable or
     # stalled file must not hold it shut. A failed run drops the row.
@@ -210,7 +209,6 @@ generate_thumbnail() {
     # Remember a video the converter rejected, so it costs nothing on the next
     # open. The key covers size and mtime, so a repaired file starts clean. A
     # timeout is left to retry: the machine may only have been busy.
-    # mcdc:ignore:tooling-limit the rejection marker is only written for videos, which reach this generator solely through the fan-out children that cannot record observations under instrumentation (see above); a timeout or kill is left to retry by design, and the rejection path is behaviorally covered by the ignored-marker scenarios
     if is_video_path "$image" && (( status != 124 && status != 137 )); then
       : >"$thumbnail.failed"
     fi
@@ -224,7 +222,7 @@ thumbnail_for() {
   local image="$1"
   local signature hash thumbnail
 
-  # mcdc:ignore:tooling-limit stat can only fail here if the file vanishes between the directory scan and this stat, a race the harness cannot stage deterministically, and the failed arm is a bare return whose decision record lands after that control transfer
+  # mcdc:ignore:tooling-limit stat can only fail here if the file vanishes between the directory scan and this stat, a race the harness cannot stage deterministically, and the failed arm's bare return is recorded as a second condition that is always false, so it never has an independence pair
   signature=$(stat -Lc '%s:%Y' "$image") || return
   hash=$(awk -F '\t' -v path="$image" -v sig="$signature" '$1 == path && $2 == sig { print $3; exit }' "$index_file" 2>/dev/null)
 
@@ -281,20 +279,28 @@ drain_pending_thumbnails() {
   if [[ -s $pending_file ]]; then
     if [[ $lazy_thumbnails == true && $cache_only != true ]]; then
       image_jobs=$(( $(nproc) / 2 ))
+      # mcdc:ignore:tooling-limit default-assignment idiom: the RHS assignment always succeeds, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); both pool sizes are behaviorally tested by the one-core and two-core pool scenarios
       (( image_jobs > 0 )) || image_jobs=1
+      # mcdc:ignore:tooling-limit cap-assignment idiom: the RHS assignment always succeeds, so its condition is always true and has no independence pair (masking); both outcomes are observed, and the cap is behaviorally tested by the eight-core pool scenario
       (( image_jobs > 2 )) && image_jobs=2
       # Publish jobs before trying to own the pool. A contended refresh leaves
       # its jobs for the current owner instead of throwing its queue away.
       queue_file="$rows_cache_file.thumbnails.pending"
+      # mcdc:ignore:tooling-limit the refused arm is a bare return, which the engine records as a second condition carrying the failed open's status, so that condition is always false and never has an independence pair; both arms are behaviorally tested, the refused one by the unopenable-queue-lock scenario
       exec {queue_lock_fd}>"$rows_cache_file.thumbnails.queue.lock" || return
+      # mcdc:ignore:defensive a blocking flock on an open descriptor fails only when a signal interrupts it, which the harness cannot stage deterministically, and its bare return is recorded as a condition that is always false; publication under contention is behaviorally tested by the pool scenarios
       flock "$queue_lock_fd" || return
       cat "$pending_file" >>"$queue_file"
       exec {queue_lock_fd}>&-
       (
         exec {worker_lock_fd}>"$rows_cache_file.thumbnails.lock"
+        # mcdc:ignore:tooling-limit both arms are observed, but the contended arm ends in exit 0, which the engine records as a true outcome, so the outcome is constant and no independence pair exists; the owner and the contended refresh are behaviorally tested by the pool scenarios
         flock -n "$worker_lock_fd" || exit 0
+        # mcdc:ignore:defensive the producer opened this same lock file just before forking the pool, so this open fails only if the cache directory changes in between, a race the harness cannot stage, and its exit 1 tail is recorded as a condition that is always false
         exec {queue_lock_fd}>"$rows_cache_file.thumbnails.queue.lock" || exit 1
+        # mcdc:ignore:tooling-limit the loop condition is the constant true, and the pool leaves the loop only through the break on an empty queue, so the condition has no false outcome; the drain-until-empty loop is behaviorally tested by the pool scenarios
         while true; do
+          # mcdc:ignore:defensive a blocking flock on an open descriptor fails only when a signal interrupts it, which the harness cannot stage deterministically, and its exit 1 tail is recorded as a condition that is always false
           flock "$queue_lock_fd" || exit 1
           if [[ ! -s $queue_file ]]; then
             # Release ownership while publishing is still locked. A producer
@@ -305,6 +311,7 @@ drain_pending_thumbnails() {
           fi
           # Unlink the batch under the queue lock, then drain its open fd.
           # Producers can publish the next batch while conversions run.
+          # mcdc:ignore:defensive only the pool owner removes the queue file, and it found the file non-empty under the queue lock it still holds, so this open fails only if another process deletes the file, which correct code never does; its exit 1 tail is recorded as a condition that is always false
           exec {pending_fd}<"$queue_file" || exit 1
           rm -f "$queue_file"
           flock -u "$queue_lock_fd"
@@ -335,7 +342,7 @@ if [[ $rows_cache_hit != true && -f $rows_cache_file && -f $rows_signature_file 
 elif [[ $rows_cache_hit != true ]]; then
   for image in "${image_files[@]}"; do
     thumbnail=$(thumbnail_for "$image")
-    # mcdc:ignore:tooling-limit thumbnail_for only answers empty when its own stat guard bails, which is the vanishing-file race staged above and unreachable here, and the skip arm is a bare continue whose decision record lands after that control transfer
+    # mcdc:ignore:tooling-limit thumbnail_for only answers empty when its own stat guard bails, which is the vanishing-file race noted above and cannot be staged here, and the skip arm's bare continue is recorded as a second condition that is always true, so the outcome is constant
     [[ -n $thumbnail ]] || continue
     # Cached rows are trusted on the directory's mtime alone, which a file
     # repaired in place never changes. Leave them uncached instead.

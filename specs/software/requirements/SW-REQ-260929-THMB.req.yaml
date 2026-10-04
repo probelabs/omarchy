@@ -5,7 +5,12 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when thumbnail_missing the image_selector shall eventually satisfy thumbnail_generated
-description: The pipeline detects video paths by extension and dispatches each media file to a format-appropriate converter. Videos go to ffmpegthumbnailer under a timeout; still images go to single-threaded vipsthumbnail. A lazy open generates stills inside the menu process and queues videos for the fan-out. The queued fan-out fills every core with still images and gives videos one lane per four cores. A content-hash lock serializes the generators per file; the generator reaps an aged legacy directory lock and leaves a fresh one to its owner. The finished thumbnail lands at the content-hash cache path and its row serves it.
+description: |-
+    The pipeline detects video paths by extension and sends each media file to a format-appropriate converter. Videos go to ffmpegthumbnailer under a timeout, and still images go to single-threaded vipsthumbnail. A content-hash lock serializes the generators per file. The generator reaps an aged legacy directory lock and leaves a fresh one to its owner. The finished thumbnail lands at the content-hash cache path, and its row serves it.
+
+    An eager open queues every missing thumbnail and converts the queue before it answers. Still images fill every core, and videos get one lane per four cores. A lazy open uses --lazy-thumbnails without --cache-only. It answers at once with each still as its own stand-in and adds the still jobs to a shared queue under a queue lock. One background pool per rows cache owns a pool lock and drains that queue in batches until it is empty. The pool runs one converter per two cores, at least one and at most two, at lowered CPU and I/O priority.
+
+    A lazy open that finds the pool busy leaves its jobs in the queue for that pool. Videos in a lazy open still take the eager video lanes.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -70,8 +75,8 @@ verification:
 history:
     created_by: agent:opencode
     created_at: "2026-09-30T00:16:34Z"
-    last_modified_by: human:Leonid Bugaev
-    last_modified_at: "2026-09-30T08:02:06Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-04T19:30:30Z"
 obligation_checklist:
     - external_call_timeout_bounded
 obligation_deferrals:
@@ -82,11 +87,11 @@ obligation_deferrals:
       ki_ref: KI-MENU-IMAGES-VIPS-NO-TIMEOUT
 obligation_hazards:
     - class: external_call_timeout_bounded
-      worst_case: 'vipsthumbnail runs with no timeout wrapper: a still image that stalls vips (corrupt/pathological file, stalled mount) wedges its fan-out lane forever; in --preload mode drain_pending_thumbnails runs before the picker opens, so enough wedged stills block the image picker open, and lazy opens leak one orphaned vipsthumbnail per open into the menu process'
+      worst_case: 'vipsthumbnail runs with no timeout wrapper: a still image that stalls vips (corrupt/pathological file, stalled mount) wedges its lane forever; an eager open waits for its whole fan-out before the picker opens, so one wedged still blocks the open, and in a lazy open it holds the shared pool so stills queued later get no thumbnail'
       severity: medium
 hazard_review:
     reviewed_at: "2026-10-01T21:26:24Z"
-    reviewed_by: agent:claude-baseline-pass
+    reviewed_by: agent:claude-code
     reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
@@ -98,7 +103,7 @@ hazard_review:
             - concurrency_scale
           not_applicable:
             - input_domain
-          rationale: 'Worst case: a directory whose stills all stall vips wedges every nproc lane and the preload drain never returns, so the image picker never opens. malformed_input: a vanished file or unparsable image fails its stat/converter guard and is skipped or queued without a row (thumbnail_for stat guard, generator failure arms); hashes are md5 of path+size+mtime, so hostile bytes never steer control flow. boundary: the legacy directory-lock reap fires only past 120s and only when the path is still a directory, and a fresh legacy lock makes the exec redirect fail so the generator bails rather than clobbering a live owner. edge_case: timeout(124) and SIGKILL(137) converter exits deliberately write no rejection marker so the next open retries, while any other non-zero exit records one - the asymmetry is the documented retry policy. Catalog 1.11.0 re-review: input_domain not applicable, media files are handed to converters by extension; their contents are not parsed here. concurrency_scale applied, lazy and queued generation run concurrently, serialized per file on a content-hash lock.'
+          rationale: 'Worst case: one still that stalls vips holds the eager drain, so the picker never opens. In a lazy open a stalled still holds the shared pool, so stills queued later get no thumbnail while the stall lasts (KI-MENU-IMAGES-VIPS-NO-TIMEOUT). malformed_input: a vanished file or unparsable image fails its stat/converter guard and is skipped or queued without a row (thumbnail_for stat guard, generator failure arms); hashes are md5 of path+size+mtime, so hostile bytes never steer control flow. boundary: the legacy directory-lock reap fires only past 120s and only when the path is still a directory, and a fresh legacy lock makes the exec redirect fail so the generator bails rather than clobbering a live owner. edge_case: timeout(124) and SIGKILL(137) converter exits deliberately write no rejection marker so the next open retries, while any other non-zero exit records one - the asymmetry is the documented retry policy. Catalog 1.11.0 re-review: input_domain not applicable, media files are handed to converters by extension; their contents are not parsed here. concurrency_scale applied: one pool per rows cache bounds lazy conversion to two converters at lowered priority, and repeated refreshes join its queue instead of starting more converters. A refresh that loses the pool lock leaves its jobs to the owner, which drains until the queue is empty. Eager, video and lazy generation can still overlap, and they serialize per file on the content-hash lock.'
         - category: property
           disposition: reviewed
           applied:
@@ -109,7 +114,7 @@ hazard_review:
           rationale: 'bash plus external converters: no manual memory, pointer arithmetic, or format strings; the only encoding surface (base64 row transit to the shell picker) belongs to the open-flow siblings 43HQ/MH9B, not to the generation contract this req carries. The nil/empty edge (stat guard returns empty and the caller skips) is recorded under scenario.'
         - category: domain
           disposition: reviewed
-          rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): the still lane vipsthumbnail call has no deadline and a stalled conversion wedges its lane - in preload mode the synchronous drain then blocks the picker open, in lazy mode each open leaks an orphaned vipsthumbnail child. Filed as KI-MENU-IMAGES-VIPS-NO-TIMEOUT; this is the batch D headline hazard. The remaining external surfaces are bounded: ffmpegthumbnailer under timeout -k 5 10, both flock waits bounded at 30s, and the done_file poll in the open flow is a poll-loop mechanism already deferred on SW-REQ-260922-MH9B under KI-MENU-SELECT-POLL-DEADLOCK (generation does not own that wait). cache_coherent: thumbnails key on path+size+mtime, so an edited image regenerates on next open and a repaired video starts clean - stale-cache serving needs an identical signature. The append-only index.tsv grows one ~100-byte row per new-or-changed file with no cap; accumulation_bounded is gated out of this project profile and the growth is desktop-churn bounded, recorded here as an explicitly evaluated residual rather than a new obligation.'
+          rationale: 'external_call_timeout_bounded evaluated and DEFERRED (see obligation_deferrals): the still lane vipsthumbnail call has no deadline and a stalled conversion wedges its lane - in an eager open the synchronous drain then blocks the picker open, and in a lazy open it holds the shared pool so stills queued later wait behind it. Filed as KI-MENU-IMAGES-VIPS-NO-TIMEOUT; this is the batch D headline hazard. The remaining external surfaces are bounded: ffmpegthumbnailer under timeout -k 5 10, the per-file and rows-cache flock waits at 30s, and the unbounded queue-lock waits guard only an append, an emptiness check and an unlink. The done_file poll in the open flow is a poll-loop mechanism already deferred on SW-REQ-260922-MH9B under KI-MENU-SELECT-POLL-DEADLOCK (generation does not own that wait). cache_coherent: thumbnails key on path+size+mtime, so an edited image regenerates on next open and a repaired video starts clean - stale-cache serving needs an identical signature. The append-only index.tsv grows one ~100-byte row per new-or-changed file with no cap; accumulation_bounded is gated out of this project profile and the growth is desktop-churn bounded, recorded here as an explicitly evaluated residual rather than a new obligation.'
 verification_state: failing
 lifecycle:
     change_history:

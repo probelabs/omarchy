@@ -1,6 +1,11 @@
 id: KI-MENU-IMAGES-VIPS-NO-TIMEOUT
-title: vipsthumbnail still-image lane has no timeout; a stalled conversion wedges its fan-out lane indefinitely
-description: generate_thumbnail dispatches still images to env VIPS_CONCURRENCY=1 vipsthumbnail with no timeout wrapper (bin/omarchy-menu-images:219), while the video lane wraps ffmpegthumbnailer in timeout -k 5 10. A still image that stalls vips - corrupt or pathological file, or a path on a stalled mount - holds its fan-out lane forever. In --preload mode drain_pending_thumbnails runs synchronously before the picker opens, so enough wedged stills block the image picker open entirely. Lazy opens spawn generate_thumbnail inside the menu process, where each wedged still leaks an orphaned vipsthumbnail child per open. The converter's content-hash lock fd stays closed, so a hung still pins no lock; damage is lane loss and unbounded process accumulation, not lock deadlock. Batch C flagged the mechanism; batch D confirms it against THMB and files the tracked debt.
+title: vipsthumbnail still-image lane has no timeout; a stalled conversion wedges its lane and, in lazy mode, the shared thumbnail pool
+description: |-
+    generate_thumbnail sends still images to env VIPS_CONCURRENCY=1 vipsthumbnail without a timeout (bin/omarchy-menu-images:199). The video lane wraps ffmpegthumbnailer in timeout -k 5 10. A still that stalls vips holds its lane forever. A corrupt or pathological file, or a path on a stalled mount, can cause the stall. An eager open, without --lazy-thumbnails or with --cache-only, waits for its whole fan-out before the picker opens. So one stalled still blocks that open.
+
+    Lazy opens queue their stills for one shared background pool per rows cache (upstream #14117). The pool runs at most two converters and finishes each batch before it takes the next. So a stalled still holds the pool, and stills that later opens queue get no thumbnail while the stall lasts. Each later open queues the stalled still again, so a freed lane can stall again. At 393a43d4 each lazy open started its own generators, and later stills still converted.
+
+    The generator holds the content-hash lock while its converter runs. The converter does not inherit the lock, so a killed generator frees it even when the converter hangs. A duplicate job for the stalled file waits 30 seconds on that lock and then gives up. The damage is lost lanes and missing thumbnails, not a lock deadlock.
 affected_requirements:
     - SW-REQ-260929-THMB
 evidence_manifests:
@@ -13,7 +18,7 @@ affected_api: bin/omarchy-menu-images still-image thumbnail lane
 reproducer_command: ./pocs/menu-images-vips-still-no-timeout.sh
 introduced_in: inception
 defect_class: latent
-mitigation: video lane bounded by timeout -k 5 10; lock fd closed for the converter so a hung still cannot pin the content-hash lock. Manual recovery is killing stray vipsthumbnail processes
+mitigation: timeout -k 5 10 bounds the video lane. The converter does not inherit the content-hash lock, so a killed generator frees the lock. Lazy conversions run in at most two lanes at lowered CPU and I/O priority, so a stalled converter competes less with the desktop. Manual recovery is to kill the stalled vipsthumbnail process and to move a still that stalls again out of the directory.
 remediation: Wrap the vipsthumbnail invocation in timeout (matching the video lane) or add an async kill to the generator. Then close this KI and flip the THMB deferral
 owner: agent:opencode-hazard-d
 review_date: "2026-09-30"
@@ -43,6 +48,14 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-images-vips-no-timeout.yaml
+    - at: "2026-10-04T19:29:23Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-title,set-description,set-mitigation
+    - at: "2026-10-04T19:29:34Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-mitigation
 poc_quality:
     real_infrastructure: true
     quantitative_impact: true
@@ -56,12 +69,12 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: pocs/menu-images-vips-still-no-timeout.sh extracts is_video_path and generate_thumbnail verbatim from bin/omarchy-menu-images and drives the real converter dispatch with a PATH-stubbed vipsthumbnail.
-        quantitative_impact: the still lane is still wedged inside vipsthumbnail at an external 5s kill (rc=124) while the video lane beside it is bounded by timeout -k 5 10; the control conversion completes and lands the thumbnail.
+        real_infrastructure: pocs/menu-images-vips-still-no-timeout.sh extracts is_video_path and generate_thumbnail verbatim from bin/omarchy-menu-images and drives the real converter dispatch with a PATH-stubbed vipsthumbnail; its lazy-pool arm runs the whole bin/omarchy-menu-images twice in lazy mode with the same kind of stub.
+        quantitative_impact: the still lane is still wedged inside vipsthumbnail at an external 5s kill (rc=124) while the video lane beside it is bounded by timeout -k 5 10; the control conversion completes and lands the thumbnail; in the lazy-pool arm, with one still stalled, a still added later gets 0 thumbnails in 3s, against 1 in the healthy control; at 393a43d4 the same sequence converts it.
         control_test: a healthy vipsthumbnail through the same extracted generator completes and moves the thumbnail into place (control arm in the same script).
         current_deployment_relevance: the unbounded vipsthumbnail invocation is live in generate_thumbnail on this branch; extracted at run time.
         honest_severity: medium - one stalled still wedges its fan-out lane indefinitely (availability of the thumbnail pipeline); no data loss.
-        reproducible: single command ./pocs/menu-images-vips-still-no-timeout.sh, deterministic, about 5 seconds.
+        reproducible: single command ./pocs/menu-images-vips-still-no-timeout.sh, deterministic, about 10 seconds; the stalled stub waits on a release file, so the run leaves no process behind.
         no_inflation: claim limited to the demonstrated unbounded wait on the still lane.
         operational_path_verified: the control arm exercises the intended bounded completion of the same generator.
     not_applicable:
