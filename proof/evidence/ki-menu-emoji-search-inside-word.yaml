@@ -5,15 +5,15 @@ results:
       command: bash test/shell.d/emojis-test.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-04T08:10:59Z"
-      revision: 8258b9c034277edd8cbb3e43b0ce227c70a10f12
+      executed_at: "2026-10-04T08:35:56Z"
+      revision: dd41eb5f8247bd0fc6a4a8ee4fe531564f753272
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-EMOJI-SEARCH-INSIDE-WORD` from the KnownIssue''s reproducer command: bash test/shell.d/emojis-test.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: Put back the single list of upstream 393a43d4 in filterEmojis in shell/plugins/emojis/EmojiSearch.js (push every match to one list in file order and return it): the red reproducer test/shell.d/emojis-test.sh fails at ''emoji filtering ranks whole keywords, then keyword starts, then matches inside a word''.'
         - test/shell.d/emojis-test.sh
       freshness_hashes:
         proof/known-issues/KI-MENU-EMOJI-SEARCH-INSIDE-WORD.yaml: ki-content-v1:sha256:cb50ea179bdb61be83541ec09e78040f6171af6b34d545f47f5ef18552d9fe7f
-        test/shell.d/emojis-test.sh: sha256:b4880f81338c6e9e883ea5b10f664c61928d17cf23d8986f9a13a01b107c16f2
+        test/shell.d/emojis-test.sh: sha256:037d975734c0ea83ee780b3896b3d48ab25abd8cd531c7750e796365447c52e8
       known_issues:
         - KI-MENU-EMOJI-SEARCH-INSIDE-WORD
       config:
