@@ -21,6 +21,7 @@ mitigation: The defect needs a user or extension string with a comma directly be
 remediation: Fixed by omacom/omarchy#13968 (one string-aware scanner; SW-REQ-260927-66FW).
 notes:
     - 'Fixed on pr/13968 by omacom/omarchy#13968 (ff77cd02 + b2dae8db): stripJsonc is one string-aware scanner that copies string contents verbatim, so a comma before } or ] inside a label or action survives. Spec: SW-REQ-260927-66FW (DEFECT-260927-CMMA). Report test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh exits 0; the in-suite tests tagged Reproduces now assert the fixed output and guard against a return.'
+    - 'Upstream: original #13250 (ours, 2026-09-25); our fix PR #13255 closed unmerged; open fix PRs #13305 and #13968 (ours).'
 customer_impact: 'A menu label or action whose text has a comma directly before } or ] is silently changed: the comma is removed. The label "x, ]y" shows as "x ]y", and the action mv f{.bak,} runs as mv f{.bak}, a different command. No error is shown. The shipped menu has no such text; only entries you write yourself can hit this.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
@@ -59,6 +60,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-01T22:39:22Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
     - at: "2026-10-02T15:04:04Z"
       by: agent:claude-baseline-pass
       action: edit
@@ -87,10 +92,6 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
-    - at: "2026-10-01T22:39:22Z"
-      by: agent:claude-pr-13968
-      action: edit
-      detail: set-remediation,append-note,set-status=fixed
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
