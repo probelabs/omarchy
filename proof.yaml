@@ -231,7 +231,7 @@ project:
                 language: js
                 command: >-
                     set -e; . test/junit/junit.sh; junit_begin menu-node;
-                    node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination="$JUNIT_PART" test/node/menumodel-replay.test.mjs || junit_fail $?;
+                    node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination="$JUNIT_PART" test/node/menumodel-replay.test.mjs test/node/emojisearch-replay.test.mjs || junit_fail $?;
                     junit_end
             # Compositor-bound menu suites: the live Menu.qml interaction
             # test (real IPC summons + wtype key events against a running
@@ -479,6 +479,20 @@ project:
                   runner: node
                   scope: shell/plugins/menu
                   js_glob: MenuModel.js
+                  test_command: menu-node
+                  min_decision_percent: 100
+                  min_condition_percent: 100
+                # The emoji picker's search (menu component, SW-REQ-261004-JATY).
+                # test/node/emojisearch-replay.test.mjs replays the JS bodies of
+                # test/shell.d/emojis-test.sh and menu-emoji-picker-test.sh under
+                # node:test, as menumodel-replay does for MenuModel.js, so the
+                # engine instruments EmojiSearch.js through an ESM import.
+                - id: menu-js-emojisearch
+                  enabled: true
+                  language: js
+                  runner: node
+                  scope: shell/plugins/emojis
+                  js_glob: EmojiSearch.js
                   test_command: menu-node
                   min_decision_percent: 100
                   min_condition_percent: 100

@@ -41,6 +41,7 @@ function filterEmojis(emojis, query, limit) {
   return out
 }
 
+//mcdc:ignore:tooling-limit the false arm is the QML path: Emojis.qml imports this file as a JavaScript resource, where module does not exist; node, the only runtime the js MC/DC engine instruments, always defines module for this CommonJS file (the node:test replay, require and the run_node_test pipe alike), so no instrumented run can reach that arm, while the exports arm is witnessed by every replayed assertion [reviewed: REVIEW-261004-F2FG]
 if (typeof module !== "undefined") {
   module.exports = {
     parseEmojis: parseEmojis,

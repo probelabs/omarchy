@@ -1,0 +1,16 @@
+id: REVIEW-261004-F2FG
+kind: spec_conformance
+reviewer: agent:claude-quattro-proof
+reviewed_at: "2026-10-04T15:44:52Z"
+subject: SW-REQ-261004-JATY
+decision: approved
+comment: 'Code-level MC/DC of shell/plugins/emojis/EmojiSearch.js, the code this requirement states (code_mcdc target menu-js-emojisearch, test command menu-node, 100% decision and condition floors). test/node/emojisearch-replay.test.mjs loads the file through an ESM import, so the js engine instruments it, and replays the JS bodies of test/shell.d/emojis-test.sh and test/shell.d/menu-emoji-picker-test.sh, read from the scripts at run time, plus one added case (a null limit). Every decision the engine counts is fully covered: parseEmojis on an array and on a non-array (line 5); filterEmojis on a value that is not a list (23); a missing limit, a null limit and a number (25); a limit that is not a number (26); a limit of 0 and above (28); the loop (32); a missing entry, an entry with no emoji and a full entry (34); an empty search text, a match and no match (35); the stop at the limit (37). The typeof module check (45) is excluded with mcdc:ignore:tooling-limit: its false arm is the QML path (Emojis.qml imports the file as a JavaScript resource, where module does not exist), which node, the only runtime the engine instruments, never takes; its true arm runs on every replayed assertion. Not decisions to the engine, checked by hand: the value defaults raw || "" (4), query || "" (13) and (item && item.k) || "" (18). The tests give query both arms and item.k both arms; raw is never empty in a test, and item is never missing there because filterEmojis skips a missing entry before it calls keywordText.'
+citations:
+    - shell/plugins/emojis/EmojiSearch.js:2@parseEmojis
+    - shell/plugins/emojis/EmojiSearch.js:22@filterEmojis
+    - shell/plugins/emojis/EmojiSearch.js:44
+    - test/node/emojisearch-replay.test.mjs:46
+    - test/node/emojisearch-replay.test.mjs:82
+    - test/shell.d/menu-emoji-picker-test.sh:45
+    - test/shell.d/menu-emoji-picker-test.sh:55
+    - test/shell.d/menu-emoji-picker-test.sh:66
