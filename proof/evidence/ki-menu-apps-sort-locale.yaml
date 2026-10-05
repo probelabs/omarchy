@@ -5,13 +5,13 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-04T19:47:22Z"
-      revision: 02686abbeb52c63f3b011226dbdde42b2ab7f8ca
+      executed_at: "2026-10-04T20:50:00Z"
+      revision: 37c0501164de40fec18e6bdd5039f955f78659be
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-APPS-SORT-LOCALE` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
+        pocs/menu-qml-static.sh: sha256:dae86e411b23794dff0e230761a2c85548b28f7f6c1b52084aa736d8f7af16d8
         proof/known-issues/KI-MENU-APPS-SORT-LOCALE.yaml: ki-content-v1:sha256:b93ff9320f60839f32842dc3f634fc7c28faf4dd23d836fd670a2d37423ef9ed
       known_issues:
         - KI-MENU-APPS-SORT-LOCALE

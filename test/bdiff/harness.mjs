@@ -148,6 +148,12 @@ function runJsonc() {
 //   R  activate row 1 (dmenu: pick beta; menu: run the action row)
 //   C  close
 //   X  the shared answer Process exits (fires the revision's onExited)
+//   D  Delete key on the cursor row (menu rows: row 0 is an app, so the
+//      uninstall confirmation opens, Uninstall preselected)
+//   K  Enter key, Q  Escape key, L  Left key (each through the revision's
+//      own Keys.onPressed handler and ConfirmDialog.handleKey)
+// An input that uses D/K/Q/L also prints the confirmation state and every
+// app removal; the others print exactly what they printed before.
 //
 // Model (method: review notes for #9056, harness bdiff-9056.js): the shared
 // QML `Process { id: resultProc }` ignores `running = true` while it is still
@@ -157,7 +163,9 @@ function runJsonc() {
 const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected']
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
-const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X'])
+const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'D', 'K', 'Q', 'L'])
+const KEY_OPS = new Set(['D', 'K', 'Q', 'L'])
+const DELETE_NAMES = ['requestDeleteSelected', 'cancelDelete', 'confirmDelete']
 
 function parseEvents(text) {
   const ops = []
@@ -199,6 +207,35 @@ function commandText(cmd) {
   return String(cmd)
 }
 
+// Verifies: SW-REQ-261002-VJR1
+// Reads the revision's own uninstall-confirmation code for the D/K/Q/L ops:
+// requestDeleteSelected, cancelDelete and confirmDelete into `found`, plus the
+// menu's Keys.onPressed body and ConfirmDialog.handleKey.
+function extractKeyHandling(qml, found) {
+  for (const n of DELETE_NAMES) {
+    const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
+    if (m) found[n] = m[0]
+  }
+  const k = qml.match(/Keys\.onPressed: (function\(event\) \{[\s\S]*?\n        \})/)
+  const dialog = readRev('shell/Ui/ConfirmDialog.qml')
+  const h = dialog && dialog.match(/\n  function handleKey\(event\) \{[\s\S]*?\n  \}\n/)
+  return { keySrc: k ? k[1] : null, confirmKeySrc: h ? h[0] : null }
+}
+
+// Verifies: SW-REQ-261002-VJR1
+// Compiles that code in the replay's scope and returns press(key): a key goes
+// through the revision's Keys.onPressed, which hands it to the uninstall
+// confirmation while one is open. Throws when the code does not compile.
+function bindKeyHandling({ ctx, scope, sandbox, r, found, keySrc, confirmKeySrc }) {
+  const deleteConfirm = { selectedIndex: 1, get opened() { return r.deleteConfirmOpen }, canceled() { r.cancelDelete() }, confirmed() { r.confirmDelete() } }
+  sandbox.deleteConfirm = deleteConfirm
+  sandbox.Util.editsFilter = () => false
+  const del = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${DELETE_NAMES.map(n => found[n]).join('\n')}; return { ${DELETE_NAMES.join(', ')}, key: ${keySrc} } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
+  for (const n of DELETE_NAMES) r[n] = del[n]
+  deleteConfirm.handleKey = vm.runInContext(`(function(root) { ${confirmKeySrc}; return handleKey })`, ctx, { timeout: VM_TIMEOUT_MS })(deleteConfirm)
+  return key => del.key({ key: sandbox.Qt[key], modifiers: 0, text: '' })
+}
+
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())
@@ -208,14 +245,17 @@ function runEvents() {
   const qml = readRev(rel)
   if (qml === null) { emit(`lifecycle: MISSING ${rel}`); return }
   const { found, onExited } = extractFunctions(qml)
-  const missing = NAMES.filter(n => !found[n])
+  const keyed = ops.some(op => KEY_OPS.has(op))
+  const { keySrc, confirmKeySrc } = keyed ? extractKeyHandling(qml, found) : { keySrc: null, confirmKeySrc: null }
+  const missing = NAMES.concat(keyed ? DELETE_NAMES : []).filter(n => !found[n])
+    .concat(keyed && !keySrc ? ['Keys.onPressed'] : [], keyed && !confirmKeySrc ? ['ConfirmDialog.handleKey'] : [])
   if (missing.length) {
     // Without these the sequence cannot be replayed faithfully; report, do not guess.
     emit(`lifecycle: MISSING-FUNCTION ${missing.join(' ')}`)
     return
   }
 
-  const S = { writes: [], busy: false, actions: [], apps: [] }
+  const S = { writes: [], busy: false, actions: [], apps: [], removed: [] }
   const exec = cmd => { S.writes.push(commandText(cmd)) }
   const resultProc = {
     command: [],
@@ -228,7 +268,11 @@ function runEvents() {
     Quickshell: { execDetached: exec, env: () => '' },
     Util: { shellQuote: s => "'" + String(s).replace(/'/g, "'\\''") + "'", execDetached: exec },
     keyCatcher: { forceActiveFocus() {} },
-    Qt: { callLater() {} },
+    Qt: {
+      callLater() {},
+      Key_Escape: 1, Key_Tab: 2, Key_Backtab: 3, Key_Backspace: 4, Key_Return: 5, Key_Enter: 6, Key_Delete: 7, Key_Left: 8,
+      Key_Up: 9, Key_Right: 10, Key_Down: 11, Key_PageUp: 12, Key_PageDown: 13, NoModifier: 0, ShiftModifier: 1,
+    },
     MenuModel: mm.api || {},
     console: { log() {}, warn() {}, error() {} },
   }
@@ -239,13 +283,14 @@ function runEvents() {
     selectionFile: '', doneFile: '', dmenuPrompt: '', dmenuOptions: [], dmenuWidth: 300, dmenuMaxHeight: 0,
     activeMenu: 'root', navStack: [], filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '',
     pendingInitialMenu: 'root', deleteConfirmOpen: false, deleteTarget: null, shell: null,
-    appLibrary: { launch(id) { S.apps.push(id) }, refreshIcons() {}, remove() {} },
+    appLibrary: { launch(id) { S.apps.push(id) }, refreshIcons() {}, remove(id) { S.removed.push(id) } },
     items: ITEMS, itemOrder: Object.keys(ITEMS),
     item(id) { return ITEMS[id] || null },
     resolveRoute(x) { return x },
     disarmPointer() {}, evaluateGuards() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
     setActiveMenu(id) { this.activeMenu = id; this.rebuildDisplay() },
     rowSelectable(i) { return i >= 0 && i < rows.length },
+    setFilter(t) { this.filterText = t }, goBack() {}, select() {}, settleCursor() {},
     // runAction is stubbed: it is not part of the request lifecycle, and the
     // stub keeps action commands apart from answer writes.
     runAction(a) { S.actions.push(String(a)) },
@@ -274,6 +319,15 @@ function runEvents() {
     return
   }
   for (const n of NAMES) r[n] = fns[n]
+  let press = null
+  if (keyed) {
+    try {
+      press = bindKeyHandling({ ctx, scope, sandbox, r, found, keySrc, confirmKeySrc })
+    } catch (e) {
+      emit(`lifecycle: COMPILE-ERROR ${errName(e)}`)
+      return
+    }
+  }
 
   const callers = new Map()
   const stray = []
@@ -309,6 +363,10 @@ function runEvents() {
         case 'R': r.activateIndex(1); break
         case 'C': r.close(); break
         case 'X': exitProc(); break
+        case 'D': press('Key_Delete'); break
+        case 'K': press('Key_Return'); break
+        case 'Q': press('Key_Escape'); break
+        case 'L': press('Key_Left'); break
       }
       deliver()
       if (slow && S.busy) { exitProc(); deliver() }
@@ -328,6 +386,10 @@ function runEvents() {
   emit(`final opened=${r.opened} mode=${r.mode} requestActive=${r.requestActive} doneFileOwner=${owner}`)
   emit(`actions ${S.actions.join(',') || '-'}`)
   emit(`apps ${S.apps.join(',') || '-'}`)
+  if (keyed) {
+    emit(`confirm open=${r.deleteConfirmOpen} target=${r.deleteTarget ? r.deleteTarget.appId : '-'}`)
+    emit(`removed ${S.removed.join(',') || '-'}`)
+  }
   emit(`stray-writes ${stray.join(' | ') || '-'}`)
 }
 

@@ -1,0 +1,3 @@
+# Verifies: SW-REQ-261002-VJR1
+# Delete raises the uninstall confirmation, then a route is summoned and Enter is pressed.
+M D M K

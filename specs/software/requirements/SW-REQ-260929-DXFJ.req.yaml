@@ -19,36 +19,35 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:54:47.596134Z"
+    reviewed_at: "2026-10-02T17:00:04.146216Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:47e688c32dde592847708eb624fd5d8fbd0e6a76ab3a8335db42c6a8642f9e03
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onShownChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:onShownChanged: file1:3f0f23426e45d77accc5bea5e92f84c8
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
-        - reviewed_at: "2026-10-02T16:44:39.973326Z"
+        - reviewed_at: "2026-10-02T11:53:15.765142Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in open(), which now runs cancelDelete() when an uninstall confirmation is pending (3 lines) and names SW-REQ-261002-VJR1 in its Implements line; every other function is byte-identical and only shifted by 3 lines, so this requirement''s implementation and its annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1164
+            - shell/plugins/menu/Menu.qml:1172
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:20
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
+        - reviewed_at: "2026-10-02T17:00:04.146216Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1161
-            - shell/plugins/menu/Menu.qml:1169
-            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
-            - test/shell.d/menu-pointer-lifecycle-test.sh:66
-            - test/shell.d/menu-pointer-lifecycle-test.sh:7
-            - test/shell.d/menu-pointer-lifecycle-test.sh:72
-        - reviewed_at: "2026-10-02T16:54:47.596134Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1162
-            - shell/plugins/menu/Menu.qml:1170
+            - shell/plugins/menu/Menu.qml:1165
+            - shell/plugins/menu/Menu.qml:1173
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-pointer-lifecycle-test.sh:66
             - test/shell.d/menu-pointer-lifecycle-test.sh:7

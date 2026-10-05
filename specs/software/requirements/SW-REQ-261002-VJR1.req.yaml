@@ -1,0 +1,138 @@
+id: SW-REQ-261002-VJR1
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when summon_over_pending_uninstall the menu_actions shall immediately satisfy pending_uninstall_dismissed
+description: A summon can arrive while the uninstall confirmation shows. The menu then closes the confirmation and removes nothing, as its Cancel button does. The summoned prompt or route then takes the next key. So the confirmation cannot answer a request that replaced its rows.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro 821ae589 has this defect. Delete on an app row opens the uninstall confirmation, with Uninstall preselected. The confirmation state closes only in onOpenedChanged, when the menu closes. A summon goes through open() into openDmenu or openRoute. These replace the rows while opened stays true.
+
+    So the confirmation stays up and still takes every key. Enter then runs confirmDelete. That cancels the summoned request and removes the app.
+
+    The fix cancels a pending confirmation at the top of open(), through cancelDelete, the same path as the Cancel button. open() is the only entry for every summon. A live run on 821ae589 deleted the desktop file of the app; with the fix the file stays and the prompt answers.
+tags: []
+variables:
+    - summon_over_pending_uninstall
+    - pending_uninstall_dismissed
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+    reviewed_at: "2026-10-02T17:00:04.794983Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_fingerprint: sha256:1657d387c6f3694db3d78cf46c22e739d9be177a0d4757c94b92b90a865d96bf
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:open: file1:3f0f23426e45d77accc5bea5e92f84c8
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
+    review_history:
+        - reviewed_at: "2026-10-02T11:53:28.109712Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A: new requirement. Implemented by the guarded root.cancelDelete() at the top of open() in Menu.qml (Implements line on open); verified by test/shell.d/menu-uninstall-confirm-test.sh, which runs the real open/openDmenu/openRoute/cancelDelete/confirmDelete and key handler bodies; satisfies SYS-REQ-260922-6642 (menu actions behave as the user chose). Spec conformance REVIEW-261002-MV7M'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-uninstall-confirm-test.sh:5
+            - test/shell.d/menu-uninstall-confirm-test.sh:6
+        - reviewed_at: "2026-10-02T11:54:19.517576Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A: new requirement. Implemented by the guarded root.cancelDelete() at the top of open() in Menu.qml (Implements line on open); verified by test/shell.d/menu-uninstall-confirm-test.sh, which runs the real open/openDmenu/openRoute/cancelDelete/confirmDelete and key handler bodies; satisfies SYS-REQ-260922-6642 (menu actions behave as the user chose). Spec conformance REVIEW-261002-MV7M'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-uninstall-confirm-test.sh:5
+            - test/shell.d/menu-uninstall-confirm-test.sh:6
+        - reviewed_at: "2026-10-02T12:26:05.455297Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A: VJR1 is now also verified by the behaviour-diff lifecycle harness: test/bdiff/harness.mjs extractKeyHandling/bindKeyHandling run each revision''s real requestDeleteSelected/cancelDelete/confirmDelete, Keys.onPressed and ConfirmDialog.handleKey, and the six seq-delete-*.events inputs drive a select, input and route summon over a raised uninstall confirmation (pending_uninstall_dismissed=T at the head, F at 5d4fb9a8) plus Enter/Escape/Cancel controls with no summon. Implemented by the guarded root.cancelDelete() in open(); satisfies SYS-REQ-260922-6642. Spec conformance REVIEW-261002-MV7M'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-cancel-button.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-escape.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-input-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-menu-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-select-enter.events:1
+            - test/bdiff/harness.mjs:210
+            - test/bdiff/harness.mjs:225
+            - test/shell.d/menu-uninstall-confirm-test.sh:5
+            - test/shell.d/menu-uninstall-confirm-test.sh:90
+        - reviewed_at: "2026-10-02T17:00:04.794983Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:21
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-cancel-button.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-escape.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-input-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-menu-enter.events:1
+            - test/bdiff/corpus/lifecycle/seq-delete-confirm-then-select-enter.events:1
+            - test/bdiff/harness.mjs:210
+            - test/bdiff/harness.mjs:225
+            - test/shell.d/menu-uninstall-confirm-test.sh:5
+            - test/shell.d/menu-uninstall-confirm-test.sh:90
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-A
+        reviewed_at: "2026-10-02T12:20:00Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-02T11:49:23Z"
+    last_modified_by: agent:claude-pr-A
+    last_modified_at: "2026-10-02T11:52:35Z"
+hazard_review:
+    reviewed_at: "2026-10-02T12:10:00Z"
+    reviewed_by: agent:claude-pr-A
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+          not_applicable:
+            - boundary
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a confirmation raised for the old rows answers the new request, so the Enter meant for a prompt removes an app and cancels the prompt. edge_case: each kind of summon is a case - a select prompt, an input prompt, and a route (witnessed). A summon with no confirmation open leaves all as before. The action-alias route closes the menu through cancel(), which clears the confirmation anyway. Enter on the confirmation itself, with no summon, still removes the app (witnessed). boundary not applicable: the decision is one boolean, with no range or limit. input_domain not applicable: the payload text does not change the decision. concurrency_scale not applicable: summons and key presses run one after the other on the GUI thread. A key that arrives before the summon still answers the confirmation, as the user meant.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'Every summon resolves a pending confirmation to one defined state: closed, nothing removed, target cleared. Every summon without one leaves the dialog state unchanged. No path keeps a dialog open over rows it was not raised for.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'Two QML properties and one guarded call; no memory, encoding or numeric surface.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'Dialog state only. The removal and its privilege handling are in the shared app library, under its own requirements. This change only stops an unintended call to it.'
+lifecycle:
+    change_history:
+        - date: "2026-10-02T11:52:35Z"
+          from: draft
+          to: review
+          reason: '[pr-A] upstream fix for the uninstall confirmation that outlives a summon: requirement authored for the behaviour the change adds; spec conformance REVIEW-261002-MV7M; executing witnesses in test/shell.d/menu-uninstall-confirm-test.sh'
+          changed_by: agent:claude-pr-A
