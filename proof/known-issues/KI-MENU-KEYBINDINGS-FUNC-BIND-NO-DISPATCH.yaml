@@ -17,6 +17,7 @@ mitigation: none - the rows are visible, selecting them silently does nothing
 remediation: Cache a dispatchable expression for function binds (emit the Lua body or register bind_commands entries for the shipped function binds). Then refuse to render rows whose recovered dispatcher is empty
 notes:
     - 'Upstream: original fix PR #11851 (2026-09-14); no issue tracks it.'
+    - '2026-10-05: the reproducer fixture now prints the Hyprland 0.56.2 shape. Every Lua bind reports dispatcher __lua with a numeric registry ref as arg; the old fixture printed an empty arg. With the old fixture a fix that dispatches through the ref still read as defect present.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -53,6 +54,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+    - at: "2026-10-05T17:09:50Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
@@ -78,7 +83,7 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: pocs/crs-260930-jvx8-c02.sh stubs hyprctl with the exact binds text the shipped function binds produce and runs the real dynamic_bindings from bin/omarchy-menu-keybindings.
+        real_infrastructure: pocs/crs-260930-jvx8-c02.sh stubs hyprctl with the binds text Hyprland 0.56.2 prints for a shipped function bind (dispatcher __lua, arg = its numeric registry ref) and runs the real dynamic_bindings from bin/omarchy-menu-keybindings.
         quantitative_impact: 1 of 1 __lua rows loses its dispatcher field (empty) while the exec row beside it keeps exec/alacritty; a registered map entry restores dispatch for the same row.
         control_test: with a registered dispatchable action in LUA_BIND_DISPATCHER_MAP - what o.bind_commands registration provides for non-function binds - the same __lua row dispatches (control arm in the same script).
         current_deployment_relevance: the __lua map overwrite in dynamic_bindings is live on this branch.
