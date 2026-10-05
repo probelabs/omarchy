@@ -19,10 +19,12 @@ affected_api: bin/omarchy-menu-select (dmenu select protocol)
 reproducer_command: /bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
 introduced_in: inception
 defect_class: latent
+remediation: 'Fixed by omacom/omarchy#9031: the menu commands record which shell process took the request and stop waiting, with exit 1 and "the shell exited before answering", about a second after that process exits or is replaced by a restart (bin/omarchy-menu-handshake, used by omarchy-menu-select, -input and -images).'
 notes:
     - 'Upstream: original fix PR #9031 (2026-08-29); no issue tracks it; related open PR #8696 waits on the done file instead of polling.'
+    - 'Fixed on pr/9031 by omacom/omarchy#9031: test/shell.d/menu-select-poll-deadlock-repro.sh exits 0 there (the stand-in shell dies 0.3s after taking the request; the script exits 1 after about 1s) with its healthy-answer control. Not part of this issue and not changed by the PR: a summon the shell refuses (it answers "unknown" and omarchy-shell exits 0, for example with omarchy.menu in disabledPlugins) still waits while the shell stays alive.'
 review_date: "2026-12-23"
-status: reviewed
+status: fixed
 history:
     - at: "2026-09-23T16:21:31Z"
       by: agent:kimi-dogfood
@@ -131,6 +133,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-10-05T17:14:51Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
