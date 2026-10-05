@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:41.283354Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T17:30:26.102485Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:goBack: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:setActiveMenu: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:goBack: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:setActiveMenu: file1:64f328f0894d30f811c70c058d219db6
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -77,6 +77,19 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1205
+            - shell/plugins/menu/Menu.qml:783
+            - shell/plugins/menu/Menu.qml:799
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:352
+            - test/shell.d/menu-compositor-test.sh:362
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T17:30:26.102485Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on the mirror of omacom/omarchy#12255 (head 9b7c3c58) on quattro-proof 1e433732: the Menu.qml functions linked to this requirement are unchanged and keep their line numbers. Menu.qml changes in one line only: its parseMenuJsonc wrapper now calls MenuModel.parseMenuJsonc(raw, false), so both menu files reach mergeMenuSources un-normalized.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1205

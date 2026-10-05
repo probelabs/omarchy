@@ -19,19 +19,19 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-02T16:54:43.088552Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T17:30:19.973034Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:9283d0703106d7c95142674ba5f961eb5ea7609456174d69e86e992a25b93ff0
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:childCount: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:displayRow: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:isDisabled: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:isVisible: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:labelFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:isDisabled: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:isVisible: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:labelFor: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/Menu.qml:childCount: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:displayRow: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:isDisabled: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:isVisible: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:labelFor: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/MenuModel.js:isDisabled: file1:354f5f3ce48e95e7c18a4f0afa167b27
+            shell/plugins/menu/MenuModel.js:isVisible: file1:354f5f3ce48e95e7c18a4f0afa167b27
+            shell/plugins/menu/MenuModel.js:labelFor: file1:354f5f3ce48e95e7c18a4f0afa167b27
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -96,6 +96,24 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:498
+            - shell/plugins/menu/Menu.qml:506
+            - shell/plugins/menu/Menu.qml:513
+            - shell/plugins/menu/Menu.qml:545
+            - shell/plugins/menu/Menu.qml:563
+            - shell/plugins/menu/MenuModel.js:284
+            - shell/plugins/menu/MenuModel.js:307
+            - shell/plugins/menu/MenuModel.js:315
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-05T17:30:19.973034Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on the mirror of omacom/omarchy#12255 (head 9b7c3c58) on quattro-proof 1e433732: the MenuModel.js functions linked to this requirement are unchanged; only their line numbers moved (+18 after parseMenuJsonc, +4 after mergeMenuSources). Their inputs are now rows normalized once in mergeMenuSources, which carry the same fields as before. Menu.qml changes in one line only: its parseMenuJsonc wrapper now calls MenuModel.parseMenuJsonc(raw, false), so both menu files reach mergeMenuSources un-normalized.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:498

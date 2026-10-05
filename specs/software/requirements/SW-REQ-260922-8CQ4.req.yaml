@@ -19,17 +19,17 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-02T16:54:40.077894Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T17:30:24.551029Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:72e8b6bad5bd5308aa4d23de7c560dd7d0ae5cff5c16e9659afc85a5fc3ecde6
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:cancelDelete: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:confirmDelete: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onCanceled: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onConfirmed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:cancelDelete: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:confirmDelete: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:onCanceled: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:onConfirmed: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:requestDeleteSelected: file1:64f328f0894d30f811c70c058d219db6
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -81,6 +81,22 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1205
+            - shell/plugins/menu/Menu.qml:1265
+            - shell/plugins/menu/Menu.qml:1267
+            - shell/plugins/menu/Menu.qml:846
+            - shell/plugins/menu/Menu.qml:856
+            - shell/plugins/menu/Menu.qml:865
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-compositor-test.sh:399
+            - test/shell.d/menu-compositor-test.sh:417
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T17:30:24.551029Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on the mirror of omacom/omarchy#12255 (head 9b7c3c58) on quattro-proof 1e433732: the Menu.qml functions linked to this requirement are unchanged and keep their line numbers. Menu.qml changes in one line only: its parseMenuJsonc wrapper now calls MenuModel.parseMenuJsonc(raw, false), so both menu files reach mergeMenuSources un-normalized.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1205

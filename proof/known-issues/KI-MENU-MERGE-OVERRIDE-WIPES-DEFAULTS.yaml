@@ -15,7 +15,7 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: Default installs ship no label-only overrides; users who override a row restate the fields they care about, masking the wipe
-remediation: 'Fixed by omacom/omarchy#12255: both menu files are parsed raw, user entries are overlaid per id, and each merged row is normalized once (SW-REQ-260922-7NPE). #10007 is the same fix.'
+remediation: 'Fixed by omacom/omarchy#12255. The loader parses both menu files raw, overlays user entries per id, and normalizes each merged row once (SW-REQ-260922-7NPE). #10007 makes the same fix.'
 notes:
     - 'Upstream: PR #10007 (2026-09-03) reported this first. The canonical issue is #11211; #11509 and #12236 are duplicates. Fix PRs #11137, #11519 and #11711 were closed unmerged; #10007 and #12255 are open.'
     - 'Reproducer moved to pocs/menu-override-sweep.js on 2026-10-05. It drives the live load path: the parsers Menu.qml''s FileViews call, then mergeMenuSources, over one-field overrides of every shipped row. It exits 1 while the defect is present and 0 once fixed, with a restate-unchanged control. The earlier probe (menu-probes.js F10) builds the user row with normalizeItem itself, so it could not observe a loader fix such as #10007 or #12255.'
@@ -64,6 +64,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-remediation,append-note,set-status=fixed
+    - at: "2026-10-05T17:30:40Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-remediation
 kill_domain: merge_semantics
 affected_file:
     - shell/plugins/menu/MenuModel.js

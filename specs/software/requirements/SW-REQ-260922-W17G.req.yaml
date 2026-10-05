@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-47T8
-    reviewed_at: "2026-10-01T09:52:20.371786138Z"
-    reviewed_by: agent:claude-quattro-clean
+    reviewed_at: "2026-10-05T17:30:16.980493Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:b91978261365965ea5975ff28c9d069b1c5ef1fe4db20e794b9a371e0bc51a96
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/MenuModel.js:guardPrelude: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:guardPrelude: file1:354f5f3ce48e95e7c18a4f0afa167b27
         satisfies:
             SYS-REQ-260922-47T8: req1:f800343ce4e05af41da7690e592b0cbe
     review_history:
@@ -47,6 +47,15 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-guards-test.sh:5
             - test/shell.d/menu-guards-test.sh:8
+        - reviewed_at: "2026-10-05T17:30:16.980493Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on the mirror of omacom/omarchy#12255 (head 9b7c3c58) on quattro-proof 1e433732: the MenuModel.js functions linked to this requirement are unchanged; only their line numbers moved (+18 after parseMenuJsonc, +4 after mergeMenuSources). Their inputs are now rows normalized once in mergeMenuSources, which carry the same fields as before. Menu.qml changes in one line only: its parseMenuJsonc wrapper now calls MenuModel.parseMenuJsonc(raw, false), so both menu files reach mergeMenuSources un-normalized.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:479
+            - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
+            - test/shell.d/menu-guards-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

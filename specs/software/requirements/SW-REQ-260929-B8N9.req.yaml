@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:47.269065Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T17:30:29.677368Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:0faebab064ec5dad24c320b57dcfc96c16ca0857948daaa09a46ed81d3778693
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:item: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:item: file1:64f328f0894d30f811c70c058d219db6
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
@@ -39,6 +39,15 @@ traces:
             - test/shell.d/menu-pointer-lifecycle-test.sh:42
             - test/shell.d/menu-pointer-lifecycle-test.sh:46
             - test/shell.d/menu-pointer-lifecycle-test.sh:49
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
+        - reviewed_at: "2026-10-05T17:30:29.677368Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on the mirror of omacom/omarchy#12255 (head 9b7c3c58) on quattro-proof 1e433732: the Menu.qml functions linked to this requirement are unchanged and keep their line numbers. Menu.qml changes in one line only: its parseMenuJsonc wrapper now calls MenuModel.parseMenuJsonc(raw, false), so both menu files reach mergeMenuSources un-normalized.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:233
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C

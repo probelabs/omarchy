@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-10-02T16:54:48.352922Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T17:30:31.095689Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:onClicked: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onEntered: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onPositionChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:onClicked: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:onEntered: file1:64f328f0894d30f811c70c058d219db6
+            shell/plugins/menu/Menu.qml:onPositionChanged: file1:64f328f0894d30f811c70c058d219db6
         satisfies:
             STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
@@ -87,6 +87,20 @@ traces:
             - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
             - test/shell.d/menu-acceptance-test.sh:14
             - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:333
+            - test/shell.d/menu-compositor-test.sh:347
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T17:30:31.095689Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-review on the mirror of omacom/omarchy#12255 (head 9b7c3c58) on quattro-proof 1e433732: the Menu.qml functions linked to this requirement are unchanged and keep their line numbers. Menu.qml changes in one line only: its parseMenuJsonc wrapper now calls MenuModel.parseMenuJsonc(raw, false), so both menu files reach mergeMenuSources un-normalized.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1477
+            - shell/plugins/menu/Menu.qml:1482
+            - shell/plugins/menu/Menu.qml:1486
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:14
             - test/shell.d/menu-compositor-test.sh:333
             - test/shell.d/menu-compositor-test.sh:347
             - test/shell.d/menu-compositor-test.sh:5
