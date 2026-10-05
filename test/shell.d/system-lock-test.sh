@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
-# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP
+# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89
 
 # Row dispositions (see proof mcdc show <REQ-ID> for the tables):
 #mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the lock path runs pkill -x ttfx and timeout 1s pidwait as unconditional sequence points; a run that reaches the path always attempts the signal and always waits bounded, so neither-fails is structural [reviewed: REVIEW-1]
@@ -74,6 +74,7 @@ run_lock() {
 
 rc=0
 run_lock || rc=$?
+# SYS-REQ-260927-WC89:error_handling:nominal
 (( rc == 0 )) || fail "system lock succeeds once the session is secure" "exit $rc, $(<"$tmpdir/stderr")"
 pass "system lock succeeds once the session is secure"
 
@@ -107,6 +108,7 @@ LOCK_REPLY=missing-pam run_lock || rc=$?
 (( rc == 1 )) || fail "system lock fails when no lock screen is configured" "exit $rc"
 grep -q "no lock screen is configured" "$tmpdir/stderr" ||
   fail "system lock says why the session was not locked" "$(<"$tmpdir/stderr")"
+# SYS-REQ-260927-WC89:error_handling:negative
 # SYS-REQ-260912-T0XP:error_handling:negative
 grep -q "^omarchy-notification-send .*Screen did not lock" "$call_log" ||
   fail "system lock warns on screen when it could not lock"
