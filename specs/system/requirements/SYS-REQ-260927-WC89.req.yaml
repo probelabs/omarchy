@@ -44,17 +44,10 @@ verification:
 history:
     created_by: agent:kimi-zero-warnings
     created_at: "2026-09-27T20:58:23Z"
-    last_modified_by: agent:opencode-quattro
-    last_modified_at: "2026-09-30T21:16:33Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-05T17:54:10Z"
 obligation_checklist:
     - error_handling
-obligation_deferrals:
-    - obligation_class: error_handling
-      reason: 'The graded worst case in the hazard_review above is a real, reproduced failure mode: bin/omarchy-system-lock line 10 swallows a refused or absent lock engagement and exits 0 behind the already-dismissed Lock row, so the user believes the session locked; failure surfacing is owned by the lock component (SYS-REQ-260912-T0XP family, per the delegation above), and until that lands the debt is tracked on KI-260930-2FBE with a green tripwire.'
-      tracking: KI-260930-2FBE
-      owner: agent:opencode-quattro
-      ki_ref: KI-260930-2FBE
-      reproducer: ./pocs/wc89-silent-lock-exit0.sh
 obligation_delegations:
     - class: error_handling
       delegated_to: SYS-REQ-260912-T0XP
