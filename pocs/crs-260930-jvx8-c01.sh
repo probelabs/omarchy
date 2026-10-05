@@ -20,8 +20,10 @@ TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$TMP/home/.config"
 cp -r "$REPO/default" "$TMP/home/.config/default"
 mkdir -p "$TMP/home/.config/hypr"
-cp "$REPO/config/hypr/hyprland.lua" "$TMP/home/.config/hypr/hyprland.lua"
-cp "$REPO/config/hypr/bindings.lua" "$TMP/home/.config/hypr/bindings.lua"
+# The whole shipped user config, as the control arm below uses: hyprland.lua
+# also requires hypr.monitors and hypr.input before hypr.bindings, so a partial
+# copy would end a fixed scan on a missing module and read as the defect.
+cp "$REPO"/config/hypr/*.lua "$TMP/home/.config/hypr/"
 cat >> "$TMP/home/.config/hypr/bindings.lua" <<'LUA'
 o.rebind("SUPER + RETURN", "Terminal", { launch = "alacritty" })
 o.bind("SUPER + SHIFT + R", "SSH", { launch = "alacritty -e ssh your-server" })
