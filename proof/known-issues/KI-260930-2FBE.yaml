@@ -14,12 +14,13 @@ tripwire_mutation: 'bin/omarchy-system-lock line 10 `omarchy-shell lock lock >/d
 introduced_in: inception
 defect_class: latent
 mitigation: 'Verify a suspicious lock before walking away: run omarchy-hyprland-session-locked (exit 0 locked, 1 unlocked) or look at the lock surface. Re-trigger the failure deliberately in a terminal, where omarchy-system-lock shows the callee stderr directly.'
-remediation: 'bin/omarchy-system-lock must propagate the omarchy-shell lock exit instead of exiting 0. The lock component (SYS-REQ-260912-T0XP family) owns engagement and failure surfacing per the WC89 obligation_delegations record. Raise a visible failure surface (desktop notification with a non-zero CLI exit); the menu side stays fire-and-forget by design. Close criterion: pocs/wc89-silent-lock-exit0.sh flips red, with every failure arm exiting non-zero and the control still green.'
+remediation: 'Fixed by omacom/omarchy#9429: bin/omarchy-system-lock now waits up to 10s for lock status to report the session secure, asks again when a request was dropped, and on failure exits 1 with a critical "Screen did not lock" notification. The alternative #13756 also makes the failure arms exit non-zero, but reports failure only through the exit code.'
 notes:
     - '2026-10-04: re-checked on upstream quattro 035ce29f, where bin/omarchy-system-lock is unchanged. pocs/wc89-silent-lock-exit0.sh exits 0 on every arm there and on upstream quattro 393a43d4. Upstream omacom/omarchy#9734 reported the same mechanism, but its reporter closed it as not planned after retracting the timeline.'
     - 'Upstream: fix PRs #9429 (2026-08-31) and #13756 (2026-09-29) are open alternatives. Issue #10299 reports a related state in which the shell answers ok to every lock without securing the session; only #9429 detects it, because it waits for lock status to report secure.'
+    - 'Fixed on pr/9429 by omacom/omarchy#9429 at 3fa17d48: pocs/wc89-silent-lock-exit0.sh exits 1 on this tree (refused, stopped-shell and absent-binary arms all exit 1 with the on-screen warning) while its control locks and exits 0. test/shell.d/system-lock-test.sh covers the same paths, including a request the shell accepts but never secures.'
 review_date: "2026-12-30"
-status: reviewed
+status: fixed
 history:
     - at: "2026-09-30T21:15:38Z"
       by: agent:opencode-quattro
@@ -64,6 +65,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-260930-2fbe.yaml
+    - at: "2026-10-05T17:25:26Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
