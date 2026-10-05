@@ -36,7 +36,7 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:244
+            - shell/plugins/menu/Menu.qml:263
             - shell/plugins/menu/MenuModel.js:41
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5
@@ -46,8 +46,8 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:248
-            - shell/plugins/menu/Menu.qml:253
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:272
             - shell/plugins/menu/MenuModel.js:47
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:40
@@ -61,8 +61,8 @@ traces:
           rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:249
-            - shell/plugins/menu/Menu.qml:254
+            - shell/plugins/menu/Menu.qml:268
+            - shell/plugins/menu/Menu.qml:273
             - shell/plugins/menu/MenuModel.js:14
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5
@@ -73,8 +73,8 @@ traces:
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:249
-            - shell/plugins/menu/Menu.qml:254
+            - shell/plugins/menu/Menu.qml:268
+            - shell/plugins/menu/Menu.qml:273
             - shell/plugins/menu/MenuModel.js:14
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1
@@ -86,8 +86,8 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:249
-            - shell/plugins/menu/Menu.qml:254
+            - shell/plugins/menu/Menu.qml:268
+            - shell/plugins/menu/Menu.qml:273
             - shell/plugins/menu/MenuModel.js:14
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1

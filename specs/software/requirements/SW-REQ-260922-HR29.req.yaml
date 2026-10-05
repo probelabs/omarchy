@@ -52,13 +52,6 @@ history:
     last_modified_at: "2026-09-30T07:28:30Z"
 obligation_checklist:
     - external_call_timeout_bounded
-obligation_deferrals:
-    - obligation_class: external_call_timeout_bounded
-      reason: omarchy-menu-file hands its listing to omarchy-menu-select and waits synchronously; the callee polls the done_file with no deadline and no peer-liveness probe, so a menu that dies after summon hangs every menu-file caller - the same reproduced defect class as the KI, third caller downstream of the same unbounded poll. The bound belongs to the KI fix at the poll site, which bounds this caller transitively.
-      tracking: KI-MENU-SELECT-POLL-DEADLOCK
-      owner: agent:opencode-hazard-c
-      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
-      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:18Z"
     reviewed_by: agent:claude-baseline-pass

@@ -6,14 +6,14 @@ subject: SW-REQ-260929-THMB
 decision: approved
 comment: 'Read bin/omarchy-menu-images at upstream 035ce29f (#14117, lazy thumbnail pool) with this branch''s comment-only annotations. thumbnail_for sends a missing still to the lazy lane only with --lazy-thumbnails and without --cache-only (line 247). Unless --prepare-only is set, it appends the job to the pending file and answers with the image itself (251). Videos and every eager still go to the video or image pending file (258-262). drain_pending_thumbnails runs an eager still queue through xargs -P nproc and waits (325). For a lazy queue it sets one converter per two cores, at least one and at most two (281-285). It appends the jobs to the shared queue under the queue lock (290-294) and forks one background pool (295-323). The pool takes the pool lock with flock -n and leaves when another pool owns it (298). Under the queue lock it stops on an empty queue (305-310); otherwise it opens and unlinks the batch and runs xargs at nice 10 in the idle I/O class (315-320). Videos always drain in the foreground, one lane per four cores (330-335). Upstream left generate_thumbnail as it was. So thumbnail_generated still follows thumbnail_missing: a job queued while the pool is busy reaches the owner, which drains until the queue is empty. A stalled converter is the open exception, tracked as KI-MENU-IMAGES-VIPS-NO-TIMEOUT. The description now states the pool. Witnesses in test/shell.d/menu-images-test.sh: lazy rows and pool generation (173-186), the unopenable queue lock (336-349), and the upstream pool scenarios on 1, 2 and 8 cores (654-704). Code MC/DC of bin/omarchy-menu-images under this test is 100% of 40 decisions and 45 conditions, 25 ignored; BASH_ENV gives the xargs children the recorder (44-54).'
 citations:
-    - bin/omarchy-menu-images:221@thumbnail_for
-    - bin/omarchy-menu-images:247
-    - bin/omarchy-menu-images:274@drain_pending_thumbnails
-    - bin/omarchy-menu-images:281
-    - bin/omarchy-menu-images:290
-    - bin/omarchy-menu-images:298
-    - bin/omarchy-menu-images:305
+    - bin/omarchy-menu-images:223@thumbnail_for
+    - bin/omarchy-menu-images:249
+    - bin/omarchy-menu-images:276@drain_pending_thumbnails
+    - bin/omarchy-menu-images:283
+    - bin/omarchy-menu-images:292
+    - bin/omarchy-menu-images:300
+    - bin/omarchy-menu-images:307
     - test/shell.d/menu-images-test.sh:44
     - test/shell.d/menu-images-test.sh:176
     - test/shell.d/menu-images-test.sh:337
-    - test/shell.d/menu-images-test.sh:656
+    - test/shell.d/menu-images-test.sh:705

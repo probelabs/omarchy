@@ -6,5 +6,5 @@ subject: SW-REQ-260929-T378
 decision: approved
 comment: Read disarmPointer and selectFromPointer. selectFromPointer returns unless pointerGate.moved reports genuine movement past the threshold, and returns again when rowSelectable reports the row disabled; only then does it raise cursorActive and move selectedIndex. disarmPointer resets the gate and runs from keyboard select, setFilter, setActiveMenu, cancelDelete, cancel, and openExistingMenu. pointer_moves_over_rows models gate-passed movement; gated_row_selection is the gate-honored landing. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:979@disarmPointer
-    - shell/plugins/menu/Menu.qml:984@selectFromPointer
+    - shell/plugins/menu/Menu.qml:1013@disarmPointer
+    - shell/plugins/menu/Menu.qml:1018@selectFromPointer

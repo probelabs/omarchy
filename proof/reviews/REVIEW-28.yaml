@@ -8,4 +8,4 @@ comment: 'Read the full call path. default/omarchy/omarchy-menu.jsonc:38 binds t
 citations:
     - default/omarchy/omarchy-menu.jsonc:38
     - bin/omarchy-system-lock:10
-    - shell/plugins/menu/Menu.qml:954@openRoute
+    - shell/plugins/menu/Menu.qml:988@openRoute

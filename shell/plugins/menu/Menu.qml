@@ -143,6 +143,7 @@ Item {
 
   // Releasing a done file uses its own process and queue so it can never race
   // resultProc, which may still be writing the result of an earlier request.
+  // Implements: SW-REQ-260922-C8HX
   function releaseNextDoneFile() {
     if (releaseProc.running || doneFilesToRelease.length === 0) return
 
@@ -151,6 +152,7 @@ Item {
     releaseProc.running = true
   }
 
+  // Implements: SW-REQ-260922-C8HX
   function finishDoneFile(path) {
     if (!path) return
     doneFilesToRelease.push(path)

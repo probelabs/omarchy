@@ -57,6 +57,7 @@ run_timezone() {
 }
 
 # A completed pick sets the zone, refreshes the clock, and notifies.
+# SW-REQ-260922-SWFT:external_call_timeout_bounded:nominal -- the zone is set as soon as omarchy-menu-select answers
 run_timezone "Europe/Berlin"
 [[ $STATUS -eq 0 ]] || fail "menu timezone exits zero on a pick" "status: $STATUS"
 [[ $CALLS == *"timedatectl set-timezone Europe/Berlin"* ]] ||
@@ -71,6 +72,7 @@ pass "menu timezone sets and refreshes a picked zone"
 
 # A cancelled pick changes nothing: no set-timezone, no refresh, no
 # notification, exit one from the `|| exit 1` guard.
+# SW-REQ-260922-SWFT:external_call_timeout_bounded:negative -- the wait is bounded inside omarchy-menu-select, which exits one when the shell that took the request exits (menu-dmenu-test.sh); that exit one ends this caller like a cancel
 run_timezone "<cancel>"
 [[ $STATUS -eq 1 ]] || fail "menu timezone exits one on a cancelled pick" "status: $STATUS"
 [[ $CALLS != *"set-timezone"* ]] ||

@@ -22,10 +22,32 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 require_command jq
 
 TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT
+SHELL_PID=""
+trap '[[ -n $SHELL_PID ]] && kill -KILL "$SHELL_PID" 2>/dev/null; rm -rf "$TMPDIR"' EXIT
 
 STUB_DIR="$TMPDIR/stub"
 mkdir -p "$STUB_DIR"
+
+# The scripts wait on the shell process that took their request, found as the
+# quickshell serving "$OMARCHY_PATH/shell" (bin/omarchy-menu-handshake). A
+# stand-in process named quickshell, started the way omarchy-launch-shell
+# starts the shell, plays that process; the stub below can kill it.
+export OMARCHY_PATH="$TMPDIR/omarchy"
+mkdir -p "$OMARCHY_PATH/shell" "$TMPDIR/qs"
+ln -s "$(command -v bash)" "$TMPDIR/qs/quickshell"
+start_shell() {
+  "$TMPDIR/qs/quickshell" -c 'for _ in $(seq 1500); do sleep 0.2; done' quickshell -n -p "$OMARCHY_PATH/shell" &
+  SHELL_PID=$!
+  disown "$SHELL_PID"
+  printf '%s\n' "$SHELL_PID" >"$TMPDIR/shell.pid"
+}
+stop_shell() {
+  [[ -n $SHELL_PID ]] || return 0
+  kill -KILL "$SHELL_PID" 2>/dev/null || true
+  for _ in 1 2 3 4 5 6 7 8 9 10; do kill -0 "$SHELL_PID" 2>/dev/null || break; sleep 0.1; done
+  SHELL_PID=""
+}
+start_shell
 
 cat >"$STUB_DIR/omarchy-shell" <<'STUB'
 #!/bin/bash
@@ -40,6 +62,13 @@ case "$FAKE_ANSWER" in
   done-only)
     ( sleep 0.1; : >"$donef" ) &
     ;;
+  shell-exits)
+    # The shell takes the request, then exits without answering.
+    ( sleep 0.3; kill -KILL "$(cat "$SHELL_PID_FILE")" ) >/dev/null 2>&1 &
+    ;;
+  refused)
+    exit 1
+    ;;
 esac
 STUB
 chmod +x "$STUB_DIR/omarchy-shell"
@@ -50,8 +79,8 @@ chmod +x "$STUB_DIR/omarchy-shell"
 run_dmenu() {
   local script="$1"; shift
   rm -f "$TMPDIR/payload"
-  OUT=$(PATH="$STUB_DIR:$PATH" SPY_PAYLOAD="$TMPDIR/payload" FAKE_ANSWER="$FAKE_ANSWER" FAKE_SELECTION="${FAKE_SELECTION:-}" \
-    "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/$script" "$@" < /dev/null 2>"$TMPDIR/err") && STATUS=0 || STATUS=$?
+  OUT=$(PATH="$STUB_DIR:$ROOT/bin:$PATH" SPY_PAYLOAD="$TMPDIR/payload" FAKE_ANSWER="$FAKE_ANSWER" FAKE_SELECTION="${FAKE_SELECTION:-}" \
+    SHELL_PID_FILE="$TMPDIR/shell.pid" "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/$script" "$@" < /dev/null 2>"$TMPDIR/err") && STATUS=0 || STATUS=$?
   ERR=$(cat "$TMPDIR/err")
   PAYLOAD=""
   [[ -f $TMPDIR/payload ]] && PAYLOAD=$(cat "$TMPDIR/payload")
@@ -65,6 +94,8 @@ FAKE_SELECTION=$(printf 'Brave\tbrowser')
 run_dmenu omarchy-menu-select "Pick a browser" Brave Firefox Zen -- --width 520 --maxheight 520
 # SW-REQ-260922-MP00:error_handling:nominal
 # SW-REQ-260922-B839:error_handling:negative
+# SW-REQ-260922-Q6ZS:external_call_timeout_bounded:nominal -- a live shell that answers ends the wait with its answer
+# SW-REQ-260922-MP00:external_call_timeout_bounded:nominal -- the answer arm is reached once the shell writes the done file
 [[ $STATUS -eq 0 ]] || fail "menu select exits zero on a pick" "status: $STATUS err: $ERR"
 [[ $OUT == "$FAKE_SELECTION" ]] || fail "menu select prints the answer file" "out: $OUT"
 printf '%s' "$PAYLOAD" | jq -e '
@@ -127,8 +158,8 @@ pass "menu select refuses an empty option list with usage and exit one"
 run_dmenu_stdin() {
   local input="$1"; shift
   rm -f "$TMPDIR/payload"
-  OUT=$(printf '%b' "$input" | PATH="$STUB_DIR:$PATH" SPY_PAYLOAD="$TMPDIR/payload" FAKE_ANSWER="$FAKE_ANSWER" FAKE_SELECTION="${FAKE_SELECTION:-}" \
-    "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-select" "$@" 2>"$TMPDIR/err") && STATUS=0 || STATUS=$?
+  OUT=$(printf '%b' "$input" | PATH="$STUB_DIR:$ROOT/bin:$PATH" SPY_PAYLOAD="$TMPDIR/payload" FAKE_ANSWER="$FAKE_ANSWER" FAKE_SELECTION="${FAKE_SELECTION:-}" \
+    SHELL_PID_FILE="$TMPDIR/shell.pid" "${OMARCHY_TEST_BASH:-$BASH}" "$ROOT/bin/omarchy-menu-select" "$@" 2>"$TMPDIR/err") && STATUS=0 || STATUS=$?
   ERR=$(cat "$TMPDIR/err")
   PAYLOAD=""
   [[ -f $TMPDIR/payload ]] && PAYLOAD=$(cat "$TMPDIR/payload")
@@ -179,6 +210,7 @@ pass "menu select reads stdin lines as options per the stated input domain"
 FAKE_ANSWER=selection
 FAKE_SELECTION="15"
 run_dmenu omarchy-menu-input "Reminder in minutes" --width 400
+# SW-REQ-260922-9ABD:external_call_timeout_bounded:nominal -- a live shell that answers ends the wait with its answer
 [[ $STATUS -eq 0 && $OUT == "15" ]] || fail "menu input prints the entered text" "status: $STATUS out: $OUT"
 printf '%s' "$PAYLOAD" | jq -e '
   .mode == "input"
@@ -196,3 +228,46 @@ run_dmenu omarchy-menu-input "Reminder in minutes"
   fail "menu input exits one silently on a dismissal" "status: $STATUS out: $OUT err: $ERR"
 # MCDC SW-REQ-260922-9ABD: empty_selection=T, exit_one_on_empty=T => TRUE
 pass "menu input exits one silently on a dismissal"
+
+# --- The shell goes away: the wait is bounded by the shell's lifetime ------
+# The wait ends when the shell process that took the request exits before it
+# answers (bin/omarchy-menu-handshake checks it about once a second); an open
+# picker on a live shell may still wait as long as its user likes.
+
+FAKE_ANSWER=shell-exits
+start=$SECONDS
+run_dmenu omarchy-menu-select "Pick a browser" Brave Firefox Zen
+# SW-REQ-260922-Q6ZS:external_call_timeout_bounded:negative -- the shell exits 0.3s after taking the request: the wait ends with exit one
+# SW-REQ-260922-MP00:external_call_timeout_bounded:negative -- no answer arm is waited on forever: nothing is printed and the exit is one
+[[ $STATUS -eq 1 && -z $OUT ]] || fail "menu select gives up when the shell exits before answering" "status: $STATUS out: $OUT err: $ERR"
+(( SECONDS - start < 5 )) || fail "menu select gives up within a few seconds of the shell exiting" "took $(( SECONDS - start ))s"
+[[ $ERR == *"the shell exited before answering"* ]] || fail "menu select says the shell exited before answering" "err: $ERR"
+stop_shell
+pass "menu select gives up within seconds when the shell exits before answering"
+
+start_shell
+FAKE_ANSWER=shell-exits
+start=$SECONDS
+run_dmenu omarchy-menu-input "Reminder in minutes"
+# SW-REQ-260922-9ABD:external_call_timeout_bounded:negative -- the shell exits 0.3s after taking the request: the wait ends with exit one
+[[ $STATUS -eq 1 && -z $OUT ]] || fail "menu input gives up when the shell exits before answering" "status: $STATUS out: $OUT err: $ERR"
+(( SECONDS - start < 5 )) || fail "menu input gives up within a few seconds of the shell exiting" "took $(( SECONDS - start ))s"
+stop_shell
+pass "menu input gives up within seconds when the shell exits before answering"
+
+# No shell serves this OMARCHY_PATH: nothing to wait on, so no summon at all.
+FAKE_ANSWER=selection
+run_dmenu omarchy-menu-select "Pick a browser" Brave
+[[ $STATUS -eq 1 && -z $OUT && -z $PAYLOAD ]] || fail "menu select without a running shell exits one without a summon" "status: $STATUS payload: $PAYLOAD"
+[[ $ERR == *"no running Omarchy shell"* ]] || fail "menu select names the missing shell" "err: $ERR"
+pass "menu select without a running shell exits one without a summon"
+
+# A summon the shell IPC refuses (non-zero exit) fails the request at once.
+start_shell
+FAKE_ANSWER=refused
+run_dmenu omarchy-menu-select "Pick a browser" Brave
+[[ $STATUS -eq 1 && -z $OUT ]] || fail "menu select fails when the summon is refused" "status: $STATUS err: $ERR"
+run_dmenu omarchy-menu-input "Reminder in minutes"
+[[ $STATUS -eq 1 && -z $OUT ]] || fail "menu input fails when the summon is refused" "status: $STATUS err: $ERR"
+stop_shell
+pass "menu select and input fail when the summon is refused"

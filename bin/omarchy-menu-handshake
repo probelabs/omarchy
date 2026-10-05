@@ -19,6 +19,7 @@
 # Print the pid of the Quickshell instance serving $OMARCHY_PATH.
 # Matches on the process name so the lookup cannot match its own caller the way
 # a `pgrep -f` over the command line would.
+# Implements: SW-REQ-260922-Q6ZS, SW-REQ-260922-9ABD, SW-REQ-260922-MH9B
 menu_shell_pid() {
   local pid
 
@@ -34,6 +35,7 @@ menu_shell_pid() {
 
 # Block until the shell completes the handshake for $done_file.
 # Returns 1 if the shell that owned the request exits first.
+# Implements: SW-REQ-260922-Q6ZS, SW-REQ-260922-9ABD, SW-REQ-260922-MH9B
 wait_for_menu_done() {
   local done_file=$1 shell_pid=$2 interval=${3:-0.05}
   local last_check=$SECONDS

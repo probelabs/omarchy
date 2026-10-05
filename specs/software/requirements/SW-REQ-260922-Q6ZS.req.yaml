@@ -53,13 +53,6 @@ history:
 obligation_checklist:
     - external_call_timeout_bounded
     - input_domain
-obligation_deferrals:
-    - obligation_class: external_call_timeout_bounded
-      reason: 'This requirement implementation carries the done_file poll itself (while [[ ! -e $done_file ]]; sleep 0.05) with no deadline and no peer-liveness probe: a selector that dies after a successful summon hangs the script and every synchronous dmenu caller - the reproduced defect the KI pins. The bound belongs to the KI fix at this site.'
-      tracking: KI-MENU-SELECT-POLL-DEADLOCK
-      owner: agent:opencode-hazard-c
-      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
-      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:20Z"
     reviewed_by: agent:claude-baseline-pass

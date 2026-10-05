@@ -43,7 +43,7 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:477
+            - shell/plugins/menu/Menu.qml:496
             - shell/plugins/menu/MenuModel.js:360
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:5
@@ -53,15 +53,15 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:482
-            - shell/plugins/menu/Menu.qml:487
-            - shell/plugins/menu/Menu.qml:517
-            - shell/plugins/menu/Menu.qml:522
-            - shell/plugins/menu/Menu.qml:527
-            - shell/plugins/menu/Menu.qml:532
-            - shell/plugins/menu/Menu.qml:537
-            - shell/plugins/menu/Menu.qml:552
-            - shell/plugins/menu/Menu.qml:771
+            - shell/plugins/menu/Menu.qml:501
+            - shell/plugins/menu/Menu.qml:506
+            - shell/plugins/menu/Menu.qml:536
+            - shell/plugins/menu/Menu.qml:541
+            - shell/plugins/menu/Menu.qml:546
+            - shell/plugins/menu/Menu.qml:551
+            - shell/plugins/menu/Menu.qml:556
+            - shell/plugins/menu/Menu.qml:571
+            - shell/plugins/menu/Menu.qml:790
             - shell/plugins/menu/MenuModel.js:369
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:284
@@ -77,8 +77,8 @@ traces:
           rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:483
-            - shell/plugins/menu/Menu.qml:488
+            - shell/plugins/menu/Menu.qml:502
+            - shell/plugins/menu/Menu.qml:507
             - shell/plugins/menu/MenuModel.js:334
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:30
@@ -89,15 +89,15 @@ traces:
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:483
-            - shell/plugins/menu/Menu.qml:488
-            - shell/plugins/menu/Menu.qml:518
-            - shell/plugins/menu/Menu.qml:523
-            - shell/plugins/menu/Menu.qml:528
-            - shell/plugins/menu/Menu.qml:533
-            - shell/plugins/menu/Menu.qml:538
-            - shell/plugins/menu/Menu.qml:553
-            - shell/plugins/menu/Menu.qml:772
+            - shell/plugins/menu/Menu.qml:502
+            - shell/plugins/menu/Menu.qml:507
+            - shell/plugins/menu/Menu.qml:537
+            - shell/plugins/menu/Menu.qml:542
+            - shell/plugins/menu/Menu.qml:547
+            - shell/plugins/menu/Menu.qml:552
+            - shell/plugins/menu/Menu.qml:557
+            - shell/plugins/menu/Menu.qml:572
+            - shell/plugins/menu/Menu.qml:791
             - shell/plugins/menu/MenuModel.js:334
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
@@ -109,15 +109,15 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:483
-            - shell/plugins/menu/Menu.qml:488
-            - shell/plugins/menu/Menu.qml:518
-            - shell/plugins/menu/Menu.qml:523
-            - shell/plugins/menu/Menu.qml:528
-            - shell/plugins/menu/Menu.qml:533
-            - shell/plugins/menu/Menu.qml:538
-            - shell/plugins/menu/Menu.qml:553
-            - shell/plugins/menu/Menu.qml:772
+            - shell/plugins/menu/Menu.qml:502
+            - shell/plugins/menu/Menu.qml:507
+            - shell/plugins/menu/Menu.qml:537
+            - shell/plugins/menu/Menu.qml:542
+            - shell/plugins/menu/Menu.qml:547
+            - shell/plugins/menu/Menu.qml:552
+            - shell/plugins/menu/Menu.qml:557
+            - shell/plugins/menu/Menu.qml:572
+            - shell/plugins/menu/Menu.qml:791
             - shell/plugins/menu/MenuModel.js:334
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1

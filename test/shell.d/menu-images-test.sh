@@ -536,6 +536,12 @@ case "$1 $2" in
     exit "${OMARCHY_SHELL_STATUS:-0}"
     ;;
   "image-selector open")
+    if [[ -n ${OMARCHY_SHELL_EXITS:-} ]]; then
+      # The selector takes the request, then the shell exits without answering.
+      ( sleep 0.3; kill -KILL "$(cat "$OMARCHY_SHELL_EXITS")" ) </dev/null >/dev/null 2>&1 &
+      echo ok
+      exit 0
+    fi
     if [[ -n ${OMARCHY_SHELL_DELAY:-} ]]; then
       # The done mark lands while the menu is already waiting, the way the
       # real selector answers after it has rendered. The marker job lets go of
@@ -557,8 +563,30 @@ esac
 STUB
 chmod +x "$stub_bin/omarchy-shell"
 
+# The menu waits on the shell process that took its request, found as the
+# quickshell serving "$OMARCHY_PATH/shell" (bin/omarchy-menu-handshake). A
+# stand-in process named quickshell, started the way omarchy-launch-shell
+# starts the shell, plays it; the menu's own bin/ is on PATH as when installed.
+picker_root="$tmp/picker-omarchy"
+mkdir -p "$picker_root/shell" "$tmp/picker-qs"
+ln -s "$(command -v bash)" "$tmp/picker-qs/quickshell"
+picker_shell=""
+start_picker_shell() {
+  "$tmp/picker-qs/quickshell" -c 'for _ in $(seq 1500); do sleep 0.2; done' quickshell -n -p "$picker_root/shell" &
+  picker_shell=$!
+  disown "$picker_shell"
+  printf '%s\n' "$picker_shell" >"$tmp/picker-shell.pid"
+}
+stop_picker_shell() {
+  [[ -n $picker_shell ]] || return 0
+  kill -KILL "$picker_shell" 2>/dev/null || true
+  for _ in 1 2 3 4 5 6 7 8 9 10; do kill -0 "$picker_shell" 2>/dev/null || break; sleep 0.1; done
+  picker_shell=""
+}
+start_picker_shell
+
 run_picker() {
-  PATH="$stub_bin:$PATH" XDG_CACHE_HOME="$cache_home" \
+  PATH="$stub_bin:$ROOT/bin:$PATH" XDG_CACHE_HOME="$cache_home" OMARCHY_PATH="$picker_root" \
     "$ROOT/bin/omarchy-menu-images" "$@"
 }
 
@@ -574,6 +602,7 @@ grep -q "image-selector preload" "$tmp/shell-log" ||
 pass "a preloading menu hands its rows to the shell and stops"
 
 # A normal open waits for the pick and prints it back.
+# SW-REQ-260922-MH9B:external_call_timeout_bounded:nominal -- a live shell that answers ends the wait with the pick
 selection=$(PICKED_SELECTION="$media/pic.png" OMARCHY_SHELL_DELAY=0.05 \
   run_picker --lazy-thumbnails "$media")
 [[ $selection == "$media/pic.png" ]] ||
@@ -603,6 +632,26 @@ status=0
 OMARCHY_SHELL_STATUS=9 run_picker --lazy-thumbnails "$media" >/dev/null 2>&1 || status=$?
 [[ $status -eq 1 ]] || fail "a selector that refuses the open fails the menu" "status: $status"
 pass "a selector that refuses the open fails the menu"
+
+# The wait for the pick is bounded by the shell's lifetime: when the shell that
+# took the request exits before it answers, the menu gives up within seconds.
+status=0
+start=$SECONDS
+# SW-REQ-260922-MH9B:external_call_timeout_bounded:negative -- the shell exits 0.3s after taking the open: the wait ends with exit one
+OMARCHY_SHELL_EXITS="$tmp/picker-shell.pid" run_picker --lazy-thumbnails "$media" >/dev/null 2>"$tmp/picker-err" || status=$?
+[[ $status -eq 1 ]] || fail "the menu gives up when the shell exits before answering" "status: $status"
+(( SECONDS - start < 5 )) || fail "the menu gives up within a few seconds of the shell exiting" "took $(( SECONDS - start ))s"
+grep -q "the shell exited before answering" "$tmp/picker-err" ||
+  fail "the menu says the shell exited before answering" "$(cat "$tmp/picker-err")"
+stop_picker_shell
+pass "the menu gives up within seconds when the shell exits before answering"
+
+# No shell serves this menu: the open is never sent.
+: >"$tmp/shell-log"
+status=0
+OMARCHY_SHELL_LOG="$tmp/shell-log" run_picker --lazy-thumbnails "$media" >/dev/null 2>&1 || status=$?
+[[ $status -eq 1 ]] || fail "the menu without a running shell fails" "status: $status"
+pass "the menu without a running shell fails"
 
 # Block converters behind a gate: printing lazy rows must neither await them
 # nor start one process per image. Repeated refreshes share one worker pool.

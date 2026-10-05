@@ -6,4 +6,4 @@ subject: SW-REQ-260922-C8HX
 decision: approved
 comment: 'Read finishRequest at Menu.qml:122-141. No active request or no doneFile: closes menu, writes nothing (3VTN arm). Cancel path (selection null) touches ONLY the done file (: > done). Selection path writes the selection file then the done file. Formula gated on finish_requested & prompt_dismissed -> done_only_written matches the cancel arm exactly; the done file is the unconditional protocol terminator.'
 citations:
-    - shell/plugins/menu/Menu.qml:123@finishRequest
+    - shell/plugins/menu/Menu.qml:124@finishRequest

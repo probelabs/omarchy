@@ -54,13 +54,6 @@ history:
     last_modified_at: "2026-09-30T07:13:57Z"
 obligation_checklist:
     - external_call_timeout_bounded
-obligation_deferrals:
-    - obligation_class: external_call_timeout_bounded
-      reason: 'Second site of the tracked poll deadlock: bin/omarchy-menu-input polls the same done_file with no deadline and no peer-liveness probe (while [[ ! -e $done_file ]]; sleep 0.05), so a menu that dies after a successful summon hangs every synchronous caller, exactly the reproduced defect class on omarchy-menu-select; the empty-selection arm under review sits downstream of that wait'
-      tracking: KI-MENU-SELECT-POLL-DEADLOCK
-      owner: agent:opencode-hazard-b
-      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
-      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:17Z"
     reviewed_by: agent:claude-baseline-pass

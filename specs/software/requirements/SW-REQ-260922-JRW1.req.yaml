@@ -41,7 +41,7 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:492
+            - shell/plugins/menu/Menu.qml:511
             - shell/plugins/menu/MenuModel.js:289
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-test.sh:5
@@ -51,11 +51,11 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:497
-            - shell/plugins/menu/Menu.qml:505
-            - shell/plugins/menu/Menu.qml:512
-            - shell/plugins/menu/Menu.qml:544
-            - shell/plugins/menu/Menu.qml:562
+            - shell/plugins/menu/Menu.qml:516
+            - shell/plugins/menu/Menu.qml:524
+            - shell/plugins/menu/Menu.qml:531
+            - shell/plugins/menu/Menu.qml:563
+            - shell/plugins/menu/Menu.qml:581
             - shell/plugins/menu/MenuModel.js:298
             - shell/plugins/menu/MenuModel.js:321
             - shell/plugins/menu/MenuModel.js:329
@@ -67,8 +67,8 @@ traces:
           rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:498
-            - shell/plugins/menu/Menu.qml:506
+            - shell/plugins/menu/Menu.qml:517
+            - shell/plugins/menu/Menu.qml:525
             - shell/plugins/menu/MenuModel.js:262
             - shell/plugins/menu/MenuModel.js:285
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
@@ -80,11 +80,11 @@ traces:
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:498
-            - shell/plugins/menu/Menu.qml:506
-            - shell/plugins/menu/Menu.qml:513
-            - shell/plugins/menu/Menu.qml:545
-            - shell/plugins/menu/Menu.qml:563
+            - shell/plugins/menu/Menu.qml:517
+            - shell/plugins/menu/Menu.qml:525
+            - shell/plugins/menu/Menu.qml:532
+            - shell/plugins/menu/Menu.qml:564
+            - shell/plugins/menu/Menu.qml:582
             - shell/plugins/menu/MenuModel.js:262
             - shell/plugins/menu/MenuModel.js:285
             - shell/plugins/menu/MenuModel.js:293
@@ -98,11 +98,11 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:498
-            - shell/plugins/menu/Menu.qml:506
-            - shell/plugins/menu/Menu.qml:513
-            - shell/plugins/menu/Menu.qml:545
-            - shell/plugins/menu/Menu.qml:563
+            - shell/plugins/menu/Menu.qml:517
+            - shell/plugins/menu/Menu.qml:525
+            - shell/plugins/menu/Menu.qml:532
+            - shell/plugins/menu/Menu.qml:564
+            - shell/plugins/menu/Menu.qml:582
             - shell/plugins/menu/MenuModel.js:262
             - shell/plugins/menu/MenuModel.js:285
             - shell/plugins/menu/MenuModel.js:293

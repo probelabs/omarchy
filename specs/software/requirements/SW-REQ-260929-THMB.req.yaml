@@ -39,10 +39,10 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - bin/omarchy-menu-images:157
-            - bin/omarchy-menu-images:165
-            - bin/omarchy-menu-images:225
-            - bin/omarchy-menu-images:278
+            - bin/omarchy-menu-images:159
+            - bin/omarchy-menu-images:167
+            - bin/omarchy-menu-images:227
+            - bin/omarchy-menu-images:280
             - bin/omarchy-menu-images:6
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-images-test.sh:5
@@ -70,12 +70,12 @@ traces:
           rationale: 'Re-review after the merge of upstream quattro 035ce29f (#14117): lazy stills now go to one shared queue drained by one background pool per rows cache (half the cores, one to two, lowered priority); eager opens and videos fan out as before. Description and hazard review revised; spec conformance REVIEW-261004-XRKV.'
           source: proof trace review --citation
           citations:
-            - bin/omarchy-menu-images:365
+            - bin/omarchy-menu-images:367
             - bin/omarchy-menu-images:6
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-images-test.sh:336
             - test/shell.d/menu-images-test.sh:5
-            - test/shell.d/menu-images-test.sh:655
+            - test/shell.d/menu-images-test.sh:704
 verification:
     assurance_level: C
     formalization_status: valid

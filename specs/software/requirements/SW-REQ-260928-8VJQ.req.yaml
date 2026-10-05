@@ -38,7 +38,7 @@ traces:
           rationale: implemented_by resolves to MenuModel.summonAction (local Implements annotation at 553) + Menu.qml runAction (header names 8VJQ at 142); verified_by resolves to menu-test.sh node block (header line 5 names 8VJQ; upstream summon assertions carry the new MCDC witness tags); satisfies R8DQ is lifecycle-active
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:162
             - shell/plugins/menu/MenuModel.js:553
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:38
@@ -48,24 +48,24 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:162
             - shell/plugins/menu/MenuModel.js:1
             - shell/plugins/menu/MenuModel.js:550
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:6
-            - test/shell.d/menu-test.sh:918
-            - test/shell.d/menu-test.sh:919
+            - test/shell.d/menu-test.sh:931
             - test/shell.d/menu-test.sh:932
-            - test/shell.d/menu-test.sh:943
+            - test/shell.d/menu-test.sh:945
+            - test/shell.d/menu-test.sh:956
         - reviewed_at: "2026-10-01T09:52:21.38302406Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
           rationale: 'quattro-clean: MenuModel.js restored to upstream e332dc97 (stripJsonc two regex passes, parseMenuJsonc scalar/null guard) and omarchy-menu-images indentation restored; only annotation lines differ from upstream (review/check-clean-product-diff.py). Linked function intent re-read; tests and MC/DC green on the box.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:162
             - shell/plugins/menu/MenuModel.js:515
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:5
@@ -76,11 +76,11 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:162
             - shell/plugins/menu/MenuModel.js:515
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
-            - test/shell.d/menu-test.sh:1015
-            - test/shell.d/menu-test.sh:1039
+            - test/shell.d/menu-test.sh:1028
+            - test/shell.d/menu-test.sh:1052
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:

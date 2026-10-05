@@ -61,9 +61,9 @@ traces:
           rationale: 'Re-review after the merge of upstream quattro 035ce29f (#14117): the rebuild, drain and publish blocks are unchanged in behaviour; drain_pending_thumbnails now publishes lazy jobs to the shared pool, and a lazy row still clears rows_cacheable. Spec conformance REVIEW-261004-KNQ7.'
           source: proof trace review --citation
           citations:
-            - bin/omarchy-menu-images:339
-            - bin/omarchy-menu-images:365
-            - bin/omarchy-menu-images:385
+            - bin/omarchy-menu-images:341
+            - bin/omarchy-menu-images:367
+            - bin/omarchy-menu-images:387
             - bin/omarchy-menu-images:6
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/menu-images-test.sh:5
@@ -87,13 +87,6 @@ obligation_suppressions:
       reason: 'bin/omarchy-menu-images handles its failure points explicitly per call. || return guards flock and stat (lines 166-167, 205): one unreadable image or a lost lock skips that item instead of aborting the batch. set -e/pipefail would invert the design: one corrupt image in a directory would kill the entire thumbnail rebuild (this req) instead of skipping it. Usage errors exit 1 explicitly (lines 27, 74, 352, 357).'
       suppressed_by: agent:kimi-dogfood
       suppressed_at: "2026-09-22T17:37:30Z"
-obligation_deferrals:
-    - obligation_class: external_call_timeout_bounded
-      reason: 'The rebuilt rows feed omarchy-shell image-selector open and the script then polls its own done_file (while [[ ! -e $done_file ]]; sleep 0.01) with no deadline and no peer-liveness probe: a selector that dies after a successful summon hangs this script and every synchronous caller. It is the image-selector instance of the KI reproduced done_file poll mechanism, so the bound is tracked with that fix rather than suppressed.'
-      tracking: KI-MENU-SELECT-POLL-DEADLOCK
-      owner: agent:opencode-hazard-c
-      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
-      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:19Z"
     reviewed_by: agent:claude-code

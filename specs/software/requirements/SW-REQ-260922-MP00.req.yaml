@@ -55,13 +55,6 @@ history:
 obligation_checklist:
     - error_handling
     - external_call_timeout_bounded
-obligation_deferrals:
-    - obligation_class: external_call_timeout_bounded
-      reason: Both traced implementations enter the answer arm through the unbounded done_file poll (while [[ ! -e $done_file ]]; sleep) with no deadline and no peer-liveness probe, so the answer contract only ever runs if the selector survives to write done - menu-select is the KI namesake site and menu-input its deferred second site. The bound belongs to the KI fix; this arm is tracked with it rather than suppressed.
-      tracking: KI-MENU-SELECT-POLL-DEADLOCK
-      owner: agent:opencode-hazard-c
-      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
-      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:19Z"
     reviewed_by: agent:claude-baseline-pass

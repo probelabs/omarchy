@@ -6,4 +6,4 @@ subject: SW-REQ-260922-FGZQ
 decision: approved
 comment: Read finishRequest. Past the no-active-request guard, a selection is written shell-quoted to the selection file, the done file is created, and only then opened=false closes the menu — the write pair precedes the close, as the description states. finish_requested models the guarded main path (the early return is 3VTN's condition). Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:117
+    - shell/plugins/menu/Menu.qml:118

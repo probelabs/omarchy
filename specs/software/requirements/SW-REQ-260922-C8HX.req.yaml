@@ -37,9 +37,9 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:869
-            - shell/plugins/menu/Menu.qml:886
+            - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:888
+            - shell/plugins/menu/Menu.qml:905
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
         - reviewed_at: "2026-09-29T13:06:46.337651191Z"
@@ -48,26 +48,26 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1173
-            - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:874
-            - shell/plugins/menu/Menu.qml:892
+            - shell/plugins/menu/Menu.qml:1212
+            - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:893
+            - shell/plugins/menu/Menu.qml:911
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:11
             - test/shell.d/menu-dmenu-test.sh:5
-            - test/shell.d/menu-dmenu-test.sh:85
-            - test/shell.d/menu-dmenu-test.sh:98
-            - test/shell.d/menu-dmenu-test.sh:99
+            - test/shell.d/menu-dmenu-test.sh:116
+            - test/shell.d/menu-dmenu-test.sh:129
+            - test/shell.d/menu-dmenu-test.sh:130
         - reviewed_at: "2026-10-02T16:44:34.977909Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1180
-            - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:875
-            - shell/plugins/menu/Menu.qml:893
+            - shell/plugins/menu/Menu.qml:1219
+            - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:894
+            - shell/plugins/menu/Menu.qml:912
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
         - reviewed_at: "2026-10-02T16:54:40.669106Z"
@@ -76,10 +76,10 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1181
-            - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:875
-            - shell/plugins/menu/Menu.qml:893
+            - shell/plugins/menu/Menu.qml:1220
+            - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:894
+            - shell/plugins/menu/Menu.qml:912
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
 verification:

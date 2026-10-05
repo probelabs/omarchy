@@ -6,5 +6,5 @@ subject: SW-REQ-260922-N3RM
 decision: approved
 comment: Read openRoute (Menu.qml:954-970) and runAction (Menu.qml:143-148). A resolved action entry with non-empty action triggers root.cancel() then runAction(entry.action) -> Util.execDetached, returning ok without opening a menu. Link entries follow target; menu entries open normally. The formula (action item with non-empty action -> action runs directly, no menu opens) matches both branches; the empty-action guard in runAction is the silent precondition.
 citations:
-    - shell/plugins/menu/Menu.qml:954@openRoute
-    - shell/plugins/menu/Menu.qml:143@runAction
+    - shell/plugins/menu/Menu.qml:988@openRoute
+    - shell/plugins/menu/Menu.qml:162@runAction

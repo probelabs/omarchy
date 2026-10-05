@@ -6,5 +6,5 @@ subject: SW-REQ-260922-3VTN
 decision: approved
 comment: 'Read finishRequest guard (Menu.qml:132-135): ''if (!root.requestActive || !root.doneFile) { root.opened = false; return }'' - the no_active_request antecedent (no active request OR no done file) maps one-to-one onto the disjunction, and the body only closes the menu (opened=false) with no file creation or truncation, exactly menu_closes_silently. No other exit path from this branch; cancel() on a non-dmenu mode takes the same close-only outcome. Formula faithful; no unmodeled precondition.'
 citations:
-    - shell/plugins/menu/Menu.qml:132
-    - shell/plugins/menu/Menu.qml:895
+    - shell/plugins/menu/Menu.qml:133
+    - shell/plugins/menu/Menu.qml:914

@@ -6,4 +6,4 @@ subject: SW-REQ-260929-B8N9
 decision: approved
 comment: Read item() in Menu.qml. The accessor returns root.items[id] or null, so a present id yields its item and any other id yields null; the lookup always answers and never returns a dangling entry. item_requested models the caller by-id lookup, item_by_id_resolved the coherent answer. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:233@item
+    - shell/plugins/menu/Menu.qml:252@item

@@ -7,6 +7,6 @@ decision: approved
 comment: 'Read the rejection path in bin/omarchy-menu-images. generate_thumbnail (165-222) writes the empty .failed marker only for video paths (is_video_path at 157 gates eligibility) and only when the converter exits non-zero without a timeout (124) or kill (137); the tmp and thumbnail are removed on any failure. thumbnail_for (225-270) hands the standing marker back before any lane choice, the caller drops the row and marks the rows uncacheable, and the publication branch then removes the rows cache instead of writing it. Timeouts and kills leave no marker, so the next open retries. Formula: a refused video (fresh refusal or standing marker) ends recorded and honored -- marker present, row withheld, rows uncached.'
 citations:
     - bin/omarchy-menu-images:6
-    - bin/omarchy-menu-images:157
-    - bin/omarchy-menu-images:165
-    - bin/omarchy-menu-images:225
+    - bin/omarchy-menu-images:159
+    - bin/omarchy-menu-images:167
+    - bin/omarchy-menu-images:227

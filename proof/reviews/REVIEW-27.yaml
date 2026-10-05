@@ -6,6 +6,6 @@ subject: SW-REQ-260922-8CQ4
 decision: approved
 comment: 'Read the delete flow at Menu.qml:841-875. requestDeleteSelected ignores invalid cursors and non-app rows, opens a confirmation naming the app (deleteTarget.label). cancelDelete closes the dialog, restores focus, removes nothing. confirmDelete closes the menu and removes via appLibrary.remove. delete_key_on_app -> uninstall_confirmed_flow matches: the key on an app row always leads to the confirmed/cancelled uninstall flow, never a direct delete.'
 citations:
-    - shell/plugins/menu/Menu.qml:841@requestDeleteSelected
-    - shell/plugins/menu/Menu.qml:851@cancelDelete
-    - shell/plugins/menu/Menu.qml:860@confirmDelete
+    - shell/plugins/menu/Menu.qml:860@requestDeleteSelected
+    - shell/plugins/menu/Menu.qml:870@cancelDelete
+    - shell/plugins/menu/Menu.qml:879@confirmDelete

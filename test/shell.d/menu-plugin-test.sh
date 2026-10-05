@@ -122,6 +122,7 @@ JSON
 pick clone "$(printf 'Clock\tomarchy.clock')"
 [[ $ROWS == *"Clock"* && $ROWS != *"Weather"* ]] ||
   fail "clone picker offers only built-in plugins" "$ROWS"
+# SW-REQ-260922-KRBH:external_call_timeout_bounded:nominal -- the picker acts as soon as omarchy-menu-select answers
 # MCDC SW-REQ-260922-KRBH: picker_verb_given=T, verb_filter_applied=T => TRUE
 pass "clone picker offers built-in plugins"
 [[ $CALLS == *"terminal: omarchy-plugin-clone omarchy.clock --edit"* ]] ||
@@ -223,6 +224,7 @@ cat >"$TMPDIR/plugins.json" <<'JSON'
 ]
 JSON
 
+# SW-REQ-260922-KRBH:external_call_timeout_bounded:negative -- the wait is bounded inside omarchy-menu-select, which exits one when the shell that took the request exits (menu-dmenu-test.sh); that exit one ends the picker like a dismissal
 FAKE_PICK_STATUS=1 pick enable "$(printf 'Fancy\tacme.fancy')"
 [[ $STATUS -eq 0 ]] || fail "a dismissed plugin picker exits zero" "status: $STATUS"
 [[ -z $CALLS ]] || fail "a dismissal acts on no plugin" "calls: $CALLS"

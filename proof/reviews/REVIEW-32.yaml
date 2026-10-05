@@ -6,4 +6,4 @@ subject: SW-REQ-260922-3JG5
 decision: approved
 comment: Read settleCursor/nextSelectable in Menu.qml and the compositor test. nextSelectable returns -1 exactly when every row is disabled; settleCursor then sets cursorActive=false, so no cursor is parked on an unrunnable row, and cursorActive restores when a row becomes selectable (compositor test line 378 observes .cursorActive == false live). The all_rows_disabled condition models the count/disabled scan; no silent precondition. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/Menu.qml:584
+    - shell/plugins/menu/Menu.qml:603

@@ -6,4 +6,4 @@ subject: SW-REQ-260922-FGZQ
 decision: approved
 comment: 'Read finishRequest (Menu.qml:131-149). The selection branch (Menu.qml:145-147) runs ''printf %s\n <selection> > selectionFile; : > doneFile'' with both paths Util.shellQuote''d, then resultProc.running=true - exactly selection_and_done_written after finish_requested with a non-null selection. State (paths) is captured before being cleared (137-141) so the write targets the active request''s files. The menu closes via opened=false in the callers (applyDmenuSelection Menu.qml:879-884 sets opened=false before finishRequest). No silent gating the formula misses.'
 citations:
-    - shell/plugins/menu/Menu.qml:131
+    - shell/plugins/menu/Menu.qml:132

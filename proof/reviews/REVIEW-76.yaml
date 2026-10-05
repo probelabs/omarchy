@@ -6,5 +6,5 @@ subject: SW-REQ-260922-C8HX
 decision: approved
 comment: 'Read finishRequest (Menu.qml:131-149) and cancel (Menu.qml:895-899). cancel() calls finishRequest(null) whenever dmenuActive, i.e. prompt_dismissed -> finish_requested with null selection. The null branch (Menu.qml:143-147) runs only '': > doneFile'' - no selection write - which is exactly done_only_written. The state-clear block (137-141) runs before the write, so the captured paths are used; no branch in the null path touches the selection file. FRETish models both gating conditions; no silent precondition observed.'
 citations:
-    - shell/plugins/menu/Menu.qml:131
-    - shell/plugins/menu/Menu.qml:895
+    - shell/plugins/menu/Menu.qml:132
+    - shell/plugins/menu/Menu.qml:914

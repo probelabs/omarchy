@@ -6,5 +6,5 @@ subject: SW-REQ-260922-B757
 decision: approved
 comment: 'Read foldedListHeight/availableRowsHeight at Menu.qml:164-216. Empty list returns baseRowHeight; rows that fit return full height; overflow computes full rows + spacing + peek so the card ends mid-row (clipped peek row signals more below), and availableRowsHeight caps the card at 70 percent of panel height. rows_overflow -> fold_signals_more matches: overflow always yields the mid-row fold signal.'
 citations:
-    - shell/plugins/menu/Menu.qml:178@foldedListHeight
-    - shell/plugins/menu/Menu.qml:164@availableRowsHeight
+    - shell/plugins/menu/Menu.qml:197@foldedListHeight
+    - shell/plugins/menu/Menu.qml:183@availableRowsHeight

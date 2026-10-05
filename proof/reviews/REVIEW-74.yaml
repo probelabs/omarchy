@@ -7,5 +7,5 @@ decision: approved
 comment: 'New guarantee authored this campaign for the upstream summonAction fast path (c231097d). Verified by construction against MenuModel.js summonAction (regex is a strict subset of bash word-splitting: id charset [A-Za-z0-9._-] excludes metacharacters; payload admits no embedded single quote so bash passes bytes identically; missing payload defaults to ''{}'' exactly as bin/omarchy-shell:51 does for the 3-arg form) and by execution: 10/10 edge battery (2026-09-28, this run) plus the upstream-authored node assertions in menu-test.sh now tagged as 8VJQ MC/DC witnesses. Fallback path (execDetached) untouched for non-matching actions; refusal path (summon returns falsy) falls through to bash per the Menu.qml shape assertion. Fretish formula action_is_bare_summon -> eventually in_process_summon_equivalent matches the gating branch.'
 citations:
     - shell/plugins/menu/MenuModel.js:553
-    - shell/plugins/menu/Menu.qml:143
+    - shell/plugins/menu/Menu.qml:162
     - test/shell.d/menu-test.sh:40

@@ -47,9 +47,9 @@ traces:
             - shell/plugins/menu/Menu.qml:35
             - shell/plugins/menu/Menu.qml:40
             - shell/plugins/menu/Menu.qml:47
-            - shell/plugins/menu/Menu.qml:87
-            - shell/plugins/menu/Menu.qml:893
-            - shell/plugins/menu/Menu.qml:918
+            - shell/plugins/menu/Menu.qml:88
+            - shell/plugins/menu/Menu.qml:912
+            - shell/plugins/menu/Menu.qml:944
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh:304
             - test/shell.d/menu-compositor-test.sh:313
@@ -64,9 +64,9 @@ traces:
             - shell/plugins/menu/Menu.qml:35
             - shell/plugins/menu/Menu.qml:40
             - shell/plugins/menu/Menu.qml:47
-            - shell/plugins/menu/Menu.qml:87
-            - shell/plugins/menu/Menu.qml:897
-            - shell/plugins/menu/Menu.qml:922
+            - shell/plugins/menu/Menu.qml:88
+            - shell/plugins/menu/Menu.qml:916
+            - shell/plugins/menu/Menu.qml:948
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh
         - reviewed_at: "2026-09-29T13:04:44.775476827Z"
@@ -75,18 +75,18 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1038
-            - shell/plugins/menu/Menu.qml:1040
-            - shell/plugins/menu/Menu.qml:1049
-            - shell/plugins/menu/Menu.qml:1051
-            - shell/plugins/menu/Menu.qml:1053
+            - shell/plugins/menu/Menu.qml:1077
+            - shell/plugins/menu/Menu.qml:1079
+            - shell/plugins/menu/Menu.qml:1088
+            - shell/plugins/menu/Menu.qml:1090
+            - shell/plugins/menu/Menu.qml:1092
             - shell/plugins/menu/Menu.qml:21
             - shell/plugins/menu/Menu.qml:35
             - shell/plugins/menu/Menu.qml:40
             - shell/plugins/menu/Menu.qml:47
-            - shell/plugins/menu/Menu.qml:87
-            - shell/plugins/menu/Menu.qml:899
-            - shell/plugins/menu/Menu.qml:924
+            - shell/plugins/menu/Menu.qml:88
+            - shell/plugins/menu/Menu.qml:918
+            - shell/plugins/menu/Menu.qml:950
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh
         - reviewed_at: "2026-10-02T16:44:33.699478Z"
@@ -95,18 +95,18 @@ traces:
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1043
-            - shell/plugins/menu/Menu.qml:1045
-            - shell/plugins/menu/Menu.qml:1054
-            - shell/plugins/menu/Menu.qml:1056
-            - shell/plugins/menu/Menu.qml:1058
+            - shell/plugins/menu/Menu.qml:1082
+            - shell/plugins/menu/Menu.qml:1084
+            - shell/plugins/menu/Menu.qml:1093
+            - shell/plugins/menu/Menu.qml:1095
+            - shell/plugins/menu/Menu.qml:1097
             - shell/plugins/menu/Menu.qml:21
             - shell/plugins/menu/Menu.qml:35
             - shell/plugins/menu/Menu.qml:40
             - shell/plugins/menu/Menu.qml:47
-            - shell/plugins/menu/Menu.qml:87
-            - shell/plugins/menu/Menu.qml:900
-            - shell/plugins/menu/Menu.qml:925
+            - shell/plugins/menu/Menu.qml:88
+            - shell/plugins/menu/Menu.qml:919
+            - shell/plugins/menu/Menu.qml:951
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh:304
             - test/shell.d/menu-compositor-test.sh:313
@@ -117,18 +117,18 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1044
-            - shell/plugins/menu/Menu.qml:1046
-            - shell/plugins/menu/Menu.qml:1055
-            - shell/plugins/menu/Menu.qml:1057
-            - shell/plugins/menu/Menu.qml:1059
+            - shell/plugins/menu/Menu.qml:1083
+            - shell/plugins/menu/Menu.qml:1085
+            - shell/plugins/menu/Menu.qml:1094
+            - shell/plugins/menu/Menu.qml:1096
+            - shell/plugins/menu/Menu.qml:1098
             - shell/plugins/menu/Menu.qml:21
             - shell/plugins/menu/Menu.qml:35
             - shell/plugins/menu/Menu.qml:40
             - shell/plugins/menu/Menu.qml:47
-            - shell/plugins/menu/Menu.qml:87
-            - shell/plugins/menu/Menu.qml:900
-            - shell/plugins/menu/Menu.qml:925
+            - shell/plugins/menu/Menu.qml:88
+            - shell/plugins/menu/Menu.qml:919
+            - shell/plugins/menu/Menu.qml:951
             - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
             - test/shell.d/menu-compositor-test.sh:304
             - test/shell.d/menu-compositor-test.sh:313

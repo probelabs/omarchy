@@ -52,13 +52,6 @@ history:
     last_modified_at: "2026-09-30T07:42:16Z"
 obligation_checklist:
     - external_call_timeout_bounded
-obligation_deferrals:
-    - obligation_class: external_call_timeout_bounded
-      reason: The timezone list flows through omarchy-menu-select, so this caller waits downstream of the unbounded done_file poll with no deadline and no peer-liveness probe - a selector that dies after summon hangs the timezone dialog, the KI reproduced defect class reaching this caller; the bound belongs to the KI fix at the poll site and bounds this caller transitively.
-      tracking: KI-MENU-SELECT-POLL-DEADLOCK
-      owner: agent:opencode-hazard-c
-      ki_ref: KI-MENU-SELECT-POLL-DEADLOCK
-      reproducer: test/shell.d/menu-select-poll-deadlock-repro.sh
 hazard_review:
     reviewed_at: "2026-10-01T21:26:21Z"
     reviewed_by: agent:claude-baseline-pass

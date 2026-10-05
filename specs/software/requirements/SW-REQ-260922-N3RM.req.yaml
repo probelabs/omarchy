@@ -38,7 +38,7 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:162
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
             - test/shell.d/menu-test.sh:5
@@ -48,9 +48,9 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:882
-            - shell/plugins/menu/Menu.qml:959
+            - shell/plugins/menu/Menu.qml:162
+            - shell/plugins/menu/Menu.qml:901
+            - shell/plugins/menu/Menu.qml:993
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
             - test/shell.d/menu-test.sh:26
@@ -66,9 +66,9 @@ traces:
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:883
-            - shell/plugins/menu/Menu.qml:960
+            - shell/plugins/menu/Menu.qml:162
+            - shell/plugins/menu/Menu.qml:902
+            - shell/plugins/menu/Menu.qml:994
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
             - test/node/menumodel-replay.test.mjs:1
@@ -80,9 +80,9 @@ traces:
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:883
-            - shell/plugins/menu/Menu.qml:961
+            - shell/plugins/menu/Menu.qml:162
+            - shell/plugins/menu/Menu.qml:902
+            - shell/plugins/menu/Menu.qml:995
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
             - test/node/menumodel-replay.test.mjs:1
