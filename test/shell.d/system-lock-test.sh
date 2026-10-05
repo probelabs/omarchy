@@ -107,6 +107,7 @@ LOCK_REPLY=missing-pam run_lock || rc=$?
 (( rc == 1 )) || fail "system lock fails when no lock screen is configured" "exit $rc"
 grep -q "no lock screen is configured" "$tmpdir/stderr" ||
   fail "system lock says why the session was not locked" "$(<"$tmpdir/stderr")"
+# SYS-REQ-260912-T0XP:error_handling:negative
 grep -q "^omarchy-notification-send .*Screen did not lock" "$call_log" ||
   fail "system lock warns on screen when it could not lock"
 pass "system lock fails when no lock screen is configured"
@@ -126,6 +127,7 @@ rc=0
 SECURE_AFTER=never run_lock || rc=$?
 elapsed=$((SECONDS - started))
 
+# SYS-REQ-260912-T0XP:error_handling:negative
 (( rc == 1 )) || fail "system lock fails when the session never becomes secure" "exit $rc"
 (( rc != 124 && rc != 137 )) || fail "system lock gives up on its own" "still running after ${elapsed}s"
 pass "system lock fails when the session never becomes secure"
@@ -241,6 +243,7 @@ chmod +x "$mock_bin_sh"/*
 
 rc=0
 run_variant "$mock_bin_sh" "$call_log_sh" || rc=$?
+# SYS-REQ-260912-T0XP:error_handling:negative
 (( rc == 1 )) || fail "system lock fails when the session-lock IPC fails" "exit $rc"
 grep -q "^omarchy-notification-send .*Screen did not lock" "$call_log_sh" ||
   fail "system lock warns on screen when the session-lock IPC fails" "calls: $(cat "$call_log_sh")"
