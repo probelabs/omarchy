@@ -17,6 +17,7 @@ mitigation: DEBUG=1 on omarchy-menu-keybindings prints the failing require
 remediation: 'Isolate each bind registration from unrelated config code: run the dofile with a permissive mock (never-throwing comparisons), or scan binds via a per-require pcall boundary. Then one throwing module cannot drop unrelated binds'
 notes:
     - 'Upstream: original fix PR #7564 (2026-08-20); later duplicate fix PR #13276; no issue tracks it.'
+    - 'Reproducer (2026-10-05): two arms. Arm A is the shipped trigger above (qconsole''s scale comparison). Arm B guards that comparison and adds a user monitors.lua that builds a mode string with string.format("%dx%d@%d", ...) from the active monitor; the library call rejects the mock value and the scan ends before hypr.bindings. Both arms lose the user''s SSH bind on this branch. A fix that only makes the mock absorb operators flips arm A; a per-module pcall around require (the remediation) flips both.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -57,6 +58,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
+    - at: "2026-10-05T17:32:31Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
