@@ -152,9 +152,9 @@ poc_quality:
     operational_path_verified: true
     reachability_verified: false
     notes: |
-        real_infrastructure: reproducer runs the real bin/omarchy-menu-select with only the omarchy-shell IPC binary stubbed on PATH (test/shell.d/menu-select-poll-deadlock-repro.sh).
-        quantitative_impact: hang measured against a 3s deadline; defect run killed by timeout (rc=124) => wait is unbounded, hanging every synchronous caller.
-        control_test: negative control in the same script - a healthy peer that writes done_file terminates promptly (rc=1 within deadline), proving the hang is the defect, not the protocol.
+        real_infrastructure: reproducer runs the real bin/omarchy-menu-select with only the omarchy-shell IPC binary stubbed on PATH; a real process named quickshell, started like omarchy-launch-shell starts the shell, stands in for the shell and is killed after it takes the request (test/shell.d/menu-select-poll-deadlock-repro.sh).
+        quantitative_impact: the stand-in shell exits 0.3s after taking the request; the wait is still running at a 5s deadline and is killed by timeout (rc=124) => the wait does not end when its peer dies, hanging every synchronous caller.
+        control_test: negative control in the same script - a live shell that writes the selection and done_file gets its answer back promptly (alpha, rc=0), proving the hang is the defect, not the protocol. A shell that stays alive and never answers is not asserted: an open picker may stay open.
         operational_path_verified: control + defect arms exercise the real operational path (summon IPC -> done_file poll) end to end.
         current_deployment_relevance: bin/omarchy-menu-select lines 93-95 carry the unbounded poll on this branch today.
         honest_severity: medium - availability impact on calling scripts; no data loss or privilege change claimed.
