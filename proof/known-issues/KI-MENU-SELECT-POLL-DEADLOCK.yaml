@@ -127,6 +127,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
+    - at: "2026-10-05T17:12:22Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-select-poll-deadlock.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
