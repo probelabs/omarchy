@@ -2,17 +2,17 @@ schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-7NPE
-      command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
-      status: pass
+      command: node pocs/menu-override-sweep.js
+      status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-04T19:47:32Z"
+      executed_at: "2026-10-05T17:11:03Z"
+      revision: 5ee16304a9e559972a8dc6fbb68ec8afffa6941a
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS` from the KnownIssue''s reproducer command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
-        - ../shell/plugins/menu/MenuModel.js
-        - pocs/menu-probes.js
+        - 'Captured by `proof evidence capture KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS` from the KnownIssue''s reproducer command: node pocs/menu-override-sweep.js. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - pocs/menu-override-sweep.js
       freshness_hashes:
-        pocs/menu-probes.js: sha256:776d23990bd6fc3e6894b6db6cf9da3bb8ca8779f618713b2d6e22aa98a9caa5
-        proof/known-issues/KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS.yaml: ki-content-v1:sha256:9896e3dc11a51c0c58302475812d87e7f41b69160c5700ef83883c8714ae345d
+        pocs/menu-override-sweep.js: sha256:ed5ba08a28ce5f9ff9234e0d8b1b35f7ffdd81c90afc87eb4e586fa570fc1377
+        proof/known-issues/KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS.yaml: ki-content-v1:sha256:3ec4ec9dfb267563b97bd6d2719b6c86a75eeb2594788d9862370493369129e7
       known_issues:
         - KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS
       config:
