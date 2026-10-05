@@ -258,7 +258,7 @@ Item {
 
   // Implements: SW-REQ-260922-E4J2, SW-REQ-260922-3T3F
   function parseMenuJsonc(raw) {
-    return MenuModel.parseMenuJsonc(raw)
+    return MenuModel.parseMenuJsonc(raw, false)
   }
 
   // Merge defaults + user extension. Later entries override earlier ones
