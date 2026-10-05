@@ -1,0 +1,45 @@
+id: SW-REQ-261005-XJN0
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: 'OPEN DECISION (awaiting the Omarchy maintainers): what shall the password field show after a failed attempt? Current behaviour (upstream quattro 035ce29f): handlePasswordFailure sets failureMessage ''Authentication failed (N)'' (Service.qml:346-355); with an empty field the overlay text shows that message instead of the ''Enter Password'' placeholder (LockView.qml:225), the text cursor is hidden (LockView.qml:42, :188) and the border uses the error colour (LockView.qml:43); the field still accepts typing and the first character clears the message (LockView.qml:195-201). Options: (A) keep the current behaviour; (B) the lock view shall show the failure message and the password prompt together; (C) the lock view shall show the failure message for a time chosen by the maintainers, then the prompt again; (D) the failure message shall appear outside the field. Approving this draft means choosing one option; its text then replaces this description.'
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-T0XP
+component: lock
+rationale: 'Raised by omacom/omarchy#14125 (proof inbox R-2205). The validation (report/cmus3invr006gcdw4hm3h94a5, rval-1d0d301a89cd1f41155b5ae3843fac19) reproduced the display with the real LockView.qml. No requirement governs the failure display. Open upstream PR #14170 implements option C; a commenter on the issue prefers keeping the message in the field.'
+tags:
+    - open-decision
+    - awaiting-maintainer-decision
+variables: []
+references:
+    - type: customer_report
+      id: omacom/omarchy#14125
+      url: https://github.com/omacom/omarchy/issues/14125
+      description: Origin report in the upstream issue tracker
+    - type: ticket
+      id: R-2205
+      url: https://portal.reqproof.com/projects/omarchy/inbox/2205
+      description: Validated report in the proof inbox (reproducer, sealed validation)
+traces:
+    satisfies:
+        - SYS-REQ-260912-T0XP
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-05T14:31:58Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-05T14:31:58Z"
