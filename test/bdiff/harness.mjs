@@ -148,16 +148,28 @@ function runJsonc() {
 //   R  activate row 1 (dmenu: pick beta; menu: run the action row)
 //   C  close
 //   X  the shared answer Process exits (fires the revision's onExited)
+//   B  route summon ({"menu":"sub"}, a submenu)
+//   F  the menu files load (the revision's rebuildItemsFromSources over the
+//      model items). Both files answer: the default file loads and the user
+//      file is found missing. An event file that uses F, D or U starts like a
+//      shell that is still starting: no items are loaded until a file loads.
+//   D  only the default file loads (the user file has not answered yet)
+//   U  the user file is found missing (its onLoadFailed answer)
+//   G  the user opens the submenu (the revision's setActiveMenu, if it has one)
+//   T  the user types into the filter and clears it (the revision's setFilter)
 //
 // Model (method: review notes for #9056, harness bdiff-9056.js): the shared
 // QML `Process { id: resultProc }` ignores `running = true` while it is still
 // running (verified live: 19/20 stranded callers on quattro), and stays busy
 // until an explicit X. Quickshell.execDetached / Util.execDetached run
 // immediately. After the last event every still-running write is drained.
-const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected']
+const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected', 'rebuildItemsFromSources']
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
-const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X'])
+// Taken from the revision when it has them; a revision without them keeps the
+// harness stubs (menuFilesAnswered: the startup ops model the files it reads).
+const OPTIONAL = ['menuFilesAnswered', 'setActiveMenu', 'setFilter']
+const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X', 'B', 'F', 'D', 'U', 'G', 'T'])
 
 function parseEvents(text) {
   const ops = []
@@ -178,7 +190,7 @@ function parseEvents(text) {
 
 function extractFunctions(qml) {
   const found = {}
-  for (const n of NAMES) {
+  for (const n of NAMES.concat(OPTIONAL)) {
     const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
     if (m) found[n] = m[0]
   }
@@ -199,9 +211,37 @@ function commandText(cmd) {
   return String(cmd)
 }
 
+// Verifies: SW-REQ-261002-DK0D
+// The menu item state a replay starts from. A sequence that uses F starts like
+// a shell that is still starting: no items loaded and no rows yet, so a route
+// summoned before the first F cannot resolve.
+function startupItems(startup) {
+  return {
+    items: startup ? {} : ITEMS, itemOrder: startup ? [] : Object.keys(ITEMS), rowsLoaded: !startup,
+    defaultMenuItems: [], userMenuItems: [], providerRevision: 0, providersLoaded: {}, providerQueue: [],
+    defaultMenuFile: { loaded: !startup }, userMenuFile: { loaded: !startup }, userMenuFailed: false,
+  }
+}
+
+// Verifies: SW-REQ-261002-DK0D
+// The startup ops: B summons a submenu route; F, D and U answer for the menu
+// files (a FileView reports loaded once its read lands; a missing user file
+// answers through onLoadFailed) and run the revision's own
+// rebuildItemsFromSources over the model items; G and T are the user opening
+// the submenu and typing into the filter, through the revision's own functions.
+function runStartupOp(op, r) {
+  if (op === 'B') r.open(JSON.stringify({ menu: 'sub' }))
+  else if (op === 'F') { r.defaultMenuFile.loaded = true; r.userMenuFailed = true; r.defaultMenuItems = Object.values(ITEMS); r.rebuildItemsFromSources() }
+  else if (op === 'D') { r.defaultMenuFile.loaded = true; r.defaultMenuItems = Object.values(ITEMS); r.rebuildItemsFromSources() }
+  else if (op === 'U') { r.userMenuFailed = true; r.userMenuItems = []; r.rebuildItemsFromSources() }
+  else if (op === 'G') r.setActiveMenu('sub', true)
+  else if (op === 'T') { r.setFilter('x'); r.setFilter('') }
+}
+
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())
+  const startup = ops.some(op => op === 'F' || op === 'D' || op === 'U')
   emit(`events ${ops.join('') || '-'}${slow ? ' @slow' : ''}`)
   if (bad.length) emit(`ignored-tokens ${bad.join(' ')}`)
   const rel = 'shell/plugins/menu/Menu.qml'
@@ -240,11 +280,15 @@ function runEvents() {
     activeMenu: 'root', navStack: [], filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '',
     pendingInitialMenu: 'root', deleteConfirmOpen: false, deleteTarget: null, shell: null,
     appLibrary: { launch(id) { S.apps.push(id) }, refreshIcons() {}, remove() {} },
-    items: ITEMS, itemOrder: Object.keys(ITEMS),
-    item(id) { return ITEMS[id] || null },
+    ...startupItems(startup),
+    item(id) { return Object.prototype.hasOwnProperty.call(r.items, id) ? r.items[id] : null },
+    loadProvidersForSearch() {},
     resolveRoute(x) { return x },
     disarmPointer() {}, evaluateGuards() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
     setActiveMenu(id) { this.activeMenu = id; this.rebuildDisplay() },
+    setFilter(f) { this.filterText = f; this.rebuildDisplay() },
+    menuFilesAnswered() { return r.defaultMenuFile.loaded && (r.userMenuFile.loaded || r.userMenuFailed) },
+    panel: { freezeCardTop() {} }, pointerGate: { allowInitialSample() {} },
     rowSelectable(i) { return i >= 0 && i < rows.length },
     // runAction is stubbed: it is not part of the request lifecycle, and the
     // stub keeps action commands apart from answer writes.
@@ -265,15 +309,16 @@ function runEvents() {
       return k in t || (!(k in sandbox) && !(k in globalThis))
     },
   })
-  const src = NAMES.map(n => found[n]).join('\n')
+  const opt = OPTIONAL.filter(n => found[n])
+  const src = NAMES.concat(opt).map(n => found[n]).join('\n')
   let fns
   try {
-    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${NAMES.join(', ')}, onExited: function() { ${onExited || ''} } } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
+    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${NAMES.concat(opt).join(', ')}, onExited: function() { ${onExited || ''} } } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
   } catch (e) {
     emit(`lifecycle: COMPILE-ERROR ${errName(e)}`)
     return
   }
-  for (const n of NAMES) r[n] = fns[n]
+  for (const n of NAMES.concat(opt)) r[n] = fns[n]
 
   const callers = new Map()
   const stray = []
@@ -308,6 +353,7 @@ function runEvents() {
         case 'P': r.activateIndex(0); break
         case 'R': r.activateIndex(1); break
         case 'C': r.close(); break
+        case 'B': case 'F': case 'D': case 'U': case 'G': case 'T': runStartupOp(op, r); break
         case 'X': exitProc(); break
       }
       deliver()
@@ -328,6 +374,7 @@ function runEvents() {
   emit(`final opened=${r.opened} mode=${r.mode} requestActive=${r.requestActive} doneFileOwner=${owner}`)
   emit(`actions ${S.actions.join(',') || '-'}`)
   emit(`apps ${S.apps.join(',') || '-'}`)
+  if (startup || ops.includes('B')) emit(`menu active=${r.activeMenu}`)
   emit(`stray-writes ${stray.join(' | ') || '-'}`)
 }
 

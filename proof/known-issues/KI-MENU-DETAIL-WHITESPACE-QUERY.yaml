@@ -44,6 +44,14 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-detail-whitespace-query.yaml
+    - at: "2026-10-02T13:00:45Z"
+      by: agent:claude-pr-B
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-detail-whitespace-query.yaml
+    - at: "2026-10-02T14:52:29Z"
+      by: human:Leonid Bugaev
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-detail-whitespace-query.yaml
 kill_domain: layout
 affected_file:
     - shell/plugins/menu/MenuModel.js

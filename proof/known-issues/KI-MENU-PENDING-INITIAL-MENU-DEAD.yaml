@@ -1,29 +1,36 @@
 id: KI-MENU-PENDING-INITIAL-MENU-DEAD
 title: 'pendingInitialMenu is stored and never read: a route summoned before the JSONC loads opens root and stays there'
-description: 'openRoute stores the resolved id in pendingInitialMenu (Menu.qml:975) and nothing reads it (anchor PIM1: exactly two occurrences). With items still empty at summon time, resolveRoute returns the literal, item() misses, openExistingMenu rewrites to root, and after onLoaded nothing applies the stored route. A misspelled route also silently becomes root, undoing resolveRoute''s documented literal fallthrough in the same turn.'
+description: |-
+    The shell queues a summon that arrives before the menu plugin loads. It hands the summon to open() as soon as the plugin loads. Neither menu FileView has read its JSONC file then, and the user extension usually answers first. So openRoute cannot resolve the route, and openExistingMenu falls back to root.
+
+    On 821ae589 nothing opens the route when the files land. openRoute writes the route to pendingInitialMenu, but nothing reads that property. The reader went away with the bash menu's replay (edfd68d4, 4cd6593b). A summon during startup (Super+Escape right after login or a shell restart) shows the main menu. An action alias such as reminder-set never runs. Seen live on 821ae589 in every cold-start run.
 affected_requirements:
     - SW-REQ-260922-N3RM
     - SW-REQ-260922-50RE
+    - SW-REQ-261002-DK0D
 evidence_manifests:
-    - pocs/menu-qml-static.sh
     - proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - test/shell.d/menu-startup-route-test.sh
 severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: pocs/menu-qml-static.sh
+reproducer_command: bash test/shell.d/menu-startup-route-test.sh
+tripwire_mutation: remove root.openRoute(pending) from rebuildItemsFromSources -> menu-startup-route-test.sh fails at 'a route summoned during startup opens once the default file loads and the user file is found missing'
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: The race needs a summon landing before the JSONC loads (a sub-second window at session start); reopening lands on the intended route
-remediation: 'Apply pendingInitialMenu once both menu files have loaded, or block the first open until they load. PR #14055 does the first.'
+remediation: 'Fixed upstream on #14055 (SW-REQ-261002-DK0D). A route that fell back to root stays pending until both menu files have answered. Then the menu tries it one time and drops it. Typing or opening another menu drops it earlier.'
 notes:
+    - 'Fixed by the upstream change on pr-B (43d787d4, "Open a menu route summoned during startup once the menu files load"): openExistingMenu keeps the route pending only when it fell back to root, and rebuildItemsFromSources opens it through openRoute once a load makes it resolve, while the menu still shows root with nothing typed (SW-REQ-261002-DK0D). Reproducer: bash test/shell.d/menu-startup-route-test.sh (red: fails on 821ae589, passes with the fix). The PIM1 anchor left pocs/menu-qml-static.sh.'
+    - 'Follow-up 48405669 ("Wait for both menu files before opening a route summoned during startup"), after review of #14055: the replay now waits until the default file has loaded and the user file has loaded or failed, so it sees the user overrides; it tries the route once and clears pendingInitialMenu whatever the outcome; setFilter and setActiveMenu clear it; a summon after both files answered never waits. The reproducer stays bash test/shell.d/menu-startup-route-test.sh (27 checks; red on 821ae589, all pass on 48405669).'
     - 'Upstream: original #14053 (ours, 2026-10-02); open fix PR #14055 (ours).'
 customer_impact: A menu key pressed while the shell is starting opens the main menu instead of the menu you asked for. This happens right after login, or after omarchy-restart-shell, which omarchy update runs. An action shortcut such as Super+Ctrl+R also opens the main menu, and its action never runs. Pressing it again a second later works.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:50:22Z"
       by: human:Leonid Bugaev
@@ -44,12 +51,32 @@ history:
       by: human:Leonid Bugaev
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-02T13:00:21Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-description,set-reproducer-command,set-tripwire-mutation,set-remediation,append-note,set-status=fixed,add-requirement,remove-evidence-manifest,add-evidence-manifest
+    - at: "2026-10-02T13:08:27Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-description
+    - at: "2026-10-02T13:15:54Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-remediation
+    - at: "2026-10-02T14:48:19Z"
+      by: agent:claude-pr-B
+      action: edit
+      detail: set-tripwire-mutation,set-remediation,append-note
     - at: "2026-10-02T22:05:53Z"
       by: agent:claude-quattro-proof
       action: edit
       detail: set-description,set-remediation,set-customer-impact
     - at: "2026-10-02T22:06:29Z"
       by: agent:claude-quattro-proof
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-03T06:49:26Z"
+      by: agent:claude-pr-B
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
     - at: "2026-10-04T19:27:18Z"
@@ -69,6 +96,10 @@ history:
       action: upstream-response
       detail: status=pending
     - at: "2026-10-04T19:47:32Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml
+    - at: "2026-10-04T20:50:00Z"
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-pending-initial-menu-dead.yaml

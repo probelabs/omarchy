@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-02T16:54:38.207329Z"
+    reviewed_at: "2026-10-02T17:00:08.169213Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:cancel: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:finishRequest: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onClicked: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:cancel: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:finishRequest: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:onClicked: file1:2d712e4428f0311e4e9d89ae9b964869
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -54,26 +54,37 @@ traces:
             - test/shell.d/menu-dmenu-test.sh:5
             - test/shell.d/menu-dmenu-test.sh:84
             - test/shell.d/menu-dmenu-test.sh:96
-        - reviewed_at: "2026-10-02T16:44:32.734608Z"
+        - reviewed_at: "2026-10-02T12:41:48.842418Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1189
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:900
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:11.067641Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1201
+            - shell/plugins/menu/Menu.qml:122
+            - shell/plugins/menu/Menu.qml:912
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:08.169213Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1180
+            - shell/plugins/menu/Menu.qml:1202
             - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:893
-            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
-            - test/shell.d/menu-dmenu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:38.207329Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:1181
-            - shell/plugins/menu/Menu.qml:122
-            - shell/plugins/menu/Menu.qml:893
+            - shell/plugins/menu/Menu.qml:912
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5
 verification:

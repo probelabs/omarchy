@@ -1,0 +1,205 @@
+id: SW-REQ-261002-DK0D
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when route_fell_back_before_load & pending_route_resolves & menu_untouched_on_root the menu_router shall eventually satisfy pending_route_opened
+description: |-
+    A summon can reach the menu while the shell starts, before both menu files have answered. The default file answers when it loads. The optional user file answers when it loads or when it fails to load. If the route does not resolve against the files loaded so far, the menu falls back to root and keeps the route pending. A route that resolves at once opens at once, as at any other time.
+
+    When both files have answered, the menu tries the pending route one time. It opens the route if the route resolves and the menu is still open in menu mode. Then the menu drops the route, also when it did not open. The menu drops the route earlier if the user types into the menu or opens another menu.
+
+    A summon that arrives after both files have answered does not wait. If its route does not resolve, the menu shows root and does not open the route later.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-R8DQ
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro 821ae589 has this defect. The shell queues a summon that arrives before the menu plugin loads. It hands the summon to open() as soon as the plugin loads (shell.qml registerPanelLoader, deliverIfLoaded). Neither FileView has read its JSONC file at that point, and the user extension usually answers first.
+
+    So openRoute cannot resolve the route, and openExistingMenu falls back to root. Nothing opens the route when the files land. Super+Escape right after login or a shell restart shows the main menu, and an action alias never runs.
+
+    openRoute already writes the route to pendingInitialMenu, which nothing read since the bash menu went away (edfd68d4, 4cd6593b). The fix keeps the route pending only when the menu fell back to root. rebuildItemsFromSources opens it through openRoute once it resolves, so aliases, links and action aliases behave as for any summon.
+
+    The first version of the fix (43d787d4) opened the route as soon as it resolved. That could happen against the default file alone. So an early summon of about ran the default command when the user file overrides it. The route also stayed pending after the user opened another menu and went back to root. So a later load or a live edit could still open it.
+
+    Review of #14055 found both. The follow-up (48405669) waits for both files, tries the route once, and drops it when the user types or opens another menu. setFilter and setActiveMenu clear it, and onLoadFailed records that the user file answered.
+tags: []
+variables:
+    - route_fell_back_before_load
+    - pending_route_resolves
+    - menu_untouched_on_root
+    - pending_route_opened
+traces:
+    satisfies:
+        - SYS-REQ-260922-R8DQ
+    reviewed_at: "2026-10-02T17:00:17.620972Z"
+    reviewed_by: agent:claude-quattro-proof
+    reviewed_fingerprint: sha256:ef62225fde625d8d3de54adb9ac7d317562e170e20195b6f9da4867a5a6339cb
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:menuFilesAnswered: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:onLoadFailed: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:openExistingMenu: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:rebuildItemsFromSources: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:setActiveMenu: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:setFilter: file1:2d712e4428f0311e4e9d89ae9b964869
+        satisfies:
+            SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
+    review_history:
+        - reviewed_at: "2026-10-02T12:59:15.790751Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B: new requirement. Implemented by the replay at the end of rebuildItemsFromSources and the clear in openExistingMenu (Implements lines on both); verified by test/shell.d/menu-startup-route-test.sh, which runs the real open/openRoute/openExistingMenu/rebuildItemsFromSources bodies and FileView handlers under node vm; satisfies SYS-REQ-260922-R8DQ (a route opens the item it denotes). Spec conformance REVIEW-261002-NS9R'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:907
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/shell.d/menu-startup-route-test.sh:101
+            - test/shell.d/menu-startup-route-test.sh:148
+            - test/shell.d/menu-startup-route-test.sh:159
+            - test/shell.d/menu-startup-route-test.sh:168
+            - test/shell.d/menu-startup-route-test.sh:5
+        - reviewed_at: "2026-10-02T13:36:01.689519Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr-B: new requirement. Implemented by the replay at the end of rebuildItemsFromSources and the clear in openExistingMenu (Implements lines on both); verified by test/shell.d/menu-startup-route-test.sh, which runs the real open/openRoute/openExistingMenu/rebuildItemsFromSources bodies and FileView handlers under node vm; satisfies SYS-REQ-260922-R8DQ (a route opens the item it denotes). Spec conformance REVIEW-261002-NS9R'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:907
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-route-after-load.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-action-alias.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-root-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-closed.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-reload.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-then-select.events:1
+            - test/bdiff/harness.mjs:206
+            - test/bdiff/harness.mjs:217
+            - test/shell.d/menu-startup-route-test.sh:101
+            - test/shell.d/menu-startup-route-test.sh:148
+            - test/shell.d/menu-startup-route-test.sh:159
+            - test/shell.d/menu-startup-route-test.sh:168
+            - test/shell.d/menu-startup-route-test.sh:5
+        - reviewed_at: "2026-10-02T14:49:20.613093Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669: DK0D now states the lifetime rule (the route waits until both menu files have answered, gets one try, and is dropped on typing or opening another menu; a summon after both files answered never waits). Implemented by rebuildItemsFromSources, menuFilesAnswered, openExistingMenu, setFilter, setActiveMenu and the user FileView onLoadFailed (Implements lines on each); verified by test/shell.d/menu-startup-route-test.sh (27 checks, real Menu.qml bodies under node vm) and the behaviour-diff harness ops and inputs; satisfies SYS-REQ-260922-R8DQ'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1077
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:297
+            - shell/plugins/menu/Menu.qml:788
+            - shell/plugins/menu/Menu.qml:801
+            - shell/plugins/menu/Menu.qml:919
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-route-after-load.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-action-alias.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-only.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-then-missing-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-missing-user-then-default.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-navigate-before-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-root-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-closed.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-reload.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-then-select.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-type-before-user.events:1
+            - test/bdiff/harness.mjs:214
+            - test/bdiff/harness.mjs:226
+            - test/shell.d/menu-startup-route-test.sh:118
+            - test/shell.d/menu-startup-route-test.sh:172
+            - test/shell.d/menu-startup-route-test.sh:184
+            - test/shell.d/menu-startup-route-test.sh:194
+            - test/shell.d/menu-startup-route-test.sh:203
+            - test/shell.d/menu-startup-route-test.sh:213
+            - test/shell.d/menu-startup-route-test.sh:223
+            - test/shell.d/menu-startup-route-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:17.620972Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1078
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/Menu.qml:297
+            - shell/plugins/menu/Menu.qml:788
+            - shell/plugins/menu/Menu.qml:801
+            - shell/plugins/menu/Menu.qml:919
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-route-after-load.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-action-alias.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-only.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-default-then-missing-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-missing-user-then-default.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-navigate-before-user.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-root-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-closed.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-reload.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-summon.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-route-then-select.events:1
+            - test/bdiff/corpus/lifecycle/seq-startup-type-before-user.events:1
+            - test/bdiff/harness.mjs:214
+            - test/bdiff/harness.mjs:226
+            - test/shell.d/menu-startup-route-test.sh:118
+            - test/shell.d/menu-startup-route-test.sh:172
+            - test/shell.d/menu-startup-route-test.sh:184
+            - test/shell.d/menu-startup-route-test.sh:194
+            - test/shell.d/menu-startup-route-test.sh:203
+            - test/shell.d/menu-startup-route-test.sh:213
+            - test/shell.d/menu-startup-route-test.sh:223
+            - test/shell.d/menu-startup-route-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-B
+        reviewed_at: "2026-10-02T12:45:00Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-02T12:25:16Z"
+    last_modified_by: agent:claude-pr-B
+    last_modified_at: "2026-10-02T15:14:22Z"
+hazard_review:
+    reviewed_at: "2026-10-02T14:45:17Z"
+    reviewed_by: agent:claude-pr-B
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+          not_applicable:
+            - boundary
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: a summon made during startup opens the main menu, runs the default command that the user file overrides, or a pending route later pulls the user out of a menu they chose. edge_case: each load order is a case - the default file first, the user file first, a missing user file, and a menu or action override that only the user file defines (witnessed). The route waits until both files answered and gets one try. A route that resolves at once, a missing id (also when a later edit adds it), a summon after both files answered, a summon with no route, a select prompt that replaced the summon, a summon closed before the files load, and a user who typed, opened another menu, or opened one and went back to root do not replay (witnessed). An action alias runs once. boundary not applicable: the decision is a set of booleans, with no range or limit. input_domain not applicable: the route string goes through the same resolveRoute as any summon. concurrency_scale not applicable: both FileView handlers and the summon run one after the other on the GUI thread; only their order varies, which the edge cases cover.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - totality
+          rationale: 'Every summoned route ends in one defined state: opened at once, opened by its one try after both menu files answered while the menu is still open in menu mode and untouched, or left on root and dropped. No path opens a route the user did not summon, opens it twice, or opens it after the user typed or opened another menu.'
+        - category: structural
+          disposition: not_applicable
+          rationale: 'One string property and one guarded call; no memory, encoding or numeric surface.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'Menu navigation state only. Action aliases run through the same runAction path as any summon, under their own requirements.'
+lifecycle:
+    change_history:
+        - date: "2026-10-02T12:45:00Z"
+          from: draft
+          to: review
+          reason: '[pr-B] upstream fix for a menu route summoned during shell startup: requirement authored for the behaviour the change adds; spec conformance REVIEW-261002-NS9R; executing witnesses in test/shell.d/menu-startup-route-test.sh'
+          changed_by: agent:claude-pr-B

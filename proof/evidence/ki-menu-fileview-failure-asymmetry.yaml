@@ -5,12 +5,12 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:51Z"
+      executed_at: "2026-10-02T14:52:30Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-FILEVIEW-FAILURE-ASYMMETRY` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
+        pocs/menu-qml-static.sh: sha256:dd8de797ee9251a54b39015c92d0b4f1626227aebb50c4d0f5d47ca64045424b
         proof/known-issues/KI-MENU-FILEVIEW-FAILURE-ASYMMETRY.yaml: ki-content-v1:sha256:d68214f5c2ee2f3d82c6e47b8f9ae0caed6474656a089e3e8c1ccb04161799b3
       known_issues:
         - KI-MENU-FILEVIEW-FAILURE-ASYMMETRY

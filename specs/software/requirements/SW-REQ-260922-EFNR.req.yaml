@@ -19,20 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-02T16:54:42.341947Z"
+    reviewed_at: "2026-10-02T17:00:12.578693Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:invalidateVolatileProvider: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:loadProviderForMenu: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onAppsChanged: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onExited: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onRead: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:startNextProvider: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:invalidateVolatileProvider: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:loadProviderForMenu: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:onAppsChanged: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:onExited: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:onRead: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:startNextProvider: file1:2d712e4428f0311e4e9d89ae9b964869
+            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:2d712e4428f0311e4e9d89ae9b964869
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
@@ -80,41 +80,61 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:19
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:36.271186Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T12:42:00.217218Z"
+          reviewed_by: agent:claude-pr-B
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources(), which opens a route that fell back to root once a load makes it resolve (6 lines), and openExistingMenu(), which clears pendingInitialMenu when the requested item is shown (2 lines); both Implements lines also name SW-REQ-261002-DK0D. Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1002
-            - shell/plugins/menu/Menu.qml:1029
-            - shell/plugins/menu/Menu.qml:355
-            - shell/plugins/menu/Menu.qml:376
-            - shell/plugins/menu/Menu.qml:422
-            - shell/plugins/menu/Menu.qml:439
+            - shell/plugins/menu/Menu.qml:1008
+            - shell/plugins/menu/Menu.qml:1011
+            - shell/plugins/menu/Menu.qml:1038
+            - shell/plugins/menu/Menu.qml:362
+            - shell/plugins/menu/Menu.qml:383
+            - shell/plugins/menu/Menu.qml:429
             - shell/plugins/menu/Menu.qml:446
-            - shell/plugins/menu/Menu.qml:465
-            - shell/plugins/menu/Menu.qml:999
+            - shell/plugins/menu/Menu.qml:453
+            - shell/plugins/menu/Menu.qml:472
             - shell/plugins/menu/MenuModel.js:145
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:42.341947Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T14:49:15.386809Z"
+          reviewed_by: agent:claude-pr-B
           method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          rationale: 'pr/14055 follow-up 48405669 on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in rebuildItemsFromSources (the pending route now waits until both menu files have answered and gets one try), the new menuFilesAnswered and userMenuFailed, setFilter and setActiveMenu (each clears pendingInitialMenu), openExistingMenu (keeps a route pending only before both files answered) and the user FileView onLoadFailed (records that the user file answered). Every other function is byte-identical and only shifted, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:1000
-            - shell/plugins/menu/Menu.qml:1003
-            - shell/plugins/menu/Menu.qml:1030
-            - shell/plugins/menu/Menu.qml:355
-            - shell/plugins/menu/Menu.qml:376
-            - shell/plugins/menu/Menu.qml:422
-            - shell/plugins/menu/Menu.qml:439
-            - shell/plugins/menu/Menu.qml:446
-            - shell/plugins/menu/Menu.qml:465
+            - shell/plugins/menu/Menu.qml:1020
+            - shell/plugins/menu/Menu.qml:1023
+            - shell/plugins/menu/Menu.qml:1050
+            - shell/plugins/menu/Menu.qml:371
+            - shell/plugins/menu/Menu.qml:392
+            - shell/plugins/menu/Menu.qml:438
+            - shell/plugins/menu/Menu.qml:455
+            - shell/plugins/menu/Menu.qml:462
+            - shell/plugins/menu/Menu.qml:481
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:12.578693Z"
+          reviewed_by: agent:claude-quattro-proof
+          method: inspection
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1021
+            - shell/plugins/menu/Menu.qml:1024
+            - shell/plugins/menu/Menu.qml:1051
+            - shell/plugins/menu/Menu.qml:371
+            - shell/plugins/menu/Menu.qml:392
+            - shell/plugins/menu/Menu.qml:438
+            - shell/plugins/menu/Menu.qml:455
+            - shell/plugins/menu/Menu.qml:462
+            - shell/plugins/menu/Menu.qml:481
             - shell/plugins/menu/MenuModel.js:145
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/node/menumodel-replay.test.mjs:1

@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:39.756361Z"
+    reviewed_at: "2026-10-02T17:00:09.848095Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:cce8af4897e3cc83790af34c836aa263cede8e10c78ec45686d6592f58267ea5
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:rebuildItemsFromSources: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:rebuildItemsFromSources: file1:2d712e4428f0311e4e9d89ae9b964869
             shell/plugins/menu/MenuModel.js:mergeMenuSources: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
@@ -65,10 +65,10 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:10
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:34.019582Z"
-          reviewed_by: agent:claude-quattro-proof
+        - reviewed_at: "2026-10-02T12:41:52.924007Z"
+          reviewed_by: agent:claude-pr-B
           method: inspection
-          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
+          rationale: 'pr-B review on quattro-proof 5d4fb9a8: rebuildItemsFromSources still merges the default and user items per key with root injected (MenuModel.mergeMenuSources unchanged); its new tail only replays a pending route through openRoute (SW-REQ-261002-DK0D) and does not change the merged items'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:267
@@ -77,10 +77,22 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:39.756361Z"
+        - reviewed_at: "2026-10-02T14:49:12.635529Z"
+          reviewed_by: agent:claude-pr-B
+          method: inspection
+          rationale: 'pr/14055 follow-up 48405669: rebuildItemsFromSources changes only after the merge: the pending-route replay waits for both files and runs once (SW-REQ-261002-DK0D). mergeMenuSources and the per-key override and root injection this requirement covers are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:267
+            - shell/plugins/menu/MenuModel.js:69
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:09.848095Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:267
