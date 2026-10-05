@@ -3,16 +3,17 @@ results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-7NPE
       command: node pocs/menu-override-sweep.js
-      status: fail
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-05T17:11:03Z"
-      revision: 5ee16304a9e559972a8dc6fbb68ec8afffa6941a
+      status: pass
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-05T17:13:56Z"
+      revision: 13cd7c4e70b8c3c3b2f7e3eb64da2a02460a4429
+      freshness_basis: revision
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS` from the KnownIssue''s reproducer command: node pocs/menu-override-sweep.js. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Captured by `proof evidence capture KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS` from the KnownIssue''s reproducer command: node pocs/menu-override-sweep.js. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - pocs/menu-override-sweep.js
       freshness_hashes:
         pocs/menu-override-sweep.js: sha256:ed5ba08a28ce5f9ff9234e0d8b1b35f7ffdd81c90afc87eb4e586fa570fc1377
-        proof/known-issues/KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS.yaml: ki-content-v1:sha256:3ec4ec9dfb267563b97bd6d2719b6c86a75eeb2594788d9862370493369129e7
+        proof/known-issues/KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS.yaml: ki-content-v1:sha256:305a8d7293fa94a6514a99bdd885e59353ba35b67f155f4f416ecefcfe84010d
       known_issues:
         - KI-MENU-MERGE-OVERRIDE-WIPES-DEFAULTS
       config:
