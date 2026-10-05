@@ -4,15 +4,13 @@ description: 'normalizeItem materializes every omitted field as an empty default
 affected_requirements:
     - SW-REQ-260922-7NPE
 evidence_manifests:
-    - pocs/menu-probes.js
-    - pocs/menu-probes2.js
-    - pocs/menu-probes3.js
     - proof/evidence/ki-menu-merge-override-wipes-defaults.yaml
+    - pocs/menu-override-sweep.js
 severity: low
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: node pocs/menu-probes.js ../shell/plugins/menu/MenuModel.js
+reproducer_command: node pocs/menu-override-sweep.js
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
@@ -20,6 +18,7 @@ mitigation: Default installs ship no label-only overrides; users who override a 
 remediation: merge the RAW user entry over the default before normalizing (or make the merge skip empty-string/empty-array values from the overlay source)
 notes:
     - 'Upstream: PR #10007 (2026-09-03) reported this first. The canonical issue is #11211; #11509 and #12236 are duplicates. Fix PRs #11137, #11519 and #11711 were closed unmerged; #10007 and #12255 are open.'
+    - 'Reproducer moved to pocs/menu-override-sweep.js on 2026-10-05. It drives the live load path: the parsers Menu.qml''s FileViews call, then mergeMenuSources, over one-field overrides of every shipped row. It exits 1 while the defect is present and 0 once fixed, with a restate-unchanged control. The earlier probe (menu-probes.js F10) builds the user row with normalizeItem itself, so it could not observe a loader fix such as #10007 or #12255.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -56,6 +55,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-merge-override-wipes-defaults.yaml
+    - at: "2026-10-05T17:09:52Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-reproducer-command,append-note,remove-evidence-manifest,add-evidence-manifest
 kill_domain: merge_semantics
 affected_file:
     - shell/plugins/menu/MenuModel.js
