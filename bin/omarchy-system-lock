@@ -23,6 +23,7 @@ lock_state() {
     <<<"$(lock_ipc 0.5s lock status)" 2>/dev/null
 }
 
+# Implements: SYS-REQ-260927-WC89 — the Lock row's callee reports a lock that did not hold: exit 1 and an on-screen notification
 report_unsecured() {
   printf 'omarchy-system-lock: the session was not locked (%s)\n' "$1" >&2
 
