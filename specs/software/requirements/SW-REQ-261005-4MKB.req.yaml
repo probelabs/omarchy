@@ -23,12 +23,19 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-05T18:02:22.49302Z"
+    reviewed_at: "2026-10-05T18:25:16.128324Z"
     reviewed_by: agent:claude-code
-    reviewed_fingerprint: sha256:b0188f756dc323a2ebdc395c8f3770ecb89a1629580107423d12fea87451f5c0
+    reviewed_fingerprint: sha256:12f79b73f47e643af9dd43e928ef9e251d38b24307fab185789fb2232ec3831f
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-keybindings: file1:b8f59a3a40ad67915023f6597000fb60
+            bin/omarchy-menu-keybindings: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:call_lua_function_if_marked: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:current_lua_function_ref: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:dispatch_binding: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:dispatch_lua_function_binding: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:lua_bind_identity: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:mark_lua_state: file1:deefe6991406922f82160a5362fde44d
+            bin/omarchy-menu-keybindings:unmark_lua_state: file1:deefe6991406922f82160a5362fde44d
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -41,19 +48,35 @@ traces:
             - bin/omarchy-menu-keybindings:8
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/keybindings-menu-test.sh:3
+        - reviewed_at: "2026-10-05T18:25:16.128324Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #11851 review at head 03cbacb8 on quattro-proof 1e433732: new requirement for dispatching Lua function binds through the registry ref Hyprland reports. Implements lines name it on the file and on lua_bind_identity, mark_lua_state, unmark_lua_state, current_lua_function_ref, call_lua_function_if_marked, dispatch_lua_function_binding and dispatch_binding (its __lua arm). Verified by the function-bind scenarios in keybindings-menu-test.sh; parent SYS-REQ-260922-6642 (menu action scripts perform their side effect or a loud refusal).'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:272
+            - bin/omarchy-menu-keybindings:629
+            - bin/omarchy-menu-keybindings:634
+            - bin/omarchy-menu-keybindings:639
+            - bin/omarchy-menu-keybindings:667
+            - bin/omarchy-menu-keybindings:675
+            - bin/omarchy-menu-keybindings:719
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
 verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-05T18:24:36Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-05T17:53:23Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-05T18:01:57Z"
+    last_modified_at: "2026-10-05T18:24:36Z"
 hazard_review:
     reviewed_at: "2026-10-05T18:01:43Z"
     reviewed_by: agent:claude-code
@@ -82,11 +105,6 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Bash, awk and Lua run inside Hyprland; the identity is base64 text, and the ref is a decimal checked by a regex before it is placed in the Lua expression. No manual memory, pointers or binary framing.
-stakeholder:
-    acceptance_criteria:
-        - id: AC-001
-          text: Given the shipped Reset zoom bind reported with a numeric ref, when the user picks its row, then the menu calls that ref once and leaves no mark; when two reported binds share the identity, or Hyprland reloaded after the lookup, nothing is called.
-          verification_method: test
 lifecycle:
     change_history:
         - date: "2026-10-05T18:01:57Z"

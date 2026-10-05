@@ -1,0 +1,34 @@
+schema_version: 1
+branch: pr-11851
+generated_at: "2026-10-05T18:25:30Z"
+reviews:
+    - requirement: SW-REQ-260922-0W96
+      artifact: bin/omarchy-menu-keybindings
+      decision: no-authored-change
+      reviewer: agent:claude-code
+      reason: 'PR #11851 at 03cbacb8: bin/omarchy-menu-keybindings dispatches Lua function binds through the reported registry ref; SW-REQ-261005-4MKB states that behaviour; 0W96 (Lua binds stay dispatchable) and 9DMS (code:N keys resolve) keep their intent unchanged.'
+      base: 1e43373287afbd6dca4674ad463d5b5db7812358
+      requirement_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
+      approval_fingerprint: sha256:57f392b15a9ab7409d5afeff271e056f6db61ad4d6820bdde4afa5ca0d6bfa43
+      artifact_fingerprint: sha256:5f99ebd70e6fd5bcf9f73db356e53ed7e19b16e5038896ff2aa56be5136b8f45
+      reviewed_at: "2026-10-05T18:25:30Z"
+    - requirement: SW-REQ-260922-9DMS
+      artifact: bin/omarchy-menu-keybindings
+      decision: no-authored-change
+      reviewer: agent:claude-code
+      reason: 'PR #11851 at 03cbacb8: bin/omarchy-menu-keybindings dispatches Lua function binds through the reported registry ref; SW-REQ-261005-4MKB states that behaviour; 0W96 (Lua binds stay dispatchable) and 9DMS (code:N keys resolve) keep their intent unchanged.'
+      base: 1e43373287afbd6dca4674ad463d5b5db7812358
+      requirement_fingerprint: sha256:aaaf72702684be4ed9cb8a538179332ac08e7ea998e0cfdf2da7d48dfe49979f
+      approval_fingerprint: sha256:5e4c03b25f18e86d97537bbfe4d8c36e6294fedaea822d753a11d4a685d1b5e4
+      artifact_fingerprint: sha256:5f99ebd70e6fd5bcf9f73db356e53ed7e19b16e5038896ff2aa56be5136b8f45
+      reviewed_at: "2026-10-05T18:25:30Z"
+    - requirement: SW-REQ-261005-4MKB
+      artifact: bin/omarchy-menu-keybindings
+      decision: no-authored-change
+      reviewer: agent:claude-code
+      reason: 'PR #11851 at 03cbacb8: bin/omarchy-menu-keybindings dispatches Lua function binds through the reported registry ref; SW-REQ-261005-4MKB states that behaviour; 0W96 (Lua binds stay dispatchable) and 9DMS (code:N keys resolve) keep their intent unchanged.'
+      base: 1e43373287afbd6dca4674ad463d5b5db7812358
+      requirement_fingerprint: sha256:12f79b73f47e643af9dd43e928ef9e251d38b24307fab185789fb2232ec3831f
+      approval_fingerprint: sha256:137242069078c8eff689921e49cc41d045b0f4a5bb7ee36d76d4b68034241391
+      artifact_fingerprint: sha256:5f99ebd70e6fd5bcf9f73db356e53ed7e19b16e5038896ff2aa56be5136b8f45
+      reviewed_at: "2026-10-05T18:25:30Z"

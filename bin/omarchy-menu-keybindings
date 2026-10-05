@@ -269,6 +269,7 @@ modmask_to_text() {
   esac
 }
 
+# Implements: SW-REQ-261005-4MKB
 lua_bind_identity() {
   printf '%s\x1f%s\x1f%s\x1f%s\x1f%s' "$1" "$2" "$3" "$4" "$5" | base64 -w0
 }
@@ -625,14 +626,17 @@ dispatch_lua_expression() {
   return 1
 }
 
+# Implements: SW-REQ-261005-4MKB
 mark_lua_state() {
   dispatch_lua_expression "(function() local registry = debug.getregistry(); registry.omarchy_menu_keybindings_marks = registry.omarchy_menu_keybindings_marks or {}; registry.omarchy_menu_keybindings_marks[\"$1\"] = true; return function() end end)()" >/dev/null
 }
 
+# Implements: SW-REQ-261005-4MKB
 unmark_lua_state() {
   dispatch_lua_expression "(function() local marks = debug.getregistry().omarchy_menu_keybindings_marks; if marks then marks[\"$1\"] = nil end; return function() end end)()" >/dev/null
 }
 
+# Implements: SW-REQ-261005-4MKB
 current_lua_function_ref() {
   local identity
   local binds ref
@@ -660,6 +664,7 @@ current_lua_function_ref() {
   [[ $ref =~ ^[0-9]+$ ]] && printf '%s\n' "$ref"
 }
 
+# Implements: SW-REQ-261005-4MKB
 call_lua_function_if_marked() {
   local ref="$1"
   local mark="$2"
@@ -667,6 +672,7 @@ call_lua_function_if_marked() {
   dispatch_lua_expression "(function() local registry = debug.getregistry(); local marks = registry.omarchy_menu_keybindings_marks; if not (marks and marks[\"$mark\"]) then error(\"Hyprland reloaded after the bind was looked up\") end; marks[\"$mark\"] = nil; return registry[$ref] end)()"
 }
 
+# Implements: SW-REQ-261005-4MKB
 dispatch_lua_function_binding() {
   local identity="$1"
   local mark="$$-$RANDOM-$RANDOM"
@@ -710,6 +716,7 @@ dispatch_sendshortcut_binding() {
   hyprctl dispatch sendshortcut "$arg"
 }
 
+# Implements: SW-REQ-260922-0W96, SW-REQ-261005-4MKB
 dispatch_binding() {
   local dispatcher="$1"
   local arg="$2"

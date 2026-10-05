@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-05T18:02:29.926644Z"
+    reviewed_at: "2026-10-05T18:25:17.069481Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:aaaf72702684be4ed9cb8a538179332ac08e7ea998e0cfdf2da7d48dfe49979f
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-keybindings: file1:b8f59a3a40ad67915023f6597000fb60
+            bin/omarchy-menu-keybindings: file1:deefe6991406922f82160a5362fde44d
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -50,6 +50,15 @@ traces:
           reviewed_by: agent:claude-code
           method: inspection
           rationale: 'PR #11851 review at head 03cbacb8 on quattro-proof 1e433732: bin/omarchy-menu-keybindings now keeps an encoded identity for __lua rows and dispatches Lua function binds through the registry ref that hyprctl binds reports, guarded by a registry mark; the selected row is matched through ENVIRON instead of awk -v. Lua binds still show with resolved keys and stay dispatchable, and code:N keys still resolve as before; the new dispatch behaviour is authored as SW-REQ-261005-4MKB. Links re-checked against the Implements line and the test header.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
+        - reviewed_at: "2026-10-05T18:25:17.069481Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #11851 review at head 03cbacb8 on quattro-proof 1e433732: bin/omarchy-menu-keybindings keeps an encoded identity for __lua rows and dispatches Lua function binds through the registry ref that hyprctl binds reports, guarded by a registry mark; the selected row is matched through ENVIRON instead of awk -v. Lua binds still show with resolved keys and stay dispatchable, and code:N keys still resolve as before. The new dispatch functions carry their own Implements lines for SW-REQ-261005-4MKB; dispatch_binding names 0W96 and 4MKB. Links re-checked against the Implements lines and the test header.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-keybindings:8

@@ -2,8 +2,8 @@
 
 # Verifies: SW-REQ-260922-0W96, SW-REQ-260922-9DMS, SW-REQ-261005-4MKB
 # mcdc:witness-out-of-process
-#mcdc:ignore:defensive SW-REQ-261005-4MKB: function_bind_called=F, function_bind_picked=T, lua_state_reloaded=F, one_bind_matches_identity=T => FALSE -- with one matching bind reported and its mark still set, dispatch_lua_function_binding hands the ref to call_lua_function_if_marked, which returns registry[ref] to hl.dispatch; not calling it needs that hand-off removed [reviewed: REVIEW-261005-9HQB]
-#mcdc:ignore:defensive SW-REQ-261005-4MKB: function_bind_called=T, function_bind_picked=T, lua_state_reloaded=T, one_bind_matches_identity=T => FALSE -- call_lua_function_if_marked raises an error before it returns registry[ref] when the mark is gone, and a reload starts the Lua state over without the mark, so a reloaded state cannot reach the call [reviewed: REVIEW-261005-9HQB]
+#mcdc:ignore:defensive SW-REQ-261005-4MKB: function_bind_called=F, function_bind_picked=T, lua_state_reloaded=F, one_bind_matches_identity=T => FALSE -- with one matching bind reported and its mark still set, dispatch_lua_function_binding hands the ref to call_lua_function_if_marked, which returns registry[ref] to hl.dispatch; not calling it needs that hand-off removed [reviewed: REVIEW-261005-THHB]
+#mcdc:ignore:defensive SW-REQ-261005-4MKB: function_bind_called=T, function_bind_picked=T, lua_state_reloaded=T, one_bind_matches_identity=T => FALSE -- call_lua_function_if_marked raises an error before it returns registry[ref] when the mark is gone, and a reload starts the Lua state over without the mark, so a reloaded state cannot reach the call [reviewed: REVIEW-261005-THHB]
 
 source "$(dirname "${BASH_SOURCE[0]}")/base-test.sh"
 
