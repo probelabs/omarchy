@@ -5,14 +5,14 @@ results:
       command: ./pocs/crs-260930-jvx8-c01.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-05T17:09:51Z"
-      revision: f1018fce21a0b3c118611012305ce32ff2e2ab44
+      executed_at: "2026-10-05T17:34:05Z"
+      revision: aef2e7c6a1106bea00d10f491046c88386984b6c
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c01.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-jvx8-c01.sh
       freshness_hashes:
-        pocs/crs-260930-jvx8-c01.sh: sha256:3e5a2ea1f0450c0d19603faba0a2e9451ccd15349eb15c3d4d9c2b5dc58fd8ec
-        proof/known-issues/KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT.yaml: ki-content-v1:sha256:09b85be167436459173b1e50e3b7d7e67e4b58617d6da23c608cfec702476ee4
+        pocs/crs-260930-jvx8-c01.sh: sha256:02db004f1a2ae060d1f57451b19c44c4041268ac7232ac112f1a049989e8a1d8
+        proof/known-issues/KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT.yaml: ki-content-v1:sha256:100090a69176bdeb622b589b848e55926e122e9190943617473b9ff694adbf42
       known_issues:
         - KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT
       config:

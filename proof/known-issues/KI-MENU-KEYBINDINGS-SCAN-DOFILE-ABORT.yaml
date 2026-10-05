@@ -62,6 +62,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: append-note
+    - at: "2026-10-05T17:34:04Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
