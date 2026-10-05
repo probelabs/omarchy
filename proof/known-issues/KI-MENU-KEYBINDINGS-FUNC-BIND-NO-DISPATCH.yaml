@@ -14,14 +14,15 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: none - the rows are visible, selecting them silently does nothing
-remediation: Cache a dispatchable expression for function binds (emit the Lua body or register bind_commands entries for the shipped function binds). Then refuse to render rows whose recovered dispatcher is empty
+remediation: Fixed by omacom/omarchy#11851 (the menu caches an encoded bind identity and dispatches a function bind through the registry ref Hyprland reports; SW-REQ-260922-0W96).
 notes:
     - 'Upstream: original fix PR #11851 (2026-09-14); no issue tracks it.'
     - '2026-10-05: the reproducer fixture now prints the Hyprland 0.56.2 shape. Every Lua bind reports dispatcher __lua with a numeric registry ref as arg; the old fixture printed an empty arg. With the old fixture a fix that dispatches through the ref still read as defect present.'
+    - Fixed on pr/11851 by omacom/omarchy#11851 at 03cbacb8. A function bind row keeps the __lua dispatcher and an encoded identity. A pick resolves the current registry ref and calls it, and a reload between lookup and call is refused. pocs/crs-260930-jvx8-c02.sh exits 1 (defect fixed) with its control intact. test/shell.d/keybindings-menu-test.sh covers the dispatch.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T11:54:25Z"
       by: human:Leonid Bugaev
@@ -62,6 +63,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-func-bind-no-dispatch.yaml
+    - at: "2026-10-05T17:14:20Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
