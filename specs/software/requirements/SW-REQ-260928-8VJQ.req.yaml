@@ -22,12 +22,12 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:46.879495Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:53.87992Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:f688d6faefa520bf3e489c3242e955a2ea16813d96ead77f7ede6b635c86df86
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:runAction: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:runAction: file1:9e123ab3fbb5185a60b3306a9a667fbf
             shell/plugins/menu/MenuModel.js:summonAction: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -81,6 +81,17 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:1028
             - test/shell.d/menu-test.sh:1052
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:53.87992Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:162
+            - shell/plugins/menu/MenuModel.js:515
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:

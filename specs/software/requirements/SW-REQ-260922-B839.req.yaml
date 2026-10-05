@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T10:09:05.968564852Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-05T18:07:00.684029Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:3a3e4e03cf0b020fc1539a66d060e46a706d556b1454e32f6b56b24f20da9932
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-select: file1:c075537ceda54de590b5d8d0b646e125
+            bin/omarchy-menu-select: file1:1b3601c53b97b7cd4bc99e3309150223
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -32,6 +32,15 @@ traces:
           reviewed_by: agent:kimi-zero-warnings
           method: inspection
           rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-select:15
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-05T18:07:00.684029Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the usage checks run before the new shell lookup, so the no-options usage error and exit 1 are unchanged; lines moved.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-select:15

@@ -19,20 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:41.575128Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:47.125493Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:descriptionTextMatches: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:leafIdFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:matchesQuery: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:nameSearchText: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:parentPathFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:pathFor: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:searchableToken: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:setFilter: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:termInSearchWords: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:descriptionTextMatches: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:leafIdFor: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:matchesQuery: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:nameSearchText: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:parentPathFor: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:pathFor: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:searchableToken: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:setFilter: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:termInSearchWords: file1:9e123ab3fbb5185a60b3306a9a667fbf
             shell/plugins/menu/MenuModel.js:matchesQuery: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
@@ -107,6 +107,26 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:502
+            - shell/plugins/menu/Menu.qml:507
+            - shell/plugins/menu/Menu.qml:537
+            - shell/plugins/menu/Menu.qml:542
+            - shell/plugins/menu/Menu.qml:547
+            - shell/plugins/menu/Menu.qml:552
+            - shell/plugins/menu/Menu.qml:557
+            - shell/plugins/menu/Menu.qml:572
+            - shell/plugins/menu/Menu.qml:791
+            - shell/plugins/menu/MenuModel.js:334
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:47.125493Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:502

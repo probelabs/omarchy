@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-02T16:54:46.459069Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:53.361645Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:6dc2e779b610aaf8bd9f52bd902d7dfda6f911d72653a61599dc28801e850f7b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:mergeAppRows: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:slugify: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:mergeAppRows: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:slugify: file1:9e123ab3fbb5185a60b3306a9a667fbf
             shell/plugins/menu/MenuModel.js:mergeAppRows: file1:4f7f286f5fa1815a2a370c084b85fb34
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
@@ -110,6 +110,21 @@ traces:
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:924
             - test/shell.d/menu-test.sh:934
+        - reviewed_at: "2026-10-05T18:06:53.361645Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:324
+            - shell/plugins/menu/Menu.qml:332
+            - shell/plugins/menu/Menu.qml:395
+            - shell/plugins/menu/MenuModel.js:112
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
     formalization_status: valid

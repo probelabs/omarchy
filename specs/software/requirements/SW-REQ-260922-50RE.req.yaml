@@ -19,21 +19,21 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:54:39.140478Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:57.324243Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:46abafd181f00e18ff959e9e158eabec2b019ef06f52eeb3adffff01370739bd
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:close: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onFileChanged: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onLoadFailed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onLoaded: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onOpenedChanged: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:open: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:openDmenu: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:openExistingMenu: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:ping: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:refresh: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:close: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onFileChanged: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onLoadFailed: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onLoaded: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onOpenedChanged: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:open: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:openDmenu: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:openExistingMenu: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:ping: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:refresh: file1:9e123ab3fbb5185a60b3306a9a667fbf
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -115,6 +115,28 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1083
+            - shell/plugins/menu/Menu.qml:1085
+            - shell/plugins/menu/Menu.qml:1094
+            - shell/plugins/menu/Menu.qml:1096
+            - shell/plugins/menu/Menu.qml:1098
+            - shell/plugins/menu/Menu.qml:21
+            - shell/plugins/menu/Menu.qml:35
+            - shell/plugins/menu/Menu.qml:40
+            - shell/plugins/menu/Menu.qml:47
+            - shell/plugins/menu/Menu.qml:88
+            - shell/plugins/menu/Menu.qml:919
+            - shell/plugins/menu/Menu.qml:951
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:304
+            - test/shell.d/menu-compositor-test.sh:313
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:57.324243Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. open() still dispatches every call to openDmenu or openExistingMenu, and both still set opened; each now first answers a request that is still waiting before it replaces the request fields.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1083

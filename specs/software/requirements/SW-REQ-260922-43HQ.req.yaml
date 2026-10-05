@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-04T20:22:57.390395Z"
+    reviewed_at: "2026-10-05T18:07:01.757313Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:f8c7007ed0cadf8073d2d92ad02b419c0071977c8d56731a3766f70a122f5415
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-images: file1:3e03c1fc44c57eb9d0b110da3d8fc11c
+            bin/omarchy-menu-images: file1:9a03b7c0112628ff2e25d764d14337b4
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -59,6 +59,16 @@ traces:
           reviewed_by: agent:claude-code
           method: inspection
           rationale: 'Re-review after the merge of upstream quattro 035ce29f (#14117): the rows cache key, signatures and reuse paths are unchanged; lines moved. Spec conformance REVIEW-261004-2L3H.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-images:341
+            - bin/omarchy-menu-images:6
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-images-test.sh:5
+        - reviewed_at: "2026-10-05T18:07:01.757313Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: omarchy-menu-images gains the handshake source line and the shell lookup and bounded wait around the open; the rows cache, signatures, thumbnail generation and rejection markers are unchanged and only moved.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-images:341

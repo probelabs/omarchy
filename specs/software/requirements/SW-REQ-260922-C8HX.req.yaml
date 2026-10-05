@@ -19,15 +19,17 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-02T16:54:40.669106Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:56.810315Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:1f0217ebe18b146180654a9c23d8422580bd834cfabd8ae6c81df51f456e7da9
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:applyDmenuSelection: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:cancel: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:finishRequest: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onClicked: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:applyDmenuSelection: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:cancel: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:finishDoneFile: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:finishRequest: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onClicked: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:releaseNextDoneFile: file1:9e123ab3fbb5185a60b3306a9a667fbf
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -78,6 +80,20 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:1220
             - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:894
+            - shell/plugins/menu/Menu.qml:912
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:56.810315Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. The two new functions are linked here: a request that loses its slot gets the done file alone, which is the done-only answer this requirement states for a dismissal, written through releaseProc so it never races resultProc. finishRequest, cancel and the onClicked handlers are unchanged.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1220
+            - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:146
+            - shell/plugins/menu/Menu.qml:155
             - shell/plugins/menu/Menu.qml:894
             - shell/plugins/menu/Menu.qml:912
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml

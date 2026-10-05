@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:44.456544Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:50.690744Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:fd3ccfe18360a85fad15b5d31824f3f7172da756ccc92a03c2b8c7d1b68de06b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:9e123ab3fbb5185a60b3306a9a667fbf
             shell/plugins/menu/MenuModel.js:resolveRoute: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -52,6 +52,18 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:990
+            - shell/plugins/menu/MenuModel.js:183
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:50.690744Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:990

@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260922-XTNR
-    reviewed_at: "2026-10-02T16:54:48.352922Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:56.329332Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:c8f96943e2f1c60ee3ea5da6e52b50cce046291bf8ba73160b1dbea570bb6986
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:onClicked: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onEntered: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onPositionChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:onClicked: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onEntered: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onPositionChanged: file1:9e123ab3fbb5185a60b3306a9a667fbf
         satisfies:
             STK-REQ-260922-XTNR: req1:f922b971d54f19986959e9d968e4e4a1
     review_history:
@@ -87,6 +87,20 @@ traces:
             - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
             - test/shell.d/menu-acceptance-test.sh:14
             - test/shell.d/menu-acceptance-test.sh:292
+            - test/shell.d/menu-compositor-test.sh:333
+            - test/shell.d/menu-compositor-test.sh:347
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:56.329332Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1516
+            - shell/plugins/menu/Menu.qml:1521
+            - shell/plugins/menu/Menu.qml:1525
+            - specs/stakeholder/requirements/STK-REQ-260922-XTNR.req.yaml
+            - test/shell.d/menu-acceptance-test.sh:14
             - test/shell.d/menu-compositor-test.sh:333
             - test/shell.d/menu-compositor-test.sh:347
             - test/shell.d/menu-compositor-test.sh:5

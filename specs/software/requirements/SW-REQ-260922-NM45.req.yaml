@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:44.066935Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:50.199871Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:da70d53ecbe7c3f19d95aa91a112e06de84b6ae590f8b8c0777bf39a78a34de2
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:activateIndex: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rebuildDmenuDisplay: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:activateIndex: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:rebuildDmenuDisplay: file1:9e123ab3fbb5185a60b3306a9a667fbf
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -80,6 +80,19 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1244
+            - shell/plugins/menu/Menu.qml:621
+            - shell/plugins/menu/Menu.qml:834
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:432
+            - test/shell.d/menu-compositor-test.sh:445
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:50.199871Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1244

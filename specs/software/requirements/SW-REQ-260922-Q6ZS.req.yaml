@@ -19,12 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T10:09:06.207711186Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-05T18:06:58.939047Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:81162de74c597dea1c09e47d7792f4cd7c2ca0c8b81d68822c3353c7c19520fa
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-select: file1:c075537ceda54de590b5d8d0b646e125
+            bin/omarchy-menu-handshake:menu_shell_pid: file1:9863f173839ffc96cdbc3567376e49fd
+            bin/omarchy-menu-handshake:wait_for_menu_done: file1:9863f173839ffc96cdbc3567376e49fd
+            bin/omarchy-menu-select: file1:1b3601c53b97b7cd4bc99e3309150223
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -34,6 +36,17 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
+            - bin/omarchy-menu-select:15
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:58.939047Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: omarchy-menu-select now sources bin/omarchy-menu-handshake, finds the shell serving $OMARCHY_PATH (menu_shell_pid, exit 1 if none), exits 1 when the summon call fails, and waits with wait_for_menu_done, which ends with exit 1 about a second after the shell that took the request exits. The payload build and the answer arm are unchanged. Witnessed in test/shell.d/menu-dmenu-test.sh (external_call_timeout_bounded, nominal and negative) and the KI reproducer, which exits 0 here.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-handshake:22
+            - bin/omarchy-menu-handshake:38
             - bin/omarchy-menu-select:15
             - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
             - test/shell.d/menu-dmenu-test.sh:5

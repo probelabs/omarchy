@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-09-29T10:09:06.145752864Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-05T18:07:00.135105Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:0ace0f550b7bfb7d4fe437b2d1a480b8faba23c6adaf182dc75062a4ade2ca8f
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-input: file1:d3dbd6e7144fadeabf3476b93114ea6a
-            bin/omarchy-menu-select: file1:c075537ceda54de590b5d8d0b646e125
+            bin/omarchy-menu-input: file1:70b6b4cbe220fb53fef1a91f05670c4f
+            bin/omarchy-menu-select: file1:1b3601c53b97b7cd4bc99e3309150223
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -33,6 +33,16 @@ traces:
           reviewed_by: agent:kimi-zero-warnings
           method: inspection
           rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-input:9
+            - bin/omarchy-menu-select:15
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-05T18:07:00.135105Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the answer arm of omarchy-menu-select and -input is reached only after wait_for_menu_done returns 0 (the done file exists); a shell that exits first now ends the run with exit 1 and nothing printed. Witnessed in test/shell.d/menu-dmenu-test.sh.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-input:9

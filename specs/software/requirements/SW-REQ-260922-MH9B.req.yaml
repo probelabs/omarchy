@@ -19,12 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-04T20:22:56.863305Z"
+    reviewed_at: "2026-10-05T18:07:01.229725Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:29500a90b89216a2ebcae8a7915c7791832018d295459e7d33bccb41621aa10b
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-images: file1:3e03c1fc44c57eb9d0b110da3d8fc11c
+            bin/omarchy-menu-handshake:menu_shell_pid: file1:9863f173839ffc96cdbc3567376e49fd
+            bin/omarchy-menu-handshake:wait_for_menu_done: file1:9863f173839ffc96cdbc3567376e49fd
+            bin/omarchy-menu-images: file1:9a03b7c0112628ff2e25d764d14337b4
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -61,6 +63,20 @@ traces:
           rationale: 'Re-review after the merge of upstream quattro 035ce29f (#14117): the rebuild, drain and publish blocks are unchanged in behaviour; drain_pending_thumbnails now publishes lazy jobs to the shared pool, and a lazy row still clears rows_cacheable. Spec conformance REVIEW-261004-KNQ7.'
           source: proof trace review --citation
           citations:
+            - bin/omarchy-menu-images:341
+            - bin/omarchy-menu-images:367
+            - bin/omarchy-menu-images:387
+            - bin/omarchy-menu-images:6
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/menu-images-test.sh:5
+        - reviewed_at: "2026-10-05T18:07:01.229725Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: omarchy-menu-images sources the handshake, looks up the shell before the open (exit 1 if none), and waits with wait_for_menu_done at a 0.01s interval; the rebuild, drain and publish blocks are unchanged. Witnessed in test/shell.d/menu-images-test.sh.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-handshake:22
+            - bin/omarchy-menu-handshake:38
             - bin/omarchy-menu-images:341
             - bin/omarchy-menu-images:367
             - bin/omarchy-menu-images:387

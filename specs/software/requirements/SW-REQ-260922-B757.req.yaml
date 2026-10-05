@@ -19,16 +19,16 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:54:40.372124Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:45.510906Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:fc27f2279de1e5cd4ee33a70334305734f2c20198f543b39a6f9ffc758a8390f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:availableRowsHeight: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:foldedListHeight: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rowHeightForDetail: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rowListHeight: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:availableRowsHeight: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:dmenuRowListHeight: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:foldedListHeight: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:rowHeightForDetail: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:rowListHeight: file1:9e123ab3fbb5185a60b3306a9a667fbf
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -79,6 +79,21 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:175
+            - shell/plugins/menu/Menu.qml:184
+            - shell/plugins/menu/Menu.qml:198
+            - shell/plugins/menu/Menu.qml:213
+            - shell/plugins/menu/Menu.qml:233
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-compositor-test.sh:328
+            - test/shell.d/menu-compositor-test.sh:466
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-05T18:06:45.510906Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:175

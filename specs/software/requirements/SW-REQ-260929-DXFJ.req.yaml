@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-J0AN
-    reviewed_at: "2026-10-02T16:54:47.596134Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-05T18:06:55.110398Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:47e688c32dde592847708eb624fd5d8fbd0e6a76ab3a8335db42c6a8642f9e03
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:freezeCardTop: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:onShownChanged: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:freezeCardTop: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:onShownChanged: file1:9e123ab3fbb5185a60b3306a9a667fbf
         satisfies:
             SYS-REQ-260922-J0AN: req1:dde419dba4ffd126569755114e079493
     review_history:
@@ -53,6 +53,16 @@ traces:
             - test/shell.d/menu-pointer-lifecycle-test.sh:66
             - test/shell.d/menu-pointer-lifecycle-test.sh:7
             - test/shell.d/menu-pointer-lifecycle-test.sh:72
+        - reviewed_at: "2026-10-05T18:06:55.110398Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1201
+            - shell/plugins/menu/Menu.qml:1209
+            - specs/system/requirements/SYS-REQ-260922-J0AN.req.yaml
+            - test/shell.d/menu-pointer-lifecycle-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
