@@ -3,16 +3,17 @@ results:
     - profile: known_issue_reproducer
       requirement: SW-REQ-260922-0W96
       command: ./pocs/crs-260930-jvx8-c02.sh
-      status: pass
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-05T17:10:19Z"
-      revision: 0097619fe8a1a880076b427d389d4fb834aac451
+      status: fail
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-05T17:23:30Z"
+      revision: 802363457219665df0370228253122716608e83a
+      freshness_basis: revision
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c02.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
+        - 'Captured by `proof evidence capture KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH` from the KnownIssue''s reproducer command: ./pocs/crs-260930-jvx8-c02.sh. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/crs-260930-jvx8-c02.sh
       freshness_hashes:
         pocs/crs-260930-jvx8-c02.sh: sha256:50f69c17386e3c5937bd62f2fa7d1789fcfaa67aa68652d5d3b6dc1c7ea8c2ce
-        proof/known-issues/KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH.yaml: ki-content-v1:sha256:58cecb5f001f309b9bc27903fe0e0ac45c17593900a61a348da33ae383521163
+        proof/known-issues/KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH.yaml: ki-content-v1:sha256:d3f7187c7f856fa5d7c559e2b5db38f9b8efc23a8d0d95af8008ee0c82087a01
       known_issues:
         - KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH
       config:
