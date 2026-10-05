@@ -281,6 +281,92 @@ assertEqual(noUserMerge.items['style.theme'].label, 'Themes', 'menu leaves defau
 const emptyMerge = menu.mergeMenuSources([], [])
 assertDeepEqual(Object.keys(emptyMerge.items), ['root'], 'menu merges empty sources to just the injected root')
 
+const stock = menu.parseMenuJsonc(`{
+  "system.logout": {"icon":"󰍃","label":"Logout","action":"omarchy-system-logout"},
+  "system.hibernate": {"icon":"󰤁","label":"Hibernate","when":"omarchy-hibernation-available","action":"systemctl hibernate"}
+}`, false)
+const actionOnly = menu.parseMenuJsonc(`{
+  "system.logout": {"action":"custom-logout"},
+  "system.hibernate": {"action":"custom-hibernate"}
+}`, false)
+const patched = menu.mergeMenuSources(stock, actionOnly)
+assertEqual(patched.items['system.logout'].action, 'custom-logout', 'menu extension overrides the declared action')
+assertEqual(patched.items['system.logout'].icon, '󰍃', 'menu extension keeps the shipped icon when omitted')
+assertEqual(patched.items['system.logout'].label, 'Logout', 'menu extension keeps the shipped label when omitted')
+assertEqual(patched.items['system.hibernate'].when, 'omarchy-hibernation-available', 'menu extension keeps the shipped when-guard when omitted')
+assertEqual(patched.items['system.hibernate'].label, 'Hibernate', 'menu extension keeps the shipped hibernate label when omitted')
+
+const explicitEmpty = menu.parseMenuJsonc(`{ "system.logout": {"icon":"","action":"custom-logout"} }`, false)
+const cleared = menu.mergeMenuSources(stock, explicitEmpty)
+assertEqual(cleared.items['system.logout'].icon, '', 'menu extension can still clear a field by setting it empty')
+assertEqual(cleared.items['system.logout'].label, 'Logout', 'menu extension keeps undeclared fields when clearing another')
+
+assert(
+  /parseMenuJsonc\(raw,\s*false\)/.test(menuQml),
+  'menu parses sources raw so unspecified extension fields do not wipe shipped values'
+)
+
+// Same override against the shipped menu, where the fields that vanish are
+// the ones whose loss is silent. `kind` is inferred from `action`, so
+// clobbering it turned a translated row into a childless submenu, which
+// `isVisible` hides.
+const shippedRaw = menu.parseMenuJsonc(defaultMenuJsonc, false)
+const shippedDns = menu.normalizeItem('setup.network.dns.custom', shippedRaw.find(item => item.id === 'setup.network.dns.custom'))
+const translated = menu.mergeMenuSources(shippedRaw, menu.parseMenuJsonc('{"setup.network.dns.custom":{"label":"Benutzerdefiniert"}}', false))
+const translatedDns = translated.items['setup.network.dns.custom']
+assertEqual(translatedDns.label, 'Benutzerdefiniert', 'menu applies a translated label to a shipped row')
+assertEqual(translatedDns.checked, shippedDns.checked, 'menu keeps a shipped checked guard under a label-only override')
+assertEqual(translatedDns.action, shippedDns.action, 'menu keeps a shipped action under a label-only override')
+assertEqual(translatedDns.kind, 'action', 'menu leaves a translated action row an action')
+assert(menu.isVisible(translated.items, translated.itemOrder, {}, translatedDns), 'menu still shows a row whose label was overridden')
+assertEqual(
+  translated.itemOrder.filter(id => translated.items[id].parent === 'setup.network.dns' &&
+    menu.isVisible(translated.items, translated.itemOrder, {}, translated.items[id])).length,
+  4,
+  'menu keeps every DNS row listed when one of their labels is overridden'
+)
+
+// Aliases are a route, so losing them breaks `omarchy menu summon` rather
+// than anything on screen.
+const rerouted = menu.mergeMenuSources(shippedRaw, menu.parseMenuJsonc('{"setup.network.dns":{"label":"DNS-Einstellungen"}}', false))
+assertDeepEqual(rerouted.items['setup.network.dns'].aliases, ['dns'], 'menu keeps shipped aliases under a label-only override')
+assertEqual(menu.resolveRoute(rerouted.items, rerouted.itemOrder, 'dns'), 'setup.network.dns', 'menu still routes a summon alias whose row was overridden')
+
+const reIconed = menu.mergeMenuSources(shippedRaw, menu.parseMenuJsonc('{"apps":{"icon":"X"},"about":{"icon":"Y"}}', false))
+assertEqual(reIconed.items.apps.icon, 'X', 'menu applies the field an extension declares')
+assertEqual(reIconed.items.apps.label, 'Apps', 'menu keeps a label the extension never mentioned')
+assertEqual(reIconed.items.apps.provider, 'apps', 'menu keeps a provider the extension never mentioned')
+assertDeepEqual(reIconed.items.apps.aliases, ['app', 'applications'], 'menu keeps aliases the extension never mentioned')
+assertEqual(reIconed.items.about.action, 'omarchy-launch-about', 'menu keeps an action the extension never mentioned')
+assertEqual(reIconed.items.about.order, menu.mergeMenuSources(shippedRaw, []).items.about.order, 'menu keeps an overridden row in its original position')
+
+const kindOf = (base, ext) =>
+  menu.mergeMenuSources(menu.parseMenuJsonc(base, false), menu.parseMenuJsonc(ext, false)).items.tools.kind
+assertEqual(kindOf('{"tools":{"label":"Tools"}}', '{"tools":{"action":"run"}}'), 'action', 'menu promotes a submenu an extension gives an action')
+assertEqual(kindOf('{"tools":{"action":"run"}}', '{"tools":{"icon":"T"}}'), 'action', 'menu leaves a re-iconed action row an action')
+assertEqual(kindOf('{"tools":{"label":"Tools"}}', '{"tools":{"target":"style"}}'), 'link', 'menu turns a submenu an extension retargets into a link')
+assertEqual(kindOf('{"tools":{"label":"Tools"}}', '{"tools":{"icon":"T"}}'), 'menu', 'menu leaves a re-iconed submenu a submenu')
+assertEqual(kindOf('{"tools":{"action":"run"}}', '{"tools":{"target":"style"}}'), 'action', 'menu keeps an inherited action when an extension only adds a target')
+assertEqual(kindOf('{"tools":{"action":"run"}}', '{"tools":{"target":"style","action":""}}'), 'link', 'menu turns an action into a link when the extension clears action')
+
+const added = menu.mergeMenuSources(shippedRaw, menu.parseMenuJsonc('{"personal":{"icon":"P"}}', false))
+assertDeepEqual(
+  Object.keys(added.items.personal).sort(),
+  Object.keys(added.items.about).sort(),
+  'menu gives a brand new extension id the same fields as a shipped row'
+)
+assertEqual(added.items.personal.label, 'personal', 'menu falls back to the id for a new row with no label')
+assertEqual(added.items.personal.parent, 'root', 'menu roots a new top-level extension row')
+
+const reparented = menu.mergeMenuSources(shippedRaw, menu.parseMenuJsonc('{"about":{"parent":"style"}}', false))
+assertEqual(reparented.items.about.parent, 'style', 'menu honors a parent an extension declares')
+
+const hijacked = menu.mergeMenuSources(shippedRaw, menu.parseMenuJsonc('{"about":{"id":"hijacked","icon":"Y"}}', false))
+assertEqual(hijacked.items.about.id, 'about', 'menu pins the object key as the id even when the entry declares one')
+assertEqual(hijacked.items.about.icon, 'Y', 'menu ignores an id field inside an entry and keeps the object key')
+assertEqual(hijacked.items.about.action, 'omarchy-launch-about', 'menu still merges a shipped action onto a row whose entry declared id')
+assertEqual(Object.keys(hijacked.items).filter(id => id === 'hijacked').length, 0, 'menu does not append an orphan row for a declared id')
+
 assertEqual(menu.slugify('Power Saver!'), 'power-saver', 'menu slugifies provider rows')
 assertEqual(menu.pathFor(merged.items, 'style.theme'), 'Style › Theme picker', 'menu builds item paths')
 assertEqual(menu.parentPathFor(merged.items, 'style.theme'), 'Style', 'menu builds parent paths')
@@ -1058,6 +1144,22 @@ test('mcdc parseMenuJsonc: scalar, null, and malformed item shapes', () => {
   assertEqual(menuModel.parseMenuJsonc('{"a": {"label": "A"}, "b": {"label": "B"}}').length, 2, 'parseMenuJsonc keeps object entries')
 })
 
+// Raw mode (normalize === false, the live loader's call): only declared keys are copied, the object key is pinned as id,
+// and an enumerable key inherited through the prototype chain is not copied into an entry.
+test('mcdc parseMenuJsonc raw mode: declared keys only, id pinned, inherited keys skipped', () => {
+  const raw = menuModel.parseMenuJsonc('{"a": {"label": "A", "id": "other"}}', false)
+  assertDeepEqual(raw, [{ label: 'A', id: 'a' }], 'parseMenuJsonc raw mode keeps only declared keys and pins the object key as id')
+  assertEqual(menuModel.parseMenuJsonc('{"a": {"label": "A"}}', true)[0].action, '', 'parseMenuJsonc fills defaults unless raw mode is asked for')
+  Object.defineProperty(Object.prototype, 'zzInherited', { value: 'x', enumerable: true, configurable: true, writable: true })
+  try {
+    const polluted = menuModel.parseMenuJsonc('{"a": {"label": "A"}}', false)
+    assertEqual(polluted.length, 1, 'parseMenuJsonc raw mode skips a non-object key inherited by the root')
+    assert(!Object.prototype.hasOwnProperty.call(polluted[0], 'zzInherited'), 'parseMenuJsonc raw mode does not copy an inherited key into the entry')
+  } finally {
+    delete Object.prototype.zzInherited
+  }
+})
+
 // SYS-REQ-260922-PPDW:error_handling:negative -- null and id-less source entries are skipped; the tree still merges
 // SYS-REQ-260922-PPDW:boundary:nominal -- null (absent) sources merge as empty lists to a tree holding only the injected root
 test('mcdc mergeMenuSources: null entries, id-less entries, null sources', () => {
@@ -1109,6 +1211,9 @@ test('mcdc resolveRoute: go/menu literals, orphans, alias-less and app entries',
   )
   routed.items['apps.htop'] = { id: 'apps.htop', kind: 'app', parent: 'apps', label: 'Htop', aliases: ['system'] }
   routed.itemOrder.push('apps.htop')
+  // mergeMenuSources normalizes every row (aliases always an array); a hand-built row may carry none
+  routed.items.bare = { id: 'bare', kind: 'menu', parent: 'root', label: 'Bare' }
+  routed.itemOrder.push('bare')
   assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'go'), 'root', 'resolveRoute routes the go literal to root')
   assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'menu'), 'root', 'resolveRoute routes the menu literal to root')
   assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'Go'), 'root', 'resolveRoute normalizes case before literal checks')
@@ -1117,6 +1222,7 @@ test('mcdc resolveRoute: go/menu literals, orphans, alias-less and app entries',
   assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'other_menu'), 'sys', 'resolveRoute normalizes underscores in aliases and skips falsy alias entries')
   assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'plain'), 'plain', 'resolveRoute returns an exact id for an alias-less entry')
   assertEqual(menuModel.resolveRoute(routed.items, routed.itemOrder, 'nowhere'), 'nowhere', 'resolveRoute falls through to the literal input')
+  assertEqual(menuModel.resolveRoute(routed.items, ['bare'], 'zz'), 'zz', 'resolveRoute skips a row with no aliases array')
   assertEqual(menuModel.resolveRoute({}, 'not-an-array', 'zz'), 'zz', 'resolveRoute treats a non-array order as empty')
   assertEqual(menuModel.resolveRoute(routed.items, ['ghost', 'plain'], 'zz'), 'zz', 'resolveRoute skips order ids with no item')
 })

@@ -48,7 +48,7 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:258
             - shell/plugins/menu/MenuModel.js:1
-            - shell/plugins/menu/MenuModel.js:77
+            - shell/plugins/menu/MenuModel.js:95
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:109
             - test/shell.d/menu-test.sh:40
@@ -83,9 +83,9 @@ traces:
             - shell/plugins/menu/MenuModel.js:44
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/node/menumodel-replay.test.mjs:1048
+            - test/node/menumodel-replay.test.mjs:1134
             - test/node/menumodel-replay.test.mjs:120
-            - test/node/menumodel-replay.test.mjs:964
+            - test/node/menumodel-replay.test.mjs:1050
             - test/shell.d/menu-test.sh:113
             - test/shell.d/menu-test.sh:287
             - test/shell.d/menu-test.sh:293
@@ -105,9 +105,9 @@ traces:
             - shell/plugins/menu/MenuModel.js:44
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/node/menumodel-replay.test.mjs:1048
+            - test/node/menumodel-replay.test.mjs:1134
             - test/node/menumodel-replay.test.mjs:120
-            - test/node/menumodel-replay.test.mjs:964
+            - test/node/menumodel-replay.test.mjs:1050
             - test/shell.d/menu-test.sh:113
             - test/shell.d/menu-test.sh:287
             - test/shell.d/menu-test.sh:293

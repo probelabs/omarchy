@@ -39,7 +39,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/MenuModel.js:553
+            - shell/plugins/menu/MenuModel.js:575
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:38
         - reviewed_at: "2026-09-29T13:06:53.72266291Z"
@@ -50,15 +50,15 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:143
             - shell/plugins/menu/MenuModel.js:1
-            - shell/plugins/menu/MenuModel.js:550
+            - shell/plugins/menu/MenuModel.js:572
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:6
-            - test/shell.d/menu-test.sh:918
-            - test/shell.d/menu-test.sh:919
-            - test/shell.d/menu-test.sh:932
-            - test/shell.d/menu-test.sh:943
+            - test/shell.d/menu-test.sh:1004
+            - test/shell.d/menu-test.sh:1005
+            - test/shell.d/menu-test.sh:1018
+            - test/shell.d/menu-test.sh:1029
         - reviewed_at: "2026-10-01T09:52:21.38302406Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -66,7 +66,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/MenuModel.js:515
+            - shell/plugins/menu/MenuModel.js:537
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:6
@@ -77,10 +77,10 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/MenuModel.js:515
+            - shell/plugins/menu/MenuModel.js:537
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
-            - test/shell.d/menu-test.sh:1015
-            - test/shell.d/menu-test.sh:1039
+            - test/shell.d/menu-test.sh:1101
+            - test/shell.d/menu-test.sh:1125
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:

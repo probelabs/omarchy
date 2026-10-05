@@ -39,7 +39,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:299
-            - shell/plugins/menu/MenuModel.js:139
+            - shell/plugins/menu/MenuModel.js:161
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-09-29T13:06:53.197386446Z"
@@ -51,8 +51,8 @@ traces:
             - shell/plugins/menu/Menu.qml:304
             - shell/plugins/menu/Menu.qml:312
             - shell/plugins/menu/Menu.qml:375
-            - shell/plugins/menu/MenuModel.js:148
-            - shell/plugins/menu/MenuModel.js:181
+            - shell/plugins/menu/MenuModel.js:170
+            - shell/plugins/menu/MenuModel.js:203
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:14
             - test/shell.d/menu-test.sh:15
@@ -61,8 +61,8 @@ traces:
             - test/shell.d/menu-test.sh:18
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:766
-            - test/shell.d/menu-test.sh:794
+            - test/shell.d/menu-test.sh:852
+            - test/shell.d/menu-test.sh:880
         - reviewed_at: "2026-10-01T09:52:21.063533346Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -71,8 +71,8 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:305
             - shell/plugins/menu/Menu.qml:313
-            - shell/plugins/menu/MenuModel.js:112
-            - shell/plugins/menu/MenuModel.js:145
+            - shell/plugins/menu/MenuModel.js:134
+            - shell/plugins/menu/MenuModel.js:167
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/shell.d/menu-test.sh:14
             - test/shell.d/menu-test.sh:5
@@ -85,14 +85,14 @@ traces:
             - shell/plugins/menu/Menu.qml:305
             - shell/plugins/menu/Menu.qml:313
             - shell/plugins/menu/Menu.qml:376
-            - shell/plugins/menu/MenuModel.js:112
-            - shell/plugins/menu/MenuModel.js:145
+            - shell/plugins/menu/MenuModel.js:134
+            - shell/plugins/menu/MenuModel.js:167
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:911
-            - test/shell.d/menu-test.sh:921
+            - test/shell.d/menu-test.sh:997
+            - test/shell.d/menu-test.sh:1007
         - reviewed_at: "2026-10-02T16:54:46.459069Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
@@ -102,14 +102,14 @@ traces:
             - shell/plugins/menu/Menu.qml:305
             - shell/plugins/menu/Menu.qml:313
             - shell/plugins/menu/Menu.qml:376
-            - shell/plugins/menu/MenuModel.js:112
-            - shell/plugins/menu/MenuModel.js:145
+            - shell/plugins/menu/MenuModel.js:134
+            - shell/plugins/menu/MenuModel.js:167
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:911
-            - test/shell.d/menu-test.sh:921
+            - test/shell.d/menu-test.sh:997
+            - test/shell.d/menu-test.sh:1007
 verification:
     assurance_level: C
     formalization_status: valid

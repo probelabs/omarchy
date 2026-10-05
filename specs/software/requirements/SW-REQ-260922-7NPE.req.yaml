@@ -35,7 +35,7 @@ traces:
           rationale: manual trace review via proof trace review
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/MenuModel.js:96
+            - shell/plugins/menu/MenuModel.js:118
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-09-29T13:06:45.804977613Z"
@@ -45,7 +45,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:266
-            - shell/plugins/menu/MenuModel.js:105
+            - shell/plugins/menu/MenuModel.js:127
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:10
             - test/shell.d/menu-test.sh:11
@@ -61,7 +61,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:267
-            - shell/plugins/menu/MenuModel.js:69
+            - shell/plugins/menu/MenuModel.js:87
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:10
             - test/shell.d/menu-test.sh:5
@@ -72,7 +72,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:267
-            - shell/plugins/menu/MenuModel.js:69
+            - shell/plugins/menu/MenuModel.js:87
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
@@ -84,7 +84,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:267
-            - shell/plugins/menu/MenuModel.js:69
+            - shell/plugins/menu/MenuModel.js:87
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40

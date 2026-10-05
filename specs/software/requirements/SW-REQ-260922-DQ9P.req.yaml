@@ -44,7 +44,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:477
-            - shell/plugins/menu/MenuModel.js:360
+            - shell/plugins/menu/MenuModel.js:382
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-09-29T13:06:47.39024247Z"
@@ -62,7 +62,7 @@ traces:
             - shell/plugins/menu/Menu.qml:537
             - shell/plugins/menu/Menu.qml:552
             - shell/plugins/menu/Menu.qml:771
-            - shell/plugins/menu/MenuModel.js:369
+            - shell/plugins/menu/MenuModel.js:391
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:284
             - test/shell.d/menu-test.sh:297
@@ -79,7 +79,7 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:483
             - shell/plugins/menu/Menu.qml:488
-            - shell/plugins/menu/MenuModel.js:334
+            - shell/plugins/menu/MenuModel.js:356
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:30
             - test/shell.d/menu-test.sh:5
@@ -98,7 +98,7 @@ traces:
             - shell/plugins/menu/Menu.qml:538
             - shell/plugins/menu/Menu.qml:553
             - shell/plugins/menu/Menu.qml:772
-            - shell/plugins/menu/MenuModel.js:334
+            - shell/plugins/menu/MenuModel.js:356
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
@@ -118,7 +118,7 @@ traces:
             - shell/plugins/menu/Menu.qml:538
             - shell/plugins/menu/Menu.qml:553
             - shell/plugins/menu/Menu.qml:772
-            - shell/plugins/menu/MenuModel.js:334
+            - shell/plugins/menu/MenuModel.js:356
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40

@@ -37,7 +37,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:472
-            - shell/plugins/menu/MenuModel.js:379
+            - shell/plugins/menu/MenuModel.js:401
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-09-29T13:06:50.573344136Z"
@@ -48,11 +48,11 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:477
             - shell/plugins/menu/Menu.qml:557
-            - shell/plugins/menu/MenuModel.js:388
+            - shell/plugins/menu/MenuModel.js:410
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:304
             - test/shell.d/menu-test.sh:31
-            - test/shell.d/menu-test.sh:385
+            - test/shell.d/menu-test.sh:471
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-01T09:52:20.071535136Z"
@@ -63,7 +63,7 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:478
             - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
+            - shell/plugins/menu/MenuModel.js:375
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:31
             - test/shell.d/menu-test.sh:5
@@ -75,7 +75,7 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:478
             - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
+            - shell/plugins/menu/MenuModel.js:375
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/node/report-reproducers.test.mjs:1
@@ -89,7 +89,7 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:478
             - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
+            - shell/plugins/menu/MenuModel.js:375
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/node/report-reproducers.test.mjs:1

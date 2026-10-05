@@ -42,7 +42,7 @@ traces:
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:492
-            - shell/plugins/menu/MenuModel.js:289
+            - shell/plugins/menu/MenuModel.js:311
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-09-29T13:04:47.747302694Z"
@@ -56,9 +56,9 @@ traces:
             - shell/plugins/menu/Menu.qml:512
             - shell/plugins/menu/Menu.qml:544
             - shell/plugins/menu/Menu.qml:562
-            - shell/plugins/menu/MenuModel.js:298
-            - shell/plugins/menu/MenuModel.js:321
-            - shell/plugins/menu/MenuModel.js:329
+            - shell/plugins/menu/MenuModel.js:320
+            - shell/plugins/menu/MenuModel.js:343
+            - shell/plugins/menu/MenuModel.js:351
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-test.sh
         - reviewed_at: "2026-10-01T09:52:18.536807824Z"
@@ -69,8 +69,8 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:498
             - shell/plugins/menu/Menu.qml:506
-            - shell/plugins/menu/MenuModel.js:262
-            - shell/plugins/menu/MenuModel.js:285
+            - shell/plugins/menu/MenuModel.js:284
+            - shell/plugins/menu/MenuModel.js:307
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/shell.d/menu-test.sh:29
             - test/shell.d/menu-test.sh:5
@@ -85,9 +85,9 @@ traces:
             - shell/plugins/menu/Menu.qml:513
             - shell/plugins/menu/Menu.qml:545
             - shell/plugins/menu/Menu.qml:563
-            - shell/plugins/menu/MenuModel.js:262
-            - shell/plugins/menu/MenuModel.js:285
-            - shell/plugins/menu/MenuModel.js:293
+            - shell/plugins/menu/MenuModel.js:284
+            - shell/plugins/menu/MenuModel.js:307
+            - shell/plugins/menu/MenuModel.js:315
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
@@ -103,9 +103,9 @@ traces:
             - shell/plugins/menu/Menu.qml:513
             - shell/plugins/menu/Menu.qml:545
             - shell/plugins/menu/Menu.qml:563
-            - shell/plugins/menu/MenuModel.js:262
-            - shell/plugins/menu/MenuModel.js:285
-            - shell/plugins/menu/MenuModel.js:293
+            - shell/plugins/menu/MenuModel.js:284
+            - shell/plugins/menu/MenuModel.js:307
+            - shell/plugins/menu/MenuModel.js:315
             - specs/system/requirements/SYS-REQ-260922-47T8.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40

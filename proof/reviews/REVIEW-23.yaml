@@ -6,6 +6,6 @@ subject: SW-REQ-260922-JRW1
 decision: approved
 comment: Read isVisible/isDisabled/labelFor branch by branch. when:false guard result returns false (row hidden) at MenuModel.js:291; leaf rows return true; provider menus stay visible; menus/links recurse over descendants with a depth cap of 32 (silent cycle-guard precondition the formula does not model - safety envelope only, never hit with a finite menu tree). isDisabled dims disabled:true rows per disabledResults; labelFor adds the check mark for checked/disabled rows. Formula (guard_results_applied -> rows_hidden_or_marked_per_results) matches the gating exactly.
 citations:
-    - shell/plugins/menu/MenuModel.js:289@isVisible
-    - shell/plugins/menu/MenuModel.js:311@isDisabled
-    - shell/plugins/menu/MenuModel.js:318@labelFor
+    - shell/plugins/menu/MenuModel.js:311@isVisible
+    - shell/plugins/menu/MenuModel.js:333@isDisabled
+    - shell/plugins/menu/MenuModel.js:340@labelFor

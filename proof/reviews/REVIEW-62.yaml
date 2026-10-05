@@ -6,4 +6,4 @@ subject: SW-REQ-260922-SJ7P
 decision: approved
 comment: Read searchScore. The tier ladder is exact label (root-deprioritized), whole-word app name, label prefix, label substring, name text, then description, with menus/links promoted by 2 and apps demoted by 5 within a tier; ties break deterministically. match_quality_varies models the tiered branch chain; better_match_ranks_first is the score ordering. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:379
+    - shell/plugins/menu/MenuModel.js:401

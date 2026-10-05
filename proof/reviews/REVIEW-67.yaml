@@ -6,4 +6,4 @@ subject: SW-REQ-260922-W17G
 decision: approved
 comment: Read guardPrelude. A reader marked wanted by its substitution slot is captured once, eagerly, into __omarchy_read_<i> before any guard line ('|| :' keeps a nonzero reader from killing the batch under errexit), and every guard referencing it reads the captured slot. reader_value_reused models the shared-slot case; reader_read_once is the single eager capture. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:483
+    - shell/plugins/menu/MenuModel.js:505

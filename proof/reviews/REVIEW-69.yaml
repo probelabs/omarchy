@@ -6,4 +6,4 @@ subject: SW-REQ-260922-Y58B
 decision: approved
 comment: Read guardScript. guards accumulates one guardLine per declared when/checked/disabled; the function returns '' exactly when the accumulated string is empty, so no prelude and no guard process exist for guardless item sets. no_guards_declared models the empty-accumulator case; empty_guard_script is the '' return. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:521
+    - shell/plugins/menu/MenuModel.js:543

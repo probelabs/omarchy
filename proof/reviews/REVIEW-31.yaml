@@ -6,4 +6,4 @@ subject: SW-REQ-260922-2JZT
 decision: approved
 comment: Read substituteGuardReaders and menu-guards-test.sh. The rewrite is a global split/join on the exact plain $(reader) form per GUARD_READERS entry; command -v reader, VAR=x reader and piped forms never match the pattern and run the real command (the 'untouched' test at line 72 proves all three non-plain forms survive verbatim). The FRETish condition plain_substitution_form models exactly the pattern-match branch; there is no other gating. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:503
+    - shell/plugins/menu/MenuModel.js:525
