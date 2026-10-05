@@ -18,8 +18,8 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-29T10:09:06.631963837Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-05T19:06:15.284405Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
     reviewed_targets:
         satisfies:
@@ -33,6 +33,17 @@ traces:
           citations:
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-05T19:06:15.284405Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait; it now waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
@@ -83,7 +94,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'cross_structure_key_identity evaluated and suppressed with rationale: the action string omarchy-system-lock and the invoked binary name live in one repo-shipped artifact pair (default/omarchy/omarchy-menu.jsonc:38 plus bin/), line-cited in REVIEW-28 and pinned by the menu tests - there are no two independently-maintained structures to drift. external_call_timeout_bounded evaluated and suppressed with rationale: the row handoff is fire-and-forget by design (menu dismisses, lock engages asynchronously), the menu side performs no wait, and the lock component engagement deadlines are owned by the lock requirements (SYS-REQ-260912-T0XP family, batch A) - deferring here would duplicate debt one level above its owner. control-not-silently-disabled is met at this boundary by the same ownership split: the wiring cannot disable the control, and the callees fail-visible contract is theirs. tampering/replay classes do not fire: the call is an in-session fork, not a message.'
-verification_state: failing
+verification_state: passing
 interface:
     caller: menu
     callee: lock
@@ -104,3 +115,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-28=present | known_issue:KI-260930-2FBE=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-05T19:06:06Z"
+          from: verification=failing
+          to: verification=passing
+          reason: '[evidence:test/shell.d/system-lock-test.sh] Derived proposal in the pr/9429 mirror audit run-f968d6b6: REVIEW-28 approved, KI-260930-2FBE fixed by omacom/omarchy#9429, system-lock tests pass.'
+          changed_by: agent:claude-code
