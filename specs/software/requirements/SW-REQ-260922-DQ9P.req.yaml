@@ -64,11 +64,11 @@ traces:
             - shell/plugins/menu/Menu.qml:771
             - shell/plugins/menu/MenuModel.js:369
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/shell.d/menu-test.sh:284
-            - test/shell.d/menu-test.sh:297
+            - test/shell.d/menu-test.sh:285
+            - test/shell.d/menu-test.sh:298
             - test/shell.d/menu-test.sh:30
-            - test/shell.d/menu-test.sh:300
-            - test/shell.d/menu-test.sh:302
+            - test/shell.d/menu-test.sh:301
+            - test/shell.d/menu-test.sh:303
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-01T09:52:17.301393856Z"

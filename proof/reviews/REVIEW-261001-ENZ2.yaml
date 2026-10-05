@@ -9,4 +9,4 @@ citations:
     - shell/plugins/menu/MenuModel.js:2@stripJsonc
     - shell/plugins/menu/MenuModel.js:39
     - shell/plugins/menu/MenuModel.js:42
-    - test/shell.d/menu-test.sh:486
+    - test/shell.d/menu-test.sh:487

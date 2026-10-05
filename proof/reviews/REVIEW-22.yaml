@@ -10,4 +10,4 @@ citations:
     - shell/plugins/menu/MenuModel.js:117
     - shell/plugins/menu/MenuModel.js:125
     - shell/plugins/menu/MenuModel.js:1
-    - test/shell.d/menu-test.sh:98
+    - test/shell.d/menu-test.sh:99

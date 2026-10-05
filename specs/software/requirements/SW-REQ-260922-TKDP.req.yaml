@@ -47,8 +47,8 @@ traces:
             - shell/plugins/menu/Menu.qml:492
             - shell/plugins/menu/Menu.qml:654
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/shell.d/menu-test.sh:286
-            - test/shell.d/menu-test.sh:309
+            - test/shell.d/menu-test.sh:287
+            - test/shell.d/menu-test.sh:310
             - test/shell.d/menu-test.sh:33
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5

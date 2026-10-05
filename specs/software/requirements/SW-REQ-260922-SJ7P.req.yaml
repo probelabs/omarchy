@@ -50,9 +50,9 @@ traces:
             - shell/plugins/menu/Menu.qml:557
             - shell/plugins/menu/MenuModel.js:388
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/shell.d/menu-test.sh:304
+            - test/shell.d/menu-test.sh:305
             - test/shell.d/menu-test.sh:31
-            - test/shell.d/menu-test.sh:385
+            - test/shell.d/menu-test.sh:386
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-01T09:52:20.071535136Z"

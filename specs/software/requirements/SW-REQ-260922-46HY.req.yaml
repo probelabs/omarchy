@@ -54,7 +54,7 @@ traces:
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:66
             - test/shell.d/menu-test.sh:9
-            - test/shell.d/menu-test.sh:97
+            - test/shell.d/menu-test.sh:98
         - reviewed_at: "2026-10-01T09:52:15.743350841Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection

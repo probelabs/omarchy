@@ -56,8 +56,8 @@ traces:
             - test/shell.d/menu-test.sh:26
             - test/shell.d/menu-test.sh:27
             - test/shell.d/menu-test.sh:28
-            - test/shell.d/menu-test.sh:307
-            - test/shell.d/menu-test.sh:342
+            - test/shell.d/menu-test.sh:308
+            - test/shell.d/menu-test.sh:343
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-02T16:44:37.365632Z"

@@ -55,10 +55,10 @@ traces:
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:6
-            - test/shell.d/menu-test.sh:918
             - test/shell.d/menu-test.sh:919
-            - test/shell.d/menu-test.sh:932
-            - test/shell.d/menu-test.sh:943
+            - test/shell.d/menu-test.sh:920
+            - test/shell.d/menu-test.sh:933
+            - test/shell.d/menu-test.sh:944
         - reviewed_at: "2026-10-01T09:52:21.38302406Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -90,8 +90,8 @@ traces:
             - shell/plugins/menu/Menu.qml:143
             - shell/plugins/menu/MenuModel.js:560
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
-            - test/shell.d/menu-test.sh:1296
-            - test/shell.d/menu-test.sh:1320
+            - test/shell.d/menu-test.sh:1297
+            - test/shell.d/menu-test.sh:1321
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:

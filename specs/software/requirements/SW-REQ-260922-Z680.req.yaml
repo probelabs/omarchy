@@ -61,8 +61,8 @@ traces:
             - test/shell.d/menu-test.sh:18
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:766
-            - test/shell.d/menu-test.sh:794
+            - test/shell.d/menu-test.sh:767
+            - test/shell.d/menu-test.sh:795
         - reviewed_at: "2026-10-01T09:52:21.063533346Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -104,8 +104,8 @@ traces:
             - shell/plugins/menu/MenuModel.js:190
             - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:1192
-            - test/shell.d/menu-test.sh:1202
+            - test/shell.d/menu-test.sh:1193
+            - test/shell.d/menu-test.sh:1203
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:

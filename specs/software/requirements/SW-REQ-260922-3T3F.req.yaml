@@ -50,16 +50,16 @@ traces:
             - shell/plugins/menu/MenuModel.js:1
             - shell/plugins/menu/MenuModel.js:77
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/shell.d/menu-test.sh:109
+            - test/shell.d/menu-test.sh:110
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:63
             - test/shell.d/menu-test.sh:64
             - test/shell.d/menu-test.sh:7
             - test/shell.d/menu-test.sh:8
-            - test/shell.d/menu-test.sh:91
             - test/shell.d/menu-test.sh:92
-            - test/shell.d/menu-test.sh:98
+            - test/shell.d/menu-test.sh:93
+            - test/shell.d/menu-test.sh:99
         - reviewed_at: "2026-10-01T09:52:15.216189783Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -100,11 +100,11 @@ traces:
             - test/node/menumodel-replay.test.mjs:1240
             - test/node/menumodel-replay.test.mjs:1339
             - test/node/menumodel-replay.test.mjs:159
-            - test/shell.d/menu-test.sh:132
-            - test/shell.d/menu-test.sh:138
-            - test/shell.d/menu-test.sh:152
-            - test/shell.d/menu-test.sh:330
-            - test/shell.d/menu-test.sh:338
+            - test/shell.d/menu-test.sh:133
+            - test/shell.d/menu-test.sh:139
+            - test/shell.d/menu-test.sh:153
+            - test/shell.d/menu-test.sh:331
+            - test/shell.d/menu-test.sh:339
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:64

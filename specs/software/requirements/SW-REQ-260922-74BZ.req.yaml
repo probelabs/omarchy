@@ -72,7 +72,7 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:790
+            - test/shell.d/menu-test.sh:791
 verification:
     assurance_level: C
     formalization_status: valid

@@ -55,8 +55,8 @@ traces:
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:62
-            - test/shell.d/menu-test.sh:94
-            - test/shell.d/menu-test.sh:96
+            - test/shell.d/menu-test.sh:95
+            - test/shell.d/menu-test.sh:97
         - reviewed_at: "2026-10-01T09:52:17.700906356Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -99,13 +99,13 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/node/menumodel-replay.test.mjs:1240
             - test/node/menumodel-replay.test.mjs:153
-            - test/shell.d/menu-test.sh:146
-            - test/shell.d/menu-test.sh:300
-            - test/shell.d/menu-test.sh:305
-            - test/shell.d/menu-test.sh:315
-            - test/shell.d/menu-test.sh:323
-            - test/shell.d/menu-test.sh:333
-            - test/shell.d/menu-test.sh:342
+            - test/shell.d/menu-test.sh:147
+            - test/shell.d/menu-test.sh:301
+            - test/shell.d/menu-test.sh:306
+            - test/shell.d/menu-test.sh:316
+            - test/shell.d/menu-test.sh:324
+            - test/shell.d/menu-test.sh:334
+            - test/shell.d/menu-test.sh:343
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
 verification:

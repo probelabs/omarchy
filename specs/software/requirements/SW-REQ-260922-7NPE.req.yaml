@@ -50,8 +50,8 @@ traces:
             - test/shell.d/menu-test.sh:10
             - test/shell.d/menu-test.sh:11
             - test/shell.d/menu-test.sh:12
-            - test/shell.d/menu-test.sh:232
-            - test/shell.d/menu-test.sh:243
+            - test/shell.d/menu-test.sh:233
+            - test/shell.d/menu-test.sh:244
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-01T09:52:16.512602825Z"

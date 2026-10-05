@@ -8,4 +8,4 @@ comment: 'Re-reviewed on the PR #13968 scanner (pr/13968 mirror; supersedes the 
 citations:
     - shell/plugins/menu/MenuModel.js:26@stripJsonc
     - shell/plugins/menu/MenuModel.js:36
-    - test/shell.d/menu-test.sh:368
+    - test/shell.d/menu-test.sh:369
