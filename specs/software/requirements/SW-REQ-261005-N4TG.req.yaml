@@ -1,0 +1,45 @@
+id: SW-REQ-261005-N4TG
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: 'OPEN DECISION (awaiting the Omarchy maintainers): should the lock screen limit the length of a typed or pasted password, and where? Current behaviour (upstream quattro 035ce29f): the password TextInput in LockView.qml (line 164) declares no maximumLength, so it keeps Qt''s default of 32767 characters; the text is mirrored into the masking TextMetrics (LockView.qml:90-96) and through passwordTextEdited into the service (Service.qml:488), and submitPassword forwards any non-empty value to PAM (Service.qml:324-339). Options: (A) keep the current behaviour, no limit of its own; (B) the password field shall accept at most N characters, N chosen by the maintainers; (C) in addition, the lock service shall reject a longer value before PAM. Approving this draft means choosing one option; its text then replaces this description.'
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-T0XP
+component: lock
+rationale: 'Raised by omacom/omarchy#10078 (proof inbox R-995). The validation (report/cmulr91070k6l1gw401lz9v1z, rval-1aeca03bd74654626c6df3e95e77ef51) reproduced the current behaviour with the real LockView.qml. No requirement bounds the length today; SW-REQ-260912-WBS3 only scales the dots. Upstream PR #10082 (draft, by the reporter) proposes B and C. For reference only: Linux-PAM''s PAM_MAX_RESP_SIZE is 512 bytes.'
+tags:
+    - open-decision
+    - awaiting-maintainer-decision
+variables: []
+references:
+    - type: customer_report
+      id: omacom/omarchy#10078
+      url: https://github.com/omacom/omarchy/issues/10078
+      description: Origin report in the upstream issue tracker
+    - type: ticket
+      id: R-995
+      url: https://portal.reqproof.com/projects/omarchy/inbox/995
+      description: Validated report in the proof inbox (reproducer, sealed validation)
+traces:
+    satisfies:
+        - SYS-REQ-260912-T0XP
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-05T14:31:15Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-05T14:31:15Z"
