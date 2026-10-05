@@ -12,14 +12,14 @@ results:
       command: /bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-05T17:33:58Z"
-      revision: b9bf86f655266586dadc2b3ef0fac8a28f325875
+      executed_at: "2026-10-05T19:25:22Z"
+      revision: be83388f773d544a931d3f7715d0a1f284a8cfec
       freshness_basis: revision
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-SELECT-POLL-DEADLOCK` from the KnownIssue''s reproducer command: /bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - test/shell.d/menu-select-poll-deadlock-repro.sh
       freshness_hashes:
-        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:95d00e964f6d49c974d4fdeacbf0346ec394b83893b702dd94168e3169a58dba
+        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:1b1616dce6575fe3ef86eb8d06c254f6fa0f84a6d2d49ac0862500310f6fd9a3
         test/shell.d/menu-select-poll-deadlock-repro.sh: sha256:1feecb839a4c88de8d7230aa6a64e5d38274a3e009ce78d4ea2c2f09d14855e7
       known_issues:
         - KI-MENU-SELECT-POLL-DEADLOCK
