@@ -11,6 +11,10 @@
 # Both-ways: asserts the defect symptom against CURRENT code (exit 0 = defect
 # present). With a fix that keeps a dispatchable action for function binds,
 # the assertion fails and this exits 1.
+# Fixture shape: Hyprland 0.56.2 reports every Lua bind as dispatcher __lua
+# with a numeric registry ref in arg (hlBind stores luaL_ref; HyprCtl prints
+# it), so the function bind row carries "arg: 264", not an empty arg. A fix
+# may dispatch through that ref; an empty arg would hide such a fix.
 # No `set -u` here on purpose: bin/omarchy-menu-keybindings itself runs without
 # it, and the empty-dispatcher overwrite this PoC pins depends on the missing
 # map lookup degrading to "" exactly as it does in production.
@@ -20,8 +24,9 @@ SCRIPT="$REPO/bin/omarchy-menu-keybindings"
 FUNCS="$(sed '/^if \[\[ $1 == "--print"/,$d' "$SCRIPT")"
 eval "$FUNCS"
 
-# Feed the exact `hyprctl binds` text the shipped function binds produce:
-# dispatcher __lua with an empty arg, plus a launch bind for contrast.
+# Feed the `hyprctl binds` text Hyprland 0.56.2 prints for a shipped function
+# bind: dispatcher __lua with its registry ref as arg, plus a launch bind for
+# contrast.
 hyprctl() {
   case $1 in
     binds)
@@ -32,7 +37,7 @@ bind
 	keycode: 0
 	description: Select all
 	dispatcher: __lua
-	arg:
+	arg: 264
 
 bind
 	modmask: 64
