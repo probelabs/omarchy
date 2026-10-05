@@ -19,7 +19,7 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:41.575128Z"
+    reviewed_at: "2026-10-02T16:58:50.32414Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:a00755573af1c8e9f45d8f9944300f4269168293110ed5e4318072da7dc2320a
     reviewed_targets:
@@ -33,7 +33,7 @@ traces:
             shell/plugins/menu/Menu.qml:searchableToken: file1:bddf782ed3ac81606c0c53a1106414c4
             shell/plugins/menu/Menu.qml:setFilter: file1:bddf782ed3ac81606c0c53a1106414c4
             shell/plugins/menu/Menu.qml:termInSearchWords: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:matchesQuery: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:matchesQuery: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -64,11 +64,11 @@ traces:
             - shell/plugins/menu/Menu.qml:771
             - shell/plugins/menu/MenuModel.js:369
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/shell.d/menu-test.sh:284
-            - test/shell.d/menu-test.sh:297
+            - test/shell.d/menu-test.sh:285
+            - test/shell.d/menu-test.sh:298
             - test/shell.d/menu-test.sh:30
-            - test/shell.d/menu-test.sh:300
-            - test/shell.d/menu-test.sh:302
+            - test/shell.d/menu-test.sh:301
+            - test/shell.d/menu-test.sh:303
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-01T09:52:17.301393856Z"
@@ -83,7 +83,21 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:30
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:35.597601Z"
+        - reviewed_at: "2026-10-01T22:40:34.654974Z"
+          reviewed_by: agent:claude-pr-13968
+          method: inspection
+          rationale: 'pr/13968: the PR #13968 changes only stripJsonc and parseMenuJsonc in MenuModel.js (product diff vs the upstream PR is annotation-only, review/check-clean-product-diff.py); the function this requirement links to is byte-identical to the baseline 9f3abc10, so the link turned suspect only through the shared file fingerprint. Re-read the linked function and its witnesses; menu-test.sh and the node replay are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:483
+            - shell/plugins/menu/Menu.qml:488
+            - shell/plugins/menu/MenuModel.js:379
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:593
+            - test/shell.d/menu-test.sh:30
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T16:58:50.32414Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
@@ -98,27 +112,7 @@ traces:
             - shell/plugins/menu/Menu.qml:538
             - shell/plugins/menu/Menu.qml:553
             - shell/plugins/menu/Menu.qml:772
-            - shell/plugins/menu/MenuModel.js:334
-            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:41.575128Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:483
-            - shell/plugins/menu/Menu.qml:488
-            - shell/plugins/menu/Menu.qml:518
-            - shell/plugins/menu/Menu.qml:523
-            - shell/plugins/menu/Menu.qml:528
-            - shell/plugins/menu/Menu.qml:533
-            - shell/plugins/menu/Menu.qml:538
-            - shell/plugins/menu/Menu.qml:553
-            - shell/plugins/menu/Menu.qml:772
-            - shell/plugins/menu/MenuModel.js:334
+            - shell/plugins/menu/MenuModel.js:379
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40

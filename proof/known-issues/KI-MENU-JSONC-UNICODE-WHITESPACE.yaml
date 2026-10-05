@@ -23,13 +23,14 @@ introduced_in: inception
 defect_class: latent
 minimization_status: minimized
 mitigation: Replace no-break spaces and other non-ASCII spaces in the menu file with ASCII spaces. The shipped default menu carries none.
-remediation: 'Read every JS whitespace character outside a string literal as plain whitespace before JSON.parse, as omacom/omarchy#13968 does (characters inside strings stay data). Close criterion: pocs/menu-jsonc-unicode-whitespace.sh exits 0 and the KI-MENU-JSONC-UNICODE-WHITESPACE tripwires in test/shell.d/menu-test.sh flip red.'
+remediation: Fixed by omacom/omarchy#13968 (its second commit b2dae8db reads every JS whitespace character outside a string literal as a space; SW-REQ-261001-BNZG).
 notes:
+    - 'Fixed on pr/13968 by omacom/omarchy#13968 (b2dae8db): outside string literals stripJsonc emits every JS whitespace character other than a line feed as one ASCII space, so VT, FF, U+00A0, U+1680, U+2000 to U+200A, U+2028, U+2029, U+202F, U+205F, U+3000 and U+FEFF between tokens no longer empty the file; inside strings they stay data. Spec: SW-REQ-261001-BNZG. pocs/menu-jsonc-unicode-whitespace.sh exits 0 for all 21 characters; the in-suite tests tagged Reproduces now assert the entries survive and guard against a return. KI-MENU-JSONC-CR-LINE-ENDINGS stays open: the PR does not change it.'
     - 'Upstream: no issue reports this. Our open PR #13968 fixes it.'
 owner: agent:claude-baseline-pass
 review_date: "2026-12-31"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-10-01T21:21:16Z"
       by: agent:claude-baseline-pass
@@ -62,6 +63,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-unicode-whitespace.yaml
+    - at: "2026-10-01T22:39:22Z"
+      by: agent:claude-pr-13968
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
     - at: "2026-10-04T19:33:23Z"
       by: agent:claude-code
       action: edit

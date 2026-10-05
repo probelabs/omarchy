@@ -1,0 +1,109 @@
+id: SW-REQ-260927-66FW
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: the menu_model shall always satisfy trailing_comma_dropped <=> (!comma_in_string & next_char_closes_json)
+description: The JSONC stripper looks ahead from each comma outside every string literal. The look-ahead skips whitespace and each // comment up to its line break. The stripper drops the comma only when the next other character is a closing brace or bracket. A comma inside a string literal is data, and the stripper copies it unchanged.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-PPDW
+component: menu
+rationale: 'PR omacom/omarchy#13968 replaces the two regex passes in MenuModel.js stripJsonc with one string-aware scanner. The upstream comma regex also matched inside strings, so a label such as "x, ]y" changed while the parse still succeeded (#13250). The look-ahead skips comments as well as whitespace. Thus a trailing comma, then a commented-out entry, then the closer still parses, as in the shipped extension template with its examples uncommented. A look-ahead that stops at the first non-whitespace character keeps that comma and empties the menu, which is the #13512 and #13681 regression.'
+tags: []
+variables:
+    - comma_in_string
+    - next_char_closes_json
+    - trailing_comma_dropped
+traces:
+    satisfies:
+        - SYS-REQ-260922-PPDW
+    reviewed_at: "2026-10-01T17:53:35.953843Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_fingerprint: sha256:edb05429dd6a72cf07d60ea9501c81d0844b42616e2d2c5dcccbf43f12962ad5
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
+        satisfies:
+            SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
+    review_history:
+        - reviewed_at: "2026-09-27T19:14:02.630895Z"
+          reviewed_by: agent:kimi-fix-jsonc-refresh
+          method: inspection
+          rationale: manual trace review via proof trace review
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/MenuModel.js:1
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/shell.d/menu-test.sh
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-13968
+        reviewed_at: "2026-10-01T17:45:00Z"
+        ai_generated: true
+        motivation:
+            kind: defect
+            ref: DEFECT-260927-CMMA
+            rationale: 'This requirement closes the string-blind trailing-comma class (#13250) on the PR #13968 scanner. It models the comma-drop decision with comma_in_string and next_char_closes_json. The look-ahead definition excludes // comments, so the requirement does not encode the #13512 regression.'
+history:
+    created_by: human:Leonid Bugaev
+    created_at: "2026-09-27T15:24:42Z"
+    last_modified_by: agent:claude-pr-13968
+    last_modified_at: "2026-10-01T18:04:59Z"
+obligation_checklist:
+    - malformed_input
+obligation_hazards:
+    - class: malformed_input
+      worst_case: 'FMEA mode (a): the stripper changes a label such as "x, ]y" to "x ]y" while the parse still succeeds, so the user sees a wrong row name. FMEA mode (b): an action such as mv f{.bak,} loses its in-string comma, and the changed command runs with the user''s privileges on row activation. FMEA mode (c): a look-ahead that does not skip // comments keeps a real trailing comma before a commented-out entry, JSON.parse rejects the file, and the whole file contributes no rows. JSON.parse accepts the text in modes (a) and (b), so no error shows. The PR #13968 scanner forbids all three modes.'
+      severity: medium
+hazard_review:
+    reviewed_at: "2026-10-01T22:58:00Z"
+    reviewed_by: agent:claude-pr-13968
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - edge_case
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'malformed_input: JSONC trailing commas are legal JSONC but not JSON, and the stripper must remove them without a change to string bytes. Witnessed rows cover a comma and closer inside a label and inside an action, plus a real trailing comma before } and before ]. boundary: a comma at end of input with no closer stays, and a comma followed only by a comment and then the closer is dropped. edge_case: an escaped backslash before the closing quote ends the string, and a trailing comma, then a whole-line or inline comment, then } or ] is dropped (the #13512 shape). Catalog 1.11.0 re-review: input_domain applied, the comma rule holds over the domain stated on SW-REQ-260922-E4J2 and SW-REQ-261001-BNZG: the look-ahead skips LF, CRLF and every other JS whitespace character, so a trailing comma followed by U+00A0, VT or CRLF and a closer is dropped, and a comma inside a string is data whatever characters surround it. concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+          rationale: The scanner is one left-to-right pass with no environment, order or time inputs, so the same text always strips the same way. A seeded differential test in test/node/menumodel-replay.test.mjs compares it with an independent reference model.
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags (HTTP, crypto or IPC frameworks) apply. The component parses a local user-authored config file into a menu model.
+        - category: structural
+          disposition: not_applicable
+          rationale: The code is garbage-collected JavaScript in the QML JS engine. It has no manual memory, pointer arithmetic, binary framing or format strings, so the C-family structural catalog does not apply.
+verification_state: passing
+lifecycle:
+    change_history:
+        - date: "2026-09-27T19:15:02Z"
+          from: draft
+          to: review
+          reason: '[fix/jsonc-trailing-comma-in-strings] fix branch review: formula verified against scanner by REVIEW-21 + independent fuzz (20k cases, 0 mismatch) this campaign'
+          changed_by: agent:kimi-fix-jsonc-refresh
+        - date: "2026-10-01T17:45:00Z"
+          from: review
+          to: review
+          reason: '[pr/13968] re-applied from e797ba5b and reworded to the PR #13968 scanner: the comma look-ahead skips whitespace and // comments (next_char_closes_json redefined), so the requirement no longer encodes the next-non-whitespace rule that #13512 and #13681 shipped.'
+          changed_by: agent:claude-pr-13968
+        - date: "2026-10-01T22:57:21Z"
+          from: verification=not_started
+          to: verification=passing
+          reason: auto-derived [not_started→passing] signals=2; review_record:REVIEW-21=present | tests_pass:test_status=passing
+          changed_by: agent:claude-pr-13968

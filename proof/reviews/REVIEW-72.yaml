@@ -1,0 +1,10 @@
+id: REVIEW-72
+kind: spec_conformance
+reviewer: agent:claude-pr-13968
+reviewed_at: "2026-10-01T18:20:00Z"
+subject: SW-REQ-260928-BMFE
+decision: approved
+comment: 'Re-reviewed on the PR #13968 guard (pr/13968 mirror). FRETish guard (array_root_present -> array_root_rejected) matches parseMenuJsonc: the root check now returns [] when typeof parsed is not object, parsed is null, or Array.isArray(parsed), so an array root yields an empty item set before for..in can walk its indices. Witness rows cover an array root with a leading comment and a trailing comma, an empty array, and an object root that still parses; the negative row covers an array of scalars, a string root and a null root. The violation rows need the Array.isArray test removed or a broken condition, so they are dispositioned defensive. Report #13492 now exits 0 on this tree.'
+citations:
+    - shell/plugins/menu/MenuModel.js:100@parseMenuJsonc
+    - test/shell.d/menu-test.sh:419

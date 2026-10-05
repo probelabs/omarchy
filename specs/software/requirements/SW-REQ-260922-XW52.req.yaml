@@ -46,8 +46,8 @@ traces:
             - shell/plugins/menu/Menu.qml:959
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - test/shell.d/menu-test.sh:25
-            - test/shell.d/menu-test.sh:308
-            - test/shell.d/menu-test.sh:336
+            - test/shell.d/menu-test.sh:309
+            - test/shell.d/menu-test.sh:337
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-02T16:44:39.000052Z"

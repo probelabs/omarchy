@@ -33,6 +33,14 @@ refresh:
         already modeled by menu-jsonc-config, dispatch path by
         menu-action-dispatch (summon grammar cannot match it). No new surface,
         vector, or posture change; all four existing surfaces re-verified.
+    - at: "2026-10-01"
+      by: agent:claude-pr-13968
+      delta: 6fe078f2..pr/13968 (omacom/omarchy#13968 @ff77cd02 + efa5170b)
+      added_surfaces: []
+      note: >
+        PR mirror refresh. menu-jsonc-config re-reviewed for the string-aware
+        scanner and its input domain (SW-REQ-261001-BNZG); three KIs fixed;
+        no new surface. Other surfaces untouched by the PR.
 narrative: proof/surfaces/threat-surface.md
 # NOTE for integrators: this proof version (0.1.0-dev+g66be0eddd) persists the
 # threat-surface map at proof/surfaces/threat-surface.yaml (schema_version 1);
@@ -45,38 +53,37 @@ surfaces:
     kind: parser
     disposition:
       status: reviewed
-      ref: KI-MENU-JSONC-COMMA-IN-STRING
+      ref: SW-REQ-261001-BNZG
       reason: >
-        Clean-baseline re-review (2026-10-01, quattro-clean = upstream
-        e332dc97 product code). The fork scanner that the 2026-09-27 review
-        credited (SW-REQ-260927-66FW, DEFECT-260927-CMMA) is not on this
-        baseline; it moved to pr/13255 with SW-REQ-260928-BMFE (pr/13511) and
-        SW-REQ-260928-C8W1 (pr/13512). Upstream's live edges are KnownIssues
-        with in-suite tripwires and report reproducers:
-        KI-MENU-JSONC-COMMA-IN-STRING (#13250, the silent mutation below),
-        KI-MENU-JSONC-ARRAY-ROOT (#13492), KI-MENU-JSONC-INLINE-COMMENT
-        (#13493), KI-MENU-JSONC-STRIP-GAPS (block comments). Within the
-        documented grammar upstream is exact (residual L-MENU-JSONC-001: 0 of
-        20k seeded fuzz divergences); vectors V-MENU-JSONC-INPUT and
-        V-MENU-JSONC-STRIP-EDGES exited closed-ki.
-      reviewed_by: agent:claude-quattro-clean
-      reviewed_at: "2026-10-01T09:30:00Z"
+        pr/13968 re-review (2026-10-01, quattro-proof 6fe078f2 + omacom/omarchy
+        #13968 at ff77cd02 + the pending efa5170b). The PR replaces the two
+        string-blind regex passes with one string-aware scanner and rejects an
+        array root, which fixes KI-MENU-JSONC-COMMA-IN-STRING (#13250),
+        KI-MENU-JSONC-ARRAY-ROOT (#13492) and KI-MENU-JSONC-INLINE-COMMENT
+        (#13493). The rules are SW-REQ-260927-66FW (commas, look-ahead skips
+        whitespace and // comments), SW-REQ-260928-BMFE (array root),
+        SW-REQ-260928-C8W1 (comments, line break kept) and SW-REQ-261001-BNZG
+        (input domain: any JS \s character outside strings is whitespace, a
+        leading byte order mark is accepted, strings verbatim). Only
+        KI-MENU-JSONC-STRIP-GAPS (block comments) stays open on this surface.
+      reviewed_by: agent:claude-pr-13968
+      reviewed_at: "2026-10-01T18:30:00Z"
     summary: >
       User-authored JSONC menu definitions (~/.config/omarchy/extensions/
       omarchy-menu.jsonc + shipped default) parsed by MenuModel.stripJsonc +
-      parseMenuJsonc into the menu model. LIVE on this baseline: the
-      string-blind trailing-comma regex silently mutates commas inside string
-      literals while JSON.parse still succeeds - including inside action:
-      command strings that omarchy-menu later executes with the user's full
-      privileges (mv f{.bak,} -> mv f{.bak}; awk '{print $1, }' ->
-      awk '{print $1 }'). Tracked as KI-MENU-JSONC-COMMA-IN-STRING.
+      parseMenuJsonc into the menu model. Under PR #13968 the stripper copies
+      string contents verbatim, so action: command strings that omarchy-menu
+      executes with the user's privileges are no longer rewritten (the upstream
+      mutation mv f{.bak,} -> mv f{.bak} is gone). The input domain is any
+      text; Unicode whitespace outside strings (incl. a byte order mark) is read
+      as a space, so an editor-saved file no longer loses every row.
     entrypoints:
       - shell/plugins/menu/MenuModel.js (stripJsonc, parseMenuJsonc)
       - shell/plugins/menu/Menu.qml (FileView onLoaded delegates)
     error_posture: recover        # L1 — parse failure yields empty menu via 3T3F catch, never a crash
     boundaries: [strip, parse, model]   # L2 — one-way; model never re-serialized
     invariants:                   # L3
-      - "within the documented grammar the parsed model equals the declared entries (E4J2; string literals carrying comma+closer are outside it - KI-MENU-JSONC-COMMA-IN-STRING)"
+      - "the parsed model equals the declared entries for any text in the JSONC grammar (E4J2 with 66FW, C8W1, BNZG; string literals survive verbatim, incl. comma+closer, // and Unicode spaces)"
       - "invalid input degrades to an empty or skipped item set with no escaping exception (3T3F)"
     equivalence_contract:         # L4 — hard gate, defined before any relational oracle
       version: 1
@@ -84,26 +91,27 @@ surfaces:
       sanctioned_normalizations:
         - "insignificant whitespace and line formatting"
         - "object key ordering"
-        - "full-line comments and trailing commas outside strings (JSONC syntax, not data)"
+        - "// comments and trailing commas outside strings (JSONC syntax, not data)"
+        - "Unicode whitespace outside strings (JS \\s, incl. a byte order mark) read as ASCII whitespace"
     oracle_families_armed:
       - valid-subset-survives / invalid-superset-degrades (L6) — menu-test.sh preservation block + node replay
       - metamorphic pairs (L7) — adding/removing full-line comments and legal trailing commas must not change the model (holds upstream, incl. comma -> comment line -> closer)
-      - differential fuzz vs independent reference model (L5/L7) — documented grammar, 20k cases, 0 mismatches on e332dc97, 2026-10-01; 2000-case seeded property test in-suite
+      - differential fuzz vs independent reference models (L5/L7) — 2000-case seeded documented-grammar property test plus a 3000-case seeded token-level differential with inline comments, comma+closer strings, array roots, the vertical tab, the form feed and all 19 non-ASCII \s characters, both in-suite and green on pr/13968; out of suite 200k-document Unicode differential vs c05d9019 (0 upstream-correct inputs parsed differently)
     oracle_families_blocked:
       - crash oracles — DEAD on a recovery-posture surface (L1)
       - live differential vs a second production parser — none exists (verified: no bin/ script parses the menu JSONC)
     candidate_vectors:
       - V-MENU-JSONC-INPUT
     ladder:
-      - {q: L1,  tag: universal, answer: "recover: any parse failure -> empty menu (3T3F catch); crash oracles dead by posture. The dangerous mode is NOT a crash but silent success on mutated text - live upstream, KI-MENU-JSONC-COMMA-IN-STRING"}
+      - {q: L1,  tag: universal, answer: "recover: any parse failure -> empty menu (3T3F catch); crash oracles dead by posture. The dangerous mode is NOT a crash but silent success on mutated text - fixed by PR #13968 (66FW), formerly KI-MENU-JSONC-COMMA-IN-STRING"}
       - {q: L2,  tag: universal, answer: "strip -> parse -> model, one-way; no re-serialization cycle, so fixpoint/idempotence families do not arm"}
-      - {q: L3,  tag: universal, answer: "conservation: string-literal bytes are data and survive verbatim; invalid input never produces phantom success... except a top-level array of objects, which renders phantom rows (KI-MENU-JSONC-ARRAY-ROOT, #13492); comma+closer inside a string is rewritten (KI-MENU-JSONC-COMMA-IN-STRING, #13250)"}
+      - {q: L3,  tag: universal, answer: "conservation: string-literal characters are data and survive verbatim (66FW, C8W1, BNZG); invalid input never produces phantom success, and a top-level array yields no rows (BMFE; #13492 fixed by PR #13968)"}
       - {q: L4,  tag: universal, answer: "equivalence_contract v1 above; armed before the metamorphic/differential lanes ran"}
       - {q: L5,  tag: domain_parameterized, answer: "no second production implementation (verified bin/ tree); an INDEPENDENT reference scanner was written for the campaign's 20k-case differential fuzz instead"}
-      - {q: L6,  tag: domain_parameterized, answer: "grammar: JSONC = JSON + full-line comments + trailing commas. Known degradation edges, all KnownIssues on this baseline: inline comments (unstripped -> empty menu, KI-MENU-JSONC-INLINE-COMMENT #13493), top-level arrays (phantom rows, KI-MENU-JSONC-ARRAY-ROOT #13492), comma+closer in strings (KI-MENU-JSONC-COMMA-IN-STRING #13250), block comments (KI-MENU-JSONC-STRIP-GAPS)"}
-      - {q: L7,  tag: domain_parameterized, answer: "metamorphic: comment/trailing-comma insertion outside strings preserves the model - holds upstream inside the documented grammar (incl. comma -> comment line -> closer, which the fork scanner / PR #13512 broke); FAILS for comma+closer inside strings (KI-MENU-JSONC-COMMA-IN-STRING)"}
+      - {q: L6,  tag: domain_parameterized, answer: "grammar: JSONC = JSON + // comments anywhere outside strings + trailing commas, over any text (Unicode whitespace outside strings is whitespace, BNZG). Remaining degradation edge: block comments (KI-MENU-JSONC-STRIP-GAPS). Fixed by PR #13968: inline comments (#13493), top-level arrays (#13492), comma+closer in strings (#13250)"}
+      - {q: L7,  tag: domain_parameterized, answer: "metamorphic: comment, trailing-comma and Unicode-whitespace insertion outside strings preserves the model - holds on PR #13968 incl. comma -> comment -> closer (the #13512/#13681 regression shape) and a byte order mark before a leading comment (the ff77cd02 regression fixed by efa5170b)"}
       - {q: L8,  tag: na, na_reason: "parser is stateless per load; FileView reload re-runs the pure function; no object lifecycle"}
-      - {q: L9,  tag: universal, answer: "governance: live edges are KnownIssues with in-suite tripwires and report reproducers (expected failures in test/node/report-reproducers.test.mjs); the fix records (DEFECT-260927-CMMA, 66FW) live on the PR lines; intake gate is report intake + the claims lifecycle"}
+      - {q: L9,  tag: universal, answer: "governance: the three fixed KnownIssues keep their Reproduces-tagged tests as regression guards and their report scripts now exit 0 (test/node/report-reproducers.test.mjs); fix records DEFECT-260927-CMMA, -4NG9, -7AX9; the remaining edge KI-MENU-JSONC-STRIP-GAPS keeps its tripwire; intake gate is report intake + the claims lifecycle"}
       - {q: L10, tag: na, na_reason: "parsing is locale/tz/fs independent (pure byte scan + JSON.parse)"}
       - {q: L11, tag: domain_parameterized, answer: "resource bounds: configs are small operator-authored files; scanner is O(n) single pass; no depth recursion; no limits enforced or needed at this scale"}
       - {q: L12, tag: domain_parameterized, answer: "the rendered menu rows are user-visible and spec-regulated through the model requirements; pixel rendering is out of scope (no rendering oracle in the harness)"}

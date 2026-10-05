@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:44.885136Z"
+    reviewed_at: "2026-10-02T16:58:52.290067Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:268ab783491ff9a96ef2795b385296e0c07156627cb6604dc98e0a5ecccaa4ec
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:depthFor: file1:bddf782ed3ac81606c0c53a1106414c4
             shell/plugins/menu/Menu.qml:searchScore: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:searchScore: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:searchScore: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -50,9 +50,9 @@ traces:
             - shell/plugins/menu/Menu.qml:557
             - shell/plugins/menu/MenuModel.js:388
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/shell.d/menu-test.sh:304
+            - test/shell.d/menu-test.sh:305
             - test/shell.d/menu-test.sh:31
-            - test/shell.d/menu-test.sh:385
+            - test/shell.d/menu-test.sh:386
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
         - reviewed_at: "2026-10-01T09:52:20.071535136Z"
@@ -67,7 +67,22 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/shell.d/menu-test.sh:31
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:38.002305Z"
+        - reviewed_at: "2026-10-01T22:40:36.874119Z"
+          reviewed_by: agent:claude-pr-13968
+          method: inspection
+          rationale: 'pr/13968: the PR #13968 changes only stripJsonc and parseMenuJsonc in MenuModel.js (product diff vs the upstream PR is annotation-only, review/check-clean-product-diff.py); the function this requirement links to is byte-identical to the baseline 9f3abc10, so the link turned suspect only through the shared file fingerprint. Re-read the linked function and its witnesses; menu-test.sh and the node replay are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:478
+            - shell/plugins/menu/Menu.qml:558
+            - shell/plugins/menu/MenuModel.js:398
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:613
+            - test/node/report-reproducers.test.mjs:1
+            - test/shell.d/menu-test.sh:31
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T16:58:52.290067Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
@@ -75,21 +90,7 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:478
             - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
-            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/node/report-reproducers.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:44.885136Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:478
-            - shell/plugins/menu/Menu.qml:558
-            - shell/plugins/menu/MenuModel.js:353
+            - shell/plugins/menu/MenuModel.js:398
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/node/report-reproducers.test.mjs:1

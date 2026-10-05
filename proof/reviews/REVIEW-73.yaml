@@ -1,0 +1,11 @@
+id: REVIEW-73
+kind: spec_conformance
+reviewer: agent:claude-pr-13968
+reviewed_at: "2026-10-01T18:20:00Z"
+subject: SW-REQ-260928-C8W1
+decision: approved
+comment: 'Re-reviewed on the PR #13968 scanner (pr/13968 mirror). The equivalence comment_tail_dropped <=> !comment_in_string matches stripJsonc: outside a string, a / followed by / enters the comment branch, which advances to the character before the next line feed (or to end of input) and emits nothing, so the line feed stays and the tokens on each side are not joined; inside a string the characters are copied before the comment test runs. Witness rows cover an inline tail at end of input, whole-line and inline comments in one pass, and // inside a string (a label and a URL in an action); the negative row shows 1//c, a line break and 2 is still rejected. The violation row needs the comment branch removed, so it is dispositioned defensive. Report #13493 now exits 0 on this tree.'
+citations:
+    - shell/plugins/menu/MenuModel.js:23@stripJsonc
+    - shell/plugins/menu/MenuModel.js:25
+    - test/shell.d/menu-test.sh:461

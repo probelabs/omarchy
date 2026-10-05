@@ -13,20 +13,20 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260922-PPDW
 component: menu
-rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. Upstream e332dc97 rejects scalar and null roots only; for..in walks a top-level JSON array root and renders phantom rows (KI-MENU-JSONC-ARRAY-ROOT, omacom/omarchy#13492).
+rationale: MenuModel.js parseMenuJsonc. A crashing parser would take the whole menu down on a user edit. PR omacom/omarchy#13968 rejects an array root like the scalar and null roots (SW-REQ-260928-BMFE), so for..in never walks array indices into phantom rows (#13492).
 tags: []
 variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-PPDW
-    reviewed_at: "2026-10-02T16:54:37.884494Z"
+    reviewed_at: "2026-10-02T16:58:48.601018Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:47bc36ad1e17188699f35ee2d55c33ab0f566f24e47c1609138c1de617645999
     reviewed_targets:
         implemented_by:
             shell/plugins/menu/Menu.qml:parseMenuJsonc: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
-            shell/plugins/menu/MenuModel.js:stripJsonc: file1:4f7f286f5fa1815a2a370c084b85fb34
+            shell/plugins/menu/MenuModel.js:parseMenuJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
+            shell/plugins/menu/MenuModel.js:stripJsonc: file1:8250af017593eb3a1a6ca466de07d7ee
         satisfies:
             SYS-REQ-260922-PPDW: req1:2c50fc4eb9d20edaed54ead7480ab30e
     review_history:
@@ -50,16 +50,16 @@ traces:
             - shell/plugins/menu/MenuModel.js:1
             - shell/plugins/menu/MenuModel.js:77
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/shell.d/menu-test.sh:109
+            - test/shell.d/menu-test.sh:110
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:63
             - test/shell.d/menu-test.sh:64
             - test/shell.d/menu-test.sh:7
             - test/shell.d/menu-test.sh:8
-            - test/shell.d/menu-test.sh:91
             - test/shell.d/menu-test.sh:92
-            - test/shell.d/menu-test.sh:98
+            - test/shell.d/menu-test.sh:93
+            - test/shell.d/menu-test.sh:99
         - reviewed_at: "2026-10-01T09:52:15.216189783Z"
           reviewed_by: agent:claude-quattro-clean
           method: inspection
@@ -72,7 +72,21 @@ traces:
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:7
-        - reviewed_at: "2026-10-02T16:44:32.391462Z"
+        - reviewed_at: "2026-10-01T22:40:30.74036Z"
+          reviewed_by: agent:claude-pr-13968
+          method: inspection
+          rationale: 'pr/13968: MenuModel.js stripJsonc is the PR #13968 string-aware scanner at the live head b2dae8db (ff77cd02 + b2dae8db) and parseMenuJsonc rejects an array root; product diff vs the upstream PR merged onto quattro f45461a3 is annotation-only (review/check-clean-product-diff.py). Re-read the linked functions against the requirement text; menu-test.sh (263 ok locally) and the node replay incl. both seeded differentials are green.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:259
+            - shell/plugins/menu/MenuModel.js:1
+            - shell/plugins/menu/MenuModel.js:86
+            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:73
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:7
+        - reviewed_at: "2026-10-02T16:58:48.601018Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
@@ -80,42 +94,20 @@ traces:
           citations:
             - shell/plugins/menu/Menu.qml:259
             - shell/plugins/menu/MenuModel.js:1
-            - shell/plugins/menu/MenuModel.js:44
+            - shell/plugins/menu/MenuModel.js:86
             - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
             - test/node/menumodel-replay.test.mjs:1
-            - test/node/menumodel-replay.test.mjs:1048
-            - test/node/menumodel-replay.test.mjs:120
-            - test/node/menumodel-replay.test.mjs:964
-            - test/shell.d/menu-test.sh:113
-            - test/shell.d/menu-test.sh:287
-            - test/shell.d/menu-test.sh:293
+            - test/node/menumodel-replay.test.mjs:1240
+            - test/node/menumodel-replay.test.mjs:1339
+            - test/node/menumodel-replay.test.mjs:159
+            - test/shell.d/menu-test.sh:133
+            - test/shell.d/menu-test.sh:139
+            - test/shell.d/menu-test.sh:153
+            - test/shell.d/menu-test.sh:331
+            - test/shell.d/menu-test.sh:339
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
             - test/shell.d/menu-test.sh:64
-            - test/shell.d/menu-test.sh:92
-            - test/shell.d/menu-test.sh:98
-        - reviewed_at: "2026-10-02T16:54:37.884494Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:259
-            - shell/plugins/menu/MenuModel.js:1
-            - shell/plugins/menu/MenuModel.js:44
-            - specs/system/requirements/SYS-REQ-260922-PPDW.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/node/menumodel-replay.test.mjs:1048
-            - test/node/menumodel-replay.test.mjs:120
-            - test/node/menumodel-replay.test.mjs:964
-            - test/shell.d/menu-test.sh:113
-            - test/shell.d/menu-test.sh:287
-            - test/shell.d/menu-test.sh:293
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-            - test/shell.d/menu-test.sh:64
-            - test/shell.d/menu-test.sh:92
-            - test/shell.d/menu-test.sh:98
 verification:
     assurance_level: C
     formalization_status: valid
@@ -127,15 +119,15 @@ verification:
 history:
     created_by: agent:kimi-dogfood
     created_at: "2026-09-22T13:34:00Z"
-    last_modified_by: agent:claude-baseline-pass
-    last_modified_at: "2026-10-01T21:23:26Z"
+    last_modified_by: agent:claude-pr-13968
+    last_modified_at: "2026-10-01T22:40:00Z"
 obligation_checklist:
     - boundary
     - error_handling
     - input_domain
 hazard_review:
-    reviewed_at: "2026-10-01T21:26:15Z"
-    reviewed_by: agent:claude-baseline-pass
+    reviewed_at: "2026-10-01T22:40:00Z"
+    reviewed_by: agent:claude-pr-13968
     reviewed_against_catalog_version: 1.11.0
     categories:
         - category: scenario
@@ -146,7 +138,7 @@ hazard_review:
             - input_domain
           not_applicable:
             - concurrency_scale
-          rationale: 'Clean-baseline review against upstream e332dc97 (2026-10-01). malformed_input: unparseable-after-strip input routes to the unconditional catch that returns []; scalar and null roots return []; non-object entries are skipped. An array root is NOT rejected upstream: for..in walks its indices and renders phantom rows keyed 0,1,... - tracked as KI-MENU-JSONC-ARRAY-ROOT (#13492) with reproducer test/reports/report-cmulr8j7z0hy31gw4pne8v6u4.sh. error_handling: the failure mode is a silent empty item set by design; no exception escapes. Comma and comment stripping belong to E4J2; their upstream gaps are KI-MENU-JSONC-COMMA-IN-STRING (#13250) and KI-MENU-JSONC-INLINE-COMMENT (#13493). Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: empty, whitespace-only and U+FFFD or NUL outside strings reject the document to an empty item set without an exception (witnesses in test/shell.d/menu-test.sh). concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
+          rationale: 'PR omacom/omarchy#13968 review (2026-10-01). malformed_input: unparseable-after-strip input routes to the unconditional catch that returns []; scalar, null and (new with this PR, SW-REQ-260928-BMFE) array roots return []; non-object entries are skipped. KI-MENU-JSONC-ARRAY-ROOT (#13492) is fixed by this PR. error_handling: the failure mode is a silent empty item set by design; no exception escapes. Comma, comment and whitespace stripping belong to E4J2 and its children 66FW, C8W1 and BNZG. Catalog 1.11.0 re-review: input_domain applied, input_domain is on its obligation checklist: empty, whitespace-only and U+FFFD or NUL outside strings reject the document to an empty item set without an exception (witnesses in test/shell.d/menu-test.sh). concurrency_scale not applicable, a pure function of its arguments, recomputed on each load or keystroke: no state across calls, no process, timer or lock.'
         - category: property
           disposition: reviewed
           applied:
@@ -166,7 +158,7 @@ defect_review:
         emitted: 40
         verified: 21
         dismissed: 19
-verification_state: failing
+verification_state: passing
 lifecycle:
     change_history:
         - date: "2026-09-28T00:00:20Z"
@@ -179,3 +171,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-22=present | known_issue:KI-MENU-JSONC-STRIP-GAPS=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-01T22:57:20Z"
+          from: verification=failing
+          to: verification=passing
+          reason: auto-derived [failing→passing] signals=4; review_record:REVIEW-22=present | known_issue:KI-MENU-JSONC-ARRAY-ROOT=none | known_issue:KI-MENU-JSONC-UNICODE-WHITESPACE=none | tests_pass:test_status=passing
+          changed_by: agent:claude-pr-13968

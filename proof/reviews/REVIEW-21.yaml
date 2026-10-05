@@ -1,0 +1,11 @@
+id: REVIEW-21
+kind: spec_conformance
+reviewer: agent:claude-pr-13968
+reviewed_at: "2026-10-01T18:20:00Z"
+subject: SW-REQ-260927-66FW
+decision: approved
+comment: 'Re-reviewed on the PR #13968 scanner (pr/13968 mirror; supersedes the 2026-09-27 review of the fork scanner). The equivalence trailing_comma_dropped <=> !comma_in_string & next_char_closes_json matches stripJsonc: the in-string branch copies every character before any comma test, so an in-string comma is never dropped; outside a string a comma starts a look-ahead that skips each \s character and each // comment up to (not past) its line break, and the comma is appended unless the look-ahead stops on } or ]. next_char_closes_json is therefore defined over the next character that is neither whitespace nor part of a // comment; a trailing comma, a commented-out entry and the closer drop the comma (the #13512 and #13681 regression shape stays green). End of input during the look-ahead keeps the comma. The three violation rows need the append, the closer test or the string branch broken, so they are dispositioned defensive.'
+citations:
+    - shell/plugins/menu/MenuModel.js:26@stripJsonc
+    - shell/plugins/menu/MenuModel.js:36
+    - test/shell.d/menu-test.sh:369

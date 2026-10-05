@@ -6,4 +6,4 @@ subject: SW-REQ-260922-DQ9P
 decision: approved
 comment: Read matchesQuery. Every query term must appear in the name search text (label, leaf id, aliases) or as a whole word in the lowercased description, else the row is rejected; root, invisible, and disabled rows return false before any term check. The term loop maps to all_terms_matched and the early false returns map to row_hidden_from_results. Formula conforms to the code.
 citations:
-    - shell/plugins/menu/MenuModel.js:360
+    - shell/plugins/menu/MenuModel.js:405
