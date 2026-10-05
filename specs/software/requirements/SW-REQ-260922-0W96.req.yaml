@@ -19,7 +19,7 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-10-05T18:04:48.89656Z"
+    reviewed_at: "2026-10-05T19:35:36.888827Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
     reviewed_targets:
@@ -55,6 +55,16 @@ traces:
             - bin/omarchy-menu-keybindings:8
             - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
             - test/shell.d/keybindings-menu-test.sh:3
+        - reviewed_at: "2026-10-05T19:35:36.888827Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #7564 review at head 7b49d0bb on quattro-proof 1e433732: the delta replaces the Lua scan''s noop mock with a stub whose metamethods absorb comparisons, arithmetic, concatenation, length and numeric indexing, and time-boxes the scan with timeout 10. The bash side (LUA_BIND_*_MAP population, dispatch) is unchanged. The PR''s new test/shell.d/menu-keybindings-lua-scan-test.sh is linked as a verifier: it runs the embedded scan over a config that loops over, compares and computes with compositor state and asserts the binds declared after those reads are reported (3/3 on Linux). Re-checked against the cited annotation lines and the diff: the link to lua_binds_dispatchable holds and is strengthened; a module that hands a stub value to a type-checking library call still ends the scan (KI-MENU-KEYBINDINGS-SCAN-DOFILE-ABORT arm B).'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
+            - test/shell.d/menu-keybindings-lua-scan-test.sh:2
 verification:
     assurance_level: C
     formalization_status: valid

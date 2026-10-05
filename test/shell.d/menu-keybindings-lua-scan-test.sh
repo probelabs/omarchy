@@ -1,4 +1,5 @@
 #!/bin/bash
+# Verifies: SW-REQ-260922-0W96
 
 set -euo pipefail
 
