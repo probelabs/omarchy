@@ -1,6 +1,6 @@
 id: KI-260930-2FBE
 title: omarchy-system-lock exits 0 when lock engagement fails, leaving the dismissed Lock row silent
-description: 'bin/omarchy-system-lock line 10 runs `omarchy-shell lock lock >/dev/null` and never checks the reply or the exit status. The shell answers a refused lock on stdout with exit 0 (missing-pam or failed), a stopped shell makes omarchy-shell exit 1, and an absent binary exits 127. Each of these passes silently. The script runs its side-effect steps and exits 0 on every path. The menu Lock row (default/omarchy/omarchy-menu.jsonc:38) dismisses the menu on activation, and no surface reports the failure. The user walks away from a session they believe locked; the WC89 hazard_review (batch D) grades this medium on high impact times near-zero likelihood. pocs/wc89-silent-lock-exit0.sh reproduces it: the real script exits 0 on all three failure arms, while the control arm (a shell that answers ok and then reports the session secure) confirms the invocation wiring.'
+description: bin/omarchy-system-lock line 10 runs `omarchy-shell lock lock >/dev/null` and never checks the reply or the exit status. The shell answers a refused lock with missing-pam or failed and exit 0. A stopped shell makes omarchy-shell exit 1, and an absent binary exits 127. The script then exits 0 on every path, and the dismissed menu Lock row (default/omarchy/omarchy-menu.jsonc:38) reports nothing. The user walks away from a session they believe locked; the WC89 hazard_review grades this medium (high impact, near-zero likelihood). pocs/wc89-silent-lock-exit0.sh exits 0 on all three failure arms, while its control arm locks cleanly.
 affected_requirements:
     - SYS-REQ-260927-WC89
 evidence_manifests:
@@ -17,7 +17,8 @@ mitigation: 'Verify a suspicious lock before walking away: run omarchy-hyprland-
 remediation: 'bin/omarchy-system-lock must propagate the omarchy-shell lock exit instead of exiting 0. The lock component (SYS-REQ-260912-T0XP family) owns engagement and failure surfacing per the WC89 obligation_delegations record. Raise a visible failure surface (desktop notification with a non-zero CLI exit); the menu side stays fire-and-forget by design. Close criterion: pocs/wc89-silent-lock-exit0.sh flips red, with every failure arm exiting non-zero and the control still green.'
 notes:
     - '2026-10-04: re-checked on upstream quattro 035ce29f, where bin/omarchy-system-lock is unchanged. pocs/wc89-silent-lock-exit0.sh exits 0 on every arm there and on upstream quattro 393a43d4. Upstream omacom/omarchy#9734 reported the same mechanism, but its reporter closed it as not planned after retracting the timeline.'
-    - 'Upstream: fix PRs #9429 (2026-08-31) and #13756 (2026-09-29) are open alternatives. Issue #10299 reports a related state in which the shell answers ok to every lock without securing the session; only #9429 detects it, because it waits for lock status to report secure.'
+    - 'Upstream: fix PRs #9429 (2026-08-31) and #13756 (2026-09-29) are open alternatives. Issue #10299 reports a related state: the shell answers ok to every lock but never secures the session. Only #9429 detects it, because it waits until lock status reports secure.'
+    - '2026-10-05: the reproducer now models the shell protocol. A refused lock answers missing-pam with exit 0, which is a new arm. The healthy control answers ok and then reports secure:true to lock status. A fix that waits for a secure session therefore keeps the control green. Upstream quattro 035ce29f exits 0 with every arm green. #9429 at 3fa17d48 and #13756 at bf2c22ec, each merged onto it, exit 1 with every failure arm non-zero.'
 review_date: "2026-12-30"
 status: reviewed
 history:
@@ -64,6 +65,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-260930-2fbe.yaml
+    - at: "2026-10-05T17:55:12Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
