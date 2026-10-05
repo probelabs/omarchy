@@ -1,0 +1,96 @@
+id: SW-REQ-261005-4MKB
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when function_bind_picked the keybindings_menu shall eventually satisfy function_bind_called <=> (one_bind_matches_identity & !lua_state_reloaded)
+description: A picked keybindings menu row for a Lua function bind calls the function through the registry ref Hyprland reports. The call happens only when one reported bind, and no other, matches the row and Hyprland did not reload its Lua state after the lookup.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-6642
+component: menu
+rationale: Upstream PR omacom/omarchy#11851 (head 03cbacb8) dispatches Lua function binds from the menu. Before it, such rows showed but ran nothing (KI-MENU-KEYBINDINGS-FUNC-BIND-NO-DISPATCH). The row keeps an encoded identity. A pick resolves the current ref from hyprctl binds and leaves a mark in the Lua registry. The call runs only while that mark is present.
+tags: []
+variables:
+    - function_bind_picked
+    - one_bind_matches_identity
+    - lua_state_reloaded
+    - function_bind_called
+traces:
+    satisfies:
+        - SYS-REQ-260922-6642
+    reviewed_at: "2026-10-05T18:02:22.49302Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:b0188f756dc323a2ebdc395c8f3770ecb89a1629580107423d12fea87451f5c0
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-menu-keybindings: file1:b8f59a3a40ad67915023f6597000fb60
+        satisfies:
+            SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
+    review_history:
+        - reviewed_at: "2026-10-05T18:02:22.49302Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #11851 review at head 03cbacb8 on quattro-proof 1e433732: new requirement for dispatching Lua function binds through the registry ref Hyprland reports. The file-level Implements line of bin/omarchy-menu-keybindings names it; the functions it covers are lua_bind_identity, mark_lua_state, current_lua_function_ref, call_lua_function_if_marked, dispatch_lua_function_binding and the __lua arm of dispatch_binding. Verified by the function-bind scenarios in keybindings-menu-test.sh; parent SYS-REQ-260922-6642 (menu action scripts perform their side effect or a loud refusal).'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-05T17:53:23Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-05T18:01:57Z"
+hazard_review:
+    reviewed_at: "2026-10-05T18:01:43Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - malformed_input
+            - boundary
+            - concurrent
+            - error_handling
+            - input_domain
+          not_applicable:
+            - concurrency_scale
+          rationale: 'malformed_input: a cached identity that does not decode, and a bind reported without a numeric ref, are refused and call nothing. boundary: two reported binds with the same identity are refused rather than guessed between; binds that differ only in submap or modifiers are told apart. concurrent: a reload between the lookup and the call clears the Lua registry, so the mark check refuses the call; an overlapping selection keeps the other selection mark. error_handling: a failed hyprctl binds or a refused mark stops the pick with exit 1 before any call. input_domain: the identity and the ref come from the menu cache and hyprctl binds, machine-written text whose malformed forms are the cases above. concurrency_scale not applicable: one pick dispatches at most one bind.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - atomicity
+            - determinism
+          rationale: 'atomicity: the call and the mark removal happen in one Lua expression, after the mark check, so a pick either calls its bind once or calls nothing. determinism: the same cached identity and the same hyprctl binds output resolve to the same ref.'
+        - category: domain
+          disposition: not_applicable
+          rationale: 'No new trust boundary: the menu runs a function the user already bound in their own Hyprland config, inside the user session, through the same hyprctl IPC the menu used before.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Bash, awk and Lua run inside Hyprland; the identity is base64 text, and the ref is a decimal checked by a regex before it is placed in the Lua expression. No manual memory, pointers or binary framing.
+stakeholder:
+    acceptance_criteria:
+        - id: AC-001
+          text: Given the shipped Reset zoom bind reported with a numeric ref, when the user picks its row, then the menu calls that ref once and leaves no mark; when two reported binds share the identity, or Hyprland reloaded after the lookup, nothing is called.
+          verification_method: test
+lifecycle:
+    change_history:
+        - date: "2026-10-05T18:01:57Z"
+          from: draft
+          to: review
+          reason: '[omacom/omarchy#11851] PR #11851 review: requirement authored for dispatching Lua function binds through the reported registry ref; executing witnesses in test/shell.d/keybindings-menu-test.sh'
+          changed_by: agent:claude-code

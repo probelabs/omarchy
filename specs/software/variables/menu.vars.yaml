@@ -380,6 +380,22 @@ variables:
       type: bool
       direction: output
       description: Lua binds appear with resolved keys and can be dispatched.
+    - name: function_bind_picked
+      type: bool
+      direction: input
+      description: The user picks a keybindings menu row whose bind runs a Lua function.
+    - name: one_bind_matches_identity
+      type: bool
+      direction: input
+      description: One bind that Hyprland reports, and no other, has the picked row's modifiers, submap, key, keycode and description, with a numeric registry ref.
+    - name: lua_state_reloaded
+      type: bool
+      direction: input
+      description: Hyprland reloaded its Lua state after the menu looked up the ref and before the call.
+    - name: function_bind_called
+      type: bool
+      direction: output
+      description: The menu calls the Lua function through the registry ref that Hyprland reports for the bind.
     - name: keycode_binding
       type: bool
       direction: input

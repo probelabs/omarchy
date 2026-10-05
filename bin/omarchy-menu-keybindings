@@ -5,7 +5,7 @@
 # Hyprland's Lua config provider currently reports Lua binds as dispatcher
 # __lua in `hyprctl binds`. Keep a lightweight source-derived cache so the
 # menu can still show and dispatch those bindings.
-# Implements: SW-REQ-260922-0W96, SW-REQ-260922-9DMS
+# Implements: SW-REQ-260922-0W96, SW-REQ-260922-9DMS, SW-REQ-261005-4MKB
 
 declare -A LUA_BIND_KEY_MAP
 declare -A LUA_BIND_DISPATCHER_MAP
@@ -637,7 +637,9 @@ current_lua_function_ref() {
   local identity
   local binds ref
 
+  # mcdc:ignore:tooling-limit masking: the right operand is a bare return 1 whose status never changes, so it has no independence pair; the decode itself is decided both ways, true by every function-bind scenario and false by the undecodable-identity scenario
   identity=$(base64 -d <<<"$1" 2>/dev/null) || return 1
+  # mcdc:ignore:tooling-limit masking: the right operand is a bare return 1 whose status never changes, so it has no independence pair; the lookup itself is decided both ways, true by every function-bind scenario and false by the failed-hyprctl-binds scenario
   binds=$(hyprctl binds) || return 1
 
   ref=$(LUA_BIND_IDENTITY="$identity" awk '
@@ -654,6 +656,7 @@ current_lua_function_ref() {
     END { emit(); if (matches == 1) print ref }
   ' <<<"$binds")
 
+  # mcdc:ignore:tooling-limit printf idiom: the RHS always succeeds writing the ref, so the exit-status outcome is constant and no MC/DC independence pair exists (masking); the numeric test is decided both ways by the numeric-ref and the ref-less scenarios
   [[ $ref =~ ^[0-9]+$ ]] && printf '%s\n' "$ref"
 }
 
@@ -669,6 +672,7 @@ dispatch_lua_function_binding() {
   local mark="$$-$RANDOM-$RANDOM"
   local ref
 
+  # mcdc:ignore:tooling-limit masking: the right operand is a bare return 1 whose status never changes, so it has no independence pair; the mark itself is decided both ways, true by every function-bind scenario and false by the refused-mark scenario
   mark_lua_state "$mark" || return 1
 
   if ref=$(current_lua_function_ref "$identity"); then

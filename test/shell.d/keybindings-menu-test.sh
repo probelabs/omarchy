@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Verifies: SW-REQ-260922-0W96, SW-REQ-260922-9DMS
+# Verifies: SW-REQ-260922-0W96, SW-REQ-260922-9DMS, SW-REQ-261005-4MKB
 # mcdc:witness-out-of-process
+#mcdc:ignore:defensive SW-REQ-261005-4MKB: function_bind_called=F, function_bind_picked=T, lua_state_reloaded=F, one_bind_matches_identity=T => FALSE -- with one matching bind reported and its mark still set, dispatch_lua_function_binding hands the ref to call_lua_function_if_marked, which returns registry[ref] to hl.dispatch; not calling it needs that hand-off removed [reviewed: REVIEW-261005-9HQB]
+#mcdc:ignore:defensive SW-REQ-261005-4MKB: function_bind_called=T, function_bind_picked=T, lua_state_reloaded=T, one_bind_matches_identity=T => FALSE -- call_lua_function_if_marked raises an error before it returns registry[ref] when the mark is gone, and a reload starts the Lua state over without the mark, so a reloaded state cannot reach the call [reviewed: REVIEW-261005-9HQB]
 
 source "$(dirname "${BASH_SOURCE[0]}")/base-test.sh"
 
@@ -53,12 +55,15 @@ stub_hyprctl() {
 }
 
 # The menu answers its pick from a file so a scenario can choose the row under
-# test without a compositor.
-cat >"$stub_bin/omarchy-menu-select" <<'STUB'
+# test without a compositor. The stub is written on every run because the
+# function-bind scenarios install a picker of their own.
+use_pick_file_picker() {
+  cat >"$stub_bin/omarchy-menu-select" <<'STUB'
 #!/bin/bash
 [[ -f $PICK_FILE ]] && cat "$PICK_FILE"
 STUB
-chmod +x "$stub_bin/omarchy-menu-select"
+  chmod +x "$stub_bin/omarchy-menu-select"
+}
 
 # env -i strips everything the instrumented sources use to record their
 # observations, so the trace directory rides along explicitly beside the
@@ -66,6 +71,7 @@ chmod +x "$stub_bin/omarchy-menu-select"
 run_keybindings() {
   local mode="$1" pick="${2:-}"
 
+  use_pick_file_picker
   printf '%s' "$pick" >"$tmpdir/pick"
   : >"$tmpdir/dispatch"
   env -i PATH="$stub_bin:$ROOT/bin:$PATH" HOME="$home" \
@@ -265,7 +271,7 @@ $(lua_function_bind 64 "W" "Close window" 261)
 $(lua_function_bind 0 "H" "Shrink in resize mode" 270 resize)
 BINDS
 
-eval "$(sed -n '/^lua_bind_identity()/,/^}/p; /^dispatch_lua_expression()/,/^}/p; /^mark_lua_state()/,/^}/p; /^unmark_lua_state()/,/^}/p; /^current_lua_function_ref()/,/^}/p; /^call_lua_function_if_marked()/,/^}/p; /^dispatch_lua_function_binding()/,/^}/p; /^dispatch_binding()/,/^}/p' "$ROOT/bin/omarchy-menu-keybindings")"
+eval "$(sed -n '/^__reqproof_mcdc_[a-z]*()/,/^}/p; /^lua_bind_identity()/,/^}/p; /^dispatch_lua_expression()/,/^}/p; /^mark_lua_state()/,/^}/p; /^unmark_lua_state()/,/^}/p; /^current_lua_function_ref()/,/^}/p; /^call_lua_function_if_marked()/,/^}/p; /^dispatch_lua_function_binding()/,/^}/p; /^dispatch_binding()/,/^}/p' "$ROOT/bin/omarchy-menu-keybindings")"
 
 keybindings >/dev/null
 records=$(cat "$tmpdir"/cache/omarchy/keybindings-*.records)
@@ -369,6 +375,7 @@ pick_from_menu() {
   rm -rf "$tmpdir/cache"
   env -i PATH="$stub_bin:$ROOT/bin:$PATH" HOME="$home" \
     XDG_CACHE_HOME="$tmpdir/cache" OMARCHY_PATH="$ROOT" \
+    PROOF_MCDC_TRACE_DIR="${PROOF_MCDC_TRACE_DIR:-}" \
     bash "$ROOT/bin/omarchy-menu-keybindings" >/dev/null
 }
 
@@ -381,6 +388,7 @@ called 264 ||
   fail "a Lua function bind is called through the ref Hyprland reports" "$(cat "$tmpdir/hyprctl.log")"
 left_no_mark ||
   fail "a Lua function bind that was called leaves no mark" "$(cat "$tmpdir/lua-state")"
+# MCDC SW-REQ-261005-4MKB: function_bind_called=T, function_bind_picked=T, lua_state_reloaded=F, one_bind_matches_identity=T => TRUE
 pass "selecting a Lua function bind calls it through its ref"
 
 stub_hyprctl_dispatch <<BINDS
@@ -404,6 +412,7 @@ BINDS
   fail "a reload between the lookup and the call is refused"
 called_nothing ||
   fail "a reload between the lookup and the call runs nothing" "$(cat "$tmpdir/called")"
+# MCDC SW-REQ-261005-4MKB: function_bind_called=F, function_bind_picked=T, lua_state_reloaded=T, one_bind_matches_identity=T => TRUE
 pass "a reload between the lookup and the call runs nothing"
 
 stub_hyprctl_dispatch <<BINDS
@@ -441,6 +450,7 @@ called_nothing ||
   fail "a bind Hyprland no longer reports calls nothing" "$(cat "$tmpdir/called")"
 left_no_mark ||
   fail "a bind Hyprland no longer reports leaves no mark" "$(cat "$tmpdir/lua-state")"
+# MCDC SW-REQ-261005-4MKB: function_bind_called=F, function_bind_picked=T, lua_state_reloaded=F, one_bind_matches_identity=F => TRUE
 pass "a bind Hyprland no longer reports calls nothing"
 
 stub_hyprctl_dispatch <<BINDS
@@ -519,6 +529,49 @@ left_no_mark ||
 ! PATH="$stub_bin:$PATH" dispatch_binding "__lua" "" >/dev/null ||
   fail "a Lua bind with nothing to look up is refused"
 pass "a failed hyprctl binds calls nothing"
+
+# The row's identity comes back from the cache file; one that no longer
+# decodes cannot name a bind, so the pick is refused before any lookup.
+stub_hyprctl_dispatch <<BINDS
+$(lua_function_bind 76 "Z" "Reset zoom" 264)
+BINDS
+! PATH="$stub_bin:$PATH" dispatch_binding "__lua" "!!not an identity!!" >/dev/null ||
+  fail "an identity that does not decode is refused"
+called_nothing ||
+  fail "an identity that does not decode calls nothing" "$(cat "$tmpdir/called")"
+left_no_mark ||
+  fail "an identity that does not decode leaves no mark" "$(cat "$tmpdir/lua-state")"
+pass "an identity that does not decode calls nothing"
+
+# If the compositor refuses the mark, the call could not be guarded against a
+# reload, so the pick stops before it looks the bind up.
+cat >"$stub_bin/hyprctl" <<STUB
+#!/bin/bash
+printf '%s\n' "\$*" >>"$tmpdir/hyprctl.log"
+case "\$1" in
+  dispatch) echo "error: the compositor refused the call" ;;
+  binds) cat "$tmpdir/binds" ;;
+esac
+STUB
+chmod +x "$stub_bin/hyprctl"
+: >"$tmpdir/hyprctl.log"
+! PATH="$stub_bin:$PATH" dispatch_binding "__lua" "$identity" >/dev/null ||
+  fail "a refused mark is refused"
+[[ $(grep -c '^dispatch ' "$tmpdir/hyprctl.log") == 1 && $(grep -c '^binds' "$tmpdir/hyprctl.log") == 0 ]] ||
+  fail "a refused mark stops before the lookup and the call" "$(cat "$tmpdir/hyprctl.log")"
+pass "a refused mark stops before the lookup and the call"
+
+# A menu closed without a pick runs no bind.
+stub_hyprctl_dispatch <<BINDS
+$(lua_function_bind 76 "Z" "Reset zoom" 264)
+BINDS
+pick_from_menu "a row the menu does not have"
+called_nothing ||
+  fail "a menu closed without a pick calls no function bind" "$(cat "$tmpdir/called")"
+! grep -q '^dispatch ' "$tmpdir/hyprctl.log" ||
+  fail "a menu closed without a pick dispatches nothing" "$(cat "$tmpdir/hyprctl.log")"
+# MCDC SW-REQ-261005-4MKB: function_bind_called=T, function_bind_picked=F, lua_state_reloaded=T, one_bind_matches_identity=T => TRUE [no-action: with no row picked the hyprctl log records no dispatch and the stub's call list stays empty]
+pass "a menu closed without a pick calls no function bind"
 
 stub_hyprctl_dispatch <<BINDS
 $(lua_function_bind 64 "D" "Different action" 300)

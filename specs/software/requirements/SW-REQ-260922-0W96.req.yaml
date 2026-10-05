@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-29T23:52:19.612584772Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-05T18:02:29.449627Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:1ad336664ec30f195856c226791a46d22d17251e65d096c8010af597ce5e3cc2
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-keybindings: file1:35b7dda12f2a3fff9780172fe00e80ae
+            bin/omarchy-menu-keybindings: file1:b8f59a3a40ad67915023f6597000fb60
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -41,6 +41,15 @@ traces:
           reviewed_by: human:Leonid Bugaev
           method: inspection
           rationale: 'post-de63134b merge re-record: Implements header unmoved (line 8); bind_commands dispatch branch (merged lines 213-215) extends lua-bind dispatchability under 0W96 - mechanism change, guarantee unchanged and better satisfied; upstream terminal-bind test witnesses T,T row; parent SYS-REQ-260922-6642 lifecycle-active'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
+        - reviewed_at: "2026-10-05T18:02:29.449627Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #11851 review at head 03cbacb8 on quattro-proof 1e433732: bin/omarchy-menu-keybindings now keeps an encoded identity for __lua rows and dispatches Lua function binds through the registry ref that hyprctl binds reports, guarded by a registry mark; the selected row is matched through ENVIRON instead of awk -v. Lua binds still show with resolved keys and stay dispatchable, and code:N keys still resolve as before; the new dispatch behaviour is authored as SW-REQ-261005-4MKB. Links re-checked against the Implements line and the test header.'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-keybindings:8

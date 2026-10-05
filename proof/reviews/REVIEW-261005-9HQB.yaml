@@ -1,0 +1,18 @@
+id: REVIEW-261005-9HQB
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-05T18:02:06Z"
+subject: SW-REQ-261005-4MKB
+decision: approved
+comment: 'Read bin/omarchy-menu-keybindings at upstream head 03cbacb8 merged onto quattro 035ce29f. A __lua row carries a base64 identity of modifiers, submap, key, keycode and description (lua_bind_identity). dispatch_binding sends it to dispatch_lua_function_binding, which first sets a mark in the Lua registry through hyprctl dispatch; a refused mark returns 1. current_lua_function_ref decodes the identity, reads hyprctl binds, and prints the arg of the one __lua bind whose fields equal the identity, and only when exactly one matches and the arg is a decimal; otherwise it fails and the mark is removed. call_lua_function_if_marked raises an error when the mark is gone (Hyprland reloaded, which starts the registry over), else clears the mark and returns registry[ref] for hl.dispatch to call. So function_bind_called holds exactly when one reported bind matches and the Lua state did not reload: the FRETish biconditional. The two violation rows need the hand-off or the mark check removed, so they are dispositioned defensive. Witnesses in test/shell.d/keybindings-menu-test.sh run these functions against a hyprctl stub that executes the dispatched Lua with a recording function behind each reported ref.'
+citations:
+    - bin/omarchy-menu-keybindings:628@mark_lua_state
+    - bin/omarchy-menu-keybindings:636@current_lua_function_ref
+    - bin/omarchy-menu-keybindings:656
+    - bin/omarchy-menu-keybindings:663@call_lua_function_if_marked
+    - bin/omarchy-menu-keybindings:670@dispatch_lua_function_binding
+    - bin/omarchy-menu-keybindings:728
+    - test/shell.d/keybindings-menu-test.sh:391
+    - test/shell.d/keybindings-menu-test.sh:415
+    - test/shell.d/keybindings-menu-test.sh:453
+    - test/shell.d/keybindings-menu-test.sh:573
