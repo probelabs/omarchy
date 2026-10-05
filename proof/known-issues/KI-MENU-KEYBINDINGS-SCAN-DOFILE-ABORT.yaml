@@ -18,6 +18,7 @@ remediation: 'Isolate each bind registration from unrelated config code: run the
 notes:
     - 'Upstream: original fix PR #7564 (2026-08-20); later duplicate fix PR #13276; no issue tracks it.'
     - 'Reproducer (2026-10-05): two arms. Arm A is the shipped trigger above (qconsole''s scale comparison). Arm B guards that comparison and adds a user monitors.lua that builds a mode string with string.format("%dx%d@%d", ...) from the active monitor; the library call rejects the mock value and the scan ends before hypr.bindings. Both arms lose the user''s SSH bind on this branch. A fix that only makes the mock absorb operators flips arm A; a per-module pcall around require (the remediation) flips both.'
+    - 'On this mirror (omacom/omarchy#7564 at 7b49d0bb, applied onto quattro 035ce29f): arm A no longer reproduces. The new stub absorbs qconsole''s scale comparison and the reported ipairs loops over stub collections, so the shipped config is scanned to the end and the user''s rebind and new bind are cached. Arm B still reproduces: a user module that passes a stub value to a library call that checks its argument type (string.format("%d"), math.floor, string.lower, a numeric for limit) still ends the scan before hypr.bindings. The KI stays open; a per-module pcall around require closes arm B.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -55,6 +56,10 @@ history:
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
     - at: "2026-10-05T17:33:06Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
+    - at: "2026-10-05T17:33:21Z"
       by: agent:claude-code
       action: edit
       detail: append-note
