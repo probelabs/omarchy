@@ -1,0 +1,10 @@
+# Verifies: SW-REQ-261003-B7ZA
+# The plugin API list (AppSearch.sortedEntries) of French app names, next to the Apps menu.
+@plugin-list
+@app calc Calculatrice
+@app files Fichiers
+@app screens Écrans
+@app editor Éditeur de texte
+@app translator Übersetzer
+@app zed Zed
+O

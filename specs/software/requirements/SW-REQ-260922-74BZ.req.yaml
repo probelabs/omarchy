@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-02T16:54:39.437542Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T07:51:41.805201Z"
+    reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:3951141167e965f81efdf4d8c2b94ccc40cd74ef7cbc22fa66a6fce7603ecf1a
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:resolveRoute: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:resolveRoute: file1:de2a1d682d8b03346dca5c0a81c1edf9
             shell/plugins/menu/MenuModel.js:resolveRoute: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
@@ -52,6 +52,19 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:956
+            - shell/plugins/menu/MenuModel.js:183
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/menu-test.sh:509
+        - reviewed_at: "2026-10-03T07:51:41.805201Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D on quattro-proof 39746e65: shell/plugins/menu/Menu.qml changed only inside rebuildDisplay, where the Apps comparator now orders the lowercased names with localeCompare instead of < and > (2 lines replaced by 2), and in the Implements line above rebuildDisplay, which now also names SW-REQ-261003-B7ZA. Every other function is byte-identical at the same lines, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:956

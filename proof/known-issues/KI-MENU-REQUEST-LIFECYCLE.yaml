@@ -78,6 +78,10 @@ history:
       by: agent:claude-baseline-pass
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-03T16:11:44Z"
+      by: agent:claude-pr-new-D
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
     - at: "2026-10-04T18:18:35Z"
       by: agent:claude-quattro-proof
       action: edit
@@ -99,6 +103,10 @@ history:
       action: edit
       detail: note
     - at: "2026-10-04T19:47:33Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-04T20:54:20Z"
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml

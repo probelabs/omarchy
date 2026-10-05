@@ -1,0 +1,10 @@
+# Verifies: SW-REQ-261003-B7ZA
+# The same French apps handed over in another order: the menu order must not change.
+@app editor Éditeur de texte
+@app xournal Xournal++
+@app calc Calculatrice
+@app zed Zed
+@app screens Écrans
+@app terminal Terminal
+@app files Fichiers
+O
