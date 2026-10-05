@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-6642
-    reviewed_at: "2026-09-29T23:52:19.676507914Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-05T18:04:49.425016Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:aaaf72702684be4ed9cb8a538179332ac08e7ea998e0cfdf2da7d48dfe49979f
     reviewed_targets:
         implemented_by:
-            bin/omarchy-menu-keybindings: file1:35b7dda12f2a3fff9780172fe00e80ae
+            bin/omarchy-menu-keybindings: file1:3cdf3bb2f30d2bd3d4fc3e1b7e2375c2
         satisfies:
             SYS-REQ-260922-6642: req1:1eaff3c90e3a4e41d3471eda7fa42992
     review_history:
@@ -41,6 +41,15 @@ traces:
           reviewed_by: human:Leonid Bugaev
           method: inspection
           rationale: 'post-de63134b merge re-record: parse_keycodes region (lines 13-46) precedes the insertion point and is byte-identical; Implements header unmoved; parent lifecycle-active'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-menu-keybindings:8
+            - specs/system/requirements/SYS-REQ-260922-6642.req.yaml
+            - test/shell.d/keybindings-menu-test.sh:3
+        - reviewed_at: "2026-10-05T18:04:49.425016Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #7564 review at head 7b49d0bb on quattro-proof 1e433732: the delta is confined to the embedded Lua bind scan (stub metamethods, timeout 10) and the cache version; parse_keycodes, the xkbcli lookup and the fallback table are untouched, and the scan still emits code:N keys in the same field. Re-checked against the cited annotation line and the diff: the keycode resolution link holds (keybindings-menu-test.sh 38/38 on Linux, including the GRAVE and code:N cases).'
           source: proof trace review --citation
           citations:
             - bin/omarchy-menu-keybindings:8
