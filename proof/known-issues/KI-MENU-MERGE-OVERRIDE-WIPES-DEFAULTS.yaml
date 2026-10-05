@@ -15,14 +15,15 @@ introduced_in: inception
 defect_class: latent
 minimization_status: candidate
 mitigation: Default installs ship no label-only overrides; users who override a row restate the fields they care about, masking the wipe
-remediation: merge the RAW user entry over the default before normalizing (or make the merge skip empty-string/empty-array values from the overlay source)
+remediation: 'Fixed by omacom/omarchy#12255: both menu files are parsed raw, user entries are overlaid per id, and each merged row is normalized once (SW-REQ-260922-7NPE). #10007 is the same fix.'
 notes:
     - 'Upstream: PR #10007 (2026-09-03) reported this first. The canonical issue is #11211; #11509 and #12236 are duplicates. Fix PRs #11137, #11519 and #11711 were closed unmerged; #10007 and #12255 are open.'
     - 'Reproducer moved to pocs/menu-override-sweep.js on 2026-10-05. It drives the live load path: the parsers Menu.qml''s FileViews call, then mergeMenuSources, over one-field overrides of every shipped row. It exits 1 while the defect is present and 0 once fixed, with a restate-unchanged control. The earlier probe (menu-probes.js F10) builds the user row with normalizeItem itself, so it could not observe a loader fix such as #10007 or #12255.'
+    - 'Fixed on pr/12255 by omacom/omarchy#12255 (head 9b7c3c58): pocs/menu-override-sweep.js exits 0 with its control, and 0 of 8996 one-field overrides change an undeclared field (8996 of 8996 on quattro-proof 1e433732).'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
-status: open
+status: fixed
 history:
     - at: "2026-09-30T12:49:18Z"
       by: human:Leonid Bugaev
@@ -59,6 +60,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-reproducer-command,append-note,remove-evidence-manifest,add-evidence-manifest
+    - at: "2026-10-05T17:13:35Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-remediation,append-note,set-status=fixed
 kill_domain: merge_semantics
 affected_file:
     - shell/plugins/menu/MenuModel.js
