@@ -1,18 +1,25 @@
 schema_version: proof.evidence_profile.v1
 results:
     - profile: known_issue_reproducer
-      requirement: SW-REQ-260922-Q6ZS
+      requirements:
+        - SW-REQ-260922-Q6ZS
+        - SW-REQ-260922-9ABD
+        - SW-REQ-260922-HR29
+        - SW-REQ-260922-KRBH
+        - SW-REQ-260922-MP00
+        - SW-REQ-260922-MH9B
+        - SW-REQ-260922-SWFT
       command: /bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh
-      status: fail
-      observed_result: known_issue_reproduced
-      executed_at: "2026-10-05T17:12:18Z"
-      revision: 49ae08d02cbbcdcd8b2dfae4325a8a8e3c890b94
+      status: pass
+      observed_result: known_issue_not_reproduced
+      executed_at: "2026-10-05T17:33:58Z"
+      revision: b9bf86f655266586dadc2b3ef0fac8a28f325875
+      freshness_basis: revision
       input_set:
-        - 'Captured by `proof evidence capture KI-MENU-SELECT-POLL-DEADLOCK` from the KnownIssue''s reproducer command: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh. The command exited fail; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
+        - 'Captured by `proof evidence capture KI-MENU-SELECT-POLL-DEADLOCK` from the KnownIssue''s reproducer command: /bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh. The command exited pass; read as RED reproducer (asserts the correct behavior, so it FAILS while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --red-reproducer.'
         - test/shell.d/menu-select-poll-deadlock-repro.sh
-        - 'Re-commanded by `proof evidence refresh`: this row runs KI-MENU-SELECT-POLL-DEADLOCK''s CURRENT reproducer command (/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh). The command previously stored in this manifest was: /opt/homebrew/bin/bash test/shell.d/menu-select-poll-deadlock-repro.sh'
       freshness_hashes:
-        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:c8e0821b7c338a083691d584b39ebc7bde0f861b0d728afd5a6a08f4ecdc9464
+        proof/known-issues/KI-MENU-SELECT-POLL-DEADLOCK.yaml: ki-content-v1:sha256:95d00e964f6d49c974d4fdeacbf0346ec394b83893b702dd94168e3169a58dba
         test/shell.d/menu-select-poll-deadlock-repro.sh: sha256:1feecb839a4c88de8d7230aa6a64e5d38274a3e009ce78d4ea2c2f09d14855e7
       known_issues:
         - KI-MENU-SELECT-POLL-DEADLOCK
