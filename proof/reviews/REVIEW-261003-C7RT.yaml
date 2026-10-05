@@ -1,0 +1,12 @@
+id: REVIEW-261003-C7RT
+kind: spec_conformance
+reviewer: agent:claude-pr-new-C
+reviewed_at: "2026-10-03T13:10:00Z"
+subject: SW-REQ-261003-390Z
+decision: approved
+comment: 'Read default/omarchy/omarchy-menu.jsonc, bin/omarchy-theme-removable, bin/omarchy-theme-remove and shell/plugins/menu/MenuModel.js on the mirror tree (the baseline plus the fix). The remove.theme row now carries "when":"omarchy-theme-removable". The helper lists the directories under ~/.config/omarchy/themes that are not symlinks or dot-directories, and exits nonzero when there are none. omarchy-theme-remove reads its picker list from the same helper. The guard batch (guardScript) answers remove.theme:w:0 when the directory is missing, empty, holds only symlinks, dot-directories or files, or is itself a symlink, and isVisible hides a row whose when: answered false. With a copied, cloned or worktree theme, .git beside a real theme, or a theme named -n, the guard answers 1, the row shows, and the picker offers only the real theme. So remove_theme_row_shown equals remover_has_removable_theme once remove_menu_guards_applied. Both violation rows need the guard and the remover to ask different questions, which they no longer can: a shown row with nothing to remove (the a85e29ab row with no when:) and a hidden row with a theme to remove (a guard narrower than the helper). Both are dispositioned defensive; the shown-side homes fail on the second. Before the batch for an open answers, the menu draws the previous answers (no-action row, witnessed in the mirror test). Witnesses in test/shell.d/menu-guards-test.sh run the shipped row through the generated batch and the real remover with a stub picker over twelve homes, and check the helper and picker lists for the mixed home; test/shell.d/menu-test.sh pins the when:. They fail on a85e29ab.'
+citations:
+    - bin/omarchy-theme-removable:10
+    - bin/omarchy-theme-remove:7
+    - test/shell.d/menu-guards-test.sh:417
+    - test/shell.d/menu-guards-test.sh:442

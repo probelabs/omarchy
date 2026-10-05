@@ -19,9 +19,12 @@ The input file is decoded the way Quickshell `FileView.text()` gives it to QML
 (checked live under Quickshell 0.3.1): invalid UTF-8 becomes U+FFFD, a leading
 byte-order mark is dropped, and every other character is kept. Output is deterministic. A revision that lacks `MenuModel.js`,
 `Menu.qml` or one of the functions prints a `MISSING` / `MISSING-FUNCTION`
-marker and exits 0. The harness writes nothing to disk: product code runs with
+marker and exits 0. Product code runs with
 no `require`/`process`, and every process spawn (`Quickshell.execDetached`,
 `Util.execDetached`, `resultProc.running = true`) is recorded, not executed.
+The one exception is the `G` event, which runs the revision's guard and theme
+remover under bash in a throwaway HOME; nothing in the repository or the real
+HOME is written.
 
 ## Event files (`corpus/lifecycle/*.events`)
 
@@ -37,6 +40,7 @@ the next event).
 | `P` / `R` | activate row 0 / row 1 |
 | `C` | close |
 | `X` | the shared answer `Process` exits (fires the revision's `onExited`) |
+| `G` | Remove > Theme guard: the revision's `remove.theme` row (from its own `default/omarchy/omarchy-menu.jsonc`) through its guard batch (`guardScript` under bash, with the revision's `bin/` first on PATH, so a guard that names a helper such as `omarchy-theme-removable` runs that revision's helper) and `isVisible`, and its `bin/omarchy-theme-remove` with a stub picker, in a throwaway HOME (under the system temp directory, removed afterwards) of the shape set by `@home:<shape>`: `missing`, `empty` (default), `copied`, `cloned`, `linked` (symlink only), `worktree` (`.git` file), `dotted` (only a `.git` directory, a name the remover refuses), `hidden` (only `.backup`), `mixed` (`.git` beside a real theme), `filed` (only a stray file), `dashed` (one theme named `-n`), `folded` (the themes folder is a symlink into a dotfiles directory). Prints `guard remove.theme home=<shape> shown=<bool> remover=<offers …\|none> agree=<yes\|NO>` (agree: the row shows exactly when the remover offers a name without a leading dot); needs GNU find and bash 4, else an `UNAVAILABLE` line on both sides |
 
 The shared QML `Process` is modelled as it behaves live: `running = true` while
 it is still running is ignored, and it stays busy until an `X`. After the last
