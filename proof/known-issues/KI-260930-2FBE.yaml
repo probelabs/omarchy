@@ -60,6 +60,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-description,set-tripwire-mutation,append-note
+    - at: "2026-10-05T17:12:51Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-260930-2fbe.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
