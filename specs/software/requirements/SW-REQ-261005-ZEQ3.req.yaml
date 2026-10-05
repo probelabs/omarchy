@@ -1,0 +1,45 @@
+id: SW-REQ-261005-ZEQ3
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: 'OPEN DECISION (awaiting the Omarchy maintainers): may a search result that runs a destructive action (remove, uninstall) be the default Enter target? Current behaviour (upstream quattro 035ce29f): searchScore (MenuModel.js:341-363) puts an exact label match in the best tier, so with ~/.rustup present and RustDesk installed, ''rust'' ranks Remove > Development > Rust first; the menu selects row 0 on a query change (Menu.qml:722-726) and Enter activates it (Menu.qml:1153-1157), which runs omarchy-remove-dev-env rust (default/omarchy/omarchy-menu.jsonc:343) and rustup self uninstall -y with no confirmation (bin/omarchy-remove-dev-env:111-114). Options: (A) keep the current ranking (SW-REQ-260922-SJ7P); (B) a destructive row shall rank below the other matches unless the query names the action; (C) install/remove rows shall not appear in global search; (D) a destructive row activated from search shall ask for confirmation, as SW-REQ-260922-8CQ4 does for uninstalling an app. Approving this draft means choosing one option; its text then replaces this description.'
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-V7W6
+component: menu
+rationale: 'Raised by omacom/omarchy#7630 (proof inbox R-1616). The validation (report/cmulrfoje01ui18w4w89862tn, rval-6102a632d0b497ca1436a3f8476bcf72) reproduced the order with MenuModel.js on the shipped menu. The order conforms to SW-REQ-260922-SJ7P; SYS-REQ-260922-V7W6''s rationale says ranking decides which row Enter activates; no requirement says whether a destructive action may be that row. Open upstream PR #7661 implements option B; #6376 asked for option C.'
+tags:
+    - open-decision
+    - awaiting-maintainer-decision
+variables: []
+references:
+    - type: customer_report
+      id: omacom/omarchy#7630
+      url: https://github.com/omacom/omarchy/issues/7630
+      description: Origin report in the upstream issue tracker
+    - type: ticket
+      id: R-1616
+      url: https://portal.reqproof.com/projects/omarchy/inbox/1616
+      description: Validated report in the proof inbox (reproducer, sealed validation)
+traces:
+    satisfies:
+        - SYS-REQ-260922-V7W6
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-05T14:31:57Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-05T14:31:57Z"
