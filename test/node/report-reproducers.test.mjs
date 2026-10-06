@@ -55,9 +55,13 @@ test('report #10601 (menu open walks rows quadratically): expected failure while
   expectReport(t, 'cmulr8ysi0jwr1gw4fjmt9khq', 1, /DEFECT: 231-row menu open/)
 })
 
-// Reproduces: KI-MENU-REQUEST-LIFECYCLE
-test('report #9057 (superseded select summon never answered): expected failure while KI-MENU-REQUEST-LIFECYCLE is open', t => {
-  expectReport(t, 'cmulr95nw0kqr1gw46i7f50xj', 1, /DEFECT: caller A \(superseded summon\) never got an answer/)
+// PR omacom/omarchy#9031 (this mirror) answers a request that a new summon
+// displaces: openDmenu writes its done file alone through releaseProc
+// (finishDoneFile). The superseded caller is answered as cancelled and the
+// report script exits 0, so the re-summon leg of KI-MENU-REQUEST-LIFECYCLE no
+// longer reproduces here; the expectation is flipped to the fixed behaviour.
+test('report #9057 (superseded select summon never answered): fixed by #9031, both callers answered', t => {
+  expectReport(t, 'cmulr95nw0kqr1gw46i7f50xj', 0, /^ok: caller A was answered and exited/m)
 })
 
 // Not a defect: the label-prefix tier outranks the label-substring tier.

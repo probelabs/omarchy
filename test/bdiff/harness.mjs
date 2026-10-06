@@ -180,6 +180,7 @@ function parseEvents(text) {
   return { ops, slow, bad }
 }
 
+// Verifies: SW-REQ-260922-C8HX
 function extractFunctions(qml) {
   const found = {}
   for (const n of NAMES.concat(OPTIONAL)) {
@@ -211,6 +212,7 @@ function commandText(cmd) {
   return String(cmd)
 }
 
+// Verifies: SW-REQ-260922-C8HX
 function runEvents() {
   emit(`# ${HARNESS} lifecycle`)
   const { ops, slow, bad } = parseEvents(readInputText())

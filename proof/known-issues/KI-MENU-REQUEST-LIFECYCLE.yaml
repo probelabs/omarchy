@@ -17,15 +17,16 @@ severity: medium
 severity_basis: risk
 risk: correctness
 cve_surface: none
-reproducer_command: sh test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh
+reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: 'Nothing bounds the wait. A superseded caller, or one whose menu process dies, keeps polling forever: 19 of 20 in a burst on quattro c05d9019. Later summons still work.'
+mitigation: With this change, a new summon answers the request it displaces with its done file alone, so the earlier caller exits as cancelled, and a caller whose menu process exits gives up within about a second (bin/omarchy-menu-handshake). The busy-writer race in finishRequest is unchanged.
 remediation: 'Finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only. #9056 (head b7bd59c4) answers a superseded request and fixes the busy-writer race; a deadline in omarchy-menu-select is still needed for a dead menu process.'
 notes:
     - 'Upstream: original #7818 (2026-08-22) reports only the superseded-summon leg; duplicate #9057; open fix PRs #7826 and #9056; related open PR #9031.'
-customer_impact: Summoning a menu again before answering the previous one, for example by pressing Super+K several times, leaves the earlier caller waiting forever. Each one stays behind as a background process, and the action that opened it never completes. The same happens when the menu process dies while a caller waits. Later menus still open and work.
+    - 'PR omacom/omarchy#9031 at head aa732d0f (mirrored on pr/9031 over quattro-proof 1e433732) fixes two legs. (1) Commits bc8f540d and aa732d0f: openDmenu and openExistingMenu answer a request that is still waiting with its done file alone, through a separate releaseProc queue (finishDoneFile), which fixes the re-summon leg (SX26/C06/C07, upstream #9057; SW-REQ-260922-C8HX). (2) Commit b5ee064d: omarchy-menu-select, -input and -images stop waiting about a second after the shell process that took the request exits (KI-MENU-SELECT-POLL-DEADLOCK). finishRequest still writes through the shared resultProc, so the busy-resultProc leg (SX26/C14) is unchanged. On this mirror test/reports/report-cmulr95nw0kqr1gw46i7f50xj.sh exits 0 (its harness now also runs the releaseProc writes and keeps a stand-in shell alive), so the reproducer is pocs/menu-qml-static.sh, the green tripwire the KI used before; it pins Menu.qml mechanisms by static grep only.'
+customer_impact: With this change, a second summon before you answer the previous one cancels the earlier request, and its caller exits. Pressing Super+K several times is one example. If the menu process exits while a caller waits, the caller gives up within about a second. A pick made while the previous answer is still being written can still be lost. Later menus still open and work.
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -102,6 +103,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-request-lifecycle.yaml
+    - at: "2026-10-06T08:40:41Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-reproducer-command,set-mitigation,append-note,set-customer-impact
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker

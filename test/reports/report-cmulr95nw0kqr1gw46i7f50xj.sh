@@ -7,12 +7,16 @@
 # value to the caller ...; cancellation reaches the caller as no-selection."
 #
 # Setup (no compositor, no Quickshell): two real bin/omarchy-menu-select callers
-# run against a stub `omarchy-shell` that only records each summon payload.
+# run against a stub `omarchy-shell` that only records each summon payload. A
+# stand-in process named quickshell, started the way omarchy-launch-shell
+# starts the shell, stays alive for the run, for revisions whose callers look
+# up the shell that took their request (bin/omarchy-menu-handshake).
 # The recorded payloads are then fed, in order, to the REAL Menu.qml request
 # functions (open, openDmenu, finishRequest, cancel — extracted verbatim from
 # shell/plugins/menu/Menu.qml and run in node with a stub QML scope; the
-# resultProc command they build is executed with bash exactly as Quickshell
-# would). Sequence = press Super+K, press Super+K again, then Escape.
+# resultProc command they build, and the releaseProc command of a revision
+# that answers a displaced request through finishDoneFile, is executed with
+# bash exactly as Quickshell would). Sequence = press Super+K, press Super+K again, then Escape.
 # Once the menu has closed nothing else will ever write a done file, so a
 # caller whose done file does not exist at that point can never exit on its
 # own. No wall-clock assertion: waits are event-driven, bounded only as a
@@ -30,7 +34,7 @@ BASH_BIN=$(command -v bash) || { echo "SETUP: bash is required"; exit 2; }
 
 WORK=$(mktemp -d) || { echo "SETUP: mktemp failed"; exit 2; }
 PIDS=""
-cleanup() { for p in $PIDS; do kill "$p" 2>/dev/null; done; rm -f "$WORK"/bin/omarchy-shell "$WORK"/spool "$WORK"/spool.done "$WORK"/out.*; rmdir "$WORK/bin" "$WORK" 2>/dev/null; }
+cleanup() { for p in $PIDS; do kill -9 "$p" 2>/dev/null; done; rm -f "$WORK"/bin/omarchy-shell "$WORK"/bin/quickshell "$WORK"/spool "$WORK"/spool.done "$WORK"/out.*; rmdir "$WORK/omarchy/shell" "$WORK/omarchy" "$WORK/bin" "$WORK" 2>/dev/null; }
 trap cleanup EXIT INT TERM
 mkdir "$WORK/bin"
 cat > "$WORK/bin/omarchy-shell" <<'STUB'
@@ -40,6 +44,12 @@ printf '%s\n' "$4" >> "$SPOOL"
 STUB
 chmod +x "$WORK/bin/omarchy-shell"
 export SPOOL="$WORK/spool"
+# The shell stand-in: a process named quickshell serving "$OMARCHY_PATH/shell".
+export OMARCHY_PATH="$WORK/omarchy"
+mkdir -p "$OMARCHY_PATH/shell"
+ln -s "$BASH_BIN" "$WORK/bin/quickshell"
+"$WORK/bin/quickshell" -c 'for _ in $(seq 600); do sleep 0.2; done' quickshell -n -p "$OMARCHY_PATH/shell" &
+PIDS="$!"
 : > "$SPOOL"
 
 wait_lines() { # $1 = line count; event wait on the spool, bounded as a setup safety net
@@ -50,9 +60,9 @@ wait_lines() { # $1 = line count; event wait on the spool, bounded as a setup sa
   done
 }
 start_caller() { # $1 = name; the background job IS the omarchy-menu-select process
-  PATH="$WORK/bin:$PATH" "$BASH_BIN" "$SELECT" Keybindings "Super+K  Keybindings" "Super+Space  Menu" -- --width 800 --height 500 > "$WORK/out.$1" 2>&1 &
+  PATH="$WORK/bin:$ROOT/bin:$PATH" "$BASH_BIN" "$SELECT" Keybindings "Super+K  Keybindings" "Super+Space  Menu" -- --width 800 --height 500 > "$WORK/out.$1" 2>&1 &
 }
-start_caller A; PID_A=$!; PIDS="$PID_A"; wait_lines 1
+start_caller A; PID_A=$!; PIDS="$PIDS $PID_A"; wait_lines 1
 start_caller B; PID_B=$!; PIDS="$PIDS $PID_B"; wait_lines 2
 
 export QML BASH_BIN
@@ -77,6 +87,8 @@ function extract(name) {
 const names = ["open", "openDmenu", "finishRequest", "cancel"]
 const fns = {}
 for (const n of names) { fns[n] = extract(n); if (!fns[n]) { console.log("SETUP: Menu.qml has no function " + n); process.exit(2) } }
+// Helpers a revision may define for answering a displaced request (#9031).
+for (const n of ["finishDoneFile", "releaseNextDoneFile"]) { const f = extract(n); if (f) { fns[n] = f; names.push(n) } }
 
 const writes = []
 const root = {
@@ -88,7 +100,10 @@ const root = {
   openRoute() { throw new Error("route path not expected for a select summon") },
   keyCatcher: { forceActiveFocus() {} }, Qt: { callLater() {} },
   Util: { shellQuote: s => "'" + String(s).replace(/'/g, "'\\''") + "'", execDetached() {} },
-  resultProc: { command: [], set running(v) { if (!v) return; writes.push(this.command[2]); cp.execFileSync(process.env.BASH_BIN, this.command.slice(1)) } }
+  resultProc: { command: [], set running(v) { if (!v) return; writes.push(this.command[2]); cp.execFileSync(process.env.BASH_BIN, this.command.slice(1)) } },
+  // releaseProc runs synchronously here, so it is never busy when asked again.
+  doneFilesToRelease: [],
+  releaseProc: { command: [], get running() { return false }, set running(v) { if (!v) return; writes.push(this.command[2]); cp.execFileSync(process.env.BASH_BIN, this.command.slice(1)) } }
 }
 root.root = root
 const scope = new Function("root", "with (root) { " + names.map(n => "root." + n + " = " + fns[n].replace(/^function \w+/, "function")).join(";\n") + " }")
