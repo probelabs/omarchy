@@ -131,7 +131,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Local filesystem reads and XDG cache writes with content-hash keys, plus the image-selector IPC summon; no network egress, secrets, or privilege surface in the signature-and-cache slice this requirement governs.
-verification_state: failing
+verification_state: not_started
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -144,3 +144,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-54=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-06T07:19:04Z"
+          from: verification=failing
+          to: verification=not_started
+          reason: auto-derived [failing→not_started] signals=3; review_record:REVIEW-261004-KNQ7=present | review_record:REVIEW-54=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=none
+          changed_by: agent:claude-code

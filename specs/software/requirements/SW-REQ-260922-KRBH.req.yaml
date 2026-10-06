@@ -79,7 +79,7 @@ hazard_review:
         - category: domain
           disposition: not_applicable
           rationale: Local plugin inventory plus the omarchy-menu-select IPC summon owned by the protocol siblings (Q6ZS/9ABD); no network egress, crypto, or privilege boundary in the filter-and-dispatch slice this requirement governs.
-verification_state: failing
+verification_state: not_started
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -92,3 +92,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-53=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-06T07:19:04Z"
+          from: verification=failing
+          to: verification=not_started
+          reason: auto-derived [failing→not_started] signals=2; review_record:REVIEW-53=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=none
+          changed_by: agent:claude-code

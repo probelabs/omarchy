@@ -78,7 +78,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'The slice contains the scripts one privileged step, sudo timedatectl set-timezone, with the zone argument quoted and the privilege shape fixed to exactly that whitelisted binary invocation - no shipped catalog class covers quoted-argument sudo hygiene, so the category records the review: least-privilege holds by construction, the menu context supplies no terminal for a password prompt (a sudo failure aborts, it never retries), and no network egress exists in the traced file. The menu-select upstream wait is dispositioned under the deferral below.'
-verification_state: failing
+verification_state: not_started
 lifecycle:
     change_history:
         - date: "2026-09-27T21:25:07Z"
@@ -91,3 +91,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-64=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-06T07:19:05Z"
+          from: verification=failing
+          to: verification=not_started
+          reason: auto-derived [failing→not_started] signals=2; review_record:REVIEW-64=present | known_issue:KI-MENU-SELECT-POLL-DEADLOCK=none
+          changed_by: agent:claude-code
