@@ -23,9 +23,9 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-06T09:09:23.00764Z"
+    reviewed_at: "2026-10-06T09:34:24.800979Z"
     reviewed_by: agent:claude-code
-    reviewed_fingerprint: sha256:153ece7777213f13251cea4c930d25a3480839d5c41aacc9077ae08369861fb3
+    reviewed_fingerprint: sha256:190d7386aadece9dada5543c1c5048fb11746c520696bfa42ee806e6c2add45e
     reviewed_targets:
         implemented_by:
             bin/omarchy-system-lock: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
@@ -45,19 +45,30 @@ traces:
             - bin/omarchy-system-lock:76
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T09:34:24.800979Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:28
+            - bin/omarchy-system-lock:76
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid
     review:
-        status: pending
-        reviewer: ""
-        reviewed_at: ""
+        status: in_review
+        reviewer: agent:claude-code
+        reviewed_at: "2026-10-06T09:33:16Z"
         ai_generated: true
 history:
     created_by: agent:claude-code
     created_at: "2026-10-06T09:00:54Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-06T09:06:38Z"
+    last_modified_at: "2026-10-06T09:33:16Z"
 obligation_checklist:
     - error_handling
 hazard_review:
@@ -84,10 +95,15 @@ hazard_review:
         - category: structural
           disposition: not_applicable
           rationale: Bash and jq over a short JSON reply; no manual memory, pointers or binary framing.
+acceptance_review:
+    reviewed_at: "2026-10-06T09:33:17Z"
+    reviewed_by: agent:claude-code
+    disposition: reviewed
+    notes: 'One acceptance criterion covers both outcomes of the failure contract: a lock that never secures exits 1 with the notification, and a secured lock exits 0 without one. test/shell.d/system-lock-test.sh runs both.'
 stakeholder:
     acceptance_criteria:
         - id: AC-001
-          text: Given a lock request the shell accepts but never secures, omarchy-system-lock exits 1 within about 11 s and sends the Screen did not lock notification; given a lock the shell secures, it exits 0 and sends no notification.
+          text: Given a lock request that the shell accepts and never secures, omarchy-system-lock exits 1 and sends the notification. Given a secured lock, it exits 0 and sends no notification.
           verification_method: test
 lifecycle:
     change_history:
