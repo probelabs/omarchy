@@ -20,8 +20,8 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-10-02T16:54:43.512614Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-06T09:09:59.192879Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
@@ -30,7 +30,7 @@ traces:
             shell/plugins/menu/Menu.qml:runAction: file1:bddf782ed3ac81606c0c53a1106414c4
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
-            SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
+            SYS-REQ-260927-WC89: req1:04222ef41e8e081fcc2e65abb868ac9c
     review_history:
         - reviewed_at: "2026-09-27T21:21:24.159161Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -78,6 +78,20 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:883
+            - shell/plugins/menu/Menu.qml:961
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-06T09:09:59.192879Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed after SYS-REQ-260927-WC89''s text changed for omacom/omarchy#9429 (the callee now exits 0 only once the session is secure, else exit 1 with a notification). This requirement still satisfies WC89''s menu side: the Lock row invokes omarchy-system-lock; its own implementation and tests are unchanged.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:143

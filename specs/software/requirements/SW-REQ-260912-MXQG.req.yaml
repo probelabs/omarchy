@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-06T07:21:17.953353Z"
+    reviewed_at: "2026-10-06T09:09:23.94497Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:3558f943eda013a9fcc5f9851131e7c00f449a7d0242a0554481e3b8c17a71f0
     reviewed_targets:
         implemented_by:
-            bin/omarchy-system-lock: file1:52ab24ddeeaf7125f2bac822cbfe1484
+            bin/omarchy-system-lock: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
         satisfies:
             SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
@@ -65,6 +65,17 @@ traces:
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/system-lock-test.sh:156
             - test/shell.d/system-lock-test.sh:161
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T09:09:23.94497Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:55
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:179
+            - test/shell.d/system-lock-test.sh:184
             - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C

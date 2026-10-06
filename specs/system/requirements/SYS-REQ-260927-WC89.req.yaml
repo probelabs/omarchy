@@ -5,7 +5,7 @@ priority: shall
 category: interface
 req_type: guarantee
 fretish: when lock_row_activated the menu shall eventually satisfy system_lock_invoked
-description: The menu Lock row invokes the lock component's CLI entry point omarchy-system-lock with no arguments. The callee engages the session lock and exits 0. This is the only menu-to-lock interaction; lock never calls menu.
+description: The menu Lock row invokes the lock component's CLI entry point omarchy-system-lock with no arguments. The callee exits 0 once the session lock is secure. When the lock does not hold, it exits 1 and shows a notification (SW-REQ-261006-861H). This is the only menu-to-lock interaction; lock never calls menu.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -18,13 +18,13 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-06T07:21:17.494023Z"
+    reviewed_at: "2026-10-06T09:09:23.475705Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
     reviewed_targets:
         implemented_by:
-            bin/omarchy-system-lock:lock_state: file1:52ab24ddeeaf7125f2bac822cbfe1484
-            bin/omarchy-system-lock:report_unsecured: file1:52ab24ddeeaf7125f2bac822cbfe1484
+            bin/omarchy-system-lock:lock_state: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:report_unsecured: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -73,6 +73,20 @@ traces:
             - test/shell.d/menu-test.sh:5
             - test/shell.d/system-lock-test.sh:65
             - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T09:09:23.475705Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:28
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:7
+            - test/shell.d/system-lock-test.sh:70
 verification:
     assurance_level: C
     formalization_status: valid
@@ -85,7 +99,7 @@ history:
     created_by: agent:kimi-zero-warnings
     created_at: "2026-09-27T20:58:23Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-05T17:54:10Z"
+    last_modified_at: "2026-10-06T09:09:22Z"
 obligation_checklist:
     - error_handling
 obligation_delegations:

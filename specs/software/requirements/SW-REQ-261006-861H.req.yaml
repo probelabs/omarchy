@@ -1,0 +1,98 @@
+id: SW-REQ-261006-861H
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when user_lock_requested the system_lock shall eventually satisfy (lock_exit_success <=> lock_secure_reported) & (lock_failure_notified <=> !lock_secure_reported)
+description: When the user locks the session, omarchy-system-lock shall exit 0 only after the shell's lock status reports the session secure. When the shell refuses the lock, or the session is not secure within 10 s, the script shall exit 1. It shall then also send the critical "Screen did not lock" notification.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260912-T0XP
+component: lock
+rationale: Upstream PR omacom/omarchy#9429 (head 3fa17d48) stops omarchy-system-lock from exiting 0 for a lock that did not hold (KI-260930-2FBE). The shell answers a refused lock with exit 0, and it secures the session only after the request returns. The script therefore polls lock status. It asks again while no request is pending, and it gives up after 10 s. The menu row, the keybinding and the idle lock drop the exit code, so the notification is the failure that a user can see. It is shown only while the shell, which owns the notification server, is running.
+tags: []
+variables:
+    - user_lock_requested
+    - lock_secure_reported
+    - lock_exit_success
+    - lock_failure_notified
+traces:
+    satisfies:
+        - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-10-06T09:09:23.00764Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:153ece7777213f13251cea4c930d25a3480839d5c41aacc9077ae08369861fb3
+    reviewed_targets:
+        implemented_by:
+            bin/omarchy-system-lock: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:lock_state: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:report_unsecured: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+        satisfies:
+            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
+    review_history:
+        - reviewed_at: "2026-10-06T09:09:23.00764Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:28
+            - bin/omarchy-system-lock:76
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:7
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-06T09:00:54Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-06T09:06:38Z"
+obligation_checklist:
+    - error_handling
+hazard_review:
+    reviewed_at: "2026-10-06T09:08:37Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - error_handling
+            - boundary
+            - concurrent
+          not_applicable:
+            - input_domain
+            - concurrency_scale
+          rationale: 'error_handling: a refused lock (missing-pam or failed), a shell that is not running, and a missing omarchy-shell all end in exit 1 with the notification; a failed notification is ignored, so the exit status still reports the failure. boundary: the 10 s deadline is checked against SECONDS, and the last poll before it can still succeed. concurrent: securing happens after the lock request returns, so a request still being processed reads as locking and the script waits; a dropped request reads as idle and is sent again. input_domain not applicable: the only input is the shell''s own status JSON. concurrency_scale not applicable: one lock call waits for one session.'
+        - category: property
+          disposition: not_applicable
+          rationale: One wait per call with a fixed deadline; no algebraic or repeated-application surface.
+        - category: domain
+          disposition: not_applicable
+          rationale: 'No new trust boundary: the script asks the user''s own shell over the same IPC as before and sends one desktop notification.'
+        - category: structural
+          disposition: not_applicable
+          rationale: Bash and jq over a short JSON reply; no manual memory, pointers or binary framing.
+stakeholder:
+    acceptance_criteria:
+        - id: AC-001
+          text: Given a lock request the shell accepts but never secures, omarchy-system-lock exits 1 within about 11 s and sends the Screen did not lock notification; given a lock the shell secures, it exits 0 and sends no notification.
+          verification_method: test
+lifecycle:
+    change_history:
+        - date: "2026-10-06T09:05:53Z"
+          from: draft
+          to: review
+          reason: '[omacom/omarchy#9429] PR #9429 review: requirement authored for the wait-until-secure failure contract; executing witnesses in test/shell.d/system-lock-test.sh'
+          changed_by: agent:claude-code
