@@ -143,7 +143,7 @@ Item {
 
   // Releasing a done file uses its own process and queue so it can never race
   // resultProc, which may still be writing the result of an earlier request.
-  // Implements: SW-REQ-260922-C8HX
+  // Implements: SW-REQ-261006-ZJEY
   function releaseNextDoneFile() {
     if (releaseProc.running || doneFilesToRelease.length === 0) return
 
@@ -152,7 +152,7 @@ Item {
     releaseProc.running = true
   }
 
-  // Implements: SW-REQ-260922-C8HX
+  // Implements: SW-REQ-261006-ZJEY
   function finishDoneFile(path) {
     if (!path) return
     doneFilesToRelease.push(path)
@@ -916,7 +916,7 @@ Item {
     filterText = ""
   }
 
-  // Implements: SW-REQ-260922-50RE
+  // Implements: SW-REQ-260922-50RE, SW-REQ-261006-ZJEY
   function openExistingMenu(initialMenu) {
     // Turning back into a regular menu drops any request still waiting on an
     // answer. Setting mode first also clears dmenuActive, so a later cancel()
@@ -948,7 +948,7 @@ Item {
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
 
-  // Implements: SW-REQ-260922-50RE
+  // Implements: SW-REQ-260922-50RE, SW-REQ-261006-ZJEY
   function openDmenu(payload) {
     // This overwrites the request fields wholesale, so a request still waiting
     // on an answer loses its slot here. Nothing would ever write its done file

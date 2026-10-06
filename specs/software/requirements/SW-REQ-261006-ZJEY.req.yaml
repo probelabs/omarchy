@@ -1,0 +1,95 @@
+id: SW-REQ-261006-ZJEY
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when request_displaced the dmenu_protocol shall eventually satisfy displaced_request_answered
+description: 'A new select or input request, or a regular menu, can replace a request that is still waiting. The menu then answers the waiting request as cancelled: it writes that request''s done file alone. The caller of the waiting request then exits and does not wait forever.'
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-X6Z5
+component: menu
+rationale: 'Upstream PR omacom/omarchy#9031 (commits bc8f540d and aa732d0f, head aa732d0f) adds this guard at the top of openDmenu and openExistingMenu. finishDoneFile queues the done file of the displaced request, and releaseNextDoneFile writes it through releaseProc, a Process apart from resultProc. This fixes the re-summon leg of KI-MENU-REQUEST-LIFECYCLE (upstream #9057).'
+tags: []
+variables:
+    - request_displaced
+    - displaced_request_answered
+traces:
+    satisfies:
+        - SYS-REQ-260922-X6Z5
+    reviewed_at: "2026-10-06T09:58:57.473308Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:a9427ec7e2cebd07f2188e961b8ca0d07c7e9aca1003f984637eaf72d461298c
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:finishDoneFile: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:openDmenu: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:openExistingMenu: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:releaseNextDoneFile: file1:ed7d17eee765fb8028394c87fb01b477
+        satisfies:
+            SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
+    review_history:
+        - reviewed_at: "2026-10-06T09:58:57.473308Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732, after the displaced-request answer was specified as SW-REQ-261006-ZJEY: openDmenu and openExistingMenu answer a waiting request, through finishDoneFile and releaseNextDoneFile (releaseProc), before they replace it; satisfies SYS-REQ-260922-X6Z5 (cancellation reaches the caller as no selection). Spec conformance REVIEW-261006-4Q8F; witnessed by executing these bodies in test/shell.d/menu-dmenu-test.sh, and by the behaviour comparison (14 intended differences).'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:146
+            - shell/plugins/menu/Menu.qml:155
+            - shell/plugins/menu/Menu.qml:919
+            - shell/plugins/menu/Menu.qml:951
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:215
+            - test/shell.d/menu-dmenu-test.sh:283
+            - test/shell.d/menu-dmenu-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:claude-code
+    created_at: "2026-10-06T09:54:08Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-06T09:58:32Z"
+hazard_review:
+    reviewed_at: "2026-10-06T09:58:30Z"
+    reviewed_by: agent:claude-code
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - concurrent
+            - concurrency_scale
+            - boundary
+          not_applicable:
+            - input_domain
+          rationale: 'concurrent: a new summon or a regular menu can arrive while a picker request still waits; the guard answers the waiting request before the new one overwrites its fields. concurrency_scale: a burst of summons displaces one request after another; each displaced done file is queued and releaseProc writes them in order, one at a time (witnessed with three summons in a row). boundary: the same request summoned again (same done file) is not a displacement and is not answered. Worst case without the guard: the displaced caller polls its done file forever. input_domain not applicable: the guard reads only requestActive, doneFile and the incoming done file; payload parsing belongs to SW-REQ-260922-50RE.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - atomicity
+          rationale: 'atomicity: the displaced done file is captured and queued before openDmenu or openExistingMenu change any request field, so the answer always names the displaced request and never the new one.'
+        - category: domain
+          disposition: not_applicable
+          rationale: No domain workload tags; the menu request protocol is a local QML plugin plus bash callers with no network, crypto or privilege surface.
+        - category: structural
+          disposition: not_applicable
+          rationale: QML/JS (garbage collected) plus bash writing a constant-format truncation of a shell-quoted path; no manual memory, pointers or binary framing.
+lifecycle:
+    change_history:
+        - date: "2026-10-06T09:58:32Z"
+          from: draft
+          to: review
+          reason: '[omacom/omarchy#9031] requirement authored for the displaced-request answer; spec conformance REVIEW-261006-4Q8F; executing witnesses in test/shell.d/menu-dmenu-test.sh'
+          changed_by: agent:claude-code

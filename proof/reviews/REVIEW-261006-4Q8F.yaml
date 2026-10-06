@@ -1,0 +1,12 @@
+id: REVIEW-261006-4Q8F
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-06T09:58:12Z"
+subject: SW-REQ-261006-ZJEY
+decision: approved
+comment: 'Read openDmenu, openExistingMenu, finishDoneFile and releaseNextDoneFile on the PR #9031 tree (head aa732d0f). openDmenu computes the next done file first and, when requestActive and doneFile are set and the incoming done file differs, calls finishDoneFile(doneFile) before it overwrites the request fields. openExistingMenu calls finishDoneFile(doneFile) when requestActive and doneFile are set, before it sets mode to menu and clears requestActive. requestActive is set only by openDmenu as !!doneFile, so the antecedent request_displaced is exactly these two guards. finishDoneFile pushes the path on doneFilesToRelease and releaseNextDoneFile writes '': > <path>'' through releaseProc, a Process apart from resultProc; releaseProc.onExited drains the queue, so a second displaced request waits for the first write and is then written. The written file is the done file alone, which the caller reads as a cancel (displaced_request_answered). The violation row needs the finishDoneFile call removed, so it is dispositioned defensive. Re-summoning the same request (same done file) is not a displacement and writes nothing. Witnessed by executing these bodies in test/shell.d/menu-dmenu-test.sh.'
+citations:
+    - shell/plugins/menu/Menu.qml:952@openDmenu
+    - shell/plugins/menu/Menu.qml:920@openExistingMenu
+    - shell/plugins/menu/Menu.qml:156@finishDoneFile
+    - shell/plugins/menu/Menu.qml:147@releaseNextDoneFile

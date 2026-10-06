@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-X6Z5
-    reviewed_at: "2026-10-05T18:06:57.84293Z"
+    reviewed_at: "2026-10-06T09:59:22.042629Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:e1e8d98547217bd5af430918dbfb4d6748ec9fa3f2001e7a6a4ffa40ea18a31f
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:cancel: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:finishRequest: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:onClicked: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:cancel: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:finishRequest: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:onClicked: file1:ed7d17eee765fb8028394c87fb01b477
         satisfies:
             SYS-REQ-260922-X6Z5: req1:4beb91f0bdb6be6bad852994a7697334
     review_history:
@@ -80,6 +80,17 @@ traces:
           reviewed_by: agent:claude-code
           method: inspection
           rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. finishRequest with no active request or no done file still only closes the menu; the new guard runs only while requestActive and a done file are set.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1220
+            - shell/plugins/menu/Menu.qml:123
+            - shell/plugins/menu/Menu.qml:912
+            - specs/system/requirements/SYS-REQ-260922-X6Z5.req.yaml
+            - test/shell.d/menu-dmenu-test.sh:5
+        - reviewed_at: "2026-10-06T09:59:22.042629Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: Menu.qml changed only by Implements comment lines (openDmenu and openExistingMenu add SW-REQ-261006-ZJEY; finishDoneFile and releaseNextDoneFile move from SW-REQ-260922-C8HX to SW-REQ-261006-ZJEY), and test/shell.d/menu-dmenu-test.sh gained the ZJEY witnesses. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1220

@@ -19,12 +19,12 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
-    reviewed_at: "2026-10-05T18:06:52.386493Z"
+    reviewed_at: "2026-10-06T09:59:31.819834Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:7dd1a4b8502776dfec2ad63fa9f83394117091a6e8ca8314af5cea25d1f92225
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:openRoute: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:openRoute: file1:ed7d17eee765fb8028394c87fb01b477
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
     review_history:
@@ -76,6 +76,17 @@ traces:
           reviewed_by: agent:claude-code
           method: inspection
           rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:995
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-06T09:59:31.819834Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: Menu.qml changed only by Implements comment lines (openDmenu and openExistingMenu add SW-REQ-261006-ZJEY; finishDoneFile and releaseNextDoneFile move from SW-REQ-260922-C8HX to SW-REQ-261006-ZJEY), and test/shell.d/menu-dmenu-test.sh gained the ZJEY witnesses. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:995

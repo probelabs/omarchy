@@ -19,20 +19,20 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-0M8A
-    reviewed_at: "2026-10-05T18:06:48.573435Z"
+    reviewed_at: "2026-10-06T09:59:27.711733Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:db3944d2eed429839f6d43366bada6043db91d31b332a4e8d4a482d1b169102b
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:invalidateVolatileProvider: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:loadProviderForMenu: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:onAppsChanged: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:onExited: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:onRead: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:startNextProvider: file1:9e123ab3fbb5185a60b3306a9a667fbf
-            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:9e123ab3fbb5185a60b3306a9a667fbf
+            shell/plugins/menu/Menu.qml:invalidateVolatileProvider: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:loadProviderForMenu: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:loadProvidersForSearch: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:mergeProviderRows: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:onAppsChanged: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:onExited: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:onRead: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:startNextProvider: file1:ed7d17eee765fb8028394c87fb01b477
+            shell/plugins/menu/Menu.qml:startProviderForMenu: file1:ed7d17eee765fb8028394c87fb01b477
             shell/plugins/menu/MenuModel.js:swapProviderRows: file1:4f7f286f5fa1815a2a370c084b85fb34
         satisfies:
             SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
@@ -124,6 +124,26 @@ traces:
           reviewed_by: agent:claude-code
           method: inspection
           rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: the Menu.qml delta is releaseNextDoneFile and finishDoneFile with their own releaseProc queue, and a guard at the top of openExistingMenu and openDmenu that answers a request still waiting (done file only) when a new request or a regular menu replaces it. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged and only moved with the added lines, so this requirement''s intent is unaffected.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1034
+            - shell/plugins/menu/Menu.qml:1037
+            - shell/plugins/menu/Menu.qml:1069
+            - shell/plugins/menu/Menu.qml:374
+            - shell/plugins/menu/Menu.qml:395
+            - shell/plugins/menu/Menu.qml:441
+            - shell/plugins/menu/Menu.qml:458
+            - shell/plugins/menu/Menu.qml:465
+            - shell/plugins/menu/Menu.qml:484
+            - shell/plugins/menu/MenuModel.js:145
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-06T09:59:27.711733Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9031 review at head aa732d0f on quattro-proof 1e433732: Menu.qml changed only by Implements comment lines (openDmenu and openExistingMenu add SW-REQ-261006-ZJEY; finishDoneFile and releaseNextDoneFile move from SW-REQ-260922-C8HX to SW-REQ-261006-ZJEY), and test/shell.d/menu-dmenu-test.sh gained the ZJEY witnesses. Each link was re-checked against its cited annotation line: the function or handler it names is unchanged, so this requirement''s intent is unaffected.'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1034

@@ -408,6 +408,14 @@ variables:
       type: bool
       direction: output
       description: Rows hide on when:false, static submenus with no visible descendant hide, provider menus stay, checked/disabled rows earn the check mark, disabled rows dim.
+    - name: request_displaced
+      type: bool
+      direction: input
+      description: A select or input request with a done file is still waiting, and openDmenu receives a request with another done file, or openExistingMenu opens a regular menu.
+    - name: displaced_request_answered
+      type: bool
+      direction: output
+      description: The done file of the displaced request is written alone, so its caller reads a cancel and exits.
     - name: menu_open_called
       type: bool
       direction: input

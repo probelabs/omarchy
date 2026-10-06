@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-# Verifies: SW-REQ-260922-Q6ZS, SW-REQ-260922-B839, SW-REQ-260922-MP00, SW-REQ-260922-9ABD, SW-REQ-260922-FGZQ, SW-REQ-260922-C8HX, SW-REQ-260922-3VTN, SYS-REQ-260922-X6Z5
+# Verifies: SW-REQ-260922-Q6ZS, SW-REQ-260922-B839, SW-REQ-260922-MP00, SW-REQ-260922-9ABD, SW-REQ-260922-FGZQ, SW-REQ-260922-C8HX, SW-REQ-260922-3VTN, SYS-REQ-260922-X6Z5, SW-REQ-261006-ZJEY
+#mcdc:ignore:defensive SW-REQ-261006-ZJEY: request_displaced=T, displaced_request_answered=F => FALSE -- openDmenu and openExistingMenu both call finishDoneFile(doneFile) first whenever requestActive and doneFile are set (openDmenu only for another done file), before they overwrite or clear the request; finishDoneFile queues the path and releaseNextDoneFile writes it alone; a displaced request left unanswered needs that call removed [reviewed: REVIEW-261006-4Q8F]
 #mcdc:ignore:defensive SW-REQ-260922-Q6ZS: payload_shape_correct=F, select_invoked=T => FALSE -- the payload is one deterministic perl encode ahead of the single summon; a malformed payload means perl died and set -e kills the script before any summon, so invoked-with-bad-shape is structural [reviewed: REVIEW-M2]
 #mcdc:ignore:defensive SW-REQ-260922-B839: no_options_given=T, usage_error_exit_one=F => FALSE -- both empty-option paths (argv and stdin mapfile) fall through to the same unconditional usage+exit 1 [reviewed: REVIEW-M2]
 #mcdc:ignore:defensive SW-REQ-260922-MP00: answer_file_written=T, selection_printed=F => FALSE -- the only read of the answer file is `[[ -s $selection_file ]] && cat`; a non-empty answer is always printed [reviewed: REVIEW-M2]
@@ -271,3 +272,79 @@ run_dmenu omarchy-menu-input "Reminder in minutes"
 [[ $STATUS -eq 1 && -z $OUT ]] || fail "menu input fails when the summon is refused" "status: $STATUS err: $ERR"
 stop_shell
 pass "menu select and input fail when the summon is refused"
+
+# --- A displaced request is answered as cancelled (SW-REQ-261006-ZJEY) -----
+# The REAL open / openDmenu / openExistingMenu / openRoute / finishRequest and,
+# when the revision has them, finishDoneFile / releaseNextDoneFile bodies from
+# Menu.qml run under node vm (bare property names resolve on the root stub via
+# `with`). Each Process records the command it starts; a start while it is
+# still running is ignored, as live.
+run_node_test <<'JS'
+// Verifies: SW-REQ-261006-ZJEY
+const fs = require('fs')
+const vm = require('vm')
+const qml = fs.readFileSync(path.join(root, 'shell/plugins/menu/Menu.qml'), 'utf8')
+const fn = name => (qml.match(new RegExp('\\n  function ' + name + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n')) || [])[0]
+const names = ['open', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'finishDoneFile', 'releaseNextDoneFile'].filter(fn)
+const harness = () => {
+  const writes = []
+  const proc = name => { let busy = false; return { command: [], get running() { return busy }, set running(v) { if (v && !busy) { busy = true; writes.push({ proc: name, command: this.command[2] }) } }, done() { busy = false } } }
+  const resultProc = proc('resultProc'), releaseProc = proc('releaseProc')
+  const r = {
+    opened: false, mode: 'menu', requestSerial: 0, applySerial: 0, requestActive: false, selectionFile: '', doneFile: '',
+    doneFilesToRelease: [], dmenuPrompt: '', dmenuOptions: [], dmenuWidth: 300, dmenuMaxHeight: 0, activeMenu: 'root', navStack: [],
+    filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '', pendingInitialMenu: 'root', appLibrary: null,
+    deleteConfirmOpen: false, deleteTarget: null,
+    items: { root: { id: 'root', kind: 'menu' } }, itemOrder: ['root'],
+    item(id) { return this.items[id] || null }, resolveRoute(input) { return input },
+    disarmPointer() {}, evaluateGuards() {}, rebuildDisplay() {}, invalidateVolatileProvider() {}, loadProviderForMenu() {},
+    setActiveMenu(id) { this.activeMenu = id }, runAction() {}
+  }
+  const fns = vm.runInNewContext(`(function() { with (root) { ${names.map(fn).join('\n')}; return { ${names.join(', ')} } } })()`, {
+    root: r, resultProc, releaseProc, Quickshell: { execDetached() {} }, keyCatcher: { forceActiveFocus() {} }, Qt: { callLater() {} },
+    Util: { shellQuote: s => "'" + String(s).replace(/'/g, "'\\''") + "'", execDetached() {} }, JSON, Math, Number, String, Array
+  })
+  for (const n of names) r[n] = fns[n]
+  return { r, writes, releaseProc }
+}
+const select = (tag, done) => JSON.stringify({ mode: 'select', prompt: 'Pick ' + tag, options: ['a', 'b'], selectionFile: '/tmp/sel-' + tag, doneFile: done || '/tmp/done-' + tag })
+
+{ // a new select request displaces a waiting one: the waiting one is answered done-file-only
+  const { r, writes } = harness()
+  r.open(select('first'))
+  assertEqual(writes.length, 0, 'opening the first request writes nothing')
+  // MCDC SW-REQ-261006-ZJEY: request_displaced=T, displaced_request_answered=T => TRUE
+  r.open(select('second'))
+  assertEqual(writes.length, 1, 'the displacing request answers the waiting one once')
+  assertEqual(writes[0].command, ": > '/tmp/done-first'", 'the waiting request gets its done file alone (a cancel), no selection')
+  assertEqual(r.doneFile, '/tmp/done-second', 'the new request owns its own done file')
+  assertEqual(r.requestActive, true, 'the new request stays active, not pre-answered')
+}
+
+{ // a regular menu displaces a waiting picker: the picker is answered done-file-only
+  const { r, writes } = harness()
+  r.open(select('pending'))
+  r.open(JSON.stringify({ menu: 'root' }))
+  assertEqual(writes.map(w => w.command).join(' | '), ": > '/tmp/done-pending'", 'the regular menu answers the waiting picker as cancelled')
+  assertEqual(r.requestActive, false, 'no request stays active once the regular menu is open')
+}
+
+{ // two displaced requests in a row while the first answer write still runs: both are answered
+  const { r, writes, releaseProc } = harness()
+  r.open(select('b1')); r.open(select('b2')); r.open(select('b3'))
+  assertEqual(writes.length, 1, 'the second answer waits while the first write still runs')
+  releaseProc.done(); r.releaseNextDoneFile && r.releaseNextDoneFile()
+  assertEqual(writes.map(w => w.command).join(' | '), ": > '/tmp/done-b1' | : > '/tmp/done-b2'", 'every displaced request is answered, in order')
+}
+
+{ // nothing is displaced: no answer is written
+  const { r, writes } = harness()
+  // MCDC SW-REQ-261006-ZJEY: request_displaced=F, displaced_request_answered=F => TRUE [no-action: no request is waiting before this summon, so no done file is written]
+  r.open(select('clean'))
+  assertEqual(writes.length, 0, 'a summon with no waiting request writes nothing')
+  // MCDC SW-REQ-261006-ZJEY: request_displaced=F, displaced_request_answered=F => TRUE [no-action: the same request summoned again keeps its done file, so it is not displaced and nothing is written]
+  r.open(select('clean'))
+  assertEqual(writes.length, 0, 'the same request summoned again is not answered')
+}
+JS
+pass "a displaced select request is answered as cancelled"
