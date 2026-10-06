@@ -155,6 +155,10 @@ function runJsonc() {
 // until an explicit X. Quickshell.execDetached / Util.execDetached run
 // immediately. After the last event every still-running write is drained.
 const NAMES = ['open', 'close', 'cancel', 'finishRequest', 'openDmenu', 'openExistingMenu', 'openRoute', 'activateIndex', 'applyDmenuSelection', 'applySelected']
+// Helpers a revision MAY define and the request functions then call (#9031:
+// answering a displaced request through its own release Process). Extracted
+// when present; a revision without them replays exactly as before.
+const OPTIONAL = ['finishDoneFile', 'releaseNextDoneFile']
 // Names bound OUTSIDE the with-scope (the wrapper's parameter and local).
 const OUTER = new Set(['root', 'displayModel'])
 const OPS = new Set(['S', 'I', 'N', 'M', 'A', 'P', 'R', 'C', 'X'])
@@ -178,12 +182,20 @@ function parseEvents(text) {
 
 function extractFunctions(qml) {
   const found = {}
-  for (const n of NAMES) {
+  for (const n of NAMES.concat(OPTIONAL)) {
     const m = qml.match(new RegExp('\\n  function ' + n + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}\\n'))
     if (m) found[n] = m[0]
   }
   const ex = qml.match(/id: resultProc\s*\n(?:\s*\/\/[^\n]*\n)*\s*onExited: \{([\s\S]*?)\n    \}/)
-  return { found, onExited: ex ? ex[1] : null }
+  // A second answer Process (releaseProc) and its one-line exit handler, when
+  // the revision has one.
+  const rex = qml.match(/id: releaseProc\s*\n(?:\s*\/\/[^\n]*\n)*\s*onExited: ([^\n]+)\n/)
+  // `property var <name>: []` queues the optional helpers use, so they start
+  // empty the way QML initialises them.
+  const queues = OPTIONAL.some(n => found[n])
+    ? [...qml.matchAll(/\n  property var (\w+): \[\]\n/g)].map(m => m[1])
+    : []
+  return { found, onExited: ex ? ex[1] : null, releaseExited: rex ? rex[1] : null, queues }
 }
 
 const ITEMS = {
@@ -207,7 +219,8 @@ function runEvents() {
   const rel = 'shell/plugins/menu/Menu.qml'
   const qml = readRev(rel)
   if (qml === null) { emit(`lifecycle: MISSING ${rel}`); return }
-  const { found, onExited } = extractFunctions(qml)
+  const { found, onExited, releaseExited, queues } = extractFunctions(qml)
+  const helpers = OPTIONAL.filter(n => found[n])
   const missing = NAMES.filter(n => !found[n])
   if (missing.length) {
     // Without these the sequence cannot be replayed faithfully; report, do not guess.
@@ -215,16 +228,25 @@ function runEvents() {
     return
   }
 
-  const S = { writes: [], busy: false, actions: [], apps: [] }
+  const S = { writes: [], busy: false, releaseBusy: false, actions: [], apps: [] }
   const exec = cmd => { S.writes.push(commandText(cmd)) }
   const resultProc = {
     command: [],
     set running(v) { if (v && !S.busy) { S.busy = true; exec(this.command) } },
     get running() { return S.busy },
   }
+  // releaseProc: a separate Process with the same ignore-while-running rule.
+  // Its write is a bare `: > <done file>`, so it is modelled as finishing
+  // before the next event (resultProc stays the stressed one, ended by X).
+  const releaseProc = {
+    command: [],
+    set running(v) { if (v && !S.releaseBusy) { S.releaseBusy = true; exec(this.command) } },
+    get running() { return S.releaseBusy },
+  }
   const mm = loadMenuModel()
   const sandbox = {
     resultProc,
+    releaseProc,
     Quickshell: { execDetached: exec, env: () => '' },
     Util: { shellQuote: s => "'" + String(s).replace(/'/g, "'\\''") + "'", execDetached: exec },
     keyCatcher: { forceActiveFocus() {} },
@@ -235,6 +257,7 @@ function runEvents() {
   const ctx = vm.createContext(sandbox)
   const rows = []
   const r = {
+    ...Object.fromEntries(queues.map(q => [q, []])),
     opened: false, mode: 'menu', requestSerial: 0, applySerial: 0, requestActive: false,
     selectionFile: '', doneFile: '', dmenuPrompt: '', dmenuOptions: [], dmenuWidth: 300, dmenuMaxHeight: 0,
     activeMenu: 'root', navStack: [], filterText: '', selectedIndex: 0, cursorActive: true, fontFamily: '',
@@ -265,15 +288,16 @@ function runEvents() {
       return k in t || (!(k in sandbox) && !(k in globalThis))
     },
   })
-  const src = NAMES.map(n => found[n]).join('\n')
+  const all = NAMES.concat(helpers)
+  const src = all.map(n => found[n]).join('\n')
   let fns
   try {
-    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${NAMES.join(', ')}, onExited: function() { ${onExited || ''} } } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
+    fns = vm.runInContext(`(function(root) { var displayModel = root.__dm; with (root) { ${src}; return { ${all.join(', ')}, onExited: function() { ${onExited || ''} }, releaseExited: function() { ${releaseExited || ''} } } } })`, ctx, { timeout: VM_TIMEOUT_MS })(scope)
   } catch (e) {
     emit(`lifecycle: COMPILE-ERROR ${errName(e)}`)
     return
   }
-  for (const n of NAMES) r[n] = fns[n]
+  for (const n of all) r[n] = fns[n]
 
   const callers = new Map()
   const stray = []
@@ -292,6 +316,7 @@ function runEvents() {
     }
   }
   const exitProc = () => { if (S.busy) { S.busy = false; fns.onExited() } }
+  const exitRelease = () => { let g = 0; while (S.releaseBusy && g++ < 10000) { S.releaseBusy = false; fns.releaseExited(); deliver() } }
   let failure = null
   try {
     for (const op of ops) {
@@ -311,10 +336,11 @@ function runEvents() {
         case 'X': exitProc(); break
       }
       deliver()
+      exitRelease()
       if (slow && S.busy) { exitProc(); deliver() }
     }
     let guard = 0
-    while (S.busy && guard++ < 10000) { exitProc(); deliver() }
+    while ((S.busy || S.releaseBusy) && guard++ < 10000) { exitProc(); deliver(); exitRelease() }
   } catch (e) {
     failure = errName(e)
   }
