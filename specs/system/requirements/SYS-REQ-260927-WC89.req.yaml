@@ -18,12 +18,13 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-05T19:29:25.032771Z"
+    reviewed_at: "2026-10-06T07:21:17.494023Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
     reviewed_targets:
         implemented_by:
-            bin/omarchy-system-lock:report_unsecured: file1:14b786779a67fdb1226978ffd930efab
+            bin/omarchy-system-lock:lock_state: file1:52ab24ddeeaf7125f2bac822cbfe1484
+            bin/omarchy-system-lock:report_unsecured: file1:52ab24ddeeaf7125f2bac822cbfe1484
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -57,6 +58,20 @@ traces:
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T07:21:17.494023Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock engages the lock through bounded IPC, resets the layout and stops ttfx with the bounded 1s wait; it waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Function-level annotations name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:28
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:65
             - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C

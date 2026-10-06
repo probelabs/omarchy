@@ -9,6 +9,7 @@
 
 lock_timeout=10
 
+# Implements: SYS-REQ-260912-T0XP — every lock IPC call is bounded, so a stalled shell cannot hang the lock
 lock_ipc() {
   local limit=$1
   shift
@@ -16,6 +17,7 @@ lock_ipc() {
   OMARCHY_SHELL_IPC_TIMEOUT="$limit" omarchy-shell "$@" 2>/dev/null
 }
 
+# Implements: SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89 — reads lock status: secure, still locking, or idle (not locked)
 lock_state() {
   jq -r 'if .secure == true then "secure"
          elif .requested == true then "locking"
