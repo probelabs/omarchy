@@ -224,6 +224,18 @@ variables:
       type: bool
       direction: output
       description: The password field consumes the key press without editing the text.
+    - name: lock_secure_reported
+      type: bool
+      direction: input
+      description: The shell's lock status reported the session secure within the 10 s deadline of omarchy-system-lock.
+    - name: lock_exit_success
+      type: bool
+      direction: output
+      description: omarchy-system-lock exited 0.
+    - name: lock_failure_notified
+      type: bool
+      direction: output
+      description: omarchy-system-lock sent the critical "Screen did not lock" notification.
 independence:
     declared: true
     reason: 'All formalized lock guarantees at both layers constrain pairwise-disjoint output variables (verified 2026-09-27: software 0/105 pairs, system 0/10 pairs share a consequent variable, matching the engine''s connected-component pruning). The two layers now hold per-layer vars files (split 2026-09-28): each layer declares exactly the variables its own requirements consume; 5 cross-layer variables (fingerprint_pam_removed, lock_state_queried, suspend_imminent, update_run_requested, user_lock_requested) are declared in both. Cross-requirement conflicts over outputs are structurally impossible.'

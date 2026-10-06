@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
-# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89
+# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89, SW-REQ-261006-861H
 
 # Row dispositions (see proof mcdc show <REQ-ID> for the tables):
 #mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the lock path runs pkill -x ttfx and timeout 1s pidwait as unconditional sequence points; a run that reaches the path always attempts the signal and always waits bounded, so neither-fails is structural [reviewed: REVIEW-1]
@@ -17,6 +17,11 @@ require_command jq
 # Resolved before the mocks shadow it: the harness bounds the script with the
 # real timeout, while the script under test sees the mock.
 real_timeout=$(command -v timeout)
+
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=T => FALSE -- the only non-zero exit is in report_unsecured, which sends the notification first (its failure is ignored), and the script has no set -e [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=T => FALSE -- the only exit 0 is the secure) arm of the poll loop; the latched-request test below fails if locking) or idle ends the wait with success [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => FALSE -- the notification is sent only in report_unsecured, which always exits 1 [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=T, lock_secure_reported=T, user_lock_requested=T => FALSE -- the secure) arm exits 0 without calling report_unsecured, the only sender of the notification [reviewed: REVIEW-261006-RY53]
 
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
@@ -45,7 +50,7 @@ if [[ ${1:-} == "lock" && ${2:-} == "status" ]]; then
   if [[ ${SECURE_AFTER:-1} != never ]] && (( polls >= ${SECURE_AFTER:-1} )); then
     printf '{"secure":true,"requested":true}\n'
   else
-    printf '{"secure":false,"requested":false}\n'
+    printf '{"secure":false,"requested":%s}\n' "${REQUESTED:-false}"
   fi
   exit 0
 fi
@@ -68,7 +73,7 @@ run_lock() {
   : >"$call_log"
   : >"$tmpdir/polls"
   PATH="$mock_bin:$PATH" CALL_LOG="$call_log" POLL_COUNT="$tmpdir/polls" \
-    SECURE_AFTER="${SECURE_AFTER:-1}" LOCK_REPLY="${LOCK_REPLY:-}" \
+    SECURE_AFTER="${SECURE_AFTER:-1}" LOCK_REPLY="${LOCK_REPLY:-}" REQUESTED="${REQUESTED:-false}" \
     "$real_timeout" -k 5s 40s "$ROOT/bin/omarchy-system-lock" 2>"$tmpdir/stderr" || rc=$?
   return "$rc"
 }
@@ -77,6 +82,10 @@ rc=0
 run_lock || rc=$?
 # SYS-REQ-260927-WC89:error_handling:nominal
 (( rc == 0 )) || fail "system lock succeeds once the session is secure" "exit $rc, $(<"$tmpdir/stderr")"
+! grep -q "^omarchy-notification-send" "$call_log" ||
+  fail "system lock sends no failure notification for a secured session" "calls: $(cat "$call_log")"
+# SW-REQ-261006-861H:error_handling:nominal
+# MCDC SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=F, lock_secure_reported=T, user_lock_requested=T => TRUE
 pass "system lock succeeds once the session is secure"
 
 mapfile -t shutdown < <(rg '^(pkill|timeout) ' "$call_log")
@@ -113,6 +122,8 @@ grep -q "no lock screen is configured" "$tmpdir/stderr" ||
 # SYS-REQ-260912-T0XP:error_handling:negative
 grep -q "^omarchy-notification-send .*Screen did not lock" "$call_log" ||
   fail "system lock warns on screen when it could not lock"
+# SW-REQ-261006-861H:error_handling:negative
+# MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => TRUE
 pass "system lock fails when no lock screen is configured"
 
 # The earliest exit in the script, so the one most likely to strand the work
@@ -148,6 +159,18 @@ pass "system lock re-requests a lock the shell dropped"
 rg -q '^pkill -f \[o\]rg\.omarchy\.screensaver$' "$call_log" ||
   fail "system lock still closes the screensaver when the lock fails"
 pass "system lock still closes the screensaver when the lock fails"
+
+# #10299: a stalled request stays latched as requested, so the shell answers
+# "ok" to every later lock without ever securing. A request still pending is
+# not a locked session, so this must still fail loudly.
+rc=0
+SECURE_AFTER=never REQUESTED=true LOCK_REPLY=ok run_lock || rc=$?
+# SW-REQ-261006-861H:error_handling:negative
+(( rc == 1 )) || fail "system lock fails when an accepted lock never secures" "exit $rc"
+grep -q "^omarchy-notification-send .*Screen did not lock" "$call_log" ||
+  fail "system lock warns on screen when an accepted lock never secures"
+# MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => TRUE
+pass "system lock fails when an accepted lock never secures"
 
 # The variant blocks below start from the shell mock above (it answers
 # `lock lock` and reports the session secure on the first `lock status`), then
@@ -263,6 +286,7 @@ pass "system lock completes the sequence and fails visibly when the session-lock
 control_log="$tmpdir/calls-control"
 PATH="$mock_bin:$PATH" CALL_LOG="$control_log" true
 # MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=F => TRUE [no-action: omarchy-system-lock is never invoked in this control, and the pkill/pidwait spy log stays empty — the signal path is unreachable without a lock request]
+# MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records no exit and zero omarchy-notification-send calls]
 # MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records zero omarchy-shell/hyprctl/pkill calls]
 if [[ -f $control_log ]]; then
   fail "no lock action runs without a lock request" "calls: $(cat "$control_log")"

@@ -17,7 +17,7 @@ lock_ipc() {
   OMARCHY_SHELL_IPC_TIMEOUT="$limit" omarchy-shell "$@" 2>/dev/null
 }
 
-# Implements: SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89 — reads lock status: secure, still locking, or idle (not locked)
+# Implements: SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89, SW-REQ-261006-861H — reads lock status: secure, still locking, or idle (not locked)
 lock_state() {
   jq -r 'if .secure == true then "secure"
          elif .requested == true then "locking"
@@ -25,7 +25,7 @@ lock_state() {
     <<<"$(lock_ipc 0.5s lock status)" 2>/dev/null
 }
 
-# Implements: SYS-REQ-260927-WC89 — the Lock row's callee reports a lock that did not hold: exit 1 and an on-screen notification
+# Implements: SYS-REQ-260927-WC89, SW-REQ-261006-861H — the Lock row's callee reports a lock that did not hold: exit 1 and an on-screen notification
 report_unsecured() {
   printf 'omarchy-system-lock: the session was not locked (%s)\n' "$1" >&2
 
@@ -73,6 +73,7 @@ if [[ $lock_reply == "missing-pam" ]]; then
   report_unsecured "no lock screen is configured"
 fi
 
+# Implements: SW-REQ-261006-861H — exit 0 only once lock status reports the session secure; ask again while no request is pending; give up after lock_timeout
 deadline=$((SECONDS + lock_timeout))
 
 while (( SECONDS < deadline )); do
