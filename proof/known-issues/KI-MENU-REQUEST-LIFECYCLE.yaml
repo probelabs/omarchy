@@ -21,7 +21,7 @@ reproducer_command: pocs/menu-qml-static.sh
 introduced_in: inception
 defect_class: latent
 minimization_status: candidate
-mitigation: With this change, a new summon answers the request it displaces with its done file alone, so the earlier caller exits as cancelled, and a caller whose menu process exits gives up within about a second (bin/omarchy-menu-handshake). The busy-writer race in finishRequest is unchanged.
+mitigation: With this change, a new summon answers the request it displaces with its done file alone. The earlier caller then exits as cancelled. A caller whose menu process exits gives up within about a second (bin/omarchy-menu-handshake). finishRequest still writes through the shared resultProc, so a pick made during an earlier write can still be lost.
 remediation: 'Finish (or sentinel) the outstanding request before replacing its files; queue the write when resultProc is running; treat a doneFile-only request as cancel-only. #9056 (head b7bd59c4) answers a superseded request and fixes the busy-writer race; a deadline in omarchy-menu-select is still needed for a dead menu process.'
 notes:
     - 'Upstream: original #7818 (2026-08-22) reports only the superseded-summon leg; duplicate #9057; open fix PRs #7826 and #9056; related open PR #9031.'
@@ -107,6 +107,10 @@ history:
       by: agent:claude-code
       action: edit
       detail: set-reproducer-command,set-mitigation,append-note,set-customer-impact
+    - at: "2026-10-06T08:53:28Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-mitigation
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
