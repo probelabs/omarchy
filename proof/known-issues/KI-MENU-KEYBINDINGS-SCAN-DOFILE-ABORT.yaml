@@ -19,6 +19,7 @@ notes:
     - 'Upstream: original fix PR #7564 (2026-08-20); later duplicate fix PR #13276; no issue tracks it.'
     - 'Reproducer (2026-10-05): two arms. Arm A is the shipped trigger above (qconsole''s scale comparison). Arm B guards that comparison and adds a user monitors.lua that builds a mode string with string.format("%dx%d@%d", ...) from the active monitor; the library call rejects the mock value and the scan ends before hypr.bindings. Both arms lose the user''s SSH bind on this branch. A fix that only makes the mock absorb operators flips arm A; a per-module pcall around require (the remediation) flips both.'
     - 'On this mirror (omacom/omarchy#7564 at 7b49d0bb, applied onto quattro 035ce29f): arm A no longer reproduces. The new stub absorbs qconsole''s scale comparison and the reported ipairs loops over stub collections, so the shipped config is scanned to the end and the user''s rebind and new bind are cached. Arm B still reproduces: a user module that passes a stub value to a library call that checks its argument type (string.format("%d"), math.floor, string.lower, a numeric for limit) still ends the scan before hypr.bindings. The KI stays open; a per-module pcall around require closes arm B.'
+    - 'Also new with omacom/omarchy#7564 at 7b49d0bb: the stub answers nil for a numeric key (so ipairs over a stub list ends), so a user module that indexes the first element directly, for example local first = hl.get_monitors()[1]; hl.monitor({ output = first.name }) or hl.get_workspaces()[1].id, now raises "attempt to index a nil value" and ends the scan before hypr.bindings. Measured on Linux with the full shipped config and qconsole''s comparisons guarded: quattro-proof 1e433732 keeps the user''s SSH bind and Terminal rebind, this mirror loses both, and a per-module pcall around require keeps them. On the unguarded shipped config quattro already stops at qconsole, so the outcome for such a user is unchanged by the PR; a guarded form (if first then ... end) is unaffected.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -67,6 +68,10 @@ history:
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-keybindings-scan-dofile-abort.yaml
+    - at: "2026-10-06T08:56:29Z"
+      by: agent:claude-code
+      action: edit
+      detail: append-note
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
