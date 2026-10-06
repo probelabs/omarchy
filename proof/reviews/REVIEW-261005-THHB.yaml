@@ -11,7 +11,7 @@ citations:
     - bin/omarchy-menu-keybindings:668@call_lua_function_if_marked
     - bin/omarchy-menu-keybindings:676@dispatch_lua_function_binding
     - bin/omarchy-menu-keybindings:720@dispatch_binding
-    - test/shell.d/keybindings-menu-test.sh:391
-    - test/shell.d/keybindings-menu-test.sh:415
-    - test/shell.d/keybindings-menu-test.sh:453
-    - test/shell.d/keybindings-menu-test.sh:573
+    - test/shell.d/keybindings-menu-test.sh:393
+    - test/shell.d/keybindings-menu-test.sh:418
+    - test/shell.d/keybindings-menu-test.sh:456
+    - test/shell.d/keybindings-menu-test.sh:578

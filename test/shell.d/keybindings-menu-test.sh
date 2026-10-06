@@ -178,6 +178,7 @@ rendered=$(keybindings)
 grep -q 'SUPER + ~  *→ Toggle scratchpad' <<<"$rendered" ||
   fail "a keycode resolves to the symbol printed on the key too" "$rendered"
 # MCDC SW-REQ-260922-9DMS: keycode_binding=T, symbol_resolved=T => TRUE
+# SW-REQ-260922-9DMS:error_handling:nominal
 pass "a keycode resolves to the symbol printed on the key too"
 
 # A keycode the keymap cannot name keeps its raw code:N form rather than
@@ -198,6 +199,7 @@ rendered=$(keybindings)
 grep -q 'SUPER + code:9999  *→ Mystery action' <<<"$rendered" ||
   fail "an unresolvable keycode keeps its raw code:N form" "$rendered"
 # MCDC SW-REQ-260922-9DMS: keycode_binding=T, symbol_resolved=F => FALSE
+# SW-REQ-260922-9DMS:error_handling:negative
 pass "an unresolvable keycode keeps its raw code:N form"
 
 # A chord refused for width opens a row of its own, and the next chord tries
@@ -389,6 +391,7 @@ called 264 ||
 left_no_mark ||
   fail "a Lua function bind that was called leaves no mark" "$(cat "$tmpdir/lua-state")"
 # MCDC SW-REQ-261005-4MKB: function_bind_called=T, function_bind_picked=T, lua_state_reloaded=F, one_bind_matches_identity=T => TRUE
+# SW-REQ-261005-4MKB:error_handling:nominal
 pass "selecting a Lua function bind calls it through its ref"
 
 stub_hyprctl_dispatch <<BINDS
@@ -528,6 +531,7 @@ left_no_mark ||
   fail "a failed hyprctl binds leaves no mark" "$(cat "$tmpdir/lua-state")"
 ! PATH="$stub_bin:$PATH" dispatch_binding "__lua" "" >/dev/null ||
   fail "a Lua bind with nothing to look up is refused"
+# SW-REQ-261005-4MKB:error_handling:negative
 pass "a failed hyprctl binds calls nothing"
 
 # The row's identity comes back from the cache file; one that no longer
@@ -559,6 +563,7 @@ chmod +x "$stub_bin/hyprctl"
   fail "a refused mark is refused"
 [[ $(grep -c '^dispatch ' "$tmpdir/hyprctl.log") == 1 && $(grep -c '^binds' "$tmpdir/hyprctl.log") == 0 ]] ||
   fail "a refused mark stops before the lookup and the call" "$(cat "$tmpdir/hyprctl.log")"
+# SW-REQ-261005-4MKB:error_handling:negative
 pass "a refused mark stops before the lookup and the call"
 
 # A menu closed without a pick runs no bind.
