@@ -62,6 +62,7 @@ exit 1
 MOCK
 chmod +x "$mock_bin"/*
 
+# Verifies: SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89 — runs the real script against the shell mock, bounded
 run_lock() {
   local rc=0
   : >"$call_log"
@@ -152,10 +153,12 @@ pass "system lock still closes the screensaver when the lock fails"
 # `lock lock` and reports the session secure on the first `lock status`), then
 # override one command. run_variant bounds the script the same way run_lock does
 # and returns its exit status instead of aborting the test.
+# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP — copies the shell mock for one variant
 variant_bin() {
   mkdir -p "$1"
   cp "$mock_bin"/* "$1"/
 }
+# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP — runs the real script with one command overridden
 run_variant() {
   local bin=$1 log=$2 rc=0
   : >"$tmpdir/polls"
