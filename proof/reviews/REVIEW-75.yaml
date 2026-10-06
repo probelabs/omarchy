@@ -8,4 +8,4 @@ comment: 'Spec conformance after upstream de63134b merge (f8146395). The bind_co
 citations:
     - bin/omarchy-menu-keybindings:8
     - bin/omarchy-menu-keybindings:213
-    - test/shell.d/keybindings-menu-test.sh:223
+    - test/shell.d/keybindings-menu-test.sh:225

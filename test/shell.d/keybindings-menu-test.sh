@@ -168,6 +168,7 @@ rendered=$(keybindings)
 grep -q 'SUPER + ~  *→ Toggle scratchpad' <<<"$rendered" ||
   fail "a keycode resolves to the symbol printed on the key too" "$rendered"
 # MCDC SW-REQ-260922-9DMS: keycode_binding=T, symbol_resolved=T => TRUE
+# SW-REQ-260922-9DMS:error_handling:nominal
 pass "a keycode resolves to the symbol printed on the key too"
 
 # A keycode the keymap cannot name keeps its raw code:N form rather than
@@ -188,6 +189,7 @@ rendered=$(keybindings)
 grep -q 'SUPER + code:9999  *→ Mystery action' <<<"$rendered" ||
   fail "an unresolvable keycode keeps its raw code:N form" "$rendered"
 # MCDC SW-REQ-260922-9DMS: keycode_binding=T, symbol_resolved=F => FALSE
+# SW-REQ-260922-9DMS:error_handling:negative
 pass "an unresolvable keycode keeps its raw code:N form"
 
 # A chord refused for width opens a row of its own, and the next chord tries
