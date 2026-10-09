@@ -508,6 +508,9 @@ Item {
       service.requestLedger = null
       check(JSON.parse(ipc.request()).reason === "receipt-unavailable", "request() without a ledger refuses instead of locking untracked")
       service.requestLedger = ledger
+      // a lock-state notification while the lock is held: the release hook does not release the receipt
+      sessionLockObject().lockStateChanged()
+      check(JSON.parse(ipc.result(held.requestId)).state !== "failed", "a held lock keeps its receipt across a lock-state notification")
       // recoverStrandedLock condition arms via direct state
       service.strandedLock = true
       service.recoverStrandedLock()
@@ -542,6 +545,9 @@ Item {
       service.requestLedger = null
       check(JSON.parse(ipc.request()).reason === "receipt-unavailable" && !service.lockRequested,
             "request() without a ledger starts no lock")
+      // a legacy lock with no ledger still locks (it just tracks nothing)
+      check(service.beginLock() === true && service.lockRequested, "beginLock without a ledger still requests the lock")
+      service.finishUnlock()
       service.requestLedger = ledger
     })
     step(200, function () {
@@ -1172,6 +1178,8 @@ Item {
       service.refreshFingerprintStatus()
     })
     stepWait(300, function () { return probeAnswers > answersMark }, "the unlocked listed answer should arrive")
+    // a probe started earlier can finish first and bump the counter; wait for the listed answer itself
+    stepWait(50, function () { return service.fingerprintConfigured }, "the unlocked listed answer should configure the reader")
     step(50, function () {
       check(service.fingerprintConfigured && !service.fingerprintAuthenticating, "a listed print outside the lock starts nothing")
       stubState("fprintd", "no")
