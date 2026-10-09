@@ -5,15 +5,15 @@ results:
       command: ./pocs/wc89-silent-lock-exit0.sh
       status: fail
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-09T06:54:27Z"
-      revision: d0e326ab90f2ecd2638987214bdd7874a604674e
+      executed_at: "2026-10-09T07:44:24Z"
+      revision: 4179ca994b2413a15c0088ebc8c389e88de2e7a6
       input_set:
         - 'Captured by `proof evidence capture KI-260930-2FBE` from the KnownIssue''s reproducer command: ./pocs/wc89-silent-lock-exit0.sh. The command exited fail; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_not_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - 'Tripwire mutation — the declared product-code edit that flips this reproducer''s outcome: bin/omarchy-system-lock line 10 `omarchy-shell lock lock >/dev/null` becomes `omarchy-shell lock lock >/dev/null || exit 1` (with the user-visible failure surfacing owned by the lock component, SYS-REQ-260912-T0XP family): the tripwire''s stopped-shell and absent-binary arms then exit non-zero, the assertions in pocs/wc89-silent-lock-exit0.sh fail, and the tripwire flips red. The control arm is unaffected.'
         - pocs/wc89-silent-lock-exit0.sh
       freshness_hashes:
         pocs/wc89-silent-lock-exit0.sh: sha256:61ff73344df8b94e54ed3070abcbb464cb028a754e3d8e9fb924c03c8b801a40
-        proof/known-issues/KI-260930-2FBE.yaml: ki-content-v1:sha256:29e2b23534af24abe017db84dc02fb20106d1b0a0b1c12d9e90b1b698b0fdd35
+        proof/known-issues/KI-260930-2FBE.yaml: ki-content-v1:sha256:b3cf3c460342ed4ea99d7ff3643c3be53a6d89a38c335d0e443620b097d55a5a
       known_issues:
         - KI-260930-2FBE
       config:
