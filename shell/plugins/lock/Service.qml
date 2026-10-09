@@ -4,7 +4,9 @@ import Quickshell.Io
 import Quickshell.Services.Pam
 import Quickshell.Wayland
 import qs.Commons
+import qs.Commons as Commons
 import "FingerprintModel.js" as FingerprintModel
+import "LockRequestModel.js" as LockRequests
 
 // Implements: SYS-REQ-260912-T0XP, SYS-REQ-260912-FRG0 — on-demand lock; session-lock state
 Item {
@@ -19,6 +21,7 @@ Item {
   readonly property string currentBackgroundLink: stateHome + "/omarchy/current/background"
 
   property bool lockRequested: false
+  property var requestLedger: null
   property bool pendingSessionLock: false
   property bool authenticatingPassword: false
   property bool fingerprintAuthenticating: false
@@ -221,7 +224,12 @@ Item {
       return false
     }
 
+    // Legacy callers can start after an asynchronous unlock too.
+    if (requestLedger && requestLedger.active
+        && LockRequests.result(requestLedger, requestLedger.active, Date.now()).state === "secured")
+      LockRequests.released(requestLedger, Date.now())
     resetAuthenticationState()
+    LockRequests.request(requestLedger, Date.now())
     lockRequested = true
     armBlankTimer()
     logEvent("lock-requested")
@@ -240,6 +248,7 @@ Item {
     //mcdc:ignore:defensive lockRequested implies locked (locked is lockRequested || sessionLock.locked || sessionLock.secure), so !lockRequested can never flip this outcome independently of !root.locked and the pair is structurally impossible; both reachable arms are witnessed by the unlock harness
     if (!root.locked && !lockRequested) return
 
+    LockRequests.released(requestLedger, Date.now())
     lockRequested = false
     pendingSessionLock = false
     sessionLockStabilizeTimer.stop()
@@ -479,16 +488,21 @@ Item {
     onSecureStateChanged: {
       root.logEvent("secure=" + secure)
       if (secure) {
+        // Record security before authentication can immediately unlock again.
+        LockRequests.secured(root.requestLedger, Date.now())
         root.pendingSessionLock = false
         sessionLockStabilizeTimer.stop()
         pendingSessionLockTimer.stop()
         root.startFingerprint()
+      } else if (!root.lockRequested && !sessionLock.locked) {
+        LockRequests.released(root.requestLedger, Date.now())
       }
     }
 
     // Implements: SYS-REQ-260912-T0XP
     onLockStateChanged: {
       root.logEvent("session-locked=" + locked)
+      if (!locked) LockRequests.released(root.requestLedger, Date.now())
 
       //mcdc:ignore:tooling-limit quickshell 0.3.1 never delivers a locked=true transition to onLockStateChanged (the handler only fires on the unlock transition), so the held-lock branch is unreachable from any in-process harness invocation; the compositor-drop cleanup it guards is exercised by the witnessed unlock path
       if (locked) {
@@ -510,7 +524,7 @@ Item {
 
     WlSessionLockSurface {
       id: lockSurface
-      color: Color.background
+      color: Commons.Color.background
 
       LockView {
         id: lockView
@@ -882,6 +896,18 @@ Item {
     else armBlankTimer()
   }
 
+  // A new kernel UUID on each shell instance prevents old receipts from
+  // satisfying a request after a restart. Fail closed until it is loaded.
+  FileView {
+    path: "/proc/sys/kernel/random/uuid"
+    watchChanges: false
+    printErrors: false
+    onLoaded: {
+      var instance = String(text() || "").trim()
+      if (!root.requestLedger && instance !== "") root.requestLedger = LockRequests.create(instance)
+    }
+  }
+
   FileView {
     id: passwordPamFileView
     path: "/etc/pam.d/omarchy-lock-password"
@@ -931,6 +957,22 @@ Item {
     // Implements: SYS-REQ-260912-FRG0
     function isLocked(): string {
       return root.locked ? "true" : "false"
+    }
+
+    function request(): string {
+      if (!root.passwordPamConfigured) return JSON.stringify({ reason: "missing-pam" })
+      // An outcome may have been recorded while an earlier unlock was still
+      // releasing its compositor flags. Preserve its archive, not its reuse.
+      if (!root.locked) LockRequests.released(root.requestLedger, Date.now())
+      var receipt = LockRequests.request(root.requestLedger, Date.now())
+      if (!receipt) return JSON.stringify({ reason: "receipt-unavailable" })
+      if (sessionLock.secure) LockRequests.secured(root.requestLedger, Date.now())
+      if (!root.locked && !root.beginLock()) LockRequests.released(root.requestLedger, Date.now())
+      return JSON.stringify(LockRequests.result(root.requestLedger, receipt.requestId, Date.now()))
+    }
+
+    function result(requestId: string): string {
+      return JSON.stringify(LockRequests.result(root.requestLedger, requestId, Date.now()))
     }
 
     // Implements: SYS-REQ-260912-FRG0
