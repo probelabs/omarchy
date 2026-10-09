@@ -1,0 +1,15 @@
+id: REVIEW-261009-PTFG
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-09T08:55:18Z"
+subject: SW-REQ-261009-RCPT
+decision: approved
+comment: 'Read shell/plugins/lock/LockRequestModel.js and the request/result IPC in Service.qml at upstream head 3a590ca0 merged onto quattro 035ce29f. secured() is the only writer of state secured, and only for the active record while it is pending. released() turns a pending record into failed and never rewrites a secured one; it stamps finishedAt and clears the active token. result() answers unknown for an id the ledger does not hold (another request, or one from an earlier shell instance, whose ids carry a different per-start UUID) and deletes a non-active, non-pending record whose finishedAt is 30 s old before answering. So a read returns secured exactly when that request became secure and its release is under 30 s old, matching lock_receipt_secured <=> (lock_request_secured & !lock_receipt_expired). The 64-record cap only refuses NEW requests (not_modeled). Witnesses: the node block in test/shell.d/system-lock-test.sh drives the module directly (fast unlock, other request, restart, read expiry, long-held lock) and the real-shell QML harness drives request()/result().'
+citations:
+    - shell/plugins/lock/LockRequestModel.js:35@secured
+    - shell/plugins/lock/LockRequestModel.js:45@released
+    - shell/plugins/lock/LockRequestModel.js:58@result
+    - shell/plugins/lock/LockRequestModel.js:12@request
+    - shell/plugins/lock/Service.qml:964@request
+    - test/shell.d/system-lock-test.sh:62
+    - test/shell.d/system-lock-test.sh:38
