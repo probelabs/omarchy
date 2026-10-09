@@ -7,9 +7,12 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 # Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89, SW-REQ-261006-861H, SW-REQ-261009-RCPT
 
 # Row dispositions (see proof mcdc show <REQ-ID> for the tables):
-#mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the lock path runs pkill -x ttfx and timeout 1s pidwait as unconditional sequence points; a run that reaches the path always attempts the signal and always waits bounded, so neither-fails is structural [reviewed: REVIEW-1]
-#mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the only wait is `timeout 1s pidwait`; there is no unbounded wait path in the file [reviewed: REVIEW-1]
+#mcdc:ignore:defensive SW-REQ-260912-MXQG: lock_secure_reported=T, ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- once the request reads secured, close_screensaver runs pkill -x ttfx and timeout 1s pidwait as unconditional sequence points; a run that reaches it always attempts the signal and always waits bounded, so neither-fails is structural [reviewed: REVIEW-1]
+#mcdc:ignore:defensive SW-REQ-260912-MXQG: lock_secure_reported=T, ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the only wait is `timeout 1s pidwait`; there is no unbounded wait path in the file [reviewed: REVIEW-1]
+#mcdc:ignore:defensive SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=T, session_lock_engaged=F, user_lock_requested=T => FALSE -- close_screensaver runs only in the secured) arm, after the shell reported this lock request secure; every path where the lock is not engaged (refused, untracked, dropped, never secured, shell down) exits through report_unsecured without stopping the screensaver, which the failure tests assert [reviewed: REVIEW-261006-RY53]
 #mcdc:ignore:defensive SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=T => FALSE -- omarchy-system-lock unconditionally attempts the lock, the layout reset, and the screensaver stop in sequence; an all-three-failed run requires a broken build, not a reachable input [reviewed: REVIEW-16]
+#mcdc:ignore:defensive SW-REQ-261009-RCPT: lock_receipt_expired=F, lock_receipt_secured=F, lock_request_secured=T, lock_result_read=T => FALSE -- secured() is the only writer of state secured, released() never rewrites a secured record, and result() drops a record only when it is not the active token and 30 s have passed since its release; within that window a secured request always reads secured [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261009-RCPT: lock_receipt_expired=T, lock_receipt_secured=T, lock_request_secured=T, lock_result_read=T => FALSE -- result() deletes a released record whose release is 30 s old before it builds the reply, so an expired request reads unknown; the read-expiry assertions below prove it [reviewed: REVIEW-261006-RY53]
 #mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=T => FALSE -- the only non-zero exit is in report_unsecured, which sends the notification first (its failure is ignored), and the script has no set -e [reviewed: REVIEW-261006-RY53]
 #mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=T => FALSE -- the only exit 0 is the secured) arm of the receipt loop; the never-secure tests below fail if pending or a missing receipt ends the wait with success [reviewed: REVIEW-261006-RY53]
 #mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => FALSE -- the notification is sent only in report_unsecured, which always exits 1 [reviewed: REVIEW-261006-RY53]
@@ -156,6 +159,14 @@ assertEqual(vm.runInNewContext('(function() {' + legacy[1] + '})()', { root: leg
 legacyRoot.passwordPamConfigured = false
 assertEqual(vm.runInNewContext('(function() {' + legacy[1] + '})()', { root: legacyRoot }), 'missing-pam', 'legacy lock IPC retains its refusal reply')
 JS
+# The node block above drives shell/plugins/lock/LockRequestModel.js and the
+# shipped Service.qml handlers; run_node_test fails the file on any assertion.
+# MCDC SW-REQ-261009-RCPT: lock_receipt_expired=F, lock_receipt_secured=T, lock_request_secured=T, lock_result_read=T => TRUE
+# MCDC SW-REQ-261009-RCPT: lock_receipt_expired=F, lock_receipt_secured=F, lock_request_secured=F, lock_result_read=T => TRUE
+# MCDC SW-REQ-261009-RCPT: lock_receipt_expired=T, lock_receipt_secured=F, lock_request_secured=T, lock_result_read=T => TRUE
+# MCDC SW-REQ-261009-RCPT: lock_receipt_expired=T, lock_receipt_secured=T, lock_request_secured=T, lock_result_read=F => TRUE [no-action: the saturation loop secures and releases 63 requests whose receipts are never read, and nothing reports them]
+# SW-REQ-261009-RCPT:error_handling:nominal
+# SW-REQ-261009-RCPT:error_handling:negative
 
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
@@ -251,7 +262,7 @@ grep -q '^omarchy-shell lock request$' "$call_log" ||
   fail "system lock engages the session lock through the shell IPC" "calls: $(cat "$call_log")"
 grep -q '^hyprctl switchxkblayout all 0$' "$call_log" ||
   fail "system lock resets the keyboard layout to the default" "calls: $(cat "$call_log")"
-# MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=T, user_lock_requested=T => TRUE
+# MCDC SW-REQ-260912-MXQG: lock_secure_reported=T, ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=T, user_lock_requested=T => TRUE
 # MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=T, session_lock_engaged=T, user_lock_requested=T => TRUE
 pass "successful lock preserves screensaver shutdown ordering after security"
 
@@ -276,6 +287,8 @@ for reason in missing-pam unavailable malformed dropped restart; do
   # SW-REQ-261006-861H:error_handling:negative
   assert_failure "$rc"
   # MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => TRUE
+  # MCDC SW-REQ-260912-MXQG: lock_secure_reported=F, ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => TRUE
+  # SW-REQ-260912-MXQG:error_handling:negative
   pass "$reason cannot report lock success or close the screensaver"
 done
 
@@ -333,8 +346,8 @@ chmod +x "$mock_bin_pk"/*
 rc=0
 run_variant "$mock_bin_pk" "$call_log_pk" || rc=$?
 (( rc == 0 )) || fail "system lock still succeeds when ttfx cannot be signalled" "exit $rc"
-# MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=T, user_lock_requested=T => FALSE
-# MCDC SW-REQ-260912-MXQG: ttfx_running=F, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => TRUE [no-action: pkill spy exits 1 on -x ttfx so zero SIGTERMs are delivered; the wait degrades to the logged `timeout 1s pidwait` bound]
+# MCDC SW-REQ-260912-MXQG: lock_secure_reported=T, ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=T, user_lock_requested=T => FALSE
+# MCDC SW-REQ-260912-MXQG: lock_secure_reported=T, ttfx_running=F, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => TRUE [no-action: pkill spy exits 1 on -x ttfx so zero SIGTERMs are delivered; the wait degrades to the logged `timeout 1s pidwait` bound]
 # MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=T, screensaver_stopped=F, session_lock_engaged=T, user_lock_requested=T => FALSE
 grep -q '^pkill -x ttfx$' "$call_log_pk" ||
   fail "system lock still attempts the ttfx stop when the signal cannot land" "calls: $(cat "$call_log_pk")"
@@ -408,7 +421,7 @@ pass "system lock resets the layout, keeps the screensaver and fails visibly whe
 # Control: without a lock request (script never invoked) no lock action runs.
 control_log="$tmpdir/calls-control"
 PATH="$mock_bin:$PATH" CALL_LOG="$control_log" true
-# MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=F => TRUE [no-action: omarchy-system-lock is never invoked in this control, and the pkill/pidwait spy log stays empty — the signal path is unreachable without a lock request]
+# MCDC SW-REQ-260912-MXQG: lock_secure_reported=T, ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=F => TRUE [no-action: omarchy-system-lock is never invoked in this control, and the pkill/pidwait spy log stays empty — the signal path is unreachable without a lock request]
 # MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records no exit and zero omarchy-notification-send calls]
 # MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records zero omarchy-shell/hyprctl/pkill calls]
 if [[ -f $control_log ]]; then
