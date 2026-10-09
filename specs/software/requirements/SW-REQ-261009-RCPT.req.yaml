@@ -1,6 +1,6 @@
 id: SW-REQ-261009-RCPT
 version: 1
-status: draft
+status: review
 priority: shall
 category: functional
 req_type: guarantee
@@ -93,7 +93,7 @@ history:
     created_by: agent:claude-code
     created_at: "2026-10-09T06:50:00Z"
     last_modified_by: agent:claude-code
-    last_modified_at: "2026-10-09T07:29:44Z"
+    last_modified_at: "2026-10-09T08:42:19Z"
 obligation_checklist:
     - error_handling
 obligation_suppressions:
@@ -111,3 +111,10 @@ stakeholder:
         - id: AC-001
           text: Given a request that became secure and that the user unlocked at once, a read within 30 s returns secured. Given another request, an earlier shell instance's request, or a read after 30 s, the read does not return secured.
           verification_method: test
+lifecycle:
+    change_history:
+        - date: "2026-10-09T08:42:19Z"
+          from: draft
+          to: review
+          reason: '[omacom/omarchy#9429] [omacom/omarchy#9429] PR #9429 review at head 3a590ca0: requirement authored for the per-request receipt the script relies on; executing witnesses in test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml'
+          changed_by: agent:claude-code
