@@ -7,7 +7,7 @@ decision: approved
 comment: 'Read shell/plugins/lock/Service.qml and FingerprintModel.js at upstream 035ce29f. The probe process runs LC_ALL=C fprintd-list "$USER" when the fingerprint PAM file and fprintd-list exist and prints no otherwise; its exit hands the raw answer to applyFingerprintProbe. classifyProbe returns yes when any line is a " - #N:" row, no when the trimmed answer is exactly no or contains has no fingers enrolled, and unknown for anything else; the yes test runs first. applyFingerprintProbe returns on unknown before touching fingerprintConfigured (counting a probe miss and, while locked and unconfigured, arming the paced recheck); on yes or no it assigns fingerprintConfigured = (status === yes). So fingerprint_auth_configured after an answer is probe_lists_print, or the previous value when the answer is neither a print nor a none, exactly the formula. The four violation rows need that order or the early return removed and are dispositioned defensive. Witnesses in test/qml/lock/shell.qml, all on a real lock with the fprintd-list stub printing the real answers: an unreachable fprintd while unconfigured (stays off, probe streak 1, recheck at 1 s); a has-no-fingers answer after a listed print (turns off and stops attempts); a two-reader answer with a print on one and none on the other while configured (stays on); and a no-answer window proved by the probe-exit counter (no-action row).'
 citations:
     - shell/plugins/lock/Service.qml:162@applyFingerprintProbe
-    - shell/plugins/lock/Service.qml:728
+    - shell/plugins/lock/Service.qml:744
     - shell/plugins/lock/FingerprintModel.js:42@classifyProbe
     - test/qml/lock/shell.qml:932
     - test/qml/lock/shell.qml:987

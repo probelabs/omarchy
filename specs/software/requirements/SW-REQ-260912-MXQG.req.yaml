@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when user_lock_requested & lock_secure_reported & ttfx_running the system_lock shall eventually satisfy ttfx_signalled & ttfx_wait_bounded
-description: When the user locks the session, the shell reports the lock request secure, and the ttfx screensaver is running, omarchy-system-lock shall send SIGTERM to ttfx. The script shall wait up to 1 s for ttfx to exit before it finishes. A lock that is not secure leaves the screensaver running.
+description: When the user locks the session and ttfx is running, omarchy-system-lock shall send SIGTERM to ttfx after the shell reports the lock secure. The script shall wait up to 1 s for ttfx to exit before it finishes. A lock that is not secure leaves the screensaver running.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,7 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: ttfx handles SIGTERM asynchronously. Closing its terminal before it exits can leave a stuck full-screen process above the lock screen. Since omacom/omarchy#9429 (head 3a590ca0) the screensaver is closed only once the lock request is secure, so a refused or stalled lock keeps the screensaver up instead of exposing the desktop.
+rationale: ttfx handles SIGTERM asynchronously. Closing its terminal before it exits can leave a stuck full-screen process above the lock screen. Since omacom/omarchy#9429 (head 3a590ca0), the script stops the screensaver only after the shell reports the lock request secure. A refused or stalled lock therefore keeps the screensaver up, and the desktop stays hidden.
 tags: []
 variables: []
 traces:

@@ -6,4 +6,4 @@ subject: SW-REQ-260912-MXQG
 decision: approved
 comment: 'Formula matches code: pkill -x ttfx delivers SIGTERM whenever the lock runs (pkill no-ops when ttfx is absent, so the ttfx_running antecedent is honored vacuously); the wait is bounded by a 10x0.1s pgrep loop (~1s) before the script finishes, matching ttfx_wait_bounded. The ''|| true'' idioms are exit-status-constant and excluded from MC/DC by tooling-limit ignore.'
 citations:
-    - bin/omarchy-system-lock:26
+    - bin/omarchy-system-lock:62
