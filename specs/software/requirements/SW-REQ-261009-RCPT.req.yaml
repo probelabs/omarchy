@@ -26,7 +26,7 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-09T07:44:10.895534341Z"
+    reviewed_at: "2026-10-09T08:23:10.47599057Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:820d169af7fb83b95859f83ad3764266bcbfc022cf6d4607025b4a8e57140de6
     reviewed_targets:
@@ -59,6 +59,21 @@ traces:
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/qml/lock/shell.qml:354
             - test/qml/lock/shell.qml:503
+            - test/shell.d/system-lock-test.sh:14
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-09T08:23:10.47599057Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0: re-recorded after the receipt harness helpers moved to the end of test/qml/lock/shell.qml (line shift only). The ledger in LockRequestModel.js and the request/result IPC in Service.qml implement this requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness it.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockRequestModel.js:11
+            - shell/plugins/lock/LockRequestModel.js:6
+            - shell/plugins/lock/Service.qml:220
+            - shell/plugins/lock/Service.qml:246
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/qml/lock/shell.qml:343
+            - test/qml/lock/shell.qml:492
             - test/shell.d/system-lock-test.sh:14
             - test/shell.d/system-lock-test.sh:7
 verification:
