@@ -641,6 +641,22 @@ project:
         mode: source_native
     review:
         authority: advisory
+        # Draft -> known-issue promotion (`proof known-issue promote`, checklist
+        # ki_promotion_v1; `proof help ki-promotion`). A promotion's reproducer
+        # commit may add files only in a NEW directory under reproducer_dirs
+        # (pocs/ is outside the product universe: production_exclude above).
+        # The capability checks back `proof known-issue promote env`: a worker
+        # without them releases the item instead of faking the run.
+        ki_promotion:
+            reproducer_dirs:
+                - pocs
+            capabilities:
+                toolchain:
+                    check: 'for t in proof git bash node jq python3; do command -v "$t" >/dev/null || { echo "missing $t"; exit 1; }; done; echo "proof git bash node jq python3 present"'
+                    provision: "install the proof CLI, git, bash, node, jq and python3"
+                linux-session:
+                    check: 'd="${PROOF_ENV_DIR:-$HOME/proof-env}"; [ "$(uname -s)" = Linux ] || { echo "not Linux"; exit 1; }; { [ -x "$d/sysroot/usr/bin/sway" ] || command -v sway >/dev/null; } || { echo "missing sway"; exit 1; }; PATH="$PATH:$d/bin"; for t in quickshell wtype socat timeout md5sum; do command -v "$t" >/dev/null || { echo "missing $t"; exit 1; }; done; echo "headless sway session tools present (test/junit/live-session.sh)"'
+                    provision: "install sway (or $PROOF_ENV_DIR/sysroot/usr/bin/sway), quickshell, wtype and socat (on PATH or $PROOF_ENV_DIR/bin); test/junit/live-session.sh starts a private headless sway per run"
         # Behaviour-diff harness (`proof change behavior-diff`): runs at base and
         # head in throwaway worktrees over the same inputs; every output
         # difference is recorded. See test/bdiff/README.md. The command runs in
