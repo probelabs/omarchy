@@ -4,11 +4,16 @@ set -euo pipefail
 
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
+# Verifies: SW-REQ-260912-MXQG, SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89, SW-REQ-261006-861H, SW-REQ-261009-RCPT
 
 # Row dispositions (see proof mcdc show <REQ-ID> for the tables):
 #mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the lock path runs pkill -x ttfx and timeout 1s pidwait as unconditional sequence points; a run that reaches the path always attempts the signal and always waits bounded, so neither-fails is structural [reviewed: REVIEW-1]
 #mcdc:ignore:defensive SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=T, ttfx_wait_bounded=F, user_lock_requested=T => FALSE -- the only wait is `timeout 1s pidwait`; there is no unbounded wait path in the file [reviewed: REVIEW-1]
 #mcdc:ignore:defensive SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=T => FALSE -- omarchy-system-lock unconditionally attempts the lock, the layout reset, and the screensaver stop in sequence; an all-three-failed run requires a broken build, not a reachable input [reviewed: REVIEW-16]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=T => FALSE -- the only non-zero exit is in report_unsecured, which sends the notification first (its failure is ignored), and the script has no set -e [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=T => FALSE -- the only exit 0 is the secured) arm of the receipt loop; the never-secure tests below fail if pending or a missing receipt ends the wait with success [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => FALSE -- the notification is sent only in report_unsecured, which always exits 1 [reviewed: REVIEW-261006-RY53]
+#mcdc:ignore:defensive SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=T, lock_secure_reported=T, user_lock_requested=T => FALSE -- the secured) arm exits 0 without calling report_unsecured, the only sender of the notification [reviewed: REVIEW-261006-RY53]
 require_command jq
 real_timeout=$(command -v timeout)
 
@@ -229,6 +234,8 @@ run_lock || rc=$?
 assert_one_request
 ! grep -q "^omarchy-notification-send" "$call_log" ||
   fail "system lock sends no failure notification for a secured session" "calls: $(cat "$call_log")"
+# SW-REQ-261006-861H:error_handling:nominal
+# MCDC SW-REQ-261006-861H: lock_exit_success=T, lock_failure_notified=F, lock_secure_reported=T, user_lock_requested=T => TRUE
 pass "system lock succeeds with its matching secure receipt"
 
 mapfile -t shutdown < <(rg '^(pkill|timeout) ' "$call_log")
@@ -266,7 +273,9 @@ for reason in missing-pam unavailable malformed dropped restart; do
   LOCK_REPLY="$reason" run_lock || rc=$?
   # SYS-REQ-260927-WC89:error_handling:negative
   # SYS-REQ-260912-T0XP:error_handling:negative
+  # SW-REQ-261006-861H:error_handling:negative
   assert_failure "$rc"
+  # MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => TRUE
   pass "$reason cannot report lock success or close the screensaver"
 done
 
@@ -281,7 +290,9 @@ SECURE_AFTER=never REQUESTED=true CURRENT_SECURE=false run_lock || rc=$?
 elapsed=$((SECONDS - started))
 # #10299: a stalled request stays latched as requested and never secures.
 # SYS-REQ-260912-T0XP:error_handling:negative
+# SW-REQ-261006-861H:error_handling:negative
 assert_failure "$rc"
+# MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => TRUE
 ((elapsed >= 8 && elapsed <= 13)) || fail "an accepted never-secure request ends within the command's deadline" "$elapsed seconds"
 grep -q 'did not secure the session' "$tmpdir/stderr" || fail "never-secure failure reports its deadline"
 pass "an accepted requested:true lock that never secures fails and notifies within ten seconds"
@@ -398,6 +409,7 @@ pass "system lock resets the layout, keeps the screensaver and fails visibly whe
 control_log="$tmpdir/calls-control"
 PATH="$mock_bin:$PATH" CALL_LOG="$control_log" true
 # MCDC SW-REQ-260912-MXQG: ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=F => TRUE [no-action: omarchy-system-lock is never invoked in this control, and the pkill/pidwait spy log stays empty — the signal path is unreachable without a lock request]
+# MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=F, lock_secure_reported=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records no exit and zero omarchy-notification-send calls]
 # MCDC SYS-REQ-260912-T0XP: keyboard_layout_default=F, screensaver_stopped=F, session_lock_engaged=F, user_lock_requested=F => TRUE [no-action: same control — with no invocation the spy log records zero omarchy-shell/hyprctl/pkill calls]
 if [[ -f $control_log ]]; then
   fail "no lock action runs without a lock request" "calls: $(cat "$control_log")"

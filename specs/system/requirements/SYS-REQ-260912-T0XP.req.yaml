@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when user_lock_requested the lock_component shall eventually satisfy session_lock_engaged & keyboard_layout_default & screensaver_stopped
-description: When the user locks the session, the system shall engage the session lock through the shell IPC. The system shall reset the keyboard layout to the default. The system shall stop the ttfx screensaver and wait for it to exit before closing its terminal. The system shall lock 1Password when it is running.
+description: When the user locks the session, the system shall engage the session lock through the shell IPC. The system shall reset the keyboard layout to the default. Once the session lock is secure, the system shall stop the ttfx screensaver and wait for it to exit before closing its terminal. The system shall lock 1Password when it is running.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -19,12 +19,14 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-04T20:22:50.714386Z"
+    reviewed_at: "2026-10-06T09:09:24.472609Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:3f77f2a80c0200f078baeed027d27f972b19dedd247714a44695c2aee3c41740
     reviewed_targets:
         implemented_by:
-            bin/omarchy-system-lock: file1:c73a5cfa8c9660a364538063c5adbda8
+            bin/omarchy-system-lock: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:lock_ipc: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:lock_state: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
             shell/plugins/lock/LockView.qml: file1:20fed47979a54c4858b0e50ef7ac7452
             shell/plugins/lock/LockView.qml:clearFailureRequested: file1:20fed47979a54c4858b0e50ef7ac7452
             shell/plugins/lock/LockView.qml:forcePasswordFocus: file1:20fed47979a54c4858b0e50ef7ac7452
@@ -260,6 +262,284 @@ traces:
             - shell/plugins/lock/Service.qml:96
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-05T17:56:06.838992Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait before it returns; it now also waits until lock status reports the session secure and exits 1 with a critical notification when it is not. The Implements annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:8
+            - shell/plugins/lock/LockView.qml:221
+            - shell/plugins/lock/LockView.qml:54
+            - shell/plugins/lock/LockView.qml:58
+            - shell/plugins/lock/LockView.qml:6
+            - shell/plugins/lock/LockView.qml:63
+            - shell/plugins/lock/LockView.qml:92
+            - shell/plugins/lock/Service.qml:139
+            - shell/plugins/lock/Service.qml:144
+            - shell/plugins/lock/Service.qml:155
+            - shell/plugins/lock/Service.qml:188
+            - shell/plugins/lock/Service.qml:195
+            - shell/plugins/lock/Service.qml:238
+            - shell/plugins/lock/Service.qml:254
+            - shell/plugins/lock/Service.qml:260
+            - shell/plugins/lock/Service.qml:321
+            - shell/plugins/lock/Service.qml:328
+            - shell/plugins/lock/Service.qml:335
+            - shell/plugins/lock/Service.qml:354
+            - shell/plugins/lock/Service.qml:372
+            - shell/plugins/lock/Service.qml:378
+            - shell/plugins/lock/Service.qml:390
+            - shell/plugins/lock/Service.qml:461
+            - shell/plugins/lock/Service.qml:478
+            - shell/plugins/lock/Service.qml:489
+            - shell/plugins/lock/Service.qml:531
+            - shell/plugins/lock/Service.qml:533
+            - shell/plugins/lock/Service.qml:535
+            - shell/plugins/lock/Service.qml:537
+            - shell/plugins/lock/Service.qml:574
+            - shell/plugins/lock/Service.qml:584
+            - shell/plugins/lock/Service.qml:586
+            - shell/plugins/lock/Service.qml:589
+            - shell/plugins/lock/Service.qml:599
+            - shell/plugins/lock/Service.qml:615
+            - shell/plugins/lock/Service.qml:620
+            - shell/plugins/lock/Service.qml:656
+            - shell/plugins/lock/Service.qml:68
+            - shell/plugins/lock/Service.qml:690
+            - shell/plugins/lock/Service.qml:714
+            - shell/plugins/lock/Service.qml:747
+            - shell/plugins/lock/Service.qml:778
+            - shell/plugins/lock/Service.qml:789
+            - shell/plugins/lock/Service.qml:794
+            - shell/plugins/lock/Service.qml:827
+            - shell/plugins/lock/Service.qml:83
+            - shell/plugins/lock/Service.qml:835
+            - shell/plugins/lock/Service.qml:849
+            - shell/plugins/lock/Service.qml:854
+            - shell/plugins/lock/Service.qml:864
+            - shell/plugins/lock/Service.qml:878
+            - shell/plugins/lock/Service.qml:88
+            - shell/plugins/lock/Service.qml:890
+            - shell/plugins/lock/Service.qml:892
+            - shell/plugins/lock/Service.qml:894
+            - shell/plugins/lock/Service.qml:9
+            - shell/plugins/lock/Service.qml:900
+            - shell/plugins/lock/Service.qml:910
+            - shell/plugins/lock/Service.qml:96
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-05T19:29:26.143903Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait; it now waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:8
+            - shell/plugins/lock/LockView.qml:221
+            - shell/plugins/lock/LockView.qml:54
+            - shell/plugins/lock/LockView.qml:58
+            - shell/plugins/lock/LockView.qml:6
+            - shell/plugins/lock/LockView.qml:63
+            - shell/plugins/lock/LockView.qml:92
+            - shell/plugins/lock/Service.qml:139
+            - shell/plugins/lock/Service.qml:144
+            - shell/plugins/lock/Service.qml:155
+            - shell/plugins/lock/Service.qml:188
+            - shell/plugins/lock/Service.qml:195
+            - shell/plugins/lock/Service.qml:238
+            - shell/plugins/lock/Service.qml:254
+            - shell/plugins/lock/Service.qml:260
+            - shell/plugins/lock/Service.qml:321
+            - shell/plugins/lock/Service.qml:328
+            - shell/plugins/lock/Service.qml:335
+            - shell/plugins/lock/Service.qml:354
+            - shell/plugins/lock/Service.qml:372
+            - shell/plugins/lock/Service.qml:378
+            - shell/plugins/lock/Service.qml:390
+            - shell/plugins/lock/Service.qml:461
+            - shell/plugins/lock/Service.qml:478
+            - shell/plugins/lock/Service.qml:489
+            - shell/plugins/lock/Service.qml:531
+            - shell/plugins/lock/Service.qml:533
+            - shell/plugins/lock/Service.qml:535
+            - shell/plugins/lock/Service.qml:537
+            - shell/plugins/lock/Service.qml:574
+            - shell/plugins/lock/Service.qml:584
+            - shell/plugins/lock/Service.qml:586
+            - shell/plugins/lock/Service.qml:589
+            - shell/plugins/lock/Service.qml:599
+            - shell/plugins/lock/Service.qml:615
+            - shell/plugins/lock/Service.qml:620
+            - shell/plugins/lock/Service.qml:656
+            - shell/plugins/lock/Service.qml:68
+            - shell/plugins/lock/Service.qml:690
+            - shell/plugins/lock/Service.qml:714
+            - shell/plugins/lock/Service.qml:747
+            - shell/plugins/lock/Service.qml:778
+            - shell/plugins/lock/Service.qml:789
+            - shell/plugins/lock/Service.qml:794
+            - shell/plugins/lock/Service.qml:827
+            - shell/plugins/lock/Service.qml:83
+            - shell/plugins/lock/Service.qml:835
+            - shell/plugins/lock/Service.qml:849
+            - shell/plugins/lock/Service.qml:854
+            - shell/plugins/lock/Service.qml:864
+            - shell/plugins/lock/Service.qml:878
+            - shell/plugins/lock/Service.qml:88
+            - shell/plugins/lock/Service.qml:890
+            - shell/plugins/lock/Service.qml:892
+            - shell/plugins/lock/Service.qml:894
+            - shell/plugins/lock/Service.qml:9
+            - shell/plugins/lock/Service.qml:900
+            - shell/plugins/lock/Service.qml:910
+            - shell/plugins/lock/Service.qml:96
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T07:21:18.49579Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock engages the lock through bounded IPC, resets the layout and stops ttfx with the bounded 1s wait; it waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Function-level annotations name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:12
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:8
+            - shell/plugins/lock/LockView.qml:221
+            - shell/plugins/lock/LockView.qml:54
+            - shell/plugins/lock/LockView.qml:58
+            - shell/plugins/lock/LockView.qml:6
+            - shell/plugins/lock/LockView.qml:63
+            - shell/plugins/lock/LockView.qml:92
+            - shell/plugins/lock/Service.qml:139
+            - shell/plugins/lock/Service.qml:144
+            - shell/plugins/lock/Service.qml:155
+            - shell/plugins/lock/Service.qml:188
+            - shell/plugins/lock/Service.qml:195
+            - shell/plugins/lock/Service.qml:238
+            - shell/plugins/lock/Service.qml:254
+            - shell/plugins/lock/Service.qml:260
+            - shell/plugins/lock/Service.qml:321
+            - shell/plugins/lock/Service.qml:328
+            - shell/plugins/lock/Service.qml:335
+            - shell/plugins/lock/Service.qml:354
+            - shell/plugins/lock/Service.qml:372
+            - shell/plugins/lock/Service.qml:378
+            - shell/plugins/lock/Service.qml:390
+            - shell/plugins/lock/Service.qml:461
+            - shell/plugins/lock/Service.qml:478
+            - shell/plugins/lock/Service.qml:489
+            - shell/plugins/lock/Service.qml:531
+            - shell/plugins/lock/Service.qml:533
+            - shell/plugins/lock/Service.qml:535
+            - shell/plugins/lock/Service.qml:537
+            - shell/plugins/lock/Service.qml:574
+            - shell/plugins/lock/Service.qml:584
+            - shell/plugins/lock/Service.qml:586
+            - shell/plugins/lock/Service.qml:589
+            - shell/plugins/lock/Service.qml:599
+            - shell/plugins/lock/Service.qml:615
+            - shell/plugins/lock/Service.qml:620
+            - shell/plugins/lock/Service.qml:656
+            - shell/plugins/lock/Service.qml:68
+            - shell/plugins/lock/Service.qml:690
+            - shell/plugins/lock/Service.qml:714
+            - shell/plugins/lock/Service.qml:747
+            - shell/plugins/lock/Service.qml:778
+            - shell/plugins/lock/Service.qml:789
+            - shell/plugins/lock/Service.qml:794
+            - shell/plugins/lock/Service.qml:827
+            - shell/plugins/lock/Service.qml:83
+            - shell/plugins/lock/Service.qml:835
+            - shell/plugins/lock/Service.qml:849
+            - shell/plugins/lock/Service.qml:854
+            - shell/plugins/lock/Service.qml:864
+            - shell/plugins/lock/Service.qml:878
+            - shell/plugins/lock/Service.qml:88
+            - shell/plugins/lock/Service.qml:890
+            - shell/plugins/lock/Service.qml:892
+            - shell/plugins/lock/Service.qml:894
+            - shell/plugins/lock/Service.qml:9
+            - shell/plugins/lock/Service.qml:900
+            - shell/plugins/lock/Service.qml:910
+            - shell/plugins/lock/Service.qml:96
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/system-lock-test.sh:156
+            - test/shell.d/system-lock-test.sh:161
+            - test/shell.d/system-lock-test.sh:65
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T09:09:24.472609Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:12
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:8
+            - shell/plugins/lock/LockView.qml:221
+            - shell/plugins/lock/LockView.qml:54
+            - shell/plugins/lock/LockView.qml:58
+            - shell/plugins/lock/LockView.qml:6
+            - shell/plugins/lock/LockView.qml:63
+            - shell/plugins/lock/LockView.qml:92
+            - shell/plugins/lock/Service.qml:139
+            - shell/plugins/lock/Service.qml:144
+            - shell/plugins/lock/Service.qml:155
+            - shell/plugins/lock/Service.qml:188
+            - shell/plugins/lock/Service.qml:195
+            - shell/plugins/lock/Service.qml:238
+            - shell/plugins/lock/Service.qml:254
+            - shell/plugins/lock/Service.qml:260
+            - shell/plugins/lock/Service.qml:321
+            - shell/plugins/lock/Service.qml:328
+            - shell/plugins/lock/Service.qml:335
+            - shell/plugins/lock/Service.qml:354
+            - shell/plugins/lock/Service.qml:372
+            - shell/plugins/lock/Service.qml:378
+            - shell/plugins/lock/Service.qml:390
+            - shell/plugins/lock/Service.qml:461
+            - shell/plugins/lock/Service.qml:478
+            - shell/plugins/lock/Service.qml:489
+            - shell/plugins/lock/Service.qml:531
+            - shell/plugins/lock/Service.qml:533
+            - shell/plugins/lock/Service.qml:535
+            - shell/plugins/lock/Service.qml:537
+            - shell/plugins/lock/Service.qml:574
+            - shell/plugins/lock/Service.qml:584
+            - shell/plugins/lock/Service.qml:586
+            - shell/plugins/lock/Service.qml:589
+            - shell/plugins/lock/Service.qml:599
+            - shell/plugins/lock/Service.qml:615
+            - shell/plugins/lock/Service.qml:620
+            - shell/plugins/lock/Service.qml:656
+            - shell/plugins/lock/Service.qml:68
+            - shell/plugins/lock/Service.qml:690
+            - shell/plugins/lock/Service.qml:714
+            - shell/plugins/lock/Service.qml:747
+            - shell/plugins/lock/Service.qml:778
+            - shell/plugins/lock/Service.qml:789
+            - shell/plugins/lock/Service.qml:794
+            - shell/plugins/lock/Service.qml:827
+            - shell/plugins/lock/Service.qml:83
+            - shell/plugins/lock/Service.qml:835
+            - shell/plugins/lock/Service.qml:849
+            - shell/plugins/lock/Service.qml:854
+            - shell/plugins/lock/Service.qml:864
+            - shell/plugins/lock/Service.qml:878
+            - shell/plugins/lock/Service.qml:88
+            - shell/plugins/lock/Service.qml:890
+            - shell/plugins/lock/Service.qml:892
+            - shell/plugins/lock/Service.qml:894
+            - shell/plugins/lock/Service.qml:9
+            - shell/plugins/lock/Service.qml:900
+            - shell/plugins/lock/Service.qml:910
+            - shell/plugins/lock/Service.qml:96
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/system-lock-test.sh:179
+            - test/shell.d/system-lock-test.sh:184
+            - test/shell.d/system-lock-test.sh:7
+            - test/shell.d/system-lock-test.sh:70
 verification:
     assurance_level: C
     formalization_status: valid

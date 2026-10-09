@@ -3,10 +3,12 @@
 // Keep the active token while its lock remains held and never reuse a token.
 // A forward clock jump can expire a receipt early: it becomes unknown and
 // callers fail conservatively rather than accepting a different request.
+// Implements: SW-REQ-261009-RCPT
 function create(instance) {
   return { instance: instance, sequence: 0, active: "", records: {}, order: [] }
 }
 
+// Implements: SW-REQ-261009-RCPT
 function request(ledger, now) {
   if (!ledger || !ledger.instance) return null
   if (ledger.active) return result(ledger, ledger.active, now)
@@ -29,6 +31,7 @@ function request(ledger, now) {
   return result(ledger, requestId, now)
 }
 
+// Implements: SW-REQ-261009-RCPT
 function secured(ledger, now) {
   if (!ledger || !ledger.active) return
   var record = ledger.records[ledger.active]
@@ -38,6 +41,7 @@ function secured(ledger, now) {
   }
 }
 
+// Implements: SW-REQ-261009-RCPT
 function released(ledger, now) {
   if (!ledger || !ledger.active) return
   var record = ledger.records[ledger.active]
@@ -50,6 +54,7 @@ function released(ledger, now) {
   ledger.active = ""
 }
 
+// Implements: SW-REQ-261009-RCPT
 function result(ledger, requestId, now) {
   var record = ledger && Object.prototype.hasOwnProperty.call(ledger.records, requestId) && ledger.records[requestId]
   if (record && requestId !== ledger.active && record.state !== "pending"

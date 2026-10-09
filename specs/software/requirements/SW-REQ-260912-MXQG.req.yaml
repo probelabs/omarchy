@@ -4,8 +4,8 @@ status: review
 priority: shall
 category: functional
 req_type: guarantee
-fretish: when user_lock_requested & ttfx_running the system_lock shall eventually satisfy ttfx_signalled & ttfx_wait_bounded
-description: When the user locks the session and the ttfx screensaver is running, omarchy-system-lock shall send SIGTERM to ttfx. The script shall wait up to 1 s for ttfx to exit before it finishes.
+fretish: when user_lock_requested & lock_secure_reported & ttfx_running the system_lock shall eventually satisfy ttfx_signalled & ttfx_wait_bounded
+description: When the user locks the session, the shell reports the lock request secure, and the ttfx screensaver is running, omarchy-system-lock shall send SIGTERM to ttfx. The script shall wait up to 1 s for ttfx to exit before it finishes. A lock that is not secure leaves the screensaver running.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,18 +13,18 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: ttfx handles SIGTERM asynchronously. Closing its terminal before it exits can leave a stuck full-screen process above the lock screen.
+rationale: ttfx handles SIGTERM asynchronously. Closing its terminal before it exits can leave a stuck full-screen process above the lock screen. Since omacom/omarchy#9429 (head 3a590ca0) the screensaver is closed only once the lock request is secure, so a refused or stalled lock keeps the screensaver up instead of exposing the desktop.
 tags: []
 variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-09-30T13:58:19.496627402Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-06T09:09:23.94497Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:3558f943eda013a9fcc5f9851131e7c00f449a7d0242a0554481e3b8c17a71f0
     reviewed_targets:
         implemented_by:
-            bin/omarchy-system-lock: file1:c73a5cfa8c9660a364538063c5adbda8
+            bin/omarchy-system-lock: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
         satisfies:
             SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
     review_history:
@@ -36,6 +36,46 @@ traces:
           citations:
             - bin/omarchy-system-lock:26
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-05T17:56:06.308435Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait before it returns; it now also waits until lock status reports the session secure and exits 1 with a critical notification when it is not. The Implements annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:52
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-05T19:29:25.575111Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait; it now waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:53
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T07:21:17.953353Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock engages the lock through bounded IPC, resets the layout and stops ttfx with the bounded 1s wait; it waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Function-level annotations name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:55
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:156
+            - test/shell.d/system-lock-test.sh:161
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T09:09:23.94497Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:55
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/system-lock-test.sh:179
+            - test/shell.d/system-lock-test.sh:184
             - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C
