@@ -11,6 +11,8 @@ description: |-
     - https://github.com/omacom/omarchy/issues/6667
     - https://github.com/omacom/omarchy/issues/12942
     - https://github.com/omacom/omarchy/issues/14011
+affected_requirements:
+    - SW-REQ-261009-GW3G
 evidence_manifests:
     - proof/evidence/ki-261009-4mb1.yaml
 severity: medium
@@ -37,6 +39,10 @@ history:
       by: human:Leonid Bugaev
       action: capture-evidence
       detail: proof/evidence/ki-261009-4mb1.yaml
+    - at: "2026-10-09T19:00:30Z"
+      by: agent:grok-promoter-1
+      action: edit
+      detail: add-requirement
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
