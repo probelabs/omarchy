@@ -214,6 +214,7 @@ exit 1
 MOCK
 chmod +x "$mock_bin"/*
 
+# Verifies: SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89, SW-REQ-261006-861H — runs the real script against the shell mock, bounded
 run_lock() {
   local rc=0
   : >"$call_log"
@@ -225,10 +226,12 @@ run_lock() {
   return "$rc"
 }
 
+# Verifies: SW-REQ-261006-861H, SW-REQ-261009-RCPT — one tracked request per invocation and never a second lock
 assert_one_request() {
   [[ $(grep -c '^omarchy-shell lock request$' "$call_log") == 1 ]] || fail "one invocation submits exactly one tracked request"
   if grep -q '^omarchy-shell lock lock$' "$call_log"; then fail "system lock never re-locks after a status snapshot"; fi
 }
+# Verifies: SW-REQ-261006-861H, SW-REQ-260912-MXQG, SYS-REQ-260927-WC89 — a failed lock exits 1, notifies, keeps the screensaver and still resets the layout
 assert_failure() {
   local rc=$1
   ((rc == 1)) || fail "unconfirmed lock exits nonzero" "exit $rc, $(<"$tmpdir/stderr")"

@@ -151,15 +151,6 @@ Item {
     return null
   }
 
-  // The WlSessionLock and the per-start UUID FileView are internal to Service
-  // (omacom/omarchy#9429 request receipts); reach them through the child tree.
-  function sessionLockObject() {
-    return findChild(service, function (o) { return typeof o.secureStateChanged === "function" && typeof o.lockStateChanged === "function" })
-  }
-  function uuidFileView() {
-    return findChild(service, function (o) { return o.path !== undefined && String(o.path).indexOf("random/uuid") >= 0 })
-  }
-
   function serviceSecure() {
     return JSON.parse(ipc.status()).secure === true
   }
@@ -203,8 +194,6 @@ Item {
     return enabledOne !== null ? enabledOne : fallback
   }
 
-  property var keptLedgerForRestore: null
-  property var uuidViewForRestore: null
   property real started: 0
   property int position: 0
   property var script: []
@@ -1297,5 +1286,21 @@ Item {
 
     started = Date.now()
     runner.start()
+  }
+
+  // ---- added for the omacom/omarchy#9429 review (request receipts); kept at the end so the
+  // ---- line numbers of the existing harness functions do not move.
+  property var keptLedgerForRestore: null
+  property var uuidViewForRestore: null
+
+  // The WlSessionLock and the per-start UUID FileView are internal to Service;
+  // reach them through the child tree.
+  // Verifies: SW-REQ-261009-RCPT
+  function sessionLockObject() {
+    return findChild(service, function (o) { return typeof o.secureStateChanged === "function" && typeof o.lockStateChanged === "function" })
+  }
+  // Verifies: SW-REQ-261009-RCPT
+  function uuidFileView() {
+    return findChild(service, function (o) { return o.path !== undefined && String(o.path).indexOf("random/uuid") >= 0 })
   }
 }
