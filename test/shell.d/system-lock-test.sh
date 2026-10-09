@@ -287,7 +287,7 @@ for reason in missing-pam unavailable malformed dropped restart; do
   # SW-REQ-261006-861H:error_handling:negative
   assert_failure "$rc"
   # MCDC SW-REQ-261006-861H: lock_exit_success=F, lock_failure_notified=T, lock_secure_reported=F, user_lock_requested=T => TRUE
-  # MCDC SW-REQ-260912-MXQG: lock_secure_reported=F, ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => TRUE
+  # MCDC SW-REQ-260912-MXQG: lock_secure_reported=F, ttfx_running=T, ttfx_signalled=F, ttfx_wait_bounded=F, user_lock_requested=T => TRUE [no-action: assert_failure fails the test if the pkill spy logged any call, so zero SIGTERMs reach ttfx when the request never reads secured]
   # SW-REQ-260912-MXQG:error_handling:negative
   pass "$reason cannot report lock success or close the screensaver"
 done
