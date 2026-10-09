@@ -26,6 +26,41 @@ variables:
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
+    reviewed_at: "2026-10-09T07:44:10.895534341Z"
+    reviewed_by: agent:claude-code
+    reviewed_fingerprint: sha256:820d169af7fb83b95859f83ad3764266bcbfc022cf6d4607025b4a8e57140de6
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/lock/LockRequestModel.js:create: file1:0ffff9354e679dba4140d91bfba43e69
+            shell/plugins/lock/LockRequestModel.js:released: file1:0ffff9354e679dba4140d91bfba43e69
+            shell/plugins/lock/LockRequestModel.js:request: file1:0ffff9354e679dba4140d91bfba43e69
+            shell/plugins/lock/LockRequestModel.js:result: file1:0ffff9354e679dba4140d91bfba43e69
+            shell/plugins/lock/LockRequestModel.js:secured: file1:0ffff9354e679dba4140d91bfba43e69
+            shell/plugins/lock/Service.qml:beginLock: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:finishUnlock: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:onLoaded: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:onLockStateChanged: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:onSecureStateChanged: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:request: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:result: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+        satisfies:
+            SYS-REQ-260912-T0XP: req1:ede086da8d2bd523f9837eeb78e981c9
+    review_history:
+        - reviewed_at: "2026-10-09T07:44:10.895534341Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockRequestModel.js:11
+            - shell/plugins/lock/LockRequestModel.js:6
+            - shell/plugins/lock/Service.qml:220
+            - shell/plugins/lock/Service.qml:246
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/qml/lock/shell.qml:354
+            - test/qml/lock/shell.qml:503
+            - test/shell.d/system-lock-test.sh:14
+            - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

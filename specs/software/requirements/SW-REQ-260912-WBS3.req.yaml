@@ -19,7 +19,7 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-04T20:22:53.566177Z"
+    reviewed_at: "2026-10-09T07:44:07.554773036Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:10ef9988f240b45bd910270e9230a798bb0d2d142144566df155ec4b5da284fc
     reviewed_targets:
@@ -32,7 +32,7 @@ traces:
             shell/plugins/lock/LockView.qml:passwordTextEdited: file1:20fed47979a54c4858b0e50ef7ac7452
             shell/plugins/lock/LockView.qml:syncPasswordText: file1:20fed47979a54c4858b0e50ef7ac7452
         satisfies:
-            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
+            SYS-REQ-260912-T0XP: req1:ede086da8d2bd523f9837eeb78e981c9
     review_history:
         - reviewed_at: "2026-09-27T21:18:01.391863Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -88,6 +88,17 @@ traces:
             - shell/plugins/lock/LockView.qml:96
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-password-overflow-test.sh:7
+        - reviewed_at: "2026-10-09T07:44:07.554773036Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:39
+            - shell/plugins/lock/LockView.qml:56
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-password-overflow-test.sh:7
+            - test/shell.d/lock-password-overflow-test.sh:9
 verification:
     assurance_level: C
     formalization_status: valid

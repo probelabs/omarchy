@@ -20,7 +20,7 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-10-06T09:09:59.192879Z"
+    reviewed_at: "2026-10-09T07:44:08.558057624Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
@@ -30,7 +30,7 @@ traces:
             shell/plugins/menu/Menu.qml:runAction: file1:bddf782ed3ac81606c0c53a1106414c4
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
-            SYS-REQ-260927-WC89: req1:04222ef41e8e081fcc2e65abb868ac9c
+            SYS-REQ-260927-WC89: req1:932cf3e81826879a61ae164234adc022
     review_history:
         - reviewed_at: "2026-09-27T21:21:24.159161Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -101,6 +101,20 @@ traces:
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-09T07:44:08.558057624Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:143
+            - shell/plugins/menu/Menu.qml:883
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:340
+            - test/shell.d/menu-test.sh:26
             - test/shell.d/menu-test.sh:5
 verification:
     assurance_level: C
