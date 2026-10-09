@@ -5,13 +5,13 @@ results:
       command: ./pocs/lock-service-failopen-runtime.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-04T20:23:36Z"
+      executed_at: "2026-10-09T16:25:20Z"
       input_set:
         - 'Captured by `proof evidence capture KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN` from the KnownIssue''s reproducer command: ./pocs/lock-service-failopen-runtime.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/lock-service-failopen-runtime.sh
       freshness_hashes:
         pocs/lock-service-failopen-runtime.sh: sha256:adb7b8d42cc83fc932fc54c6b754f8cc411b873945a0cf356ec36bb26b8dd4ab
-        proof/known-issues/KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN.yaml: ki-content-v1:sha256:4fffffecc2c847b789b2aeca7af0bd1fbd08ea2903b993d27cfce80cf93e4aaa
+        proof/known-issues/KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN.yaml: ki-content-v1:sha256:e02793c5db2285256f9494daaaac280e591e4e81310becf59bee55ff011454e1
       known_issues:
         - KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN
       config:

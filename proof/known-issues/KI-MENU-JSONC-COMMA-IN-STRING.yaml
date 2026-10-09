@@ -17,10 +17,12 @@ reproducer_command: sh test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh
 tripwire_mutation: 'Make the stripJsonc comma pass string-aware (copy string-literal bytes verbatim, as omacom/omarchy#13968 does): the green tripwires tagged Reproduces KI-MENU-JSONC-COMMA-IN-STRING in test/shell.d/menu-test.sh and test/node/menumodel-replay.test.mjs flip red, and the red reproducer test/reports/report-cmulr8l6h0i461gw40vqqv64c.sh starts exiting 0.'
 introduced_in: inception
 defect_class: latent
+disclosure: public
 mitigation: The defect needs a user or extension string with a comma directly before } or ]. The shipped default menu has no such string. An author can drop the comma or put a character between the comma and the closer
 remediation: Replace the comma regex with a string-aware pass that copies string literals verbatim, as omacom/omarchy#13968 does (requirement SW-REQ-260927-66FW in the proof layer). The pass must still drop a trailing comma when comment lines and the closer come after it. The preservation tests pin that shape.
 notes:
     - 'Upstream: original #13250 (ours, 2026-09-25); our fix PR #13255 closed unmerged; open fix PRs #13305 and #13968 (ours).'
+    - 'Disclosure set to public (owner, 2026-10-09): already public upstream at https://github.com/omacom/omarchy/issues/13250.'
 customer_impact: 'A menu label or action whose text has a comma directly before } or ] is silently changed: the comma is removed. The label "x, ]y" shows as "x ]y", and the action mv f{.bak,} runs as mv f{.bak}, a different command. No error is shown. The shipped menu has no such text; only entries you write yourself can hit this.'
 owner: agent:claude-quattro-clean
 review_date: "2026-12-31"
@@ -84,6 +86,14 @@ history:
       action: upstream-response
       detail: status=pending
     - at: "2026-10-04T19:47:31Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml
+    - at: "2026-10-09T16:24:48Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-disclosure=public,append-note
+    - at: "2026-10-09T16:25:20Z"
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-menu-jsonc-comma-in-string.yaml

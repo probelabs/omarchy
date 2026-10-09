@@ -15,11 +15,13 @@ cve_surface: none
 reproducer_command: ./pocs/crs-260930-ttvk-c02.sh
 introduced_in: inception
 defect_class: latent
+disclosure: public
 minimization_status: candidate
 mitigation: Upstream quattro 035ce29f includes the fix. Until a machine gets the update, a wrong fingerprint attempt still falls through to the password field.
 remediation: Fixed by omacom/omarchy#7158 (879d6583d; SW-REQ-261004-V813). pocs/crs-260930-ttvk-c02.sh stays as a regression check. It runs the live probe command and handler and exits 0 while the fix holds.
 notes:
     - '2026-10-04: re-checked on upstream quattro 035ce29f. The rewritten reproducer runs the live probe command with bash and the live onExited handler in node. It exits 0 on 035ce29f: a zero-enrollment user gets fingerprintConfigured=false, and the enrolled control gets true. It exits 1 on upstream quattro 393a43d4, where the probe answers ''yes'' for the empty store. Upstream omacom/omarchy#9551 (Karl Ahlin, 2026-09-01) reported both callers. The maintainers closed it unmerged and shipped its matcher in #7158.'
+    - 'Disclosure set to public (owner, 2026-10-09): already public upstream at https://github.com/omacom/omarchy/pull/9551.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -57,6 +59,14 @@ history:
       action: upstream-recheck
       detail: status=fixed
     - at: "2026-10-04T20:23:29Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-fprint-probe-fail-open.yaml
+    - at: "2026-10-09T16:24:48Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-disclosure=public,append-note
+    - at: "2026-10-09T16:25:19Z"
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-lock-fprint-probe-fail-open.yaml

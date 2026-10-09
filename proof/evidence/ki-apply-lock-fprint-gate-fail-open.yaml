@@ -7,13 +7,13 @@ results:
       command: ./pocs/crs-260930-g166-c01-c13.sh
       status: pass
       observed_result: known_issue_not_reproduced
-      executed_at: "2026-10-04T20:23:30Z"
+      executed_at: "2026-10-09T16:25:20Z"
       input_set:
         - 'Reproducer contract changed on 2026-10-04: ./pocs/crs-260930-g166-c01-c13.sh is now a RED reproducer. It asserts the correct behavior: exit 0 = defect absent, exit 1 = defect present, exit 2 = control failed. Upstream omacom/omarchy#7158 (879d6583d) fixed the defect, so the expected result on upstream quattro 035ce29f is pass, read as known_issue_not_reproduced; on upstream quattro 393a43d4 the same script exits 1. Re-stamp with: proof evidence capture KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN --red-reproducer.'
         - pocs/crs-260930-g166-c01-c13.sh
       freshness_hashes:
         pocs/crs-260930-g166-c01-c13.sh: sha256:f08ddd5dac4536b76f9aab797019d4ab54ed680f0f5b8df57dffc90a9baafad0
-        proof/known-issues/KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN.yaml: ki-content-v1:sha256:984e83039686e8a10353a55c6cb5d50615b39c05f43693d2e36955906ee83a9b
+        proof/known-issues/KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN.yaml: ki-content-v1:sha256:3844a993c77ac6b2ac295dcd6e3df00728b7311ef4940ecc4480443cfdaed623
       known_issues:
         - KI-APPLY-LOCK-FPRINT-GATE-FAIL-OPEN
       config:

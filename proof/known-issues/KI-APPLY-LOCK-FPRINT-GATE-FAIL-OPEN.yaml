@@ -16,11 +16,13 @@ cve_surface: none
 reproducer_command: ./pocs/crs-260930-g166-c01-c13.sh
 introduced_in: inception
 defect_class: latent
+disclosure: public
 minimization_status: candidate
 mitigation: Upstream quattro 035ce29f includes the fix. On an older install, run omarchy-apply-lock again after the update. The new gate removes a fingerprint stack that the old gate installed for a user with no prints.
 remediation: 'Fixed by omacom/omarchy#7158 (879d6583d): the gate requires an enrolled ''- #N:'' row and keeps the configuration on a failed probe (SW-REQ-261004-SP65). pocs/crs-260930-g166-c01-c13.sh stays as a regression check. It runs the real helper and exits 0 while the fix holds.'
 notes:
     - '2026-10-04: re-checked on upstream quattro 035ce29f. The rewritten reproducer runs the real helper end to end, so it follows the new gate. It exits 0 on 035ce29f: the empty and failed probes install nothing, and the enrolled control installs the stack. It exits 1 on upstream quattro 393a43d4, where both inputs install pam_fprintd. Upstream omacom/omarchy#9551 (Karl Ahlin, 2026-09-01) reported the defect. The maintainers closed it unmerged and shipped its matcher in #7158.'
+    - 'Disclosure set to public (owner, 2026-10-09): already public upstream at https://github.com/omacom/omarchy/pull/9551.'
 owner: agent:opencode-quattro
 review_date: "2026-09-30"
 release_disposition: ship_with_known_issue
@@ -66,6 +68,14 @@ history:
       action: upstream-recheck
       detail: status=fixed
     - at: "2026-10-04T20:23:29Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml
+    - at: "2026-10-09T16:24:48Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-disclosure=public,append-note
+    - at: "2026-10-09T16:25:19Z"
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-apply-lock-fprint-gate-fail-open.yaml

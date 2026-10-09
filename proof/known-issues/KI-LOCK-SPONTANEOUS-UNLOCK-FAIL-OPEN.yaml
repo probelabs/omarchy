@@ -12,11 +12,13 @@ cve_surface: unlikely
 reproducer_command: ./pocs/lock-service-failopen-runtime.sh
 introduced_in: inception
 defect_class: latent
+disclosure: public
 mitigation: The trigger needs the compositor or quickshell to end a held lock on its own. Upstream triage on Hyprland 0.56.2 found no compositor route to that (omacom/omarchy#10459). If the desktop shows after a wake, lock it again with omarchy-system-lock.
 remediation: Re-queue the lock (queueSessionLock) when locked flips false while lockRequested is outstanding, instead of treating it as an unlock
 notes:
     - '2026-10-04: re-checked on upstream quattro 035ce29f, where the drop arm is unchanged. pocs/lock-service-failopen-runtime.sh exits 0 (defect present) there and on upstream quattro 393a43d4. Upstream omacom/omarchy#7072 reports a lock that reverts about 4s after it engages. #10459 reports a desktop exposed after an output re-add. PR #11810 re-locked through omarchy-hyprland-session-locked and closed unmerged.'
     - cve_surface is unlikely. The branch fails open whenever the loss happens, so kill_domain stays fail_open. But no party can cause the compositor-side lock loss on demand. Upstream triage on Hyprland 0.56.2 found no compositor route that ends a held lock and kept the lock in 12 attempts. The 'unlocked' event in the field reports comes from finishUnlock, not from this branch.
+    - 'Disclosure set to public (owner, 2026-10-09): already public upstream at https://github.com/omacom/omarchy/issues/7072 and https://github.com/omacom/omarchy/issues/10459.'
 review_date: "2026-09-30"
 status: reviewed
 history:
@@ -72,6 +74,14 @@ history:
       action: upstream-response
       detail: status=acknowledged
     - at: "2026-10-04T20:23:35Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
+    - at: "2026-10-09T16:24:48Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-disclosure=public,append-note
+    - at: "2026-10-09T16:25:20Z"
       by: agent:claude-code
       action: refresh-evidence
       detail: proof/evidence/ki-lock-spontaneous-unlock-fail-open.yaml
