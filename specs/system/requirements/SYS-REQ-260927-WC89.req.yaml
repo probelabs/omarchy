@@ -5,7 +5,7 @@ priority: shall
 category: interface
 req_type: guarantee
 fretish: when lock_row_activated the menu shall eventually satisfy system_lock_invoked
-description: The menu Lock row invokes the lock component's CLI entry point omarchy-system-lock with no arguments. The callee engages the session lock and exits 0. This is the only menu-to-lock interaction; lock never calls menu.
+description: The menu Lock row invokes the lock component's CLI entry point omarchy-system-lock with no arguments. The callee exits 0 once the session lock is secure. When the lock does not hold, it exits 1 and shows a notification (SW-REQ-261006-861H). This is the only menu-to-lock interaction; lock never calls menu.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -18,10 +18,13 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-09-29T10:09:06.631963837Z"
-    reviewed_by: human:Leonid Bugaev
+    reviewed_at: "2026-10-06T09:09:23.475705Z"
+    reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
     reviewed_targets:
+        implemented_by:
+            bin/omarchy-system-lock:lock_state: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:report_unsecured: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -33,6 +36,57 @@ traces:
           citations:
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-05T19:06:15.284405Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait; it now waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-05T19:29:25.032771Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock still engages the lock, resets the layout and stops ttfx with the bounded 1s wait; it now waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Annotations still name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:26
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T07:21:17.494023Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'Re-reviewed against omacom/omarchy#9429 at 3fa17d48: bin/omarchy-system-lock engages the lock through bounded IPC, resets the layout and stops ttfx with the bounded 1s wait; it waits until lock status reports the session secure, exits 0 then, and exits 1 with a critical notification when it is not. Function-level annotations name this requirement; test/shell.d/system-lock-test.sh witnesses the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:28
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:65
+            - test/shell.d/system-lock-test.sh:7
+        - reviewed_at: "2026-10-06T09:09:23.475705Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'PR #9429 review at head 3fa17d48 on quattro-proof 1e433732: bin/omarchy-system-lock waits until lock status reports the session secure and exits 0 only then; a refused lock or the 10 s deadline exits 1 after the Screen did not lock notification (SW-REQ-261006-861H). Function-level Implements lines name the requirement; test/shell.d/system-lock-test.sh witnesses the paths, including a request that stays pending and never secures.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:28
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:7
+            - test/shell.d/system-lock-test.sh:70
 verification:
     assurance_level: C
     formalization_status: valid
@@ -44,17 +98,10 @@ verification:
 history:
     created_by: agent:kimi-zero-warnings
     created_at: "2026-09-27T20:58:23Z"
-    last_modified_by: agent:opencode-quattro
-    last_modified_at: "2026-09-30T21:16:33Z"
+    last_modified_by: agent:claude-code
+    last_modified_at: "2026-10-06T09:09:22Z"
 obligation_checklist:
     - error_handling
-obligation_deferrals:
-    - obligation_class: error_handling
-      reason: 'The graded worst case in the hazard_review above is a real, reproduced failure mode: bin/omarchy-system-lock line 10 swallows a refused or absent lock engagement and exits 0 behind the already-dismissed Lock row, so the user believes the session locked; failure surfacing is owned by the lock component (SYS-REQ-260912-T0XP family, per the delegation above), and until that lands the debt is tracked on KI-260930-2FBE with a green tripwire.'
-      tracking: KI-260930-2FBE
-      owner: agent:opencode-quattro
-      ki_ref: KI-260930-2FBE
-      reproducer: ./pocs/wc89-silent-lock-exit0.sh
 obligation_delegations:
     - class: error_handling
       delegated_to: SYS-REQ-260912-T0XP
@@ -90,7 +137,7 @@ hazard_review:
         - category: domain
           disposition: reviewed
           rationale: 'cross_structure_key_identity evaluated and suppressed with rationale: the action string omarchy-system-lock and the invoked binary name live in one repo-shipped artifact pair (default/omarchy/omarchy-menu.jsonc:38 plus bin/), line-cited in REVIEW-28 and pinned by the menu tests - there are no two independently-maintained structures to drift. external_call_timeout_bounded evaluated and suppressed with rationale: the row handoff is fire-and-forget by design (menu dismisses, lock engages asynchronously), the menu side performs no wait, and the lock component engagement deadlines are owned by the lock requirements (SYS-REQ-260912-T0XP family, batch A) - deferring here would duplicate debt one level above its owner. control-not-silently-disabled is met at this boundary by the same ownership split: the wiring cannot disable the control, and the callees fail-visible contract is theirs. tampering/replay classes do not fire: the call is an in-session fork, not a message.'
-verification_state: failing
+verification_state: passing
 interface:
     caller: menu
     callee: lock
@@ -98,7 +145,7 @@ interface:
     signature: omarchy-system-lock() -> exit 0
     protocol: "CLI exec with no arguments and no stdin; no stdout contract (output discarded)"
     assumptions: "Caller provides no arguments; PATH resolves omarchy-system-lock; a Hyprland session with omarchy-shell IPC answers the lock verb."
-    guarantees: "Callee engages the session lock via omarchy-shell lock lock, resets keyboard layout, locks 1password when running, stops the ttfx screensaver, and exits 0."
+    guarantees: "Callee engages the session lock via one tracked omarchy-shell lock request, resets keyboard layout, locks 1password when running, stops the ttfx screensaver once the request is secure, and exits 0 only then (else exit 1 and a notification)."
 lifecycle:
     change_history:
         - date: "2026-09-27T21:01:10Z"
@@ -111,3 +158,8 @@ lifecycle:
           to: verification=failing
           reason: auto-derived [not_started→failing] signals=2; review_record:REVIEW-28=present | known_issue:KI-260930-2FBE=failing
           changed_by: agent:auto-derive
+        - date: "2026-10-05T19:06:06Z"
+          from: verification=failing
+          to: verification=passing
+          reason: '[evidence:test/shell.d/system-lock-test.sh] Derived proposal in the pr/9429 mirror audit run-f968d6b6: REVIEW-28 approved, KI-260930-2FBE fixed by omacom/omarchy#9429, system-lock tests pass.'
+          changed_by: agent:claude-code

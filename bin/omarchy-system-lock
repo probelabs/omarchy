@@ -9,6 +9,7 @@
 
 lock_timeout=10
 
+# Implements: SYS-REQ-260912-T0XP — every lock IPC call is bounded, so a stalled shell cannot hang the lock
 lock_ipc() {
   local limit=$1
   shift
@@ -16,6 +17,7 @@ lock_ipc() {
   OMARCHY_SHELL_IPC_TIMEOUT="$limit" omarchy-shell "$@" 2>/dev/null
 }
 
+# Implements: SYS-REQ-260912-T0XP, SYS-REQ-260927-WC89, SW-REQ-261006-861H — reads this request's receipt: secured, still pending, failed, or invalid (unknown or another request)
 lock_state() {
   jq -r --arg id "$request_id" \
     'if .requestId != $id then "invalid"
@@ -26,6 +28,7 @@ lock_state() {
     <<<"$(lock_ipc 0.5s lock result "$request_id")" 2>/dev/null
 }
 
+# Implements: SYS-REQ-260927-WC89, SW-REQ-261006-861H — the Lock row's callee reports a lock that did not hold: exit 1 and an on-screen notification
 report_unsecured() {
   printf 'omarchy-system-lock: the session lock was not confirmed (%s)\n' "$1" >&2
 
@@ -75,6 +78,7 @@ if [[ -z $request_id ]]; then
   report_unsecured "the shell could not accept a tracked lock request"
 fi
 
+# Implements: SW-REQ-261006-861H — exit 0 only once this request's receipt reads secured; one tracked request, never a second lock; give up after lock_timeout
 # A status snapshot cannot distinguish never-secured from already-unlocked.
 # Wait for this request's immutable outcome, without requesting a second lock.
 while (( SECONDS < deadline )); do

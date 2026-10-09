@@ -217,7 +217,7 @@ Item {
     if (fingerprintPam.active) fingerprintPam.abort()
   }
 
-  // Implements: SW-REQ-260912-J8SX
+  // Implements: SW-REQ-260912-J8SX, SW-REQ-261009-RCPT
   function beginLock() {
     if (!passwordPamConfigured) {
       logEvent("lock-denied: missing-pam")
@@ -243,7 +243,7 @@ Item {
     return true
   }
 
-  // Implements: SYS-REQ-260912-T0XP
+  // Implements: SYS-REQ-260912-T0XP, SW-REQ-261009-RCPT
   function finishUnlock() {
     //mcdc:ignore:defensive lockRequested implies locked (locked is lockRequested || sessionLock.locked || sessionLock.secure), so !lockRequested can never flip this outcome independently of !root.locked and the pair is structurally impossible; both reachable arms are witnessed by the unlock harness
     if (!root.locked && !lockRequested) return
@@ -484,7 +484,7 @@ Item {
 
     locked: false
 
-    // Implements: SYS-REQ-260912-T0XP
+    // Implements: SYS-REQ-260912-T0XP, SW-REQ-261009-RCPT
     onSecureStateChanged: {
       root.logEvent("secure=" + secure)
       if (secure) {
@@ -499,7 +499,7 @@ Item {
       }
     }
 
-    // Implements: SYS-REQ-260912-T0XP
+    // Implements: SYS-REQ-260912-T0XP, SW-REQ-261009-RCPT
     onLockStateChanged: {
       root.logEvent("session-locked=" + locked)
       if (!locked) LockRequests.released(root.requestLedger, Date.now())
@@ -902,6 +902,7 @@ Item {
     path: "/proc/sys/kernel/random/uuid"
     watchChanges: false
     printErrors: false
+    // Implements: SW-REQ-261009-RCPT
     onLoaded: {
       var instance = String(text() || "").trim()
       if (!root.requestLedger && instance !== "") root.requestLedger = LockRequests.create(instance)
@@ -959,6 +960,7 @@ Item {
       return root.locked ? "true" : "false"
     }
 
+    // Implements: SYS-REQ-260912-T0XP, SW-REQ-261009-RCPT
     function request(): string {
       if (!root.passwordPamConfigured) return JSON.stringify({ reason: "missing-pam" })
       // An outcome may have been recorded while an earlier unlock was still
@@ -971,6 +973,7 @@ Item {
       return JSON.stringify(LockRequests.result(root.requestLedger, receipt.requestId, Date.now()))
     }
 
+    // Implements: SYS-REQ-260912-T0XP, SW-REQ-261009-RCPT
     function result(requestId: string): string {
       return JSON.stringify(LockRequests.result(root.requestLedger, requestId, Date.now()))
     }

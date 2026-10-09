@@ -1,0 +1,15 @@
+id: REVIEW-261006-RY53
+kind: spec_conformance
+reviewer: agent:claude-code
+reviewed_at: "2026-10-06T09:04:41Z"
+subject: SW-REQ-261006-861H
+decision: approved
+comment: 'Read bin/omarchy-system-lock at upstream head 3fa17d48 merged onto quattro 035ce29f. The script has exactly two exits. The only exit 0 is the secure) arm of the poll loop, reached only when lock_state reads secure:true from lock status. Every other end goes through report_unsecured: a missing-pam reply, or the 10 s deadline. report_unsecured sends the critical Screen did not lock notification (its failure is ignored with || true) and then exits 1. No set -e, so no other command ends the script early. So lock_exit_success holds exactly when lock_secure_reported, and lock_failure_notified exactly when it does not, as the FRETish biconditionals state. The violation rows (exit 1 with no notification, exit 0 when not secure, exit 0 with a notification) need report_unsecured or the secure) arm changed, so they are dispositioned defensive. The exit-0-when-not-secure row is also guarded by the latched-request test: treating locking) as success fails it. Witnesses in test/shell.d/system-lock-test.sh run the real script against a shell mock that answers lock lock and lock status.'
+citations:
+    - bin/omarchy-system-lock:21@lock_state
+    - bin/omarchy-system-lock:29@report_unsecured
+    - bin/omarchy-system-lock:81
+    - bin/omarchy-system-lock:72
+    - test/shell.d/system-lock-test.sh:84
+    - test/shell.d/system-lock-test.sh:122
+    - test/shell.d/system-lock-test.sh:168
