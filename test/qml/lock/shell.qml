@@ -151,6 +151,15 @@ Item {
     return null
   }
 
+  // The WlSessionLock and the per-start UUID FileView are internal to Service
+  // (omacom/omarchy#9429 request receipts); reach them through the child tree.
+  function sessionLockObject() {
+    return findChild(service, function (o) { return typeof o.secureStateChanged === "function" && typeof o.lockStateChanged === "function" })
+  }
+  function uuidFileView() {
+    return findChild(service, function (o) { return o.path !== undefined && String(o.path).indexOf("random/uuid") >= 0 })
+  }
+
   function serviceSecure() {
     return JSON.parse(ipc.status()).secure === true
   }
@@ -194,6 +203,8 @@ Item {
     return enabledOne !== null ? enabledOne : fallback
   }
 
+  property var keptLedgerForRestore: null
+  property var uuidViewForRestore: null
   property real started: 0
   property int position: 0
   property var script: []
@@ -340,6 +351,20 @@ Item {
     step(200, function () {
       if (service.beginLock() !== false) throw "beginLock without PAM should return false"
       if (ipc.lock() !== "missing-pam") throw "lock() without PAM should report missing-pam"
+      // Verifies: SW-REQ-261009-RCPT — tracked request IPC refuses without PAM
+      check(JSON.parse(ipc.request()).reason === "missing-pam", "request() without PAM should report missing-pam")
+      // a secure-state change while nothing is requested or held: the release arm's both conditions true
+      var idleLock = sessionLockObject()
+      check(idleLock !== null, "the session lock object is reachable")
+      idleLock.secureStateChanged()
+      // a second load with the ledger already built: the ledger is kept
+      var uuidView = uuidFileView()
+      check(uuidView !== null && service.requestLedger !== null, "the per-start ledger is built from the kernel UUID")
+      var keptLedger = service.requestLedger
+      uuidView.reload()
+      check(service.requestLedger === keptLedger, "a reload keeps the existing ledger")
+      // an empty UUID read builds no ledger (fail closed)
+      stubState("empty-uuid", "")
       if (ipc.isLocked() !== "false") throw "isLocked should be false before locking"
       ipc.status()
       // submit with lockRequested forced on and no PAM config: start() fails
@@ -356,6 +381,20 @@ Item {
       service.authenticatingPassword = false
       // a submit with no lock requested: the guard's first condition
       service.submitPassword("pre-pam")
+    })
+    step(300, function () {
+      var uuidView = uuidFileView()
+      var keptLedger = service.requestLedger
+      service.requestLedger = null
+      uuidView.path = Quickshell.env("MCDC_STUB_STATE") + "/empty-uuid"
+      uuidView.reload()
+      root.keptLedgerForRestore = keptLedger
+      root.uuidViewForRestore = uuidView
+    })
+    step(300, function () {
+      check(service.requestLedger === null, "an empty UUID read builds no ledger")
+      service.requestLedger = root.keptLedgerForRestore
+      root.uuidViewForRestore.path = "/proc/sys/kernel/random/uuid"
     })
     step(200, function () {
       // double-call guards: the running-condition arms
@@ -461,6 +500,14 @@ Item {
       service.requestSessionLock()
       if (ipc.isLocked() !== "true") throw "isLocked should be true while locked"
       if (ipc.lock() !== "ok") throw "lock() while locked should be ok"
+      // Verifies: SW-REQ-261009-RCPT — a tracked request while locked joins the active one
+      var held = JSON.parse(ipc.request())
+      check(held.requestId !== undefined, "request() while locked returns a receipt")
+      check(JSON.parse(ipc.result(held.requestId)).requestId === held.requestId, "result() answers for the same request")
+      var ledger = service.requestLedger
+      service.requestLedger = null
+      check(JSON.parse(ipc.request()).reason === "receipt-unavailable", "request() without a ledger refuses instead of locking untracked")
+      service.requestLedger = ledger
       // recoverStrandedLock condition arms via direct state
       service.strandedLock = true
       service.recoverStrandedLock()
@@ -479,6 +526,23 @@ Item {
       service.lockRequested = true
       service.finishUnlock()
       service.lockRequested = false
+    })
+    step(300, function () {
+      // Verifies: SW-REQ-261009-RCPT — an unlocked tracked request starts a lock and reads pending;
+      // released before it is secure, it reads failed
+      var fresh = JSON.parse(ipc.request())
+      check(fresh.state === "pending" && service.lockRequested, "request() while unlocked starts a tracked lock")
+      // a secure-state change while the request is pending: the release arm's first condition false
+      sessionLockObject().secureStateChanged()
+      service.finishUnlock()
+      check(JSON.parse(ipc.result(fresh.requestId)).state === "failed", "a request released before it is secure reads failed")
+      // with no ledger, an unlocked request refuses and does not start a lock (it fails closed on reporting,
+      // open on locking): pinned here so a change to that choice is visible
+      var ledger = service.requestLedger
+      service.requestLedger = null
+      check(JSON.parse(ipc.request()).reason === "receipt-unavailable" && !service.lockRequested,
+            "request() without a ledger starts no lock")
+      service.requestLedger = ledger
     })
     step(200, function () {
       // slow strand check, started unlocked and unrequested: the second call

@@ -5,7 +5,7 @@ priority: shall
 category: functional
 req_type: guarantee
 fretish: when user_lock_requested the system_lock shall eventually satisfy (lock_exit_success <=> lock_secure_reported) & (lock_failure_notified <=> !lock_secure_reported)
-description: When the user locks the session, omarchy-system-lock shall exit 0 only after the shell reports that this lock request became secure. When the shell refuses the request, cannot track it, ends it before it is secure, or does not secure it within 10 s, the script shall exit 1. It shall then also send the critical "Screen did not lock" notification.
+description: When the user locks the session, omarchy-system-lock shall exit 0 only after the shell reports this lock request secure. The script shall exit 1 when the shell refuses or cannot track the request. It shall also exit 1 when the shell ends the request before it is secure, or does not secure it within 10 s. On exit 1 it shall also send the critical "Screen did not lock" notification.
 formalization_strategy: fretish
 informal_verification:
     method: ""
@@ -13,7 +13,10 @@ informal_verification:
     verified: false
 parent: SYS-REQ-260912-T0XP
 component: lock
-rationale: Upstream PR omacom/omarchy#9429 stops omarchy-system-lock from exiting 0 for a lock that did not hold (KI-260930-2FBE). The shell answers a refused lock with exit 0, and it secures the session only after the request returns. At head 3a590ca0 the script sends one tracked request (lock request) and reads that request's own outcome (lock result) until it is secured, failed or gone, and it gives up after 10 s. A status snapshot cannot tell a request that never secured from one that secured and was already unlocked; the per-request receipt can (SW-REQ-261009-RCPT). The menu row, the keybinding and the idle lock drop the exit code, so the notification is the failure that a user can see. It is shown only while the shell, which owns the notification server, is running.
+rationale: |-
+    Upstream PR omacom/omarchy#9429 stops omarchy-system-lock from exiting 0 for a lock that did not hold (KI-260930-2FBE). The shell answers a refused lock with exit 0, and it secures the session only after the request returns. At head 3a590ca0 the script sends one tracked request (lock request). It then reads the outcome of that request (lock result) until the shell reports it secured, failed or unknown.
+
+    It gives up after 10 s. A status snapshot cannot tell a request that never became secure from a secure lock that the user already unlocked; the per-request receipt can (SW-REQ-261009-RCPT). The menu row, the keybinding and the idle lock drop the exit code, so the notification is the failure that a user can see. The user sees it only while the shell, which owns the notification server, is running.
 tags: []
 variables:
     - user_lock_requested

@@ -969,6 +969,7 @@ Item {
       var receipt = LockRequests.request(root.requestLedger, Date.now())
       if (!receipt) return JSON.stringify({ reason: "receipt-unavailable" })
       if (sessionLock.secure) LockRequests.secured(root.requestLedger, Date.now())
+      //mcdc:ignore:defensive beginLock returns false only when passwordPamConfigured is false, but reaching this condition requires the missing-pam guard at the top of request() to have passed, so !root.beginLock() is always false when evaluated and the release arm is structurally dead; the missing-pam arm is witnessed by the lock IPC harness
       if (!root.locked && !root.beginLock()) LockRequests.released(root.requestLedger, Date.now())
       return JSON.stringify(LockRequests.result(root.requestLedger, receipt.requestId, Date.now()))
     }
