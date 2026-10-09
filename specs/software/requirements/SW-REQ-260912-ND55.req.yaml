@@ -19,7 +19,7 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-T0XP
-    reviewed_at: "2026-10-04T20:22:52.980929Z"
+    reviewed_at: "2026-10-09T07:44:06.920280412Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:acfb8573e2a8aed78be868c02bdd4cd45d17441df3b6c22c283615ab65053bda
     reviewed_targets:
@@ -28,9 +28,9 @@ traces:
             shell/plugins/lock/LockView.qml:onClicked: file1:20fed47979a54c4858b0e50ef7ac7452
             shell/plugins/lock/LockView.qml:onPositionChanged: file1:20fed47979a54c4858b0e50ef7ac7452
             shell/plugins/lock/LockView.qml:wakeRequested: file1:20fed47979a54c4858b0e50ef7ac7452
-            shell/plugins/lock/Service.qml: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml: file1:3ef9306678e8ffe91c4b368edc4b4ca6
         satisfies:
-            SYS-REQ-260912-T0XP: req1:cc27cadd93c7f222773ef341cfe19cae
+            SYS-REQ-260912-T0XP: req1:ede086da8d2bd523f9837eeb78e981c9
     review_history:
         - reviewed_at: "2026-09-27T21:17:59.652605Z"
           reviewed_by: agent:kimi-zero-warnings
@@ -108,6 +108,18 @@ traces:
             - shell/plugins/lock/Service.qml:800
             - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
             - test/shell.d/lock-blank-fingerprint-test.sh:7
+        - reviewed_at: "2026-10-09T07:44:06.920280412Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/LockView.qml:165
+            - shell/plugins/lock/LockView.qml:60
+            - shell/plugins/lock/Service.qml:814
+            - specs/system/requirements/SYS-REQ-260912-T0XP.req.yaml
+            - test/shell.d/lock-blank-fingerprint-test.sh:7
+            - test/shell.d/lock-blank-fingerprint-test.sh:9
 verification:
     assurance_level: C
     formalization_status: valid

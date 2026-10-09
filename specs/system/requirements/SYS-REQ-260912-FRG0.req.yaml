@@ -19,17 +19,17 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-04T20:22:51.264878Z"
+    reviewed_at: "2026-10-09T07:44:11.406388739Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:09b910367c950a5d23bb4b015ae116f9d9ca20931b96302f52194bdc3b41cc38
     reviewed_targets:
         implemented_by:
             bin/omarchy-hyprland-session-locked: file1:29c131c6b9f0363e3de279c1859e3bdb
-            shell/plugins/lock/Service.qml: file1:d0d70fa4f09f29e6c5e801280757bebd
-            shell/plugins/lock/Service.qml:hidePreview: file1:d0d70fa4f09f29e6c5e801280757bebd
-            shell/plugins/lock/Service.qml:isLocked: file1:d0d70fa4f09f29e6c5e801280757bebd
-            shell/plugins/lock/Service.qml:preview: file1:d0d70fa4f09f29e6c5e801280757bebd
-            shell/plugins/lock/Service.qml:status: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:hidePreview: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:isLocked: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:preview: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:status: file1:3ef9306678e8ffe91c4b368edc4b4ca6
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -108,6 +108,20 @@ traces:
             - shell/plugins/lock/Service.qml:962
             - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
             - test/shell.d/hyprland-session-locked-test.sh:7
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-10-09T07:44:11.406388739Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-hyprland-session-locked:6
+            - shell/plugins/lock/Service.qml:11
+            - shell/plugins/lock/Service.qml:958
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/shell.d/hyprland-session-locked-test.sh:14
+            - test/shell.d/hyprland-session-locked-test.sh:7
+            - test/shell.d/lock-stranded-recovery-test.sh:101
             - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C

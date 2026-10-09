@@ -18,13 +18,13 @@ variables: []
 traces:
     satisfies:
         - STK-REQ-260912-XJ5D
-    reviewed_at: "2026-10-06T09:09:23.475705Z"
+    reviewed_at: "2026-10-09T07:44:12.515639739Z"
     reviewed_by: agent:claude-code
-    reviewed_fingerprint: sha256:f1310ef6b54a7f8c3fe1523b58fa51afc4d27f954d80d5436ddec8daab6496f9
+    reviewed_fingerprint: sha256:54123dd81d8b80076eba0cbca374a31583816ae5b67b991cc7d81c516bbff147
     reviewed_targets:
         implemented_by:
-            bin/omarchy-system-lock:lock_state: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
-            bin/omarchy-system-lock:report_unsecured: file1:f71e5a468dd5f0ddc29f4aa99a57d57b
+            bin/omarchy-system-lock:lock_state: file1:bce95d9c828a99840c2c0af99d4bb136
+            bin/omarchy-system-lock:report_unsecured: file1:bce95d9c828a99840c2c0af99d4bb136
         satisfies:
             STK-REQ-260912-XJ5D: req1:e375df0921cd802bcdfb0844d8e2ec03
     review_history:
@@ -87,6 +87,21 @@ traces:
             - test/shell.d/menu-test.sh:5
             - test/shell.d/system-lock-test.sh:7
             - test/shell.d/system-lock-test.sh:70
+        - reviewed_at: "2026-10-09T07:44:12.515639739Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - bin/omarchy-system-lock:20
+            - bin/omarchy-system-lock:31
+            - specs/stakeholder/requirements/STK-REQ-260912-XJ5D.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:935
+            - test/shell.d/menu-test.sh:35
+            - test/shell.d/menu-test.sh:5
+            - test/shell.d/system-lock-test.sh:243
+            - test/shell.d/system-lock-test.sh:7
 verification:
     assurance_level: C
     formalization_status: valid

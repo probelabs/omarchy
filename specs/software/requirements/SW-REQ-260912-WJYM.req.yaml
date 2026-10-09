@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260912-FRG0
-    reviewed_at: "2026-10-04T20:22:52.413124Z"
+    reviewed_at: "2026-10-09T07:44:08.075070935Z"
     reviewed_by: agent:claude-code
     reviewed_fingerprint: sha256:a1e2adef8ba0d8e38e0bef9e877664d69d4efe26d1e64d5eb6de56be02c4b08e
     reviewed_targets:
         implemented_by:
-            shell/plugins/lock/Service.qml:checkStrandedLock: file1:d0d70fa4f09f29e6c5e801280757bebd
-            shell/plugins/lock/Service.qml:onTriggered: file1:d0d70fa4f09f29e6c5e801280757bebd
-            shell/plugins/lock/Service.qml:recoverStrandedLock: file1:d0d70fa4f09f29e6c5e801280757bebd
+            shell/plugins/lock/Service.qml:checkStrandedLock: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:onTriggered: file1:3ef9306678e8ffe91c4b368edc4b4ca6
+            shell/plugins/lock/Service.qml:recoverStrandedLock: file1:3ef9306678e8ffe91c4b368edc4b4ca6
         satisfies:
             SYS-REQ-260912-FRG0: req1:72431d69149a9c2f85ee97b2bfab8e2c
     review_history:
@@ -93,6 +93,17 @@ traces:
             - shell/plugins/lock/Service.qml:130
             - shell/plugins/lock/Service.qml:806
             - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
+            - test/shell.d/lock-stranded-recovery-test.sh:7
+        - reviewed_at: "2026-10-09T07:44:08.075070935Z"
+          reviewed_by: agent:claude-code
+          method: inspection
+          rationale: 'omacom/omarchy#9429 review at head 3a590ca0 on quattro-proof 1e433732: the PR adds a per-request receipt (lock request / lock result, LockRequestModel.js) and moves screensaver cleanup behind a secured receipt. Re-read each linked target: the Service.qml hooks only record or release the active receipt and leave the lock, unlock, blank, fingerprint and stranded-lock behaviour of this requirement as before; bin/omarchy-system-lock exits 0 only on a secured receipt and stops the screensaver only then. Annotations still name the requirement; test/shell.d/system-lock-test.sh and test/qml/lock/shell.qml witness the paths.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/lock/Service.qml:120
+            - shell/plugins/lock/Service.qml:133
+            - specs/system/requirements/SYS-REQ-260912-FRG0.req.yaml
+            - test/shell.d/lock-stranded-recovery-test.sh:10
             - test/shell.d/lock-stranded-recovery-test.sh:7
 verification:
     assurance_level: C
