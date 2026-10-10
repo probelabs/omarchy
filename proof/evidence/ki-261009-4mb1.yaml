@@ -5,13 +5,13 @@ results:
       command: bash pocs/reproducers/ki-261009-4mb1/repro.sh
       status: fail
       observed_result: known_issue_reproduced
-      executed_at: "2026-10-09T19:01:14Z"
+      executed_at: "2026-10-10T12:40:03Z"
       input_set:
         - 'Captured by `proof evidence capture KI-261009-4MB1` from the KnownIssue''s reproducer command: bash pocs/reproducers/ki-261009-4mb1/repro.sh. Judged under proof.reproducer_verdict.v1: observed_result known_issue_reproduced (status fail), decided by marker — the reproducer printed its defect-present marker. Polarity basis: stated by the caller via --red-reproducer.'
         - pocs/reproducers/ki-261009-4mb1/repro.sh
       freshness_hashes:
         pocs/reproducers/ki-261009-4mb1/repro.sh: sha256:fb3fd39b286f7b9fb9d1846b14e26b0dc972b1fef662616a3a69bec84b0e3d21
-        proof/known-issues/KI-261009-4MB1.yaml: ki-content-v1:sha256:0f1dab265e2cdf7d89a42d8e4f4b1c42072329c35f0b443219bb8c5d424b4427
+        proof/known-issues/KI-261009-4MB1.yaml: ki-content-v1:sha256:8c0a3608af7f59d33b59817846e57fd440556c66273e3d43057f4f3285fc9564
       known_issues:
         - KI-261009-4MB1
       config:
@@ -26,9 +26,7 @@ results:
         basis: the reproducer printed its defect-present marker
         signals:
             - 'PROOF-REPRODUCER: defect-present KI-261009-4MB1'
-        exit_code: 1
-        duration_ms: 27
-        stdout:
+        output:
             bytes: 147
             sha256: sha256:6964e556183cfe5d4a06e5db68e91390abdb2e6d337c5542b0000209d66dcdea
             excerpt: |

@@ -5,7 +5,7 @@ description: |-
 
     Trigger: keyboard off runs brightnessctl -s set 0 while the LED's current brightness is already 0, so the saved restore value becomes 0. The following wake restore applies that saved 0. The lock plugin's blank path (shell/plugins/lock/Service.qml blankProcess) runs `omarchy-brightness-keyboard off`. A later blank, from onAuthenticatingPasswordChanged re-arming the idle timer or from a suspend-frozen timer calling armBlankTimer, runs off again before omarchy-system-wake restores. bin/omarchy-brightness-keyboard off always calls `brightnessctl -sd "$device" set 0`, which saves the current value even when it is already 0.
 
-    The same save-current-zero mechanism covers a firmware idle timeout that zeros the LED before the first off (the anchor) and a second off that overwrites a level the first off saved (the member reports).
+    The same mechanism covers two report shapes. In the anchor, a firmware idle timeout zeros the LED before the first off. In the member reports, a second off overwrites the level that the first off saved.
 
     Reports:
     - https://github.com/omacom/omarchy/issues/6667
@@ -24,9 +24,12 @@ reproducer_command: bash pocs/reproducers/ki-261009-4mb1/repro.sh
 introduced_in: inception
 defect_class: latent
 disclosure: public
-mitigation: 'Press the hardware keyboard backlight key to turn the light back on. Until the saved level is preserved, do not blank twice before unlock: a mistyped password that re-arms the idle blank, or a suspend while the screen is already blank, runs keyboard off again and stores 0.'
-remediation: 'In bin/omarchy-brightness-keyboard, do not save a brightness of 0 on off: when the current level is already 0, leave the previously saved non-zero level in place and still set the LED to 0. Restore then returns that earlier level. The lock blank path can also skip keyboard off when the displays are already blank, so off runs once per blank. A person should approve a requirement that unlock restores the last non-zero keyboard backlight level rather than a 0 saved while the LED was already off.'
-status: open
+mitigation: Press the hardware keyboard backlight key to turn the light back on. Until a fix lands, avoid a second blank before unlock. A mistyped password re-arms the idle blank and can cause one. A suspend while the screen is already blank can also cause one. Each second blank runs keyboard off again and stores 0.
+remediation: In bin/omarchy-brightness-keyboard, make off skip the save when the current level is already 0. Off still sets the LED to 0, and the earlier non-zero saved level stays in place. Restore then returns that earlier level. The lock blank path can also skip keyboard off when the displays are already blank, so off runs once per blank. A person should approve SW-REQ-261009-GW3G, which states that unlock restores the last non-zero keyboard backlight level.
+notes:
+    - 'Promotion follow-up: STE100 sentence split; submission_validation (Gates 2/3/4/6) and poc_quality recorded from the reproducer run and upstream quattro 077ac1da.'
+review_date: "2026-10-10"
+status: reviewed
 history:
     - at: "2026-10-09T18:58:33Z"
       by: agent:grok-promoter-1
@@ -43,6 +46,26 @@ history:
       by: agent:grok-promoter-1
       action: edit
       detail: add-requirement
+    - at: "2026-10-10T12:39:24Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description,set-mitigation,set-remediation,note
+    - at: "2026-10-10T12:39:28Z"
+      by: agent:claude-code
+      action: review
+      detail: reviewer=agent:claude-code,new_review_date=2026-10-10
+    - at: "2026-10-10T12:39:31Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-261009-4mb1.yaml
+    - at: "2026-10-10T12:40:02Z"
+      by: agent:claude-code
+      action: edit
+      detail: set-description
+    - at: "2026-10-10T12:40:02Z"
+      by: agent:claude-code
+      action: refresh-evidence
+      detail: proof/evidence/ki-261009-4mb1.yaml
 upstream_report:
     vendor: omacom/omarchy
     channel: issue_tracker
@@ -50,6 +73,36 @@ upstream_report:
     reference: omacom/omarchy#6667
     reported_at: "2026-08-09"
     reported_by: human:github/sotoreynah
+poc_quality:
+    real_infrastructure: true
+    quantitative_impact: true
+    control_test: true
+    untrusted_attacker: false
+    current_deployment_relevance: true
+    honest_severity: true
+    attacker_profitability: false
+    reproducible: true
+    no_inflation: true
+    operational_path_verified: true
+    reachability_verified: false
+    notes: |
+        real_infrastructure: pocs/reproducers/ki-261009-4mb1/repro.sh runs the unmodified bin/omarchy-brightness-keyboard and the real brightnessctl. Only the LED sysfs node is a fake directory, bind-mounted over /sys/class/leds in a user namespace. Upstream omacom/omarchy#6667, #12942 and #14011 report the symptom on real hardware.
+        quantitative_impact: after the second off and a restore, the LED brightness is 0 out of 200. The expected value is the earlier level 80.
+        control_test: the first off from level 80 must save 80 and set the LED to 0, or the reproducer exits 2 (setup failure). That run shows the single-blank path works.
+        current_deployment_relevance: bin/omarchy-brightness-keyboard (blob f323b94f) and bin/omarchy-system-wake (blob f558007f) are identical on upstream quattro 077ac1da. Its lock blankProcess still runs omarchy-brightness-keyboard off.
+        honest_severity: medium. Every affected unlock leaves the keyboard dark and only the hardware key recovers it. No data, session or security impact is claimed.
+        reproducible: one command, bash pocs/reproducers/ki-261009-4mb1/repro.sh. It is deterministic, runs in under a second, and exits 1 with the defect-present marker while the defect is present.
+        no_inflation: the claim is limited to restore applying a saved 0. No lock bypass, crash or data loss is claimed.
+        operational_path_verified: the reproducer runs the sequence the lock and wake paths run. Keyboard off runs twice, as the lock blankProcess does on a second blank, and omarchy-system-wake then runs keyboard restore.
+    not_applicable:
+        attacker_profitability: 'local-behavioral defect: no attacker exists, so attacker cost versus gain does not apply'
+        reachability_verified: 'local-behavioral defect: the trigger is a second blank in the user session; there is no ingress or input-validation layer to traverse'
+        untrusted_attacker: 'local-behavioral defect: no party gains anything, so an untrusted-attacker model does not apply'
+submission_validation:
+    natspec_review: The script header documents only the arguments (omarchy:args=[--no-osd] <up|down|cycle|off|restore>). No comment in bin/omarchy-brightness-keyboard, bin/omarchy-system-wake or the lock blankProcess states which level off saves or which level restore brings back.
+    commit_origin: 4d11f8cc0 "Extract turning brightness devices on/off" (2026-05-06) added off as brightnessctl -sd "$device" set 0 and restore as brightnessctl -rd. The same commit made omarchy-system-wake call omarchy-brightness-keyboard restore.
+    intended_path_verified: true
+    master_status: 'identical: bin/omarchy-brightness-keyboard (blob f323b94f) and bin/omarchy-system-wake (blob f558007f) are unchanged on upstream quattro 077ac1da, and its lock blankProcess still runs keyboard off.'
 affected_file:
     - bin/omarchy-brightness-keyboard
     - shell/plugins/lock/Service.qml
