@@ -1,0 +1,50 @@
+id: KI-261010-HY1B
+title: Empty media directories make transcode print omarchy-menu-select's usage
+description: |-
+    With empty ~/Pictures and ~/Videos (the state of a fresh install), `omarchy transcode` prints `Usage: omarchy-menu-select <prompt> [option...] [-- menu args...]` and exits 1 — an internal usage string for a command the user never typed — and picking Transcode from the menu is a silent no-op.
+
+    Trigger: ~/Pictures and ~/Videos exist and are empty, so bin/omarchy-menu-file's find over those paths matches no media file and pipes an empty option list into bin/omarchy-menu-select. omarchy-menu-select cannot tell an empty piped list from "the caller passed no options": `if (( ${#options[@]} == 0 )) && [[ ! -t 0 ]]; then mapfile -t options; fi` reads zero lines, and the next check prints its usage and exits 1. omarchy-transcode's `input=$(omarchy-menu-file ...)` then dies under set -e with that usage on stderr. From the menu entry trigger.transcode there is no terminal, so stderr goes nowhere.
+
+    The same empty-directory path reaches bin/omarchy-games-retro-install (~/Games/roms), which swallows the exit code with `|| exit 0` and so fails silently instead.
+
+    Reports:
+    - https://github.com/omacom/omarchy/issues/7114
+affected_requirements:
+    - SW-REQ-261010-DFDW
+evidence_manifests:
+    - proof/evidence/ki-261010-hy1b.yaml
+severity: low
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: omarchy transcode (bin/omarchy-transcode -> bin/omarchy-menu-file -> bin/omarchy-menu-select)
+reproducer_command: bash pocs/reproducers/ki-261010-hy1b/repro.sh
+introduced_in: inception
+defect_class: latent
+disclosure: public
+mitigation: Run omarchy transcode with at least one picture or video in ~/Pictures or ~/Videos (or pass --path and an input file). If the usage line appears, it means those directories hold no media; nothing has gone wrong beyond the missing empty-state message. From the menu, check ~/Pictures and ~/Videos before picking Transcode, since the entry gives no feedback when they are empty.
+remediation: In bin/omarchy-menu-file, report the empty listing to the user instead of piping an empty list into omarchy-menu-select — a "No files found" notification naming the searched paths — and exit 1, so omarchy transcode and the menu's Transcode entry say why nothing happened and omarchy-games-retro-install gets the same notice. A person should approve draft requirement SW-REQ-261010-DFDW, which states that caller-level empty-state behaviour; until then no requirement governs it (SW-REQ-260922-B839 mandates the helper's usage+exit-1 on an empty option list and is satisfied there, and SW-REQ-260922-HR29 is silent on an empty listing).
+status: open
+history:
+    - at: "2026-10-10T07:50:00Z"
+      by: agent:opencode-promoter-1
+      action: created
+    - at: "2026-10-10T07:50:12Z"
+      by: agent:opencode-promoter-1
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=omacom/omarchy#7114
+    - at: "2026-10-10T07:50:27Z"
+      by: agent:opencode-promoter-1
+      action: capture-evidence
+      detail: proof/evidence/ki-261010-hy1b.yaml
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/7114
+    reference: omacom/omarchy#7114
+    reported_at: "2026-08-16"
+    reported_by: omarchybot
+affected_file:
+    - bin/omarchy-menu-select
+    - bin/omarchy-menu-file
+    - bin/omarchy-transcode

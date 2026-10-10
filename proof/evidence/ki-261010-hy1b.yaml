@@ -1,0 +1,40 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirement: SW-REQ-261010-DFDW
+      command: bash pocs/reproducers/ki-261010-hy1b/repro.sh
+      status: fail
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-10T07:50:28Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-261010-HY1B` from the KnownIssue''s reproducer command: bash pocs/reproducers/ki-261010-hy1b/repro.sh. Judged under proof.reproducer_verdict.v1: observed_result known_issue_reproduced (status fail), decided by marker — the reproducer printed its defect-present marker. Polarity basis: stated by the caller via --red-reproducer.'
+        - pocs/reproducers/ki-261010-hy1b/repro.sh
+      freshness_hashes:
+        pocs/reproducers/ki-261010-hy1b/repro.sh: sha256:85ed18504477f6980e2d42c3f266ee93866f4bef3149a843161de39454cb68ca
+        proof/known-issues/KI-261010-HY1B.yaml: ki-content-v1:sha256:76ddd96f1cdcf8b6edb3d6126d2acc3e5a8cb3e146f57eb80916c801d48d68ab
+      known_issues:
+        - KI-261010-HY1B
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root
+      reproducer_run:
+        contract: proof.reproducer_verdict.v1
+        verdict: known_issue_reproduced
+        mechanism: marker
+        basis: the reproducer printed its defect-present marker
+        signals:
+            - 'PROOF-REPRODUCER: defect-present KI-261010-HY1B'
+        exit_code: 1
+        duration_ms: 14
+        stdout:
+            bytes: 304
+            sha256: sha256:8a958833a546ea38bab9f7d7c3248aef60158cb3861f6c609de6a7f49f57ee72
+            excerpt: |
+                --- omarchy transcode with empty ~/Pictures and ~/Videos (exit 1) ---
+                Usage: omarchy-menu-select <prompt> [option...] [-- menu args...]
+                --- notifications recorded ---
+                --- end ---
+                the internal omarchy-menu-select usage reached the user of omarchy transcode
+                PROOF-REPRODUCER: defect-present KI-261010-HY1B
