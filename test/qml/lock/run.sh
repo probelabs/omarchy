@@ -184,4 +184,30 @@ for out in "$RT/out-a.log" "$RT/out-b.log" "$RT/out-b2.log"; do
   fi
 done
 
+
+# JUnit: test/junit/junit.sh reports this run as one <testcase> named run.sh,
+# but the harness's Verifies annotations live in test/qml/lock/shell.qml. So
+# under a proof test command (PROOF_PROJECT_ROOT set) this runner also records
+# its verdict as a <testcase> for shell.qml, in a part of its own that
+# test/junit/merge.mjs merges into the report, and proof joins the outcome
+# to those annotations.
+# Verifies: SW-REQ-261004-V813, SW-REQ-261004-296X, SW-REQ-261004-VVN2, SW-REQ-261009-RCPT
+if [[ -n ${PROOF_PROJECT_ROOT:-} ]]; then
+  JROOT=$(. "$ROOT/test/junit/junit.sh" && junit_root) || JROOT=""
+  if [[ -n $JROOT && -d $JROOT/.proof/test-results/parts ]]; then
+    {
+      echo '<?xml version="1.0" encoding="UTF-8"?>'
+      echo '<testsuites>'
+      echo "  <testsuite name=\"lock-qml-harness\" tests=\"1\" failures=\"$rc\" errors=\"0\" skipped=\"0\">"
+      if (( rc == 0 )); then
+        echo '    <testcase name="shell.qml" classname="lock-qml-harness" file="test/qml/lock/shell.qml"/>'
+      else
+        echo '    <testcase name="shell.qml" classname="lock-qml-harness" file="test/qml/lock/shell.qml"><failure message="lock-qml harness did not complete cleanly"/></testcase>'
+      fi
+      echo '  </testsuite>'
+      echo '</testsuites>'
+    } >"$JROOT/.proof/test-results/parts/lock-qml-harness.xml"
+  fi
+fi
+
 exit $rc
