@@ -1,0 +1,38 @@
+schema_version: proof.evidence_profile.v1
+results:
+    - profile: known_issue_reproducer
+      requirements:
+        - SW-REQ-260912-WJYM
+        - SW-REQ-261009-7BPR
+      command: bash pocs/reproducers/ki-261009-dz3p/repro.sh
+      status: fail
+      observed_result: known_issue_reproduced
+      executed_at: "2026-10-10T12:40:34Z"
+      input_set:
+        - 'Captured by `proof evidence capture KI-261009-DZ3P` from the KnownIssue''s reproducer command: bash pocs/reproducers/ki-261009-dz3p/repro.sh. Judged under proof.reproducer_verdict.v1: observed_result known_issue_reproduced (status fail), decided by marker — the reproducer printed its defect-present marker. Polarity basis: stated by the caller via --red-reproducer.'
+        - pocs/reproducers/ki-261009-dz3p/repro.sh
+      freshness_hashes:
+        pocs/reproducers/ki-261009-dz3p/repro.sh: sha256:bf8d3b61913d3f143fb11af0fa349cb58cbaaaebba9c1d6a7b1d6233feab4d4b
+        proof/known-issues/KI-261009-DZ3P.yaml: ki-content-v1:sha256:8dc56ee62b64d0f9317199e9abbcf031c002ca462b505004de43b87acbd65534
+      known_issues:
+        - KI-261009-DZ3P
+      config:
+        - os:linux
+        - arch:amd64
+        - arch:x86_64
+        - privilege:non-root
+      reproducer_run:
+        contract: proof.reproducer_verdict.v1
+        verdict: known_issue_reproduced
+        mechanism: marker
+        basis: the reproducer printed its defect-present marker
+        signals:
+            - 'PROOF-REPRODUCER: defect-present KI-261009-DZ3P'
+        output:
+            bytes: 346
+            sha256: sha256:39ca350cf3da79f22ce72e71d9356bbd6d5fc06b56bd4645e204eb888427f376
+            excerpt: |
+                control: secure=false took the session lock
+                after-stale-secure sessionLocked=false secure=true lastEvent=lock-pending: screen-stabilizing
+                events=log:lock-stranded: recovering,resetAuthenticationState,armBlankTimer,log:lock-requested,log:lock-pending: screen-stabilizing,stabilize.restart,callLater
+                PROOF-REPRODUCER: defect-present KI-261009-DZ3P

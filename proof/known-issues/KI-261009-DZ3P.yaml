@@ -1,0 +1,55 @@
+id: KI-261009-DZ3P
+title: Stranded-lock recovery stalls because requestSessionLock treats a stale secure flag as a working lock
+description: |-
+    The lock surface is gone and Hyprland's lockscreen-app-died wall stays up indefinitely while the shell process stays alive. The lock service logs lock-stranded: recovering, lock-requested, and lock-pending: screen-stabilizing, then nothing, and no password prompt appears. A TTY is required to get out.
+
+    Trigger: the lock surface is destroyed while the session is locked but the shell process keeps running (a file change in a loaded local plugin reloads the shell QML). Stranded-lock recovery then runs, and requestSessionLock returns on every pendingSessionLockTimer retry because sessionLock.secure is true while sessionLock.locked is still false. That pair is not a working lock: the session lock was never taken.
+
+    SW-REQ-260912-WJYM requires the service to take the session lock once when the stranded-lock probe exits 0, the service holds no lock, and password PAM exists, and to log the recovery. The live functions do log the recovery and request the lock, then requestSessionLock returns without setting sessionLock.locked. The requirement does not state that a secure flag without a held session lock must not block that take; the code marks the pair unreachable.
+
+    Reports:
+    - https://github.com/omacom/omarchy/issues/6888
+    - https://github.com/omacom/omarchy/issues/12080
+    - https://github.com/omacom/omarchy/issues/11389
+affected_requirements:
+    - SW-REQ-260912-WJYM
+    - SW-REQ-261009-7BPR
+evidence_manifests:
+    - proof/evidence/ki-261009-dz3p.yaml
+severity: medium
+severity_basis: risk
+risk: availability
+cve_surface: none
+affected_api: lock service requestSessionLock during stranded-lock recovery
+reproducer_command: bash pocs/reproducers/ki-261009-dz3p/repro.sh
+introduced_in: inception
+defect_class: latent
+disclosure: public
+mitigation: 'From a TTY, clear Hyprland''s crashed-lockscreen wall with hyprctl eval ''hl.clear_crashed_lockscreen()'' and lock again, or restart the shell process. Until requestSessionLock stops treating a secure flag without a held session lock as a working lock, do not write files under a loaded plugin while the session is locked: that reload destroys the lock surface and leaves this stall.'
+remediation: 'In shell/plugins/lock/Service.qml requestSessionLock, do not return just because sessionLock.secure is true when sessionLock.locked is false. A secure flag without a held session lock is not a working lock; after the stabilize wait, the service should still set sessionLock.locked so the recovery that already logged lock-stranded: recovering finishes by taking the session lock once. The locked binding (lockRequested || sessionLock.locked || sessionLock.secure) also makes a later checkStrandedLock treat the stall as a healthy lock, so a retry never starts. A person should approve a requirement that states this stale-secure case; SW-REQ-260912-WJYM only requires the take when the service holds no lock and does not mention a secure flag that is true while the session lock is not held.'
+status: open
+history:
+    - at: "2026-10-09T19:22:41Z"
+      by: agent:grok-promoter-1
+      action: created
+    - at: "2026-10-09T19:22:41Z"
+      by: agent:grok-promoter-1
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=omacom/omarchy#6888
+    - at: "2026-10-09T19:22:45Z"
+      by: agent:grok-promoter-1
+      action: capture-evidence
+      detail: proof/evidence/ki-261009-dz3p.yaml
+    - at: "2026-10-10T12:40:33Z"
+      by: agent:opencode-promoter-1
+      action: refresh-evidence
+      detail: proof/evidence/ki-261009-dz3p.yaml
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/6888
+    reference: omacom/omarchy#6888
+    reported_at: "2026-08-14"
+    reported_by: human:github/jfbourdeau
+dedup_armor: 'Not KI-LOCK-PAM-FLIP-ENGAGES-LOCK: that one engages the lock when password PAM disappears during the stabilize window. Not KI-LOCK-SPONTANEOUS-UNLOCK-FAIL-OPEN: that one treats a compositor-side lock loss as a finished unlock. Not KI-LOCK-PROBE-HYPRCTL-NO-TIMEOUT: that one is a hyprctl monitors call with no deadline, and it already says omacom/omarchy#6888 is this secure early return instead. Not KI-LOCK-SCREENS-CHANGE-BLANK-LOST: that one drops the blank intent when a screen is added or removed.'
+affected_file: shell/plugins/lock/Service.qml

@@ -1,0 +1,31 @@
+id: SW-REQ-261009-7BPR
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: When stranded-lock recovery has begun because the stranded-lock probe exited 0, password PAM is configured, and the service does not hold a session lock, the lock service shall take the session lock once even if sessionLock.secure is already true. A secure flag while sessionLock.locked is false is not a working lock and shall not make requestSessionLock return without taking the session lock.
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+component: lock
+rationale: Draft for a human. SW-REQ-260912-WJYM requires taking the session lock once when the probe exits 0 and the service holds no lock, but it does not state that sessionLock.secure without sessionLock.locked is not a held lock. The implementation treats that pair as unreachable and returns from requestSessionLock.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:opencode-promoter-1
+    created_at: "2026-10-10T12:38:00Z"
+    last_modified_by: agent:opencode-promoter-1
+    last_modified_at: "2026-10-10T12:38:00Z"
