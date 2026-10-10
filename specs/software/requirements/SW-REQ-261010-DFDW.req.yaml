@@ -1,0 +1,31 @@
+id: SW-REQ-261010-DFDW
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: When omarchy-menu-file's paths contain no file matching the requested formats, the user shall be told there is nothing to pick — a message naming the searched paths, such as a 'No files found' desktop notification — instead of piping an empty option list into omarchy-menu-select. omarchy menu select's usage diagnostic shall never surface as the outcome of a file-pick request; omarchy transcode with empty ~/Pictures and ~/Videos shall report that there is nothing to transcode. From a menu entry with no terminal the same empty state shall reach the user, so picking Transcode is never a silent no-op.
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+component: menu
+rationale: Draft for a human. SW-REQ-260922-B839 mandates omarchy-menu-select's usage diagnostic and exit 1 when no options are given from arguments or stdin, and the empty piped list satisfies it at that layer; SW-REQ-260922-HR29 states only omarchy-menu-file's listing shape and a nonexistent-path rejection. No approved requirement states the caller-level empty-list outcome, so omarchy transcode leaks the helper's internal usage string and the menu's Transcode entry is a silent no-op (R-1777 / omacom/omarchy#7114). A person should approve this requirement rather than leave the gap unstated.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:opencode-promoter-1
+    created_at: "2026-10-10T07:47:08Z"
+    last_modified_by: agent:opencode-promoter-1
+    last_modified_at: "2026-10-10T07:47:08Z"
