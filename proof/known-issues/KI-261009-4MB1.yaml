@@ -1,0 +1,55 @@
+id: KI-261009-4MB1
+title: Lock keyboard-off saves brightness 0 when the light is already off, so unlock restores darkness
+description: |-
+    After unlock the keyboard backlight stays at 0. Software restore does not bring back the earlier non-zero level; only the hardware backlight key turns it on.
+
+    Trigger: keyboard off runs brightnessctl -s set 0 while the LED's current brightness is already 0, so the saved restore value becomes 0. The following wake restore applies that saved 0. The lock plugin's blank path (shell/plugins/lock/Service.qml blankProcess) runs `omarchy-brightness-keyboard off`. A later blank, from onAuthenticatingPasswordChanged re-arming the idle timer or from a suspend-frozen timer calling armBlankTimer, runs off again before omarchy-system-wake restores. bin/omarchy-brightness-keyboard off always calls `brightnessctl -sd "$device" set 0`, which saves the current value even when it is already 0.
+
+    The same save-current-zero mechanism covers a firmware idle timeout that zeros the LED before the first off (the anchor) and a second off that overwrites a level the first off saved (the member reports).
+
+    Reports:
+    - https://github.com/omacom/omarchy/issues/6667
+    - https://github.com/omacom/omarchy/issues/12942
+    - https://github.com/omacom/omarchy/issues/14011
+affected_requirements:
+    - SW-REQ-261009-GW3G
+evidence_manifests:
+    - proof/evidence/ki-261009-4mb1.yaml
+severity: medium
+severity_basis: risk
+risk: correctness
+cve_surface: none
+affected_api: omarchy-brightness-keyboard off and restore
+reproducer_command: bash pocs/reproducers/ki-261009-4mb1/repro.sh
+introduced_in: inception
+defect_class: latent
+disclosure: public
+mitigation: 'Press the hardware keyboard backlight key to turn the light back on. Until the saved level is preserved, do not blank twice before unlock: a mistyped password that re-arms the idle blank, or a suspend while the screen is already blank, runs keyboard off again and stores 0.'
+remediation: 'In bin/omarchy-brightness-keyboard, do not save a brightness of 0 on off: when the current level is already 0, leave the previously saved non-zero level in place and still set the LED to 0. Restore then returns that earlier level. The lock blank path can also skip keyboard off when the displays are already blank, so off runs once per blank. A person should approve a requirement that unlock restores the last non-zero keyboard backlight level rather than a 0 saved while the LED was already off.'
+status: open
+history:
+    - at: "2026-10-09T18:58:33Z"
+      by: agent:grok-promoter-1
+      action: created
+    - at: "2026-10-09T18:58:38Z"
+      by: agent:grok-promoter-1
+      action: upstream-report
+      detail: vendor=omacom/omarchy,channel=issue_tracker,reference=omacom/omarchy#6667
+    - at: "2026-10-09T18:58:39Z"
+      by: human:Leonid Bugaev
+      action: capture-evidence
+      detail: proof/evidence/ki-261009-4mb1.yaml
+    - at: "2026-10-09T19:00:30Z"
+      by: agent:grok-promoter-1
+      action: edit
+      detail: add-requirement
+upstream_report:
+    vendor: omacom/omarchy
+    channel: issue_tracker
+    tracker_url: https://github.com/omacom/omarchy/issues/6667
+    reference: omacom/omarchy#6667
+    reported_at: "2026-08-09"
+    reported_by: human:github/sotoreynah
+affected_file:
+    - bin/omarchy-brightness-keyboard
+    - shell/plugins/lock/Service.qml

@@ -1,0 +1,31 @@
+id: SW-REQ-261009-GW3G
+version: 1
+status: draft
+priority: shall
+category: functional
+req_type: guarantee
+fretish: ""
+description: When the lock blanks the keyboard backlight, the system shall save a brightness level only when that level is greater than zero. After unlock, restoring the keyboard backlight shall apply the last saved non-zero level rather than a zero that was current only because the light was already off.
+formalization_strategy: informal
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+component: lock
+rationale: Draft for a human. Keyboard off today saves the current brightness even when it is already 0, so a later restore leaves the backlight dark. No approved requirement states this behaviour.
+tags: []
+variables: []
+traces: {}
+verification:
+    assurance_level: C
+    formalization_status: none
+    review:
+        status: pending
+        reviewer: ""
+        reviewed_at: ""
+        ai_generated: true
+history:
+    created_by: agent:grok-promoter-1
+    created_at: "2026-10-09T19:00:12Z"
+    last_modified_by: agent:grok-promoter-1
+    last_modified_at: "2026-10-09T19:00:12Z"
