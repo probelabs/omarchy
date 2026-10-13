@@ -1,0 +1,13 @@
+id: REVIEW-261003-CY43
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T10:47:26Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: 'Round-3 re-review on the upstream change cb981de6. The Apps comparator in rebuildDisplay orders the lowercased names with localeCompare and falls back to the id only on a tie. AppSearch.sortedEntries, which the plugin API hands out, now orders by the lowercased key and then the name with localeCompare, so a plugin sees the menu order. The restated claim matches the collation: accented Latin names sort under their base letter; with the language''s own collation (ru_RU, el_GR, zh_CN) that script comes first, before the Latin names, where a85e29ab put it after Z; under en_US or fr_FR other scripts follow the Latin names; under C or C.UTF-8 Qt keeps code-point order. The real shell shows each of these orders. The node witnesses pin the comparator: seq-apps-locale-ru/el/zh collate as that locale through @locale, seq-apps-nonlatin as en-US, and the PR test''s fourth case runs the real sortedEntries. The formula and the defensive violation row (REVIEW-261003-JTMM) are unchanged.'
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - shell/plugins/menu/Menu.qml:714
+    - test/shell.d/menu-apps-order-test.sh:57
+    - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+    - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1

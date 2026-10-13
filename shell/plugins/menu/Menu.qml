@@ -652,7 +652,7 @@ Item {
     })
   }
 
-  // Implements: SW-REQ-260922-TKDP
+  // Implements: SW-REQ-260922-TKDP, SW-REQ-261003-B7ZA
   function rebuildDisplay() {
     if (root.dmenuActive) {
       root.rebuildDmenuDisplay()
@@ -711,8 +711,8 @@ Item {
         rows.sort(function(a, b) {
           var aLabel = String(a.label || "").toLowerCase()
           var bLabel = String(b.label || "").toLowerCase()
-          if (aLabel < bLabel) return -1
-          if (aLabel > bLabel) return 1
+          var byLabel = aLabel.localeCompare(bLabel)
+          if (byLabel !== 0) return byLabel
           var aId = String(a.itemId || "")
           var bId = String(b.itemId || "")
           if (aId < bId) return -1

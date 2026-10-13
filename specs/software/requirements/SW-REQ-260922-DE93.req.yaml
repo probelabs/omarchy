@@ -19,14 +19,14 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-P708
-    reviewed_at: "2026-10-02T16:54:41.283354Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T07:51:44.076905Z"
+    reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:0e9e0a0eb26c8227be56d23944d3383039e8874ba98ffd8284dc07065674e6d1
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:goBack: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:setActiveMenu: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:Keys.onPressed: file1:de2a1d682d8b03346dca5c0a81c1edf9
+            shell/plugins/menu/Menu.qml:goBack: file1:de2a1d682d8b03346dca5c0a81c1edf9
+            shell/plugins/menu/Menu.qml:setActiveMenu: file1:de2a1d682d8b03346dca5c0a81c1edf9
         satisfies:
             SYS-REQ-260922-P708: req1:ae036b3f1c3f9a17d480cba9bbe03c1a
     review_history:
@@ -77,6 +77,19 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:1205
+            - shell/plugins/menu/Menu.qml:783
+            - shell/plugins/menu/Menu.qml:799
+            - specs/system/requirements/SYS-REQ-260922-P708.req.yaml
+            - test/shell.d/menu-compositor-test.sh:352
+            - test/shell.d/menu-compositor-test.sh:362
+            - test/shell.d/menu-compositor-test.sh:5
+        - reviewed_at: "2026-10-03T07:51:44.076905Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D on quattro-proof 39746e65: shell/plugins/menu/Menu.qml changed only inside rebuildDisplay, where the Apps comparator now orders the lowercased names with localeCompare instead of < and > (2 lines replaced by 2), and in the Implements line above rebuildDisplay, which now also names SW-REQ-261003-B7ZA. Every other function is byte-identical at the same lines, so this requirement''s implementation and annotations are unchanged'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:1205

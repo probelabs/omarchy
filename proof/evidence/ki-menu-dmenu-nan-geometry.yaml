@@ -5,12 +5,12 @@ results:
       command: pocs/menu-qml-static.sh
       status: pass
       observed_result: known_issue_reproduced
-      executed_at: "2026-09-30T21:02:51Z"
+      executed_at: "2026-10-03T16:11:44Z"
       input_set:
         - 'Captured by `proof evidence capture KI-MENU-DMENU-NAN-GEOMETRY` from the KnownIssue''s reproducer command: pocs/menu-qml-static.sh. The command exited pass; read as GREEN tripwire (pins the buggy behavior, so it PASSES while the defect is present), so this run is recorded as observed_result: known_issue_reproduced. Polarity basis: stated by the caller via --green-tripwire.'
         - pocs/menu-qml-static.sh
       freshness_hashes:
-        pocs/menu-qml-static.sh: sha256:b21e4bfa0972a53b0d36b2a59e3f605b6008bb8afa2cab71ad24421aaa4191f0
+        pocs/menu-qml-static.sh: sha256:db8aa21e72ff6684e9f51bd74f1e864acb9c48d7bd6e3cebe30491f206b969a3
         proof/known-issues/KI-MENU-DMENU-NAN-GEOMETRY.yaml: ki-content-v1:sha256:9d8a774e2e8edf78f107fb34d64987ace431e4e0f63b5205ce3ab897453bb261
       known_issues:
         - KI-MENU-DMENU-NAN-GEOMETRY

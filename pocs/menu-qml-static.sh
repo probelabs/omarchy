@@ -8,7 +8,6 @@
 #   REV1 uninstantiated delegate aborts the peek adjustment
 #   DET1 detail gate uses truthy (untrimmed) filterText
 #   DME1 dmenu geometry via bare Number() (NaN possible)
-#   SRT1 search sorts localeCompare, apps sort code-unit <
 #   FV1  only the user FileView has onLoadFailed (default has none)
 #   FV2  user-file failure wipes the last good items
 #   CNF1 openExistingMenu leaves the uninstall confirm state set
@@ -38,11 +37,6 @@ grep -qF 'root.filterText || root.dmenuActive' "$F"; yes_no DET1 "detail gate us
 
 grep -qF 'Number(payload.width || 300)' "$F"; yes_no DME1 "dmenu width via bare Number() (NaN possible)" $?
 
-grep -qF 'localeCompare' "$F"; S1=$?
-grep -qF 'aLabel < bLabel' "$F"; S2=$?
-if [[ $S1 == 0 && $S2 == 0 ]]; then st=0; else st=1; fi
-yes_no SRT1 "search sorts localeCompare while apps sort uses code-unit <" $st
-
 N=$(grep -cF 'onLoadFailed' "$F")
 if [[ $N == 1 ]] && grep -qF 'id: defaultMenuFile' "$F"; then st=0; else st=1; fi
 yes_no FV1 "only the user FileView has onLoadFailed; default file has none" $st
@@ -60,5 +54,5 @@ if (( fail )); then
   echo "ANCHORED-EVIDENCE: a mechanism no longer matches - claims possibly fixed"
   exit 1
 fi
-echo "ANCHORED-EVIDENCE: all 13 Menu.qml mechanisms match the live code"
+echo "ANCHORED-EVIDENCE: all 12 Menu.qml mechanisms match the live code"
 exit 0

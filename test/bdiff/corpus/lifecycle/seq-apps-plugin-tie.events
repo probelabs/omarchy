@@ -1,0 +1,6 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Two apps whose names collate equal (a decomposed and a composed É): the menu and the plugin list both order them by desktop id.
+@plugin-list
+@app z.desktop Éditeur
+@app a.desktop Éditeur
+O

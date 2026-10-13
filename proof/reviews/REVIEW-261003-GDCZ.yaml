@@ -1,0 +1,11 @@
+id: REVIEW-261003-GDCZ
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T12:45:10Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: 'Re-review of the round-3 text corrections. Under C or C.UTF-8 Qt keeps UTF-16 code-unit order, the same as before the fix; this corrects the term code-point order in REVIEW-261003-AP6S and REVIEW-261003-CY43. B7ZA now states which setting selects the collation: Qt takes it from LC_ALL, then LC_COLLATE, then LANG, and LANGUAGE does not change it. Checks with the QML engine of Qt 6.11 show it: LANG=fr_FR.UTF-8 with LC_COLLATE=C.UTF-8 keeps É after Z, and LANG=en_US.UTF-8 with LC_COLLATE=fr_FR.UTF-8 puts É under E. The comparator, the formula and the defensive violation row (REVIEW-261003-JTMM) are unchanged. The witness test now also asserts the encoding, ascii and first-row inputs (15 cases).'
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - test/shell.d/menu-apps-order-bdiff-test.sh:10
+    - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1

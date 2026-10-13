@@ -1,0 +1,13 @@
+id: REVIEW-261003-JTMM
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T07:50:41Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: Read shell/plugins/menu/Menu.qml on the pr-new-D tree (upstream a85e29ab plus the fix). rebuildDisplay, with no search query and the Apps menu active, collects the visible child rows and sorts them with an inline comparator. The comparator lowercases both labels and orders them by localeCompare; only when localeCompare returns 0 does it fall back to the item id, compared with < and >. So apps_rows_rebuilt leads to apps_rows_in_letter_order in the same call, before the rows go to displayModel. rebuildDisplay is the only place that fills displayModel for a non-dmenu menu, and every path that shows the Apps menu (openExistingMenu, setActiveMenu, provider refresh) calls it. With a search query the search sort applies instead, which already used localeCompare. The violation row (a rebuilt Apps list that is not in that order) needs the comparator to go back to the code-unit < and > of a85e29ab; it is dispositioned defensive. The PR's test test/shell.d/menu-apps-order-test.sh extracts this comparator from Menu.qml and runs it on French and German names and on a case tie; it fails on a85e29ab.
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - shell/plugins/menu/Menu.qml:710
+    - shell/plugins/menu/Menu.qml:714
+    - test/shell.d/menu-apps-order-test.sh:17
+    - test/shell.d/menu-apps-order-test.sh:28

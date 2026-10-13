@@ -1,0 +1,8 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Plain ASCII names only.
+@app firefox Firefox
+@app alacritty Alacritty
+@app zed zed
+@app btop Btop
+@app obsidian Obsidian
+O P

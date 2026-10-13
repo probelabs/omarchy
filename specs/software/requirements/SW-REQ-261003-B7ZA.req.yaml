@@ -1,0 +1,380 @@
+id: SW-REQ-261003-B7ZA
+version: 1
+status: review
+priority: shall
+category: functional
+req_type: guarantee
+fretish: when apps_rows_rebuilt the menu_view shall immediately satisfy apps_rows_in_letter_order
+description: |-
+    The Apps menu orders its rows by the collation of the locale and ignores case. A name that starts with an accented Latin letter, such as Écrans or Übersetzer, sorts under its base letter. Names in other scripts sort where the collation of the locale puts them. In the Apps menu, two equal names keep their id order.
+
+    Under ru_RU, el_GR or zh_CN the script of that language comes first, before the Latin names. Under en_US or fr_FR other scripts come after the Latin names. Qt takes the collation from LC_ALL, then LC_COLLATE, then LANG; LANGUAGE does not change it. Under C or C.UTF-8 it keeps UTF-16 code-unit order, the same as before the fix.
+
+    This requirement states only the order of the rows. SW-REQ-261003-C9GM states which apps the list holds. AppSearch.sortedEntries, which gives the same list to plugins, uses the same comparison. Ties keep a fixed order by desktop id, the same as the Apps menu.
+formalization_strategy: fretish
+informal_verification:
+    method: ""
+    evidence: ""
+    verified: false
+parent: SYS-REQ-260922-0M8A
+component: menu
+rationale: |-
+    Upstream omacom/omarchy quattro a85e29ab has this defect. rebuildDisplay sorts the Apps rows with its own comparator, because DesktopEntries can reorder its values when an application starts. The comparator compares the lowercased names with < and >, that is by UTF-16 code unit. So every name that starts with a letter above U+007A goes after z.
+
+    App names come from the Name of each desktop entry for the user's language. On a French desktop, Écrans and Éditeur de texte show after Zed. A check in the real shell with LANG=fr_FR.UTF-8 showed this order on a85e29ab.
+
+    The fix compares the names with localeCompare, as the search sort in the same function already does. The fix keeps the tie-break on the id. With the fix, the real shell shows the two names under E.
+
+    AppSearch.sortedEntries, which gives the same list to plugins, now uses localeCompare too. After review, a second upstream commit (c4a14aa9) breaks its ties on the desktop id, as the Apps menu does. So two names that collate equal come out in id order, whatever order they arrive in. A composed and a decomposed É are such a pair.
+
+    The node witnesses (test/shell.d/menu-apps-order-test.sh, the behaviour-diff harness and test/shell.d/menu-apps-order-bdiff-test.sh) run the comparator under the ICU collation of Node. They pin the comparator, not the collation of Qt. The PR test runs node under LC_ALL=C.UTF-8, where node uses the root collation. So its result does not depend on the locale of the test machine.
+
+    Checks in the real shell cover Qt. Under fr_FR.UTF-8 the accented names move under their base letter. Under ru_RU, el_GR and zh_CN the script of the language now comes first; on a85e29ab it came after Z. Under en_US and fr_FR other scripts still follow the Latin names. Under C.UTF-8 the order stays as on a85e29ab.
+
+    Checks with the QML engine of Qt 6.11 show which setting selects the collation. With LANG=fr_FR.UTF-8 and LC_COLLATE=C.UTF-8, É stays after Z. With LANG=en_US.UTF-8 and LC_COLLATE=fr_FR.UTF-8, É sorts under E. LANGUAGE does not change the order.
+
+    Under en_US, names that start with a symbol, such as _Under, (beta) X or ~Tilde, now sort before digits and letters. This requirement accepts these changes as the order of the locale.
+tags: []
+variables:
+    - apps_rows_rebuilt
+    - apps_rows_in_letter_order
+traces:
+    satisfies:
+        - SYS-REQ-260922-0M8A
+    reviewed_at: "2026-10-03T16:11:20.36821Z"
+    reviewed_by: agent:claude-pr-new-D
+    reviewed_fingerprint: sha256:98b20d51d7a5393e07170f3db9935ce29e784885f887dab9508a829bc705cebc
+    reviewed_targets:
+        implemented_by:
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:de2a1d682d8b03346dca5c0a81c1edf9
+            shell/services/AppSearch.js:sortedEntries: file1:d8fc5b5c3f072f482ef9239ada9a5076
+        satisfies:
+            SYS-REQ-260922-0M8A: req1:6cb960bac1d515134b83990f8390b049
+    review_history:
+        - reviewed_at: "2026-10-03T07:51:50.959294Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D: new requirement. Implemented by the Apps comparator in rebuildDisplay (Implements line on rebuildDisplay), which orders the lowercased names with localeCompare and falls back to the id only on a tie; verified by test/shell.d/menu-apps-order-test.sh, which extracts that comparator from Menu.qml and runs it on French and German names and a case tie; satisfies SYS-REQ-260922-0M8A (dynamic rows such as apps). Spec conformance REVIEW-261003-JTMM'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T07:57:54.126381Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D: B7ZA is now also verified by the behaviour-diff harness and a proof-side witness test. test/bdiff/harness.mjs (appDirective, appsItems, bindAppsDisplay) runs each revision''s real rebuildDisplay, displayRow and isVisible for an Apps summon, with a sort spy; the ten seq-apps-*.events inputs cover French, German, decomposed accents, non-Latin scripts, case ties, encodings (U+FFFD, BOM, astral, NBSP, full-width), a reordered hand-over, Enter on the first row and a root-menu control. test/shell.d/menu-apps-order-bdiff-test.sh asserts four of those outputs in the menu-shell suite (T,T rows and the F,F no-action row: sorts=0 on a root summon). Implemented by the Apps comparator in rebuildDisplay (Implements line on rebuildDisplay), which orders the lowercased names with localeCompare and falls back to the id only on a tie; verified by test/shell.d/menu-apps-order-test.sh, which extracts that comparator from Menu.qml and runs it on French and German names and a case tie; satisfies SYS-REQ-260922-0M8A (dynamic rows such as apps). Spec conformance REVIEW-261003-JTMM'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/harness.mjs:172
+            - test/bdiff/harness.mjs:178
+            - test/bdiff/harness.mjs:188
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T09:19:45.355576Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D round 2 on quattro-proof 87c3ca68 (upstream a85e29ab merged; Menu.qml unchanged by the merge): B7ZA restated - the rows follow the locale collation (accented Latin names under their base letter, other scripts where the collation puts them, after Latin for Greek/Cyrillic/Arabic/Han), case-insensitive, id tie-break; Qt supplies the collation and keeps code-point order under C/C.UTF-8; the node witnesses pin the comparator, the real-shell run covers Qt. New input seq-apps-symbols.events (symbol-led names before digits and letters, an intended change). B7ZA is verified by the behaviour-diff harness and a proof-side witness test. test/bdiff/harness.mjs (appDirective, appsItems, bindAppsDisplay) runs each revision''s real rebuildDisplay, displayRow and isVisible for an Apps summon, with a sort spy; the ten seq-apps-*.events inputs cover French, German, decomposed accents, non-Latin scripts, case ties, encodings (U+FFFD, BOM, astral, NBSP, full-width), a reordered hand-over, Enter on the first row and a root-menu control. test/shell.d/menu-apps-order-bdiff-test.sh asserts four of those outputs in the menu-shell suite (T,T rows and the F,F no-action row: sorts=0 on a root summon). Implemented by the Apps comparator in rebuildDisplay (Implements line on rebuildDisplay), which orders the lowercased names with localeCompare and falls back to the id only on a tie; verified by test/shell.d/menu-apps-order-test.sh, which extracts that comparator from Menu.qml and runs it on French and German names and a case tie; satisfies SYS-REQ-260922-0M8A (dynamic rows such as apps). Spec conformance REVIEW-261003-JTMM'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:172
+            - test/bdiff/harness.mjs:178
+            - test/bdiff/harness.mjs:188
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T10:47:41.214615Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D round 3 (upstream change cb981de6 on quattro-proof 87c3ca68): B7ZA restated - the rows follow the collation of the locale: accented Latin names under their base letter; under ru_RU, el_GR or zh_CN the script of the language first, before the Latin names; under en_US or fr_FR other scripts after the Latin names; Qt keeps code-point order under C/C.UTF-8 (all checked in the real shell). AppSearch.sortedEntries, which gives plugins the same list, uses the same comparison (Implements line there; that file is outside the verification scope, so the engine does not index the link). Implemented by the Apps comparator in rebuildDisplay; verified by test/shell.d/menu-apps-order-test.sh (4 cases incl. sortedEntries), the behaviour-diff harness (appDirective, appsItems, bindAppsDisplay, pinLocale, pluginListOrder) with 14 seq-apps inputs incl. @locale ru/el/zh and @plugin-list, and test/shell.d/menu-apps-order-bdiff-test.sh (10 cases); satisfies SYS-REQ-260922-0M8A. Spec conformance REVIEW-261003-JTMM (defensive row) and the round-3 re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T10:58:05.225625Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D round 3 (upstream change cb981de6 on quattro-proof 87c3ca68): B7ZA restated - the rows follow the collation of the locale: accented Latin names under their base letter; under ru_RU, el_GR or zh_CN the script of the language first, before the Latin names; under en_US or fr_FR other scripts after the Latin names; Qt keeps code-point order under C/C.UTF-8 (all checked in the real shell). AppSearch.sortedEntries, which gives plugins the same list, uses the same comparison (Implements line there; that file is outside the verification scope, so the engine does not index the link). Implemented by the Apps comparator in rebuildDisplay; verified by test/shell.d/menu-apps-order-test.sh (4 cases incl. sortedEntries), the behaviour-diff harness (appDirective, appsItems, bindAppsDisplay, pinLocale, pluginListOrder) with 14 seq-apps inputs incl. @locale ru/el/zh and @plugin-list, and test/shell.d/menu-apps-order-bdiff-test.sh (10 cases); satisfies SYS-REQ-260922-0M8A. Spec conformance REVIEW-261003-JTMM (defensive row) and the round-3 re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T12:14:02.658427Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D round 3 (upstream change cb981de6 on quattro-proof 87c3ca68): B7ZA restated - the rows follow the collation of the locale: accented Latin names under their base letter; under ru_RU, el_GR or zh_CN the script of the language first, before the Latin names; under en_US or fr_FR other scripts after the Latin names; Qt keeps code-point order under C/C.UTF-8 (all checked in the real shell). AppSearch.sortedEntries, which gives plugins the same list, uses the same comparison (Implements line there; that file is outside the verification scope, so the engine does not index the link). Implemented by the Apps comparator in rebuildDisplay; verified by test/shell.d/menu-apps-order-test.sh (4 cases incl. sortedEntries), the behaviour-diff harness (appDirective, appsItems, bindAppsDisplay, pinLocale, pluginListOrder) with 14 seq-apps inputs incl. @locale ru/el/zh and @plugin-list, and test/shell.d/menu-apps-order-bdiff-test.sh (10 cases); satisfies SYS-REQ-260922-0M8A. Spec conformance REVIEW-261003-JTMM (defensive row) and the round-3 re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T12:44:57.001869Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D round 3 (upstream change cb981de6 on quattro-proof 87c3ca68): B7ZA restated - the rows follow the collation of the locale: accented Latin names under their base letter; under ru_RU, el_GR or zh_CN the script of the language first, before the Latin names; under en_US or fr_FR other scripts after the Latin names; Qt keeps code-point order under C/C.UTF-8 (all checked in the real shell). AppSearch.sortedEntries, which gives plugins the same list, uses the same comparison (Implements line there; that file is outside the verification scope, so the engine does not index the link). Implemented by the Apps comparator in rebuildDisplay; verified by test/shell.d/menu-apps-order-test.sh (4 cases incl. sortedEntries), the behaviour-diff harness (appDirective, appsItems, bindAppsDisplay, pinLocale, pluginListOrder) with 14 seq-apps inputs incl. @locale ru/el/zh and @plugin-list, and test/shell.d/menu-apps-order-bdiff-test.sh (10 cases); satisfies SYS-REQ-260922-0M8A. Spec conformance REVIEW-261003-JTMM (defensive row) and the round-3 re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T13:01:47.664842Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D final, on quattro-proof 49cd12b0 (upstream 393a43d4; shell/services/AppSearch.js now in the verification scope): implemented by the Apps comparator in rebuildDisplay (localeCompare of the lowercased labels, then the id) and by AppSearch.sortedEntries (localeCompare of the lowercased key, then the old < and > on the key and the name; identical names keep their input order), with Implements lines on both. Verified by test/shell.d/menu-apps-order-test.sh (sortedEntries, collate-equal names in both input orders, symbol-first order), the behaviour-diff harness and its 15 seq-apps inputs, and test/shell.d/menu-apps-order-bdiff-test.sh (15 cases). Satisfies SYS-REQ-260922-0M8A. Collation text: UTF-16 code-unit order under C/C.UTF-8; LC_ALL, then LC_COLLATE, then LANG select the collation. Spec conformance REVIEW-261003-JTMM (defensive row) and the final re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - shell/services/AppSearch.js:108
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T15:29:49.327119Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D final, on quattro-proof 49cd12b0 (upstream 393a43d4; shell/services/AppSearch.js now in the verification scope): implemented by the Apps comparator in rebuildDisplay (localeCompare of the lowercased labels, then the id) and by AppSearch.sortedEntries (localeCompare of the lowercased key, then the old < and > on the key and the name; identical names keep their input order), with Implements lines on both. Verified by test/shell.d/menu-apps-order-test.sh (sortedEntries, collate-equal names in both input orders, symbol-first order), the behaviour-diff harness and its 15 seq-apps inputs, and test/shell.d/menu-apps-order-bdiff-test.sh (15 cases). Satisfies SYS-REQ-260922-0M8A. Collation text: UTF-16 code-unit order under C/C.UTF-8; LC_ALL, then LC_COLLATE, then LANG select the collation. Spec conformance REVIEW-261003-JTMM (defensive row) and the final re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - shell/services/AppSearch.js:108
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:21
+            - test/shell.d/menu-apps-order-test.sh:5
+        - reviewed_at: "2026-10-03T16:11:20.36821Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr/14155 (upstream c5ed4375 + c4a14aa9) on quattro-proof 58cd8018: implemented by the Apps comparator in rebuildDisplay (localeCompare of the lowercased labels, then the id) and by AppSearch.sortedEntries (localeCompare of the lowercased key, then the desktop id, the same tie-break as the menu), with Implements lines on both. Verified by test/shell.d/menu-apps-order-test.sh (run under LC_ALL=C.UTF-8: sortedEntries, collate-equal names in id order in both arrival orders, symbol-first order), the behaviour-diff harness and its 16 seq-apps inputs, and test/shell.d/menu-apps-order-bdiff-test.sh (16 cases). Satisfies SYS-REQ-260922-0M8A. Collation text: UTF-16 code-unit order under C/C.UTF-8; LC_ALL, then LC_COLLATE, then LANG select the collation. Spec conformance REVIEW-261003-JTMM (defensive row) and the c4a14aa9 re-review.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:655
+            - shell/services/AppSearch.js:108
+            - specs/system/requirements/SYS-REQ-260922-0M8A.req.yaml
+            - test/bdiff/corpus/lifecycle/seq-apps-ascii.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-case-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-decomposed.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-encoding.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-first-row.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french-reordered.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-french.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-german.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-el.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-ru.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-locale-zh.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-nonlatin.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-plugin-tie.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-root-control.events:1
+            - test/bdiff/corpus/lifecycle/seq-apps-symbols.events:1
+            - test/bdiff/harness.mjs:177
+            - test/bdiff/harness.mjs:183
+            - test/bdiff/harness.mjs:191
+            - test/bdiff/harness.mjs:212
+            - test/bdiff/harness.mjs:222
+            - test/shell.d/menu-apps-order-bdiff-test.sh:10
+            - test/shell.d/menu-apps-order-test.sh:23
+            - test/shell.d/menu-apps-order-test.sh:5
+verification:
+    assurance_level: C
+    formalization_status: valid
+    review:
+        status: in_review
+        reviewer: agent:claude-pr-new-D
+        reviewed_at: "2026-10-03T07:51:12Z"
+        ai_generated: true
+history:
+    created_by: agent:claude-pr-new-D
+    created_at: "2026-10-03T07:49:05Z"
+    last_modified_by: agent:claude-pr-new-D
+    last_modified_at: "2026-10-03T16:10:35Z"
+hazard_review:
+    reviewed_at: "2026-10-03T07:51:11Z"
+    reviewed_by: agent:claude-pr-new-D
+    reviewed_against_catalog_version: 1.11.0
+    categories:
+        - category: scenario
+          disposition: reviewed
+          applied:
+            - edge_case
+            - empty_input
+          not_applicable:
+            - boundary
+            - input_domain
+            - concurrency_scale
+          rationale: 'Worst case: an app whose name starts with an accented or non-Latin letter shows after Z, so a user who scans the list by letter does not find it where it belongs. edge_case: precomposed accents (É, Ü), a decomposed accent (E plus a combining mark), non-Latin scripts, mixed case and two equal names; each case sorts by localeCompare and an equal pair keeps id order (witnessed). empty_input: an entry with no name gives the empty string, which sorts first as before. boundary not applicable: the comparator has no range or limit. input_domain not applicable: the names reach the comparator as decoded strings from DesktopEntries; it parses nothing. concurrency_scale not applicable: one synchronous sort on the GUI thread per rebuild.'
+        - category: property
+          disposition: reviewed
+          applied:
+            - determinism
+            - totality
+          rationale: 'determinism: the same names and ids give the same order on every rebuild, whatever order DesktopEntries returns them in, because a tie on the name falls back to the id. totality: the comparator returns a defined result for every pair of rows, including equal names, empty names and names in any script.'
+        - category: structural
+          disposition: not_applicable
+          rationale: One string comparison inside an array sort; no memory, numeric or encoding transform. The names are already decoded strings when they reach the comparator.
+        - category: domain
+          disposition: not_applicable
+          rationale: Display order of rows inside the shell window only; no trust boundary, privilege, network, crypto or process surface.
+lifecycle:
+    change_history:
+        - date: "2026-10-03T07:51:12Z"
+          from: draft
+          to: review
+          reason: '[pr-new-D] upstream fix for the Apps menu sort of accented names: requirement authored for the behaviour the change adds; spec conformance REVIEW-261003-JTMM; executing witnesses in test/shell.d/menu-apps-order-test.sh'
+          changed_by: agent:claude-pr-new-D

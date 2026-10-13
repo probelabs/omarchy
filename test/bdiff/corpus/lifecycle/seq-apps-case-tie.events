@@ -1,0 +1,8 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Case-only differences and equal names: the id breaks the tie.
+@app b zed
+@app a Zed
+@app c ZED
+@app d Alacritty
+@app e alacritty
+O

@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:45.246961Z"
-    reviewed_by: agent:claude-quattro-proof
+    reviewed_at: "2026-10-03T07:51:47.924391Z"
+    reviewed_by: agent:claude-pr-new-D
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:isDescendantOf: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:isDescendantOf: file1:de2a1d682d8b03346dca5c0a81c1edf9
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:de2a1d682d8b03346dca5c0a81c1edf9
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -68,6 +68,18 @@ traces:
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:493
+            - shell/plugins/menu/Menu.qml:655
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/shell.d/menu-test.sh:40
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-03T07:51:47.924391Z"
+          reviewed_by: agent:claude-pr-new-D
+          method: inspection
+          rationale: 'pr-new-D: rebuildDisplay changed only in the Apps branch with no query: its comparator orders the lowercased names with localeCompare instead of < and > (SW-REQ-261003-B7ZA, named on the same Implements line). The search path this requirement covers (current-menu matches before drilldown matches, the divider exactly when both groups are non-empty, the searchSort) is unchanged, and isDescendantOf is byte-identical'
           source: proof trace review --citation
           citations:
             - shell/plugins/menu/Menu.qml:493

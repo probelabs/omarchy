@@ -105,7 +105,7 @@ function fuzzyScore(entry, query) {
   return 4000 - name.length
 }
 
-// Implements: SW-REQ-261003-C9GM
+// Implements: SW-REQ-261003-C9GM, SW-REQ-261003-B7ZA
 function sortedEntries(values, query, hiddenCallback) {
   var q = String(query || "").trim()
   var rows = []
@@ -123,10 +123,12 @@ function sortedEntries(values, query, hiddenCallback) {
 
   rows.sort(function(a, b) {
     if (q && a.score !== b.score) return b.score - a.score
-    if (a.key < b.key) return -1
-    if (a.key > b.key) return 1
-    if (a.name < b.name) return -1
-    if (a.name > b.name) return 1
+    var byKey = a.key.localeCompare(b.key)
+    if (byKey !== 0) return byKey
+    var aId = String(a.entry.id || "")
+    var bId = String(b.entry.id || "")
+    if (aId < bId) return -1
+    if (aId > bId) return 1
     return 0
   })
 

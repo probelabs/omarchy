@@ -1,0 +1,13 @@
+id: REVIEW-261003-721N
+kind: spec_conformance
+reviewer: agent:claude-pr-new-D
+reviewed_at: "2026-10-03T13:01:59Z"
+subject: SW-REQ-261003-B7ZA
+decision: approved
+comment: 'Final re-review on quattro-proof 49cd12b0, where shell/services/AppSearch.js is in the verification scope. sortedEntries carries an Implements line for SW-REQ-261003-B7ZA next to SW-REQ-261003-C9GM. With no query it orders by localeCompare of the lowercased key, and when that returns 0 by the old < and > on the key and then the name. So two different names that collate equal keep one order, and identical names keep their input order, as before. The Apps comparator in rebuildDisplay orders by localeCompare of the lowercased labels and then the id. Under C or C.UTF-8 Qt keeps UTF-16 code-unit order, the same as before the fix; LC_ALL, then LC_COLLATE, then LANG select the collation. Witnesses: the PR test runs the real sortedEntries (accented names, collate-equal names in both input orders) and the Apps comparator; seq-apps-plugin-list shows the menu and the plugin list agree. C9GM (which apps the library lists) is unaffected: only the order changes.'
+citations:
+    - shell/plugins/menu/Menu.qml:656@rebuildDisplay
+    - shell/services/AppSearch.js:109@sortedEntries
+    - test/shell.d/menu-apps-order-test.sh:57
+    - test/shell.d/menu-apps-order-test.sh:66
+    - test/bdiff/corpus/lifecycle/seq-apps-plugin-list.events:1

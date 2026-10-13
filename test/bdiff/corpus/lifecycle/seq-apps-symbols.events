@@ -1,0 +1,9 @@
+# Verifies: SW-REQ-261003-B7ZA
+# Names that start with a symbol or a digit on an English desktop (as in the real-shell run, LANG=en_US.UTF-8).
+@app beta (beta) X
+@app onepassword 1Password
+@app under _Under
+@app alacritty Alacritty
+@app zed Zed
+@app tilde ~Tilde
+O
