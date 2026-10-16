@@ -1,0 +1,28 @@
+id: KI-261016-EEV6
+title: Update lock survives in daemonized descendants and blocks subsequent updates
+description: |-
+    A later update reports that one is already running even though the updater has exited, because a surviving daemon holds its lock descriptor.
+
+    Trigger: An update spawns a long-lived descendant that inherits the update lock file descriptor and keeps it open after the updater exits.
+
+    Where: lock: bin/omarchy-update-lock descriptor lifetime across exec and descendant processes
+
+    Reported upstream in omacom/omarchy#8077 (https://github.com/omacom/omarchy/issues/8077). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-H8A5
+    - SW-REQ-260912-FVHS
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8077
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1503#update-lock-fd-inherited'
+    reproducer_sketch: 'Run an update whose AUR build starts a daemon that retains inherited descriptors (reported flutter-beta/adb), let the updater finish or abort, and start another update. Expected a released lock; actual refusal and fuser/proc fd evidence of the daemon holding omarchy-update.lock.'

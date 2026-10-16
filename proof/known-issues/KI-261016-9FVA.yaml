@@ -1,0 +1,26 @@
+id: KI-261016-9FVA
+title: Hyprland crash while the Omarchy lock is engaged leaves the lockdead screen with no local way to unlock
+description: |-
+    After Hyprland crashes while the session is locked and its watchdog relaunches it with --safe-mode --locked, Hyprland's lockdead screen stays up, the displays stay off (DPMS) and the Omarchy shell is not running, so no Omarchy lock surface or password prompt ever appears and the user cannot unlock locally; recovery needs a TTY (hl.clear_crashed_lockscreen(), waking DPMS, restarting the shell).
+
+    Trigger: The compositor itself aborts while the Omarchy lock (idle lock, and by the reporter's account also the suspend lock) is engaged, and the watchdog relaunches Hyprland as 'Hyprland --watchdog-fd 4 --safe-mode --locked'.
+
+    Where: lock: re-establishing the Omarchy session lock client (shell/plugins/lock lock service and its stranded-lock recovery) in a compositor instance relaunched with --safe-mode --locked after a crash; nothing brings the lock client back to replace Hyprland's crashed-lockscreen state.
+
+    Reported upstream in omacom/omarchy#12612 (https://github.com/omacom/omarchy/issues/12612). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12612
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-286#hyprland-crash-locked-no-recovery'
+    reproducer_sketch: 'Let the idle lock engage, then make Hyprland abort (reported: a renderer assert/SIGABRT in makeSnapshotFB during window unmap under amdgpu VM exhaustion, Hyprland 0.56.2, Radeon 780M) so its watchdog relaunches it with --safe-mode --locked. Expected: an Omarchy lock surface (or an offered/documented recovery path) lets the user authenticate. Actual: lockdead screen, panels off, Omarchy shell dead, no local unlock until hl.clear_crashed_lockscreen() is run from a TTY, DPMS is woken and the shell restarted.'

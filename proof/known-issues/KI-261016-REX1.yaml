@@ -1,0 +1,26 @@
+id: KI-261016-REX1
+title: Learn Bash action opens an unreachable learning destination
+description: |-
+    Selecting Learn -> Bash opens a web page reporting that the site cannot be reached instead of the Bash learning resource.
+
+    Trigger: Select the Learn -> Bash menu action configured to open https://devhints.io/bash.
+
+    Where: menu: learn.bash action in default/omarchy/omarchy-menu.jsonc
+
+    Reported upstream in omacom/omarchy#11183 (https://github.com/omacom/omarchy/issues/11183). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11183
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-720#bash-learning-destination-unreachable'
+    reproducer_sketch: 'On the reported Omarchy 4.0.3, select Learn -> Bash, whose shipped action opens https://devhints.io/bash. Expected: a Bash learning page. Actual: site cannot be reached.'

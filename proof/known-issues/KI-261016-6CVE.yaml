@@ -1,0 +1,27 @@
+id: KI-261016-6CVE
+title: 'Menu action routes run their command fire-and-forget: a failing command silently no-ops with success reported and no trace'
+description: |-
+    Invoking a menu action route — the theme/background switcher keybindings (omarchy-menu toggle theme / toggle background) or a menu row that runs a command — answers ok at the IPC level yet nothing happens: no picker or menu surface appears, the theme/background is not changed, and no error reaches any journal or log. The same command chain run from the session environment (desktop double-click, terminal) works.
+
+    Trigger: The action's command fails when the menu dispatches it detached through a login shell (Util.execDetached -> bash -lc): a stale menu override naming a command that no longer exists, or a login-shell/session OMARCHY_PATH divergence (dev-channel switch or quattro upgrade) so the chain cannot reach the running shell. The silent no-trace behaviour reproduces on stock quattro with a nonexistent command; this reporter's exact trigger is unestablished (machine wiped).
+
+    Where: menu: shell/plugins/menu/Menu.qml runAction — an action route deliberately opens no menu (SW-REQ-260922-N3RM) and dispatches its command fire-and-forget through Util.execDetached with no exit handling, so a command that fails to run leaves no trace anywhere.
+
+    Reported upstream in omacom/omarchy#8262 (https://github.com/omacom/omarchy/issues/8262). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-N3RM
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8262
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1454#theme-bg-action-route-silent-noop'
+    reproducer_sketch: 'On stock quattro, add a style.theme override in ~/.config/omarchy/extensions/omarchy-menu.jsonc whose command is not installed, then run omarchy-menu toggle theme: it exits 0 silently, no omarchy-image-selector layer appears, and nothing reaches the journals (reproduced upstream by the project bot 2026-08-28). On a machine whose ~/.config/uwsm/env survived the quattro upgrade, compare echo $OMARCHY_PATH with bash -lc ''echo $OMARCHY_PATH'': where they differ, every menu action dispatched through the login shell finds no shell instance and fails silently.'

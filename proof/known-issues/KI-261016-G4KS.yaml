@@ -1,0 +1,27 @@
+id: KI-261016-G4KS
+title: Remove > Services omits entries for shipped service removers
+description: |-
+    Remove > Services shows only the services with menu rows (Dropbox, Tailscale, Microsoft, SSH Agent when present) and offers no row for a service whose remover ships, so that service can only be removed from a terminal by script name.
+
+    Trigger: Install a service that has an install menu row and a shipped remover (e.g. run omarchy-install-service-1password), then open Remove > Services.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc remove.service entries (the install.service.1password row exists; no remove.service.1password row)
+
+    Reported upstream in omacom/omarchy#15485 (https://github.com/omacom/omarchy/issues/15485). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:48Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15485
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5422#remove-services-missing-entries'
+    reproducer_sketch: 'Run omarchy-install-service-1password, open the menu to Remove > Services: expected a 1Password row invoking omarchy-remove-service-1password, actual no 1Password row (only Dropbox, Tailscale, Microsoft, SSH Agent if present). The same gap is noted for the Sunshine install/remove scripts.'

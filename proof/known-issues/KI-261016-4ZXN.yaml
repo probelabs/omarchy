@@ -1,0 +1,27 @@
+id: KI-261016-4ZXN
+title: Hibernate menu offers an action logind refuses because the resume configuration is invalid
+description: |-
+    Selecting Hibernate from the menu fails immediately with Invalid resume config while CanHibernate returns na.
+
+    Trigger: An empty resume device or stale swapfile resume offset leaves logind unable to hibernate, but the menu still permits selecting Hibernate.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc system.hibernate row and its hibernation-availability guard
+
+    Reported upstream in omacom/omarchy#14360 (https://github.com/omacom/omarchy/issues/14360). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-JRW1
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14360
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5172#hibernate-menu-invalid-config-refusal'
+    reproducer_sketch: 'On the reported invalid resume configuration, inspect CanHibernate (na), then select Hibernate from the menu. The report states the action fails with Invalid resume config. Correcting both runtime resume parameters changes CanHibernate to yes.'

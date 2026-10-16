@@ -1,0 +1,26 @@
+id: KI-261016-V0CZ
+title: Lock screen shows the password in clear while it is typed
+description: |-
+    Characters typed into the lock screen password field become visible instead of staying masked.
+
+    Trigger: The user types the password on the unlock screen.
+
+    Where: lock screen password field
+
+    Reported upstream in omacom/omarchy#12727 (https://github.com/omacom/omarchy/issues/12727). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12727
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-242#lock-password-shown-clear'
+    reproducer_sketch: 'Lock the session and type the password on the unlock screen. Expected the characters to stay masked. Actual the password becomes visible while typing. The report says this replicates exactly and guesses that focus or unfocus of the unlock surface is involved; it gives no further steps.'

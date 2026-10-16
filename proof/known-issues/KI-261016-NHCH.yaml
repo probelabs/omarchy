@@ -1,0 +1,26 @@
+id: KI-261016-NHCH
+title: Defaults Editor menu hides installed Zed because its when-guard checks zeditor
+description: |-
+    Setup → Defaults → Editor does not show Zed as checked, or hides the row, so Neovim looks like the standard editor.
+
+    Trigger: Zed is installed as the Arch binary /usr/bin/zed (no zeditor on PATH) and the menu entry's when is omarchy-cmd-present zeditor.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc entry setup.default.editor.zed
+
+    Reported upstream in omacom/omarchy#11326 (https://github.com/omacom/omarchy/issues/11326). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11326
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-678#menu-zed-hidden-zeditor'
+    reproducer_sketch: 'Install Zed so /usr/bin/zed exists and zeditor does not. Open Setup → Defaults → Editor. Expected: Zed visible and checkable. Actual: the row is hidden because omarchy-cmd-present zeditor fails.'

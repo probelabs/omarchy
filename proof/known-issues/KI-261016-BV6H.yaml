@@ -1,0 +1,26 @@
+id: KI-261016-BV6H
+title: keybindings --print shows key combos in a dialect hl.unbind / o.bind do not accept
+description: |-
+    omarchy menu keybindings --print shows modifiers joined by spaces with a single plus only before the key (SUPER SHIFT + S), not the plus-separated form the Lua config uses (SUPER + SHIFT + S). Pasting a printed combo into hl.unbind silently removes nothing, so the default shortcut stays active; o.bind rejects it.
+
+    Trigger: Copy a combo printed by omarchy menu keybindings --print into hl.unbind(...) or o.bind(...) in the Lua bindings config, as the bindings.lua comment suggests.
+
+    Where: menu: bin/omarchy-menu-keybindings --print key-string formatting (modifier mask rendered back to text, a single ' + ' before the key)
+
+    Reported upstream in omacom/omarchy#7627 (https://github.com/omacom/omarchy/issues/7627). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7627
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1618#keybindings-print-modifier-dialect'
+    reproducer_sketch: 'Run omarchy menu keybindings --print, take the line for Super+Shift+S (printed SUPER SHIFT + S), write hl.unbind("SUPER SHIFT + S") in ~/.config/hypr/bindings.lua, save and reload. Expected: the default bind is removed. Actual: nothing is removed and the shortcut stays active; hl.unbind("SUPER + SHIFT + S") works.'

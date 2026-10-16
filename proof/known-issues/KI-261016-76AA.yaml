@@ -1,0 +1,27 @@
+id: KI-261016-76AA
+title: Lock refuses to engage when no real screen exists, allowing suspend with an unlocked session
+description: |-
+    A lid-close suspend proceeds with the session unlocked because the lock never engages: requestSessionLock() gates sessionLock.locked on hasRealScreen(), and with zero outputs the gate never passes so the sleep-lock budget expires.
+
+    Trigger: Undock the laptop (external output disappears) while the lid is open, then close the lid to suspend. The lock is requested but hasRealScreen() returns false because Quickshell reports no real screen.
+
+    Where: lock: shell/plugins/lock/Service.qml requestSessionLock() gates sessionLock.locked = true on hasRealScreen()
+
+    Reported upstream in omacom/omarchy#15152 (https://github.com/omacom/omarchy/issues/15152). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15152
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5359#no-real-screen-lock-gate'
+    reproducer_sketch: 'Undock the laptop (remove external display while lid is open), then close the lid to trigger suspend. Expected: session locks before suspend. Actual: lock is requested but requestSessionLock() hits the !hasRealScreen() branch on every 100ms retry and never sets sessionLock.locked = true; after 12s the sleep-lock budget expires and logind suspends with the session unlocked.'

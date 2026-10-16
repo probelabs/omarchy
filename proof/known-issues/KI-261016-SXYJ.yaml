@@ -1,0 +1,26 @@
+id: KI-261016-SXYJ
+title: Lock blank timer is not re-armed after a wake that bypasses lock-screen input, so a woken locked display stays lit
+description: |-
+    A blanked locked display is lit again by a wake that does not pass through lock-screen input, and the lock screen then stays lit — often for many minutes, sometimes indefinitely — instead of blanking again after its idle timeout.
+
+    Trigger: While the session is locked and blanked, an external wake lights the display without a LockView wakeRequested event: the idle service running omarchy-system-wake (an activity or idle-inhibitor signal, or the 3 s screensaver grace timer cancelling the cycle), or a resume from suspend woken by someone or something other than lock-screen input.
+
+    Where: shell/plugins/lock/Service.qml: the one-shot idleBlankTimer is re-armed only by runWake() (lock-screen input), beginLock(), a password transition or unlock; no other wake path re-arms it (and lock() is a no-op while already locked), so an external wake leaves the display lit.
+
+    Reported upstream in omacom/omarchy#11133 (https://github.com/omacom/omarchy/issues/11133). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11133
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-731#lock-external-wake-no-reblank'
+    reproducer_sketch: 'Set idle screensaver/lock to 600/900, let the session lock and initially blank, then let a background inhibitor or activity signal run the idle service wake while nobody touches the lock view. Expected the lock to re-blank after its idle timeout; actual it stays lit. Observe idle-cycle-cancel: activity and process-start: wake in the journal and the lack of prompt re-blanking.'

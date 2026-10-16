@@ -1,0 +1,27 @@
+id: KI-261016-Q424
+title: First lock-screen fingerprint attempt after resume or session start is rejected, then a later one succeeds
+description: |-
+    The first fingerprint attempt at the native lock screen is rejected, and a second attempt a couple of seconds later succeeds.
+
+    Trigger: Present the enrolled finger at the native lock screen's first fingerprint prompt after a resume, or right after an autologin session starts with no suspend in between.
+
+    Where: lock: the native lock screen's omarchy-lock-fingerprint PAM conversation, Service.qml fingerprint verify
+
+    Reported upstream in omacom/omarchy#10796 (https://github.com/omacom/omarchy/issues/10796). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261004-296X
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10796
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-830#fingerprint-first-scan-after-resume'
+    reproducer_sketch: 'Enroll a fingerprint and wire the native lock PAM. (a) Suspend, resume and scan the enrolled finger immediately; (b) with autologin on, use the first native-lock fingerprint prompt right after session start with no suspend in between. Expected the first scan to unlock. Actual the first attempt is rejected and a second attempt a couple of seconds later succeeds. The resume case''s journal shows ''Cannot run while suspended'' and a failed release because the device is still busy.'

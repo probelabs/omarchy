@@ -1,0 +1,26 @@
+id: KI-261016-RR77
+title: Menu Ollama install picks the CUDA package when nvidia-smi is merely on PATH
+description: |-
+    Menu → Install → AI → Ollama installs the CUDA Ollama package on a machine that has no NVIDIA GPU.
+
+    Trigger: nvidia-smi is on PATH because nvidia-utils was installed as a dependency, although no NVIDIA GPU or driver is present, and the user runs the Ollama install menu row.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc entry install.ai.ollama, the branch that sets ollama-cuda when omarchy-cmd-present nvidia-smi succeeds
+
+    Reported upstream in omacom/omarchy#10380 (https://github.com/omacom/omarchy/issues/10380). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10380
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-920#ollama-install-cuda-on-amd'
+    reproducer_sketch: 'On a non-NVIDIA machine where nvidia-smi exists but cannot talk to an NVIDIA driver, open Menu → Install → AI → Ollama. Expected a package for the installed GPU. Actual the CUDA Ollama package and its CUDA dependencies are installed.'

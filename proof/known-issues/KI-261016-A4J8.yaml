@@ -1,0 +1,27 @@
+id: KI-261016-A4J8
+title: omarchy-system-sleep-lock posts a new critical notification per failure instead of replacing the previous one
+description: |-
+    Each unsecured-suspend report adds another, separate critical 'Screen did not lock before suspend' notification instead of replacing the previous one, so a repeating failure accumulates one identical critical card per occurrence.
+
+    Trigger: report_unsecured() runs repeatedly: the lock budget expires before the session reports secure on successive suspends.
+
+    Where: bin/omarchy-system-sleep-lock report_unsecured(): omarchy-notification-send is called with -u critical but without -r/--replace-id and without keeping the id from -p/--print-id, although omarchy-notification-send supports both.
+
+    Reported upstream in omacom/omarchy#10651 (https://github.com/omacom/omarchy/issues/10651). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-H2YF
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10651
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-861#sleep-lock-report-unsecured-no-replace'
+    reproducer_sketch: 'Make report_unsecured fire several times in a row (e.g. a suspend/wake loop where the session cannot reach secure within budget_cap_ms, as on a battery-critical laptop whose drivers are still re-initialising; or invoke the budget-expiry path repeatedly). Expected: one unsecured-suspend card that is replaced (optionally with a count). Actual: one new critical card per failure (the reporter saw 28 for 28 cycles). Because the notification shell keeps critical cards until dismissed and restores them after a restart, they pile up; that persistence lives in the notification shell, not in this script.'

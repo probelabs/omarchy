@@ -1,0 +1,27 @@
+id: KI-261016-5H1Y
+title: An unacknowledged lock request remains latched and makes later lock calls succeed without locking
+description: |-
+    After a lock request fails to acquire a secure session, subsequent lock IPC calls return ok without starting another attempt, leaving the desktop accessible while the service still reports a requested lock.
+
+    Trigger: A lock request reaches the service and stalls before the compositor confirms sessionLocked or secure; later manual, idle or pre-suspend lock requests encounter the outstanding latch.
+
+    Where: shell/plugins/lock/Service.qml lockRequested/locked state and lock IPC short-circuit after pending session-lock acquisition fails to complete.
+
+    Reported upstream in omacom/omarchy#10299 (https://github.com/omacom/omarchy/issues/10299). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10299
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-942#unsecured-lock-request-latched'
+    reproducer_sketch: 'Capture a stalled acquisition with requested:true, sessionLocked:false and secure:false. Repeatedly invoke omarchy-shell lock lock and inspect status: expected retry or explicit failed acquisition; actual ok with no secure lock. The report does not establish a deterministic way to induce the initial compositor stall.'

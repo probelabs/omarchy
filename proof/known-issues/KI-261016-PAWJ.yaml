@@ -1,0 +1,27 @@
+id: KI-261016-PAWJ
+title: 1Password is locked only at resume because suspend freezes the detached lock helper before it delivers the lock
+description: |-
+    1Password logs its Manual lock only at the resume timestamp, not before suspend: the vault stays unlocked across the suspend; the helper then exits cleanly.
+
+    Trigger: Lid-close lock and suspend in quick succession: suspend freezes the backgrounded 1password --lock helper before it has delivered its lock command, because the inhibitor is released once the session lock is secure without waiting for the helper.
+
+    Where: lock: bin/omarchy-system-lock background 1password --lock invocation, not awaited by the bin/omarchy-system-sleep-lock inhibitor path
+
+    Reported upstream in omacom/omarchy#7785 (https://github.com/omacom/omarchy/issues/7785). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7785
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1576#1password-lock-delayed-until-resume'
+    reproducer_sketch: 'With 1Password running, close the lid and compare 1Password''s lock log with suspend/resume timestamps. Expected: Locked. Reason: Manual before suspend entry. Actual (reported cycle): no Locked line at lid close, Locked. Reason: Manual only at the resume time, no helper core.'

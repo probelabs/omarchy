@@ -1,0 +1,28 @@
+id: KI-261016-BVQ9
+title: Kept cloned menu loses its injected shell facade and permanently loses application rows
+description: |-
+    A cloned menu's shell object becomes null after initial injection; Apps remains empty and installed applications disappear from search while other submenus work.
+
+    Trigger: Clone omarchy.menu and restart the shell; the scoped shell API is destroyed after loading and never reinjected into the keepLoaded menu.
+
+    Where: menu: shell/plugins/menu/Menu.qml mergeAppRows in the cloned menu (a copy of the audited plugin), whose app rows vanish because root.shell is null; caused by the panel Loader/scoped PluginShellApi lifecycle in shell/shell.qml revoking the facade and never re-injecting it
+
+    Reported upstream in omacom/omarchy#12989 (https://github.com/omacom/omarchy/issues/12989). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+    - SW-REQ-261003-C9GM
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12989
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-180#cloned-menu-shell-facade-revoked'
+    reproducer_sketch: 'Clone omarchy.menu, restart shell, open Apps and search an installed application. Expected application rows; actual empty Apps/search. Instrument the clone''s onShellChanged to observe PluginShellApi followed by null without reinjection.'

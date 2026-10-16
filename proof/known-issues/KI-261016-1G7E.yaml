@@ -1,0 +1,26 @@
+id: KI-261016-1G7E
+title: Omarchy manual opened from the menu keeps its links in Chromium instead of the default browser
+description: |-
+    With a non-Chromium default browser, the Omarchy manual opens as a Chromium app window and external links followed or opened from it (including the context menu's open-link entry) open in Chromium, not in the configured default browser.
+
+    Trigger: The default browser is not one the web-app launcher accepts (e.g. Firefox), and the user opens the manual from the menu's Learn -> Omarchy row and follows an external link in it.
+
+    Where: menu: the Learn -> Omarchy row in default/omarchy/omarchy-menu.jsonc launches the manual through omarchy-launch-webapp, which falls back to a Chromium --app window
+
+    Reported upstream in omacom/omarchy#8109 (https://github.com/omacom/omarchy/issues/8109). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8109
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1498#manual-links-not-default-browser'
+    reproducer_sketch: 'Set firefox.desktop as the default browser (Omarchy 4.0.0-1 in the report), open the menu -> Learn -> Omarchy, right-click an external link in the manual. Expected: the link opens in Firefox. Actual: the window is Chromium and offers to open the link in Chromium; followed links stay in Chromium.'

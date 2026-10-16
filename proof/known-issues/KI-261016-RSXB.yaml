@@ -1,0 +1,27 @@
+id: KI-261016-RSXB
+title: omarchy-menu-file lists no files when Pictures or Videos is a symlink
+description: |-
+    When ~/Pictures or ~/Videos is a symlink to a directory that contains media, the transcode file picker never opens and omarchy-menu-file returns zero files.
+
+    Trigger: Run omarchy transcode, or the menu transcode action, while ~/Pictures or ~/Videos is a symlink to a directory (find is invoked without -L).
+
+    Where: menu: bin/omarchy-menu-file find over Pictures and Videos
+
+    Reported upstream in omacom/omarchy#12665 (https://github.com/omacom/omarchy/issues/12665). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-HR29
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12665
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-260#menu-file-symlink-skip'
+    reproducer_sketch: 'Point ~/Videos at a directory that contains webm files, then run omarchy transcode. Expected: a picker listing those files. Actual: no panel; find without -L prints nothing while find -L lists them.'

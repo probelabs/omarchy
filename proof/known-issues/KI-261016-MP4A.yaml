@@ -1,0 +1,26 @@
+id: KI-261016-MP4A
+title: Lock screen renders black when QtQuick Color shadows the shell palette singleton
+description: |-
+    The native lock screen loses its theme colors and renders black instead of its normal themed interface.
+
+    Trigger: Run the shell with a QtQuick module exposing a Color type that shadows the shell's unqualified qs.Commons Color singleton, then display the lock screen.
+
+    Where: lock: unqualified shell palette references in the audited native lock screen under shell/plugins/lock/**
+
+    Reported upstream in omacom/omarchy#15134 (https://github.com/omacom/omarchy/issues/15134). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15134
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-5356#lock-palette-singleton-shadow'
+    reproducer_sketch: 'Upgrade to Qt 6.12 and quickshell 0.3.2 as in the report, run the shell and display the lock screen. Expected the normal theme colors; actual the lock screen is affected by the same black rendering as the menu. The report''s qualified-import overlay restores shell colors.'

@@ -1,0 +1,27 @@
+id: KI-261016-ZYJ7
+title: Large wallpaper collections exceed the image-selector open IPC deadline
+description: |-
+    Opening the background image selector with a large wallpaper collection does not complete within the shell's fixed image-selector open deadline: no picker appears and the caller reports the shell as not responding and the image selector as failing to accept the request, while allowing a longer deadline lets the picker appear after a few seconds.
+
+    Trigger: Open the background switcher (SUPER+CTRL+SPACE or omarchy-theme-bg-switcher) while the theme's backgrounds folder holds a few hundred real images.
+
+    Where: menu: bin/omarchy-menu-images image-selector open handoff — the picker open IPC round-trip and its deadline
+
+    Reported upstream in omacom/omarchy#12792 (https://github.com/omacom/omarchy/issues/12792). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260922-6642
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12792
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-227#large-background-picker-open-timeout'
+    reproducer_sketch: 'Put about 500 images in ~/.config/omarchy/backgrounds/<theme>/ and invoke SUPER+CTRL+SPACE or omarchy-theme-bg-switcher. Expected a working image selector; actual acceptance timeout and no picker. Repeat with OMARCHY_SHELL_IPC_TIMEOUT=15s to see the delayed carousel appear after a few seconds.'

@@ -1,0 +1,26 @@
+id: KI-261016-2S1B
+title: Lock screen password field types no numpad digits while NumLock is on until NumLock is toggled twice
+description: |-
+    With NumLock on, numpad keys produce no digits in the Quickshell lock-screen password field; toggling NumLock off and on restores keypad entry for that prompt.
+
+    Trigger: Enter password digits using the numeric keypad at a Quickshell lock screen whose keypad handling is out of sync with active NumLock, including when resume raises the lock screen.
+
+    Where: lock: shell/plugins/lock/LockView.qml password-field keypad input handling.
+
+    Reported upstream in omacom/omarchy#7162 (https://github.com/omacom/omarchy/issues/7162). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7162
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1755#lock-keypad-digits-numlock-desync'
+    reproducer_sketch: 'With NumLock on, open the lock screen (or suspend and resume) and type a numpad digit. Expected a digit in the password field; actual no digit. Toggle NumLock off and on and repeat: keypad entry then works. Compare the compositor''s NumLock state with the failing prompt where possible.'

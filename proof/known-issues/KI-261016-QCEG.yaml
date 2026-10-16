@@ -1,0 +1,27 @@
+id: KI-261016-QCEG
+title: Native lock repeatedly verifies a failed fingerprint reader without backoff
+description: |-
+    After the reader reports that it is disabled, the lock keeps starting verify about once a second for many minutes with no backoff.
+
+    Trigger: While the native lock is active, fingerprint verification fails immediately because the reader reports a device error.
+
+    Where: lock: shell/plugins/lock/Service.qml fingerprint PAM completion and error retry handling
+
+    Reported upstream in omacom/omarchy#10796 (https://github.com/omacom/omarchy/issues/10796). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261004-296X
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10796
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-830#fingerprint-device-error-retry-storm'
+    reproducer_sketch: 'With the native lock up, let fingerprint verification fail immediately with a device-disabled error. Expected backoff and an unavailable reader after repeated misses. Actual verify retries about once a second for many minutes.'

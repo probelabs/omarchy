@@ -1,0 +1,26 @@
+id: KI-261016-V99F
+title: Open system menu ignores outside clicks on another display
+description: |-
+    The system menu remains visible after a click on the desktop or an application on a different monitor moves focus away from its screen.
+
+    Trigger: Open the system menu on one display of a multi-monitor session, then click outside it on another display.
+
+    Where: menu: shell/plugins/menu/Menu.qml outside-click dismissal of the system menu
+
+    Reported upstream in omacom/omarchy#9433 (https://github.com/omacom/omarchy/issues/9433). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9433
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1149#menu-outside-click-multimonitor'
+    reproducer_sketch: 'With two monitors, open the system menu using Super+Escape on one. Click the desktop or an app on the other. Expected the menu dismisses; actual it stays visible.'

@@ -1,0 +1,27 @@
+id: KI-261016-G8XS
+title: Menu remains invisible after monitor power-off and a no-output shell transition
+description: |-
+    After monitor power-off/no-output events the bar draws but the menu window does not appear; the shell remains available over IPC.
+
+    Trigger: Monitor power-off or shell start/reload while the compositor has no outputs, producing placeholder-screen events in the reported session.
+
+    Where: menu: the menu overlay/summon surface (shell/plugins/menu; bin/omarchy-menu summon/toggle answered by shell IPC) failing to present across output disappearance and return; no proven internal cause is asserted
+
+    Reported upstream in omacom/omarchy#13995 (https://github.com/omacom/omarchy/issues/13995). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13995
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-2159#menu-invisible-after-output-loss'
+    reproducer_sketch: 'On the reported setup power off the monitor and return to the desktop after a no-output/placeholder-screen episode, then summon root. Expected menu presentation; reported actual is a visible bar with no menu window until shell recovery.'

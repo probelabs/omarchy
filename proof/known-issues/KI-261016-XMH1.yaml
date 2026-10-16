@@ -1,0 +1,26 @@
+id: KI-261016-XMH1
+title: Sleep-lock service fails to reacquire its delay inhibitor during a sleep transition
+description: |-
+    The sleep-lock service logs Failed to inhibit: The operation inhibition has been requested for is already running, exits status=1/FAILURE and restarts, leaving a delay-inhibitor gap until a retry succeeds.
+
+    Trigger: Suspend and resume while the sleep-lock service uses Restart=always and RestartSec=2; a restarted inhibitor acquisition occurs before logind finishes the sleep operation.
+
+    Where: omarchy-sleep-lock.service and omarchy-system-sleep-monitor invoking systemd-inhibit for omarchy-system-sleep-lock
+
+    Reported upstream in omacom/omarchy#13160 (https://github.com/omacom/omarchy/issues/13160). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13160
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-131#sleep-inhibitor-transition-restart'
+    reproducer_sketch: 'Start a graphical session, suspend and resume, then inspect the user journal for omarchy-sleep-lock.service. Expected inhibitor reacquisition without a failed unit; reported actual is the already-running refusal, exit 1 and subsequent restart.'

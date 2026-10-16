@@ -1,0 +1,28 @@
+id: KI-261016-QTCD
+title: Keybindings menu renders static web-app action rows even when no Chromium browser or extension exists
+description: |-
+    The SUPER K keybindings menu lists Copy URL from Web App (SHIFT ALT+L) and Download Video from Web App (SHIFT ALT+D) as selectable rows on systems with no Chromium-based browser; selecting them silently does nothing, and no supported user-level mechanism can hide or remove the rows.
+
+    Trigger: The default browser is Firefox or another non-Chromium browser (Chromium not installed) and the keybindings menu is opened (SUPER K): static_bindings() emits the two rows unconditionally, ungated on the bundled extension or a Chromium-based browser being present.
+
+    Where: bin/omarchy-menu-keybindings static_bindings(), which unconditionally emits the two web-app rows
+
+    Reported upstream in omacom/omarchy#8642 (https://github.com/omacom/omarchy/issues/8642). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+    - SYS-REQ-260922-6642
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8642
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1346#keybindings-static-webapp-rows'
+    reproducer_sketch: 'Set the default browser to Firefox (xdg-settings set default-web-browser firefox.desktop) with Chromium not installed, then press SUPER K. The two web-app rows are listed; selecting one dispatches sendshortcut to a browser with no such extension and nothing happens. No ~/.config/omarchy/ override exists and edits to the packaged script are overwritten on update.'

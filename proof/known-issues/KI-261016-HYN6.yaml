@@ -1,0 +1,28 @@
+id: KI-261016-HYN6
+title: Idle lock removes the covering screensaver before session-lock surfaces are secure
+description: |-
+    The desktop becomes briefly visible after the fullscreen screensaver is removed while native lock surfaces are still being created, before display standby.
+
+    Trigger: The idle lock deadline fires with the fullscreen screensaver running; omarchy-system-lock tears the screensaver down before ext-session-lock reports the lock secure.
+
+    Where: lock: bin/omarchy-system-lock screensaver teardown during the idle-to-lock handoff
+
+    Reported upstream in omacom/omarchy#9184 (https://github.com/omacom/omarchy/issues/9184). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+    - SW-REQ-260912-MXQG
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9184
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1212#idle-lock-screensaver-flash'
+    reproducer_sketch: 'Let the fullscreen idle screensaver run through the lock deadline. Expected it remains mapped until session-lock is secure; actual the desktop can flash while lock surfaces are still being created (lock-requested precedes secure by roughly 0.6-1.6 s per a commenter). The report describes a bounded secure-state wait before screensaver teardown preventing this flash. On the reporter''s build, composed with the unmerged dismissal monitor of #7780, a dismissal callback at the lock deadline could also tear the screensaver down early.'

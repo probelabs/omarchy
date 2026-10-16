@@ -1,0 +1,27 @@
+id: KI-261016-W8D0
+title: Power-profile submenu invokes a CLI that crashes during Python and D-Bus teardown
+description: |-
+    The powerprofilesctl subprocess launched to populate the power-profile submenu crashes during interpreter shutdown instead of completing cleanly.
+
+    Trigger: Opening the power-profile submenu invokes powerprofilesctl get/list, whose GObject finalizer can call into the Python interpreter after it has been torn down.
+
+    Where: menu: shell/plugins/menu/Menu.qml power-profile submenu enumeration calls powerprofilesctl get/list; the child crashes during Python/PyGObject shutdown.
+
+    Reported upstream in omacom/omarchy#8596 (https://github.com/omacom/omarchy/issues/8596). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8596
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1363#menu-powerprofiles-cli-teardown-crash'
+    reproducer_sketch: 'On the reported Omarchy 4.0.0-1 installation with power-profiles-daemon 0.30-1 masked for TLP, open the Omarchy power-profile submenu and inspect coredumpctl. Expected: no crashing helper invocation. Reported actual: powerprofilesctl aborts with SIGABRT and a PyGILState_Ensure teardown stack. Later non-maintainer comments also show active-daemon SIGSEGV/SIGABRT occurrences; these are intermittent.'

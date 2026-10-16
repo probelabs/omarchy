@@ -1,0 +1,26 @@
+id: KI-261016-QE50
+title: Default Editor menu hides installed Sublime Text by checking the wrong command
+description: |-
+    Sublime Text is absent from Setup → Default → Editor despite sublime-text-4 being installed and subl working.
+
+    Trigger: Install sublime-text-4 providing /usr/bin/subl but no sublime_text command on PATH, then open the default editor menu.
+
+    Where: default/omarchy/omarchy-menu.jsonc setup.default.editor.sublime when guard
+
+    Reported upstream in omacom/omarchy#10800 (https://github.com/omacom/omarchy/issues/10800). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10800
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-829#sublime-default-menu-hidden'
+    reproducer_sketch: 'Install sublime-text-4, verify subl works, and open Setup → Default → Editor. Expected Sublime Text selectable; actual row hidden because omarchy-cmd-present sublime_text fails.'

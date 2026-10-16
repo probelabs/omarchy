@@ -1,0 +1,26 @@
+id: KI-261016-166P
+title: Hibernate menu row remains available when the kernel refuses hibernation
+description: |-
+    The menu shows Hibernate but selecting it immediately fails without a visible result or error.
+
+    Trigger: The kernel has hibernation disabled while the availability probe's image-size, swap-size and resume-config checks pass.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc system.hibernate row and its hibernation-availability guard
+
+    Reported upstream in omacom/omarchy#7730 (https://github.com/omacom/omarchy/issues/7730). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7730
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1590#hibernate-row-kernel-disabled'
+    reproducer_sketch: 'On a configured system where /sys/power/state lacks disk and /sys/power/disk is [disabled], run omarchy hibernation available and open the System menu. Expected unavailable/hidden Hibernate; actual probe exits 0, row appears and selection silently does nothing.'

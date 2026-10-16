@@ -1,0 +1,27 @@
+id: KI-261016-AA2E
+title: omarchy-menu-select cannot open a picker whose option list exceeds the single-argument limit
+description: |-
+    With a large media library the select payload built from the option list exceeds MAX_ARG_STRLEN (128KB), so the transcode file picker cannot be opened with it.
+
+    Trigger: omarchy-menu-file pipes a large file listing (every matching file under Pictures and Videos, uncapped) on stdin into omarchy-menu-select, which passes the whole encoded option list as one command-line argument when it builds and sends the select payload.
+
+    Where: menu: bin/omarchy-menu-select payload build (options JSON and payload each passed as a single argv string), reached from bin/omarchy-menu-file
+
+    Reported upstream in omacom/omarchy#12665 (https://github.com/omacom/omarchy/issues/12665). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-Q6ZS
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12665
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-260#menu-file-arg-maxlen'
+    reproducer_sketch: 'Put enough media under ~/Pictures or ~/Videos that the path list exceeds 128KB (about 1500 files in the report), then run omarchy transcode. Expected: a picker (the reporter''s fix caps it to the 500 most recent). Actual: the payload exceeds MAX_ARG_STRLEN (E2BIG) and no picker opens.'

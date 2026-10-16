@@ -1,0 +1,27 @@
+id: KI-261016-ZXY0
+title: Thumbnail hash lookup starts a separate index scan for each image
+description: |-
+    Preparing wallpaper picker rows repeatedly reads index.tsv through a fresh awk process for each image instead of reusing one loaded index.
+
+    Trigger: Building background-picker rows for a wallpaper collection and calling thumbnail_for once per image.
+
+    Where: menu: bin/omarchy-menu-images thumbnail_for hash lookup against index.tsv
+
+    Reported upstream in omacom/omarchy#8503 (https://github.com/omacom/omarchy/issues/8503). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260929-THMB
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8503
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1393#menu-images-index-scan-per-thumbnail'
+    reproducer_sketch: 'Open the background picker on a large custom wallpaper set while thumbnail_for prepares rows. Expected one index load and in-memory lookups without a format change; reported actual is one fresh awk index scan per image. No timing measurements or cache-clearing prerequisite are supplied.'

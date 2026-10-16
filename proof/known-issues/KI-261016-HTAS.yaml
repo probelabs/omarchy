@@ -1,0 +1,26 @@
+id: KI-261016-HTAS
+title: Lock view continues rendering while displays are blanked, causing unbounded GPU buffer retention
+description: |-
+    GPU memory grows for the duration of a locked, DPMS-off session and is released on the next render after wake or unlock; exhausting GPU memory can abort the compositor.
+
+    Trigger: The session remains locked with the output DPMS-off while the lock view keeps committing frames that the compositor does not render and release.
+
+    Where: lock: shell/plugins/lock/LockView.qml rendering and shell/plugins/lock/Service.qml blank handling do not suspend repainting while the output is blanked.
+
+    Reported upstream in omacom/omarchy#10612 (https://github.com/omacom/omarchy/issues/10612). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10612
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-874#lock-blanked-render-buffer-retention'
+    reproducer_sketch: 'Lock, let the display blank, wait 30 minutes and sample GPU memory usage. Expected bounded retention during a dark lock; actual sustained growth that drops after wake/unlock. Reporter measured this on Intel Arc and AMD cards, with compositor aborts after exhaustion on the smaller card.'

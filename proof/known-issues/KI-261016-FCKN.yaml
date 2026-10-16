@@ -1,0 +1,27 @@
+id: KI-261016-FCKN
+title: Menu summon reports success without a surface or user feedback when graphics-context allocation fails
+description: |-
+    The menu command acknowledges success but creates no usable menu surface and gives no user-visible explanation when the graphics backend cannot initialize; repeated summons remain silent while graphics resources are unavailable.
+
+    Trigger: Summon or toggle the menu while GPU memory pressure prevents allocation of its EGL/GL graphics context.
+
+    Where: menu: shell/plugins/menu/Menu.qml open/openRoute and its omarchy-menu OverlayWindow presentation path do not surface the graphics-context creation failure to the user.
+
+    Reported upstream in omacom/omarchy#10880 (https://github.com/omacom/omarchy/issues/10880). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10880
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-804#menu-graphics-allocation-silent-failure'
+    reproducer_sketch: 'Occupy GPU memory with other applications until a menu summon cannot allocate its context. Invoke omarchy-menu toggle root or summon and observe command success with no menu surface, accompanied by graphics-context allocation/RHI errors in the journal. Expected a visible menu or explicit failure feedback; actual silent nonpresentation. The subject reports recovery by restarting the shell, and a commenter reports recovery when GPU memory is freed.'

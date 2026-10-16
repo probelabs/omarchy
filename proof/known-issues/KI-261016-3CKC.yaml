@@ -1,0 +1,27 @@
+id: KI-261016-3CKC
+title: Idle lock SIGSEGV when one QQuickItem is reused across lock-screen windows
+description: |-
+    At the idle lock timeout, Quickshell logs that the same QQuickItem is used on different windows and then terminates with SIGSEGV in QQuickItem setParentItem / window reparenting; the shell restarts and the crash repeats on the next lock timeout.
+
+    Trigger: The idle timeout initiates session locking with multiple outputs connected; cross-window QQuickItem warnings and a QML binding/reparenting stack immediately precede the crash. The identity and ownership of the reparented item are not established.
+
+    Where: lock: session-lock engagement through shell/plugins/lock/Service.qml and Quickshell WlSessionLock; the observed fault is Qt Quick's setParentItem/refWindow path. The report does not identify the item or establish whether Omarchy QML or Quickshell moved it.
+
+    Reported upstream in omacom/omarchy#8973 (https://github.com/omacom/omarchy/issues/8973). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8973
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1255#lock-item-cross-window-sigsegv'
+    reproducer_sketch: 'Connect two monitors and leave the stock shell idle until the lock timeout (reported with lock 300 s on Quickshell 0.3.1 / Qt 6.11.2, hybrid Intel+NVIDIA). Expected: each output has its own lock visual tree and the shell stays up. Actual: repeated ''Cannot use same item on different windows at the same time'' warnings, then SIGSEGV in setParentItem/refWindow, and the shell restarts. The project bot could not reproduce on a two-output worker without NVIDIA; a symbolized backtrace is needed to name the shared item.'

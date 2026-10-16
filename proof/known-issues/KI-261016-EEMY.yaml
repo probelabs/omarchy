@@ -1,0 +1,27 @@
+id: KI-261016-EEMY
+title: Locked display repeatedly wakes and re-blanks after its blanked output drops and returns by hotplug, without user input
+description: |-
+    While locked, the display repeatedly turns on showing the password field for a few seconds and goes dark again, with no keyboard or mouse input, for as long as the session stays locked.
+
+    Trigger: The lock blanks a monitor that drops hotplug detect in standby. While the session stays locked, that output is removed and re-added and comes back lit; the lock's blank timer then blanks it again, and the cycle repeats with no keyboard or mouse input.
+
+    Where: lock: shell/plugins/lock blank and wake handling when an output is recreated during an already-blanked locked session (Service.qml idle blank timer and blank state; LockView.qml lock surface).
+
+    Reported upstream in omacom/omarchy#13812 (https://github.com/omacom/omarchy/issues/13812). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13812
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-2112#lock-hdmi-hotplug-blank-wake-loop'
+    reproducer_sketch: 'On a monitor that drops HPD in standby (reporter: HDMI-A-1 on amdgpu), run omarchy system lock and leave input untouched. Expected the display to remain blank after the lock blanks it. Actual the password view returns for a few seconds, the display blanks again, and connector disconnect/reconnect cycles repeat in the Hyprland log. The reporter suspects a pointer enter on the recreated lock surface calls wakeRequested; that path is not required to see the cycle.'

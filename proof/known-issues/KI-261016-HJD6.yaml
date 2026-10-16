@@ -1,0 +1,27 @@
+id: KI-261016-HJD6
+title: Lock blank's display-off DPMS dispatch reports success but leaves every output powered on
+description: |-
+    After lock the displays never power off and every output keeps dpmsStatus true; the display-off DPMS dispatch the lock blank runs returns ok but changes nothing, also when run by hand with no input in between.
+
+    Trigger: Lock the session (omarchy system lock or the idle lock) and leave it untouched past the blank timeout, so the lock's blank runs omarchy-brightness-display off.
+
+    Where: lock: shell/plugins/lock/Service.qml idleBlankTimer -> runBlank()/blankProcess display-off path, through the DPMS-off dispatch it invokes (bin/omarchy-brightness-display off)
+
+    Reported upstream in omacom/omarchy#7456 (https://github.com/omacom/omarchy/issues/7456). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7456
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1664#lock-initial-blank-no-effect'
+    reproducer_sketch: 'Run omarchy system lock (or let the idle lock engage) and leave input untouched for a minute; over SSH or a TTY, hyprctl monitors -j shows dpmsStatus true on every output. Then run hyprctl dispatch ''hl.dsp.dpms({ action = "disable" })'' by hand with no input: expected dpmsStatus false, reported true. Reported on Hyprland 0.56.2 with two Dell panels on NVIDIA+AMD and confirmed on a second 0.56.2 system; one commenter''s AMD system and a bot''s worker blank fine, so the condition is build/driver dependent. The reporter''s theory (the table form is ignored; switch to the string form) is disputed (the bot reads the string form as a toggle) and is not part of this definition.'

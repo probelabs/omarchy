@@ -1,0 +1,26 @@
+id: KI-261016-6FJ3
+title: Renaming binding descriptions drops the keybindings menu's intended row precedence
+description: |-
+    The keybindings cheatsheet reorders rows because translated or reworded labels no longer match its description-based precedence rules.
+
+    Trigger: Reword or translate binding descriptions matched by the cheatsheet's English-text ordering rules.
+
+    Where: menu: bin/omarchy-menu-keybindings prioritize_entries description-regex precedence rules
+
+    Reported upstream in omacom/omarchy#12404 (https://github.com/omacom/omarchy/issues/12404). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12404
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-357#keybindings-description-precedence'
+    reproducer_sketch: 'Translate the shipped binding descriptions and render the keybindings cheatsheet. Expected action ordering to remain stable when only display text changes; actual most rows reorder as description regexes cease to match.'

@@ -1,0 +1,27 @@
+id: KI-261016-4TDB
+title: Apps menu misses newly installed Flatpak entries until the shell restarts despite correct search paths
+description: |-
+    A newly installed Flatpak's valid, unhidden desktop entry is absent from Apps search despite export directories already being present in the running shell's search paths; restarting the shell makes it appear.
+
+    Trigger: Install a Flatpak while the shell is running with the Flatpak export search paths already configured, then search for its newly exported desktop entry.
+
+    Where: menu: shell/plugins/menu/Menu.qml Apps list and onAppsChanged/mergeAppRows integration with the AppLibrary/DesktopEntries live discovery feed; the precise upstream watcher cause is not established here.
+
+    Reported upstream in omacom/omarchy#8650 (https://github.com/omacom/omarchy/issues/8650). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261003-C9GM
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8650
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1341#flatpak-live-entry-refresh-missed'
+    reproducer_sketch: 'As reported in comment 5473526233, install a system Flatpak during a running session, confirm the exported desktop file exists, is not hidden, XDG_DATA_DIRS in the shell and user manager already includes exports, and gtk-launch works. Apps search omits it until omarchy restart shell. Compare before/after without changing search paths.'

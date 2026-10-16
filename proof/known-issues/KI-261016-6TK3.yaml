@@ -1,0 +1,26 @@
+id: KI-261016-6TK3
+title: Lock-screen wake requests repeatedly apply a conflicting monitor scale, causing display flicker
+description: |-
+    The lit lock display flickers as wake handling repeatedly applies a scale different from the active layout and that layout restores its scale.
+
+    Trigger: User input invokes lock wake while the internal panel's active scale differs from the scale inferred from monitors.lua and repeated reconciliation cannot make that inferred scale stick.
+
+    Where: shell/plugins/lock/LockView.qml wakeRequested and shell/plugins/lock/Service.qml runWake invoke the full system-wake/clamshell monitor-scale reconciliation path on lock input.
+
+    Reported upstream in omacom/omarchy#10290 (https://github.com/omacom/omarchy/issues/10290). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10290
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-943#lock-keystroke-wake-scale-flicker'
+    reproducer_sketch: 'Use an internal-panel scale of 1.6 controlled by a separate monitor rule or layout daemon while monitors.lua resolves to 2. Lock and type in the password field. Expected no display reconfiguration while typing; actual repeated scale changes and flicker. R-1655 describes mouse movement reaching the same wake/scale mechanism.'

@@ -1,0 +1,27 @@
+id: KI-261016-Q16A
+title: Pre-suspend locking never runs when the event watcher connects to the wrong system bus
+description: |-
+    The pre-suspend session lock is never requested because the sleep-event watcher cannot connect to the system bus.
+
+    Trigger: The sleep watcher resolves a dbus-monitor from PATH whose default system-bus address does not identify the running system bus.
+
+    Where: lock: pre-suspend request delivery to bin/omarchy-system-sleep-lock; the upstream event source is bin/omarchy-system-sleep-monitor's PATH-resolved dbus-monitor
+
+    Reported upstream in omacom/omarchy#7412 (https://github.com/omacom/omarchy/issues/7412). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-HC86
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7412
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1676#sleep-monitor-path-shadowed-dbus-monitor'
+    reproducer_sketch: 'Put a dbus-monitor build using a nonexistent system-bus socket ahead of /usr/bin in the user manager PATH, start the stock sleep-lock service, then suspend. Expected the pre-suspend session-lock request; actual no request, a bus-connection error and repeated service restarts. The reported example uses Homebrew''s dbus-monitor and reports more than 10000 restarts.'

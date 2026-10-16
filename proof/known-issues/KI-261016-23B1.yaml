@@ -1,0 +1,28 @@
+id: KI-261016-23B1
+title: DNS menu marks no active provider when its status helper cannot read the configured DNS
+description: |-
+    Setup > Network > DNS shows no provider checked even though a DNS provider is configured.
+
+    Trigger: Open the DNS menu as a regular user when the NetworkManager DNS drop-in is unreadable and omarchy-dns aborts without returning provider status.
+
+    Where: menu: checked expressions in default/omarchy/omarchy-menu.jsonc under Setup > Network > DNS consume the empty omarchy-dns status result.
+
+    Reported upstream in omacom/omarchy#15225 (https://github.com/omacom/omarchy/issues/15225). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-JRW1
+    - SYS-REQ-260922-47T8
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15225
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5372#dns-status-failure-no-checked-provider'
+    reproducer_sketch: 'Pin Cloudflare with omarchy dns Cloudflare, with its NetworkManager drop-in root-readable only; run omarchy-dns as a regular user to observe exit 2 and empty stdout, then open Setup > Network > DNS. Expected Cloudflare checked; actual no provider checked.'

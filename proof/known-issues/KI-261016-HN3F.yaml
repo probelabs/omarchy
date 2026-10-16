@@ -1,0 +1,27 @@
+id: KI-261016-HN3F
+title: Lock IPC derived locked freezes true while its three inputs all read false
+description: |-
+    The live lock service answers isLocked and status with locked:true although requested, sessionLocked and secure all read false and lastEvent is unlocked. Pollers treat the unlocked session as locked; the follow-up also observes subsequent lock requests returning ok without engaging a lock.
+
+    Trigger: Unlock a previously locked session; the derived locked value remains true even after lockRequested, sessionLock.locked and sessionLock.secure have become false. Suspend/hibernate cycles and shell restarts were part of the original observation, but the follow-up reports that one unlock is sufficient.
+
+    Where: lock: shell/plugins/lock/Service.qml — the derived locked property (lockRequested || sessionLock.locked || sessionLock.secure) and the lock isLocked/status IPC that serve it
+
+    Reported upstream in omacom/omarchy#14588 (https://github.com/omacom/omarchy/issues/14588). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14588
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5240#derived-locked-stale-true'
+    reproducer_sketch: 'On the affected Quickshell 0.3.2 setup, lock and unlock once, then query isLocked/status from the same shell and request another lock. Expected locked:false after unlock and a working next lock. Reported actual: locked:true with all three inputs false; the next request returns ok without locking. The original report observed this after suspend/hibernate and restarts; restarting the shell temporarily clears it.'

@@ -1,0 +1,26 @@
+id: KI-261016-NJRR
+title: Hibernate menu remains available with an invalid resume device, allowing hibernation that loses the session
+description: |-
+    The menu offers Hibernate even though the configured resume device is empty; hibernation writes an image, but the next boot ignores it and starts a fresh session without warning.
+
+    Trigger: The resume drop-in lacks a valid resume device while the hibernation availability guard's swap-size and resume-hook-presence checks pass.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc system.hibernate row uses a hibernation-availability guard that does not validate the resume device configuration.
+
+    Reported upstream in omacom/omarchy#12630 (https://github.com/omacom/omarchy/issues/12630). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12630
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-275#hibernate-menu-invalid-resume-device'
+    reproducer_sketch: 'On a system with the reported empty resume= drop-in but a valid resume_offset, sufficient swap and the resume hook present, open the menu. Expected: Hibernate unavailable or a visible warning until the resume configuration is repaired. Actual: the guard reports success and Hibernate remains offered; the report says a subsequent hibernation writes the image but cold-boots instead of restoring it.'

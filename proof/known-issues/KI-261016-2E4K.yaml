@@ -1,0 +1,26 @@
+id: KI-261016-2E4K
+title: Menu filter rejects printable keys carrying keypad or layout modifiers
+description: |-
+    A typed printable character such as '+' does not appear in the menu search field, preventing queries containing it.
+
+    Trigger: Entering printable text with a keypad or layout modifier that the menu's no-modifier-or-Shift-only input gate rejects.
+
+    Where: menu: shell/plugins/menu/Menu.qml printable-text branch in Keys.onPressed
+
+    Reported upstream in omacom/omarchy#7629 (https://github.com/omacom/omarchy/issues/7629). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7629
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1617#menu-search-plus-dropped'
+    reproducer_sketch: 'Open the keybindings menu and type keypad ''+''. Expected ''+'' in the query; actual no character. The report gives SUPER SHIFT + RETURN as a search it cannot enter; PR 7659 demonstrates the restrictive modifier predicate.'

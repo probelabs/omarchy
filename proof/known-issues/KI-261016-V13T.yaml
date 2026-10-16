@@ -1,0 +1,27 @@
+id: KI-261016-V13T
+title: Menu window stops mapping after a panel-tree re-instantiation with no output loss, while menu IPC still answers ok
+description: |-
+    The menu IPC keeps answering ok and a summon is accepted, but no omarchy-menu overlay surface is created: SUPER+SPACE silently does nothing while the bar stays normal, until the shell is restarted.
+
+    Trigger: The live shell re-instantiates its panel/component tree (a second duplicate-IpcHandler registration batch across built-in and third-party panels) while every output stays present: no no-output / placeholder-screen transition, no update restart, a single quickshell process.
+
+    Where: menu: the menu overlay/summon path (shell/plugins/menu; bin/omarchy-menu summon/toggle answered by shell IPC); the caller of the re-instantiation is not identified
+
+    Reported upstream in omacom/omarchy#14284 (https://github.com/omacom/omarchy/issues/14284). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14284
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5147#menu-unmapped-after-panel-reinstantiate'
+    reproducer_sketch: 'Run the shell with permanent outputs (reporter: DP-4 plus a headless Virtual-1) and third-party plugins; after hours of uptime a second duplicate-IpcHandler warning batch appears within ~250 ms (19 -> 38 warnings), observed twice in one day right after a ''Panel.qml loaded'' + ''marketplace entries: 4096'' pair, with zero placeholder-screen / FALLBACK lines. Then run `omarchy menu summon root`: expected the menu overlay; actual `ok` and nothing in `hyprctl layers | grep omarchy-menu`; `omarchy restart shell` restores it.'

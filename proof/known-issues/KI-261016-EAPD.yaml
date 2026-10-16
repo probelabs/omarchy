@@ -1,0 +1,27 @@
+id: KI-261016-EAPD
+title: Lock display blanking stops across successive lock cycles until the shell is restarted
+description: |-
+    The locked display remains powered on past the blank timeout across repeated locks in a long-running shell, while direct execution of the blank command still powers it off. Restarting the shell restores automatic blanking.
+
+    Trigger: Lock the session after the running shell has entered the persistent blanking-failure state, and leave it without input past the lock blank timeout; the event that first enters this state is not established.
+
+    Where: lock: shell/plugins/lock/Service.qml idleBlankTimer to runBlank and its reused blankProcess command path.
+
+    Reported upstream in omacom/omarchy#7652 (https://github.com/omacom/omarchy/issues/7652). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7652
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1608#lock-blank-process-latched-running'
+    reproducer_sketch: 'In the affected long-running shell, invoke omarchy-shell lock lock and poll hyprctl monitors -j beyond five seconds: dpmsStatus stays true across repeated locks. Run the same blank command directly while locked: it powers off and stays off. Restart shell and repeat: automatic blanking returns. Reported after roughly 24 hours. A reused Process remaining running is a suspected explanation, not a measured condition; no failed wake was observed.'

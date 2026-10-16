@@ -1,0 +1,26 @@
+id: KI-261016-2GGV
+title: A stalled Wayland clipboard owner freezes the whole shell UI when an always-alive TextInput reads the clipboard on the GUI thread
+description: |-
+    The whole Quickshell UI stops responding for about 1-2 seconds — the bar and every Shell panel together, while regular application windows stay responsive; the journal prints QWaylandDataOffer pipe timeouts and errors for text/plain.
+
+    Trigger: The current Wayland clipboard owner is temporarily unresponsive (its serving thread stalled) while a shell panel's text input takes focus or the clipboard's dataChanged fires, so the shell GUI thread waits on the owner's pipe while reading clipboard text.
+
+    Where: The shell GUI thread's synchronous clipboard read (QQuickTextInput::q_canPasteChanged -> QClipboard::mimeData -> QWaylandDataOffer), reached through an always-alive non-read-only TextInput — audited: shell/plugins/lock/LockView.qml passwordInput
+
+    Reported upstream in omacom/omarchy#8753 (https://github.com/omacom/omarchy/issues/8753). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8753
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1312#clipboard-stall-freezes-shell-ui'
+    reproducer_sketch: 'Run the report''s QML clipboard owner, which copies text and starts a five-second timer before busy-looping its GUI thread for 30 seconds. Within five seconds click the stalled-owner window once. Wait until that window becomes unresponsive, then click the stock Clock widget in the Omarchy bar. Expected: the panel and shell remain responsive. Actual: the Clock panel/bar stops responding for approximately 1–2 seconds, with QWaylandDataOffer pipe-read timeouts in the journal.'

@@ -1,0 +1,26 @@
+id: KI-261016-ESTF
+title: 'Menu Bitwarden install aborts the package transaction: bitwarden-cli''s nodejs-lts-jod conflicts with an installed nodejs package'
+description: |-
+    The menu-launched Bitwarden install aborts the whole package transaction ("unresolvable package conflicts detected") and installs nothing: neither the Bitwarden desktop package nor bitwarden-cli lands, although the desktop package alone would install fine.
+
+    Trigger: Install Bitwarden from the Omarchy menu while the repository nodejs package is already present, however it got there (a manual install, or an earlier menu install that depends on nodejs).
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc install.service.bitwarden action, which requests 'bitwarden bitwarden-cli' in one package transaction
+
+    Reported upstream in omacom/omarchy#12726 (https://github.com/omacom/omarchy/issues/12726). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12726
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-243#bitwarden-cli-nodejs-conflict'
+    reproducer_sketch: 'On a system where the nodejs package is installed (e.g. after Install > Editor > Zed, which depends on nodejs and npm), select Install > Service > Bitwarden and authenticate. Expected: the Bitwarden desktop package installs. Actual: pacman stops at ''nodejs-lts-jod-22.23.2-1 and nodejs-26.8.1-2 are in conflict. Remove nodejs? [y/N]'' and aborts with ''error: unresolvable package conflicts detected''; neither bitwarden nor bitwarden-cli is installed.'

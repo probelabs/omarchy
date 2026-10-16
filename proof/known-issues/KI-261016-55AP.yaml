@@ -1,0 +1,26 @@
+id: KI-261016-55AP
+title: The 1password --lock helper spawned by omarchy-system-lock crashes when its run is cut short
+description: |-
+    The short-lived 1password --lock helper (not the main app, which keeps running) dies with SIGTRAP and a Process crashed notification appears, intermittently.
+
+    Trigger: The detached, timeout-wrapped helper is still alive when its run is ended from outside: on the reported path, suspend freezes user.slice with the helper alive (nothing on the inhibitor path waits for or reaps it) and it is terminated at thaw.
+
+    Where: lock: bin/omarchy-system-lock backgrounded timeout --kill-after=1s 3s 1password --lock helper, not awaited by bin/omarchy-system-sleep-lock before the inhibitor is released
+
+    Reported upstream in omacom/omarchy#7785 (https://github.com/omacom/omarchy/issues/7785). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7785
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1576#1password-helper-crash-after-suspend'
+    reproducer_sketch: 'With 1Password running and unlocked, close the lid (no external monitor) so the lid-close path locks and suspends; resume. Expected: no helper crash. Actual (intermittent): coredumpctl lists a 1password SIGTRAP at the resume second and a crash notification appears. Reported on Omarchy 4.0.0-1, 1Password 8.12.32, ThinkPad T14 Gen 1.'

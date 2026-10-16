@@ -1,0 +1,26 @@
+id: KI-261016-VDRV
+title: Idle lock leaves an output's lock view inert after another output unlocks
+description: |-
+    One output's lock view does not mirror password input and remains frozen after authentication returns another output to the desktop.
+
+    Trigger: Idle lock engages on multiple connected outputs while their layout is settling; manual lock works in the reported reproduction.
+
+    Where: shell/plugins/lock/Service.qml queueSessionLock, sessionLockStabilizeTimer and requestSessionLock driving per-output WlSessionLockSurface creation
+
+    Reported upstream in omacom/omarchy#12949 (https://github.com/omacom/omarchy/issues/12949). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12949
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-185#idle-lock-secondary-surface-inert'
+    reproducer_sketch: 'With two external outputs and internal panel disabled, use DP-2 at 3840x2160 scale 1.5 and DP-3 at position 2560x0. Verify manual lock mirrors input and unlocks both, then allow idle lock. Actual: no mirrored input on DP-2 and its lock image remains frozen after DP-3 unlocks. Expected both views work and disappear. Reporter says changing stabilization 500 to 1500 ms fixes this; invalid geometry at surface creation remains inferred.'

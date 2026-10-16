@@ -1,0 +1,26 @@
+id: KI-261016-FK3M
+title: 'Idle-locked shell wedges alive: its session-lock client dies while the lock status IPC keeps reporting a secure lock'
+description: |-
+    While the session is idle-locked, the shell process stays alive but stops logging; its ext-session-lock client dies and Hyprland's crashed-lockscreen failsafe stays on screen, while 'omarchy-shell lock status' keeps answering locked/secure with a lastEventAt hours stale, so a dead locker is indistinguishable from a healthy one over IPC. The shell never recovers by itself.
+
+    Trigger: The session sits idle-locked (no suspend, no user input) and the shell's event loop wedges at some point during the lock; the exact trigger is unidentified (intermittent).
+
+    Where: lock: the shell's session lock (shell/plugins/lock Service.qml) and its lock status IPC, which keeps serving the last reached state after the event loop wedges
+
+    Reported upstream in omacom/omarchy#10546 (https://github.com/omacom/omarchy/issues/10546). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10546
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-885#idle-locked-shell-wedge-stale-secure'
+    reproducer_sketch: 'Reported on a hybrid Intel+NVIDIA laptop with a single internal display (Omarchy 4.0.2-1, Quickshell 0.3.1-1, Hyprland 0.56.2-1), twice in one night with no suspend: idle-lock the session and wait several hours. Expected: the lock surface stays alive, or a dead locker is reported as not secure. Actual: Hyprland''s lockscreen failsafe stays up, the shell logs nothing more, and ''omarchy-shell lock status'' still reports secure:true with a stale lastEventAt. (The 1Password StatusNotifierItem warning logged last is present on healthy idle locks too and is not the trigger.)'

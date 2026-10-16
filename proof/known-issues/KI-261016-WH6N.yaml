@@ -1,0 +1,28 @@
+id: KI-261016-WH6N
+title: Lock shell dies requesting a lock surface on an output Hyprland removed, crash-looping through stranded recovery while the session stays locked
+description: |-
+    While a session lock is active, output removal during lock-surface creation terminates the shell's Wayland connection. The compositor retains the lock and shows its crashed-lockscreen fallback; shell relaunch and stranded-lock recovery can repeat, and unsuccessful recovery leaves no working password prompt.
+
+    Trigger: A display output disappears while the shell is creating or maintaining session-lock surfaces, including output transitions during idle blanking or suspend/resume.
+
+    Where: lock: shell/plugins/lock/Service.qml session-lock surface lifecycle and stranded-lock recovery, interacting with Quickshell WlSessionLock surfaces and the compositor's handling of surfaces requested for removed outputs.
+
+    Reported upstream in omacom/omarchy#7478 (https://github.com/omacom/omarchy/issues/7478). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-WJYM
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7478
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1659#lock-surface-egl-crash-loop'
+    reproducer_sketch: 'Lock the session and remove its output while locked: let the lock''s idle blank run on a display that drops its link, suspend/resume while locked, or with the session locked run hyprctl output create headless guard then hyprctl output destroy guard ~50ms later (the project bot''s worker-VM reproduction, no monitor needed). Expected: the lock screen holds or rebuilds its surface. Actual: ''Could not create EGL surface'' then ''The Wayland connection experienced a fatal error: Invalid argument'', shell exits 255, relaunches into ''lock-stranded: recovering'', looping; sometimes Hyprland''s crashed-lockscreen fallback needing TTY recovery.'

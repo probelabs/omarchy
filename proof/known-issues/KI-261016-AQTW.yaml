@@ -1,0 +1,27 @@
+id: KI-261016-AQTW
+title: First menu open after focus moves to another monitor maps the menu beneath the windows; extra presses are needed to see it
+description: |-
+    After focus moves to a monitor other than the one the menu was last shown on, the first Super+Space (or omarchy-menu toggle root) shows no menu: its omarchy-menu surface moves to the focused monitor and grows to full size but stays on the bottom layer, beneath the windows, and can hold keyboard input; the next press closes that invisible menu and the one after opens it visibly on top. Opens on the same monitor show on top with one press.
+
+    Trigger: Open the menu after keyboard/mouse focus has moved to a different monitor than the menu's last open, so the menu panel must change screen in the same step that it is shown.
+
+    Where: menu: shell/plugins/menu/Menu.qml's panel (its OverlayWindow instance, namespace omarchy-menu, shown: root.opened && root.rowsLoaded); when the shared overlay window switches screen in the same transition that sets shown, the recreated layer surface keeps the bottom layer instead of the shown overlay layer
+
+    Reported upstream in omacom/omarchy#13562 (https://github.com/omacom/omarchy/issues/13562). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:38Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13562
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-12#menu-first-open-other-monitor'
+    reproducer_sketch: 'Two monitors. Open the menu with Super+Space on monitor A and close it; move focus to monitor B; press Super+Space. Expected: the menu opens visibly on B on the first press. Actual: nothing visible (hyprctl layers -j shows namespace omarchy-menu on B at level 1 / bottom, full size); a second press closes it, a third shows it on top.'

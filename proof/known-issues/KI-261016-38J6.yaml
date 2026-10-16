@@ -1,0 +1,26 @@
+id: KI-261016-38J6
+title: Shell SIGSEGV in Qt QML garbage collection or object destruction while lock fingerprint authentication is active
+description: |-
+    The shell (Quickshell) terminates with SIGSEGV whose faulting frames are in Qt QML garbage collection (QV4 mark stack / GC state machine) or QObject/QQuickItem destruction (QQmlData::destroyed via posted deferred-delete events), not in the PAM subprocess; it restarts and recovers the stranded lock.
+
+    Trigger: A lock-screen fingerprint PAM conversation is active and waiting for, or timing out on, the fingerprint reader (including after the reader re-enumerates); no monitor add/remove precedes the crash.
+
+    Where: lock: the fingerprint authentication lifecycle of shell/plugins/lock/Service.qml (omarchy-lock-fingerprint PAM conversation); the fault is in Qt QML GC / object teardown and the QML object is not identified
+
+    Reported upstream in omacom/omarchy#14396 (https://github.com/omacom/omarchy/issues/14396). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14396
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-5187#fingerprint-lock-qml-gc-sigsegv'
+    reproducer_sketch: 'Enable fingerprint unlock, lock, and leave the fingerprint conversation waiting or timing out (reporter: Validity VFS5011 on a ThinkPad X260, three crashes on one boot, one ~15 s after the reader re-enumerated). Expected the shell to keep running. Actual SIGSEGV in QV4::MarkStack::drain / GCStateMachine::transition or QQmlData::destroyed teardown, followed by lock-stranded recovery and ''Device was already claimed'' fingerprint retries.'

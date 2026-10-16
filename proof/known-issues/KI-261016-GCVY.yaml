@@ -1,0 +1,27 @@
+id: KI-261016-GCVY
+title: Lock password field stores and measures an unbounded password
+description: |-
+    The lock screen accepts a password of any length, builds a repeated-character TextMetrics string the same length, and forwards the whole value into PAM, so allocation and layout grow with the input.
+
+    Trigger: Keyboard or clipboard input of a very long password into the lock screen's password field.
+
+    Where: shell/plugins/lock/LockView.qml password text and TextMetrics, and Service.qml where that value is assigned and sent to PAM
+
+    Reported upstream in omacom/omarchy#10078 (https://github.com/omacom/omarchy/issues/10078). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-WBS3
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10078
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-995#lock-password-unbounded-allocation'
+    reproducer_sketch: 'At the lock screen, paste a very long string into the password field. Expected a small maximum length enforced before storing, measuring, or sending to PAM. Actual the field accepts it, builds a matching TextMetrics string, and forwards the unbounded value into the PAM flow.'

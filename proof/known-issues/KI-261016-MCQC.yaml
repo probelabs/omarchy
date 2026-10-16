@@ -1,0 +1,26 @@
+id: KI-261016-MCQC
+title: Recreated lock surface paints the fallback color instead of the wallpaper on its first frames after resume
+description: |-
+    A lock surface restored after suspend/resume shows only the flat fallback color (Color.background) for roughly two seconds; the blurred wallpaper appears only after later input causes another frame.
+
+    Trigger: Suspend while the native session lock is active, then resume so that the lock outputs (and their lock surfaces) are recreated.
+
+    Where: lock: shell/plugins/lock/LockView.qml wallpaper Image loaded asynchronously with cache: false; Service.qml does not preload or retain the already-known wallpaper for the output sizes recreated lock surfaces need
+
+    Reported upstream in omacom/omarchy#9182 (https://github.com/omacom/omarchy/issues/9182). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9182
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1213#lock-resume-wallpaper-fallback-frame'
+    reproducer_sketch: 'Lock the session, suspend, and resume on a system whose outputs are recreated during DisplayPort link training (the report: NVIDIA, two DisplayPort outputs); observe the first lock frames before typing. Expected the configured blurred wallpaper on the first visible frame; actual Color.background until a later input forces a frame (the reporter verified that preloading the cache-busted wallpaper URL per output size while unlocked removes the gray frame).'

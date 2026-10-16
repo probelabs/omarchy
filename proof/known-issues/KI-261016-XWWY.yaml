@@ -1,0 +1,26 @@
+id: KI-261016-XWWY
+title: Renaming binding descriptions prevents alternative chords from merging in the keybindings menu
+description: |-
+    Alternative chords for one action appear as separate entries instead of being merged into one cheatsheet row.
+
+    Trigger: Reword or translate the binding descriptions used as the alternative-chord merge keys.
+
+    Where: menu: bin/omarchy-menu-keybindings alternative_chord_actions and description-based chord merge
+
+    Reported upstream in omacom/omarchy#12404 (https://github.com/omacom/omarchy/issues/12404). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12404
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-357#keybindings-description-chord-merge'
+    reproducer_sketch: 'Translate the shipped binding descriptions and render the keybindings cheatsheet. Expected the existing alternative-chord groups to remain merged; the report measures all four groups no longer merging.'

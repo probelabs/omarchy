@@ -1,0 +1,27 @@
+id: KI-261016-X3P4
+title: Share > Clipboard sends an empty file when the clipboard has no text representation
+description: |-
+    omarchy share clipboard hands LocalSend a 0-byte .txt file instead of the clipboard contents.
+
+    Trigger: Share the clipboard while it offers no text type (for example only image/png, as after a screenshot): wl-paste without --type writes nothing and exits non-zero, and the empty temp file is sent anyway.
+
+    Where: menu: bin/omarchy-menu-share clipboard mode (wl-paste with no --type into a hardcoded mktemp --suffix=.txt file, send not gated on a successful read)
+
+    Reported upstream in omacom/omarchy#8340 (https://github.com/omacom/omarchy/issues/8340). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-8ERH
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8340
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1436#share-clipboard-image-empty-file'
+    reproducer_sketch: 'Take a screenshot with omarchy screenshot (wl-copy --type image/png); wl-paste -l shows image/png; run omarchy share clipboard. Expected: the image is sent to the target device. Actual: a 0-byte .txt is sent (TEMP_FILE=$(mktemp --suffix=.txt); wl-paste >"$TEMP_FILE" gives size 0, while wl-paste --type image/png returns the full image).'

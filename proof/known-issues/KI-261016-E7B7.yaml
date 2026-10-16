@@ -1,0 +1,27 @@
+id: KI-261016-E7B7
+title: Lock password field inserts character auto-repeat from a held key
+description: |-
+    The password field accumulates unintended repeated masked characters before the user starts entering the password.
+
+    Trigger: A held lock-combination key continues repeating after the lock field gains focus, or a wake key repeats before release.
+
+    Where: shell/plugins/lock/LockView.qml password TextInput key-event handling
+
+    Reported upstream in omacom/omarchy#12398 (https://github.com/omacom/omarchy/issues/12398). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261004-VVN2
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12398
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-362#lock-password-repeat-input'
+    reproducer_sketch: 'Press Ctrl+Super+L and hold the combination slightly longer than a tap, then inspect the field. Expected no character auto-repeat; reported actual several masked characters. Historical behavior: merged PR 7806 suppresses auto-repeat except Backspace/Delete.'

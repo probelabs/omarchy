@@ -1,0 +1,27 @@
+id: KI-261016-GJ8K
+title: Apps menu omits Flatpak entries when its running session lacks export search paths
+description: |-
+    Installed, valid and unhidden Flatpak desktop entries are absent from the Apps menu when the running shell's XDG_DATA_DIRS omits their export directories.
+
+    Trigger: Open the Apps menu in a session whose running shell lacks the user or system Flatpak export path, with valid desktop files present in that omitted directory.
+
+    Where: menu: shell/plugins/menu/Menu.qml Apps rows consume the AppLibrary/DesktopEntries discovery list; Flatpak exports outside the running process's XDG_DATA_DIRS never reach that list.
+
+    Reported upstream in omacom/omarchy#8650 (https://github.com/omacom/omarchy/issues/8650). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261003-C9GM
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8650
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1341#flatpak-missing-session-xdg'
+    reproducer_sketch: 'In the reported session verify the quickshell process lacks Flatpak export paths in XDG_DATA_DIRS while an unhidden Flatpak desktop file exists. Open Apps and search for it: expected a row, actual missing. Compare after supplying the export paths and restarting the shell/session. Do not assume all graphical logins omit profile scripts.'

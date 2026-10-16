@@ -1,0 +1,26 @@
+id: KI-261016-FNC4
+title: Clamshell-disabled internal panel stays off after resume while the lock is secure
+description: |-
+    After resume from a lid-closed suspend, the internal panel stays disabled and black while the session lock is already secure and password attempts are recorded.
+
+    Trigger: Resume after a lid-closed suspend once the machine is undocked, so the clamshell reconciliation poll is not running and the lid-switch or monitor-added event is missed.
+
+    Where: lock: the locked session's wake path - shell/plugins/lock/Service.qml runWake (via omarchy-system-wake) does not bring back a panel the clamshell rule disabled at the compositor level (a DPMS enable cannot re-enable it); resume-side clamshell reconciliation depends on the omarchy-hyprland-monitor-watch poll, which stops once no external monitor is active
+
+    Reported upstream in omacom/omarchy#11744 (https://github.com/omacom/omarchy/issues/11744). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11744
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-588#clamshell-resume-panel-disabled'
+    reproducer_sketch: 'Suspend with the lid closed and an external monitor, undock so the clamshell poll stops, then resume. Expected the internal panel to be re-enabled. Actual eDP-1 stays disabled, the lock is secure, and password submissions are logged while the panel stays black until a hard reboot. With the external monitor still connected the watcher re-enables the panel after a few seconds.'

@@ -1,0 +1,27 @@
+id: KI-261016-B7QC
+title: Lock transition aborts the shell when Qt Quick cannot create its OpenGL context (EGL_BAD_ALLOC), and relaunches repeat the abort until the supervisor gives up
+description: |-
+    When the lock surface is requested, the shell's OpenGL context cannot be made current (eglError 0x3003, 'Failed to create RHI'), Qt Quick logs 'FATAL: Failed to initialize graphics backend for OpenGL.' and the shell dies with SIGABRT; each relaunch aborts the same way until the supervisor stops relaunching, leaving no shell and no lock UI.
+
+    Trigger: The idle screensaver-to-lock hand-off (screensaver windows close, the lock surface is requested and exposed) at a moment when EGL cannot allocate the context's resources (EGL_BAD_ALLOC).
+
+    Where: lock: the lock transition in shell/plugins/lock/Service.qml requesting and exposing the session-lock surface; Qt Quick's default context-creation-failure policy (qFatal on first expose) turns the EGL failure into an abort, and the shell supervisor's relaunches re-enter it
+
+    Reported upstream in omacom/omarchy#8453 (https://github.com/omacom/omarchy/issues/8453). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8453
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1408#idle-lock-egl-bad-alloc-abort'
+    reproducer_sketch: 'Reported setup: NVIDIA GTX 1080, dual DisplayPort, Quickshell 0.3.1, Qt 6.11.2, idle screensaver=150 / lock=300. Leave the session idle into lock. Expected: the screensaver hands off to a usable lock screen. Actual: lock-requested, lock-pending: screen-stabilizing, QWaylandGLContext::makeCurrent eglError 0x3003, Failed to create RHI, FATAL Failed to initialize graphics backend for OpenGL, seven SIGABRT cores, ''Giving up on the Omarchy shell after 6 relaunches''. Commenters see the same fatal on wake from a locked session and on output re-add with no lock; VRAM pressure is a disputed aggravator. A forced zero-output transition (disable the only monitor, reload) is a commenter''s fast reproducer.'

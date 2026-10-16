@@ -1,0 +1,26 @@
+id: KI-261016-8TJR
+title: Startup lock silently ends a prompting PAM exchange without authentication feedback
+description: |-
+    At the startup lock, submitting input for a prompting authentication module enters the authenticating state and then returns to the password field without failure feedback or completion of that module's authentication. The reporter's follow-up says a real password unlocks the same startup dialog, and the prompting exchange works on a later manual lock.
+
+    Trigger: Submit the prompting PAM exchange at the lock observed just after session startup; the same exchange succeeds after manually locking the running session.
+
+    Where: lock: the password PamContext conversation and its completion/error feedback in shell/plugins/lock/Service.qml; the underlying cause of the early conversation termination is not established.
+
+    Reported upstream in omacom/omarchy#8762 (https://github.com/omacom/omarchy/issues/8762). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8762
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1309#startup-lock-pam-silent-return'
+    reproducer_sketch: 'The reporter configured a pam_irlume.so consent module before the stock omarchy-lock-password stack. Cold boot with autologin on that machine, type yes and Enter at the observed startup lock: activity appears, then the password field returns with no failure flash and no face-daemon request or downstream pam_unix attempt. A real password unlocks; later manual locking and submitting yes engages the camera and unlocks. The startup-lock entry path and exact conversation teardown mechanism remain unconfirmed.'

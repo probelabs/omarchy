@@ -1,0 +1,26 @@
+id: KI-261016-2NW8
+title: Sleep preparation flashes the lock password views before the displays blank
+description: |-
+    Starting suspend or hibernate briefly exposes the desktop lock password views before the displays enter sleep; the ordering is secure but visually wrong.
+
+    Trigger: Suspend or hibernate engages the desktop session lock via the sleep-lock path (displays still on while the lock surfaces map).
+
+    Where: lock: the sleep-lock handoff — omarchy-system-sleep-lock requesting the session lock and each WlSessionLockSurface in shell/plugins/lock mapping visibly before the displays blank
+
+    Reported upstream in omacom/omarchy#9231 (https://github.com/omacom/omarchy/issues/9231). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9231
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1206#suspend-lock-prompt-flash'
+    reproducer_sketch: 'On a dual-DisplayPort NVIDIA system, trigger suspend (or hibernate) so the sleep path takes the desktop session lock: the lock request begins, each WlSessionLockSurface maps visibly, the compositor reports secure, and only then sleep begins. Expected sleep preparation to stay visually black while acquiring a secure ext-session-lock surface on every output; actual the password prompt flashes before the displays blank.'

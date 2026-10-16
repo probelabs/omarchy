@@ -1,0 +1,26 @@
+id: KI-261016-C61W
+title: Lock password field is left without keyboard focus when the lock surface becomes ready after its one-shot focus request
+description: |-
+    The visible lock password field does not own keyboard focus, so typed input does not reach it although the lock is ready for input.
+
+    Trigger: The lock surface becomes ready for keyboard input after LockView's focus request has already run. Examples: outputs restored or recreated on resume from a suspend taken while locked (on several monitors they can return one after another), or PAM disabling and then re-enabling the field after a failed password attempt.
+
+    Where: shell/plugins/lock/LockView.qml password focus requests (Component.onCompleted / inputEnabled change only) and shell/plugins/lock/Service.qml screen-change handling, which does not re-request focus
+
+    Reported upstream in omacom/omarchy#9180 (https://github.com/omacom/omarchy/issues/9180). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9180
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1214#lock-resume-output-focus'
+    reproducer_sketch: 'Lock the session, suspend, resume and wait for the displays to return (multi-monitor makes output recreation sequential), then type into the visible password field without clicking. Separately, enter a wrong password and type again once the field re-enables. Expected: the field holds active focus and receives the text. Actual: the field can lack active focus.'

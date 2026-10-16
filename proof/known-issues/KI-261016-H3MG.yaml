@@ -1,0 +1,26 @@
+id: KI-261016-H3MG
+title: Menu's 'No matches for ...' empty-state line is painted outside the menu card on a long non-matching query
+description: |-
+    When a search returns no results, the "No matches for …" message runs past the left and right edges of the menu's rounded container instead of being elided or wrapped; the search field itself elides correctly.
+
+    Trigger: Open the Omarchy menu (SUPER + SPACE) and type a long string that matches nothing.
+
+    Where: menu: shell/plugins/menu/Menu.qml empty-state Text with a fixed width (Style.space(320)) and no elide or wrapMode
+
+    Reported upstream in omacom/omarchy#7510 (https://github.com/omacom/omarchy/issues/7510). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7510
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1652#menu-empty-state-overflow'
+    reproducer_sketch: 'SUPER + SPACE, type ''holas como esatas cjaksjdwdawdjwdj'': expected the ''No matches for ...'' line stays inside the card (elided or wrapped); actual it spills past both edges of the menu.'

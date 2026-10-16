@@ -1,0 +1,27 @@
+id: KI-261016-AZ60
+title: Dictation menu misreports installed state when Voxtype comes from another package
+description: |-
+    Install > AI > Dictation remains enabled and Remove > AI > Dictation is hidden even though the voxtype command is installed and dictation works.
+
+    Trigger: Open the Dictation install/remove menu with voxtype installed from a package other than voxtype-bin.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc install.ai.dictation disabled guard and remove.ai.dictation when guard test voxtype-bin package presence
+
+    Reported upstream in omacom/omarchy#11749 (https://github.com/omacom/omarchy/issues/11749). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260922-47T8
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11749
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-587#dictation-pkg-cmd-check-mismatch'
+    reproducer_sketch: 'Install the AUR voxtype source package, verify dictation works, then open Install > AI > Dictation and Remove > AI. Expected install disabled and remove visible; actual install enabled and remove hidden.'

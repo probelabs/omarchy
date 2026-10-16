@@ -1,0 +1,26 @@
+id: KI-261016-1ZP2
+title: Lock screensaver teardown leaves cursor visibility disabled after unlock
+description: |-
+    The desktop mouse pointer remains invisible after unlock with cursor:invisible still true.
+
+    Trigger: The lock path terminates a screensaver terminal before the saver can restore the cursor visibility setting it disabled.
+
+    Where: lock: bin/omarchy-system-lock screensaver process and terminal teardown
+
+    Reported upstream in omacom/omarchy#15371 (https://github.com/omacom/omarchy/issues/15371). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:48Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15371
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-5400#screensaver-teardown-hidden-cursor'
+    reproducer_sketch: 'Run a third-party screensaver that sets cursor:invisible=true and restores it during deferred cleanup, allow the idle lock deadline to kill its terminal, then unlock. Expected visible pointer; actual pointer stays hidden and hyprctl getoption cursor:invisible reads true.'

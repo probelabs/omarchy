@@ -1,0 +1,26 @@
+id: KI-261016-EQ9A
+title: A hung wake command makes every later lock wake request a no-op
+description: |-
+    Once one omarchy-system-wake started by the lock never exits, every later lock wake request (input on a blanked lock) starts nothing, so blanked displays are not woken for the rest of the lock.
+
+    Trigger: An omarchy-system-wake run started by the lock's runWake hangs and never exits, then the user tries to wake the blanked lock again.
+
+    Where: lock: shell/plugins/lock/Service.qml runWake starts wakeProcess only `if (!wakeProcess.running)`, and wakeProcess (omarchy-system-wake) has no timeout or kill
+
+    Reported upstream in omacom/omarchy#11744 (https://github.com/omacom/omarchy/issues/11744). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11744
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-588#lock-wake-process-no-deadline'
+    reproducer_sketch: 'Replace omarchy-system-wake with a command that sleeps forever, lock, let the display blank, press a key (first runWake starts the hung process), let the lock re-blank, press a key again. Expected the wake command to run again and light the displays. Actual: runWake skips the start because wakeProcess.running is still true, so nothing wakes the displays until the hung process exits.'

@@ -1,0 +1,27 @@
+id: KI-261016-RHAZ
+title: Power menu plugin's powerprofilesctl call fails with ImportError when PATH's python3 lacks PyGObject
+description: |-
+    The powerprofilesctl CLI that the Quickshell power menu plugin spawns exits at startup with ImportError instead of listing or setting power profiles, so the menu's power-profile action fails.
+
+    Trigger: powerprofilesctl carries the packaged '#!/usr/bin/env python3' shebang (Omarchy's install-time rewrite to /bin/python3 was undone by a power-profiles-daemon reinstall or upgrade) while a python3 without PyGObject (e.g. mise's) is first on PATH.
+
+    Where: menu: shell/plugins/menu/Menu.qml power menu plugin spawning powerprofilesctl (relies on the CLI resolving the system Python)
+
+    Reported upstream in omacom/omarchy#11031 (https://github.com/omacom/omarchy/issues/11031). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11031
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-759#menu-powerprofiles-cli-wrong-python'
+    reproducer_sketch: 'Fresh Omarchy install with mise providing python3 on PATH; sudo pacman -S power-profiles-daemon; head -1 /usr/bin/powerprofilesctl shows ''#!/usr/bin/env python3''; open the power-profile entry of the Omarchy menu. Expected: profiles listed/set. Actual (per the report''s reasoning, not executed): powerprofilesctl fails with ImportError (no gi module) and the menu''s power action fails. Reported on omarchy 4.0.3-1, power-profiles-daemon 0.30-1, python 3.14.7.'

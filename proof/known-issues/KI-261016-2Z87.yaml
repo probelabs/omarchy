@@ -1,0 +1,26 @@
+id: KI-261016-2Z87
+title: Editable lock input eagerly reads whole clipboard offers with no byte bound, growing shell memory without a paste
+description: |-
+    Shell memory grows with the entire offered clipboard text even when no user pastes or types into the field.
+
+    Trigger: Another application changes the Wayland clipboard to a large text offer while an editable shell TextInput exists.
+
+    Where: Audited shell/plugins/lock/LockView.qml password input exposes QQuickTextInput::q_canPasteChanged synchronous whole-offer clipboard reads; unaudited shell TextFields also expose the same path.
+
+    Reported upstream in omacom/omarchy#15083 (https://github.com/omacom/omarchy/issues/15083). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15083
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-5346#clipboard-offer-unbounded-allocation'
+    reproducer_sketch: 'With an editable field alive, offer 100 MiB text/plain through wl-copy without pasting. Expected no whole-offer allocation on clipboard change; actual the editable QML probe grows 238 MB and the real shell plugin probe grows 240..297 MB. Read-only controls show no growth.'

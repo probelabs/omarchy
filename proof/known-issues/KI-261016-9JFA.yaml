@@ -1,0 +1,26 @@
+id: KI-261016-9JFA
+title: Encrypted hibernate resume requires both LUKS and session passwords because the sleep lock engages before S4
+description: |-
+    On a stock encrypted root installation, hibernate resume requires two authentication prompts: the initramfs LUKS passphrase and then the restored session lock password. Expected one auth step (boot decryption only) for the interactive LUKS hibernate path.
+
+    Trigger: Hibernate on a stock encrypted root using Omarchy's cryptdevice= initramfs flow. The sleep monitor receives PrepareForSleep(true) and invokes omarchy-system-sleep-lock before S4, so the session is locked when the hibernation image is saved.
+
+    Where: lock: omarchy-system-sleep-lock engaging the session lock before hibernate (S4) on every PrepareForSleep(true) without distinguishing hibernate via a marker — the locked state is saved into the hibernation image
+
+    Reported upstream in omacom/omarchy#8909 (https://github.com/omacom/omarchy/issues/8909). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8909
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1278#hibernate-lock-before-s4-double-auth'
+    reproducer_sketch: 'On an encrypted Btrfs root with Omarchy''s stock cryptdevice= initramfs flow and hibernate enabled: trigger hibernate from the menu. Expected only the LUKS prompt on resume. Actual LUKS prompt then session lock password prompt (double auth). The sleep monitor saw no hibernate marker and locked before S4.'

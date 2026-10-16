@@ -1,0 +1,28 @@
+id: KI-261016-6BAK
+title: Menu and lock controls omit accessibility roles and names
+description: |-
+    Assistive technology cannot identify and operate menu and lock controls because their item trees contain no accessibility roles or names.
+
+    Trigger: Inspect or use the menu and lock surfaces through Qt's accessibility bridge with assistive technology; window-tree publication must be working to observe the missing metadata.
+
+    Where: Audited menu and lock UI surfaces in shell/plugins/menu/** and shell/plugins/lock/**: missing Accessible.role and Accessible.name metadata, including controls built from the shared Ui kit.
+
+    Reported upstream in omacom/omarchy#12009 (https://github.com/omacom/omarchy/issues/12009). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+    - STK-REQ-260912-XJ5D
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12009
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-513#menu-lock-accessibility-metadata-missing'
+    reproducer_sketch: 'The report''s source scan finds no Accessible. properties in /usr/share/omarchy/shell. With a working Quickshell AT-SPI window-tree bridge, open the application menu or lock screen and inspect roles and names: expected named, operable controls; reported actual missing roles/names. The reporter''s Quickshell 0.3.1 cannot publish any window tree, so that independent upstream prerequisite must first be resolved.'

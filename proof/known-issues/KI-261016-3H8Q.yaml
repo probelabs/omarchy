@@ -1,0 +1,27 @@
+id: KI-261016-3H8Q
+title: Lock re-blanks a slow display five seconds after wake
+description: |-
+    After a wake from the lock's DPMS blank, a slow display is blanked again before it finishes showing the lock screen, so one key or mouse move does not leave the lock screen usable. Lengthening the five-second timer removes the failure.
+
+    Trigger: A keyboard or pointer wake while the session is locked and the display is in DPMS standby, on a monitor whose DPMS handshake takes longer than five seconds.
+
+    Where: lock: shell/plugins/lock/Service.qml idleBlankTimer (interval 5000), re-armed by runWake
+
+    Reported upstream in omacom/omarchy#7749 (https://github.com/omacom/omarchy/issues/7749). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7749
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1584#slow-dpms-wake-reblank'
+    reproducer_sketch: 'Lock the session and wait until a slow DisplayPort monitor enters DPMS standby, then press Shift once. Expected the lock screen to stay visible. Actual the five-second timer blanks the display again before the handshake finishes. Changing that timer from 5 seconds to 15 seconds keeps the lock screen up.'

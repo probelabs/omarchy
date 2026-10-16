@@ -1,0 +1,26 @@
+id: KI-261016-612T
+title: Default Agent menu still offers the sunset Gemini CLI, so the selection fails
+description: |-
+    Selecting Gemini under Setup > Default > Agent fails during installation or fails to authenticate, and the menu does not offer the Antigravity CLI that replaced it.
+
+    Trigger: The audited Default Agent menu entry still targets the deprecated Gemini CLI after that CLI was sunset.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc Setup > Default > Agent entry
+
+    Reported upstream in omacom/omarchy#8477 (https://github.com/omacom/omarchy/issues/8477). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8477
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1401#menu-default-agent-dead-gemini'
+    reproducer_sketch: 'Open Setup > Default > Agent and choose Gemini. Expected: the menu installs and launches the current Google agent CLI. Actual: installation or authentication fails because the entry still targets the sunset Gemini CLI, and Antigravity is not the menu target.'

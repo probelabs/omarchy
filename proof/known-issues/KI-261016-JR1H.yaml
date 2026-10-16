@@ -1,0 +1,26 @@
+id: KI-261016-JR1H
+title: Setup > Network menu has no row that opens the Wi-Fi panel
+description: |-
+    The Omarchy menu's Setup > Network submenu lists only DNS and QR Code; no row summons the Wi-Fi scan/connect panel, so without the bar's network widget the menu offers no way to pick or switch a Wi-Fi network.
+
+    Trigger: Open Setup > Network in the Omarchy menu; it matters once the bar's network widget is absent (plugin disabled, removed from a custom shell.json, or dragged off the bar).
+
+    Where: menu: the Setup > Network submenu in the menu's item tree (default/omarchy/omarchy-menu.jsonc), which declares no Wi-Fi row.
+
+    Reported upstream in omacom/omarchy#10803 (https://github.com/omacom/omarchy/issues/10803). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10803
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-828#setup-network-no-wifi-row'
+    reproducer_sketch: 'Run `omarchy plugin disable omarchy.network` (or drop it from ~/.config/omarchy/shell.json), open the menu and go to Setup > Network: expected a Wi-Fi row that opens the same panel as the bar icon; actual only DNS and QR Code rows. Only Super+Ctrl+W still opens the panel.'

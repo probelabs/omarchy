@@ -1,0 +1,30 @@
+id: KI-261016-CS5T
+title: Lock-screen fingerprint PAM stack has no clamshell gate, so fingerprint auth runs while the lid is closed
+description: |-
+    With the laptop lid closed, the lock screen still invokes pam_fprintd.so on every fingerprint attempt instead of skipping fingerprint authentication.
+
+    Trigger: The session is locked, or resumes from suspend, while the lid is closed and a fingerprint is enrolled.
+
+    Where: bin/omarchy-apply-lock's fingerprint PAM install: the tee heredoc that writes /etc/pam.d/omarchy-lock-fingerprint as only 'auth required pam_fprintd.so' with no omarchy-hw-laptop-closed pam_exec gate
+
+    Reported upstream in omacom/omarchy#10096 (https://github.com/omacom/omarchy/issues/10096). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-JW2J
+    - SW-REQ-260912-Y0WT
+    - SW-REQ-261004-YNBG
+    - SW-REQ-261004-296X
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10096
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-989#lock-fingerprint-no-clamshell-gate'
+    reproducer_sketch: 'Enroll a fingerprint, inspect /etc/pam.d/omarchy-lock-fingerprint for a lid-closed pam_exec gate before pam_fprintd.so, then lock with the lid closed: expected fingerprint skipped, actual pam_fprintd.so is called.'

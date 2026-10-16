@@ -1,0 +1,27 @@
+id: KI-261016-DDXV
+title: Keybindings menu resolves code:N bindings against the default US keymap instead of the active layout
+description: |-
+    On a non-US active layout the keybindings menu names code:N bindings by their US keysyms (e.g. MINUS / EQUAL for code:20 / code:21), not the symbol the active layout puts on that physical key, so it advertises shortcuts that cannot be typed as shown; the bindings themselves fire on the correct physical key.
+
+    Trigger: Open the keybindings menu (SUPER K or omarchy menu keybindings --print) while the active keyboard layout is not US; parse_keycodes compiles the keymap with xkbcli compile-keymap and no layout arguments.
+
+    Where: menu: bin/omarchy-menu-keybindings parse_keycodes keycode-to-symbol resolver (keymap_cmd = xkbcli compile-keymap </dev/null)
+
+    Reported upstream in omacom/omarchy#8999 (https://github.com/omacom/omarchy/issues/8999). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-9DMS
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8999
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1248#keybindings-default-us-symbols'
+    reproducer_sketch: 'Select a non-US layout (reported: es; confirmed in a comment on de/mac), run omarchy menu keybindings --print. Expected the resize bind on code:20 shown as SUPER + APOSTROPHE (es); actual SUPER + MINUS. SUPER + apostrophe resizes, SUPER + minus does nothing. xkbcli compile-keymap with no args gives minus/equal at AE11/AE12; with --layout es gives apostrophe/exclamdown.'

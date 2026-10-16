@@ -1,0 +1,27 @@
+id: KI-261016-X5GT
+title: Key presses used to wake a blanked lock screen also edit the password
+description: |-
+    Wake keystrokes leave unwanted masked characters in the password field before intentional password entry.
+
+    Trigger: Press a character key to wake the blanked display while the session is locked.
+
+    Where: shell/plugins/lock/LockView.qml password input and wake-event handling with shell/plugins/lock/Service.qml
+
+    Reported upstream in omacom/omarchy#12398 (https://github.com/omacom/omarchy/issues/12398). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261004-VVN2
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12398
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-362#lock-wake-key-enters-password'
+    reproducer_sketch: 'Lock the session, wait until the display blanks, then tap a character key to wake it. Expected the wake-only action to leave an empty field; actual the wake character is inserted. Repeat suppression alone can leave the initial character.'

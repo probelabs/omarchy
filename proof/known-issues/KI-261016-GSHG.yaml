@@ -1,0 +1,27 @@
+id: KI-261016-GSHG
+title: Defaults → Browser cannot show or check an XDG default browser outside the menu's hardcoded browser rows
+description: |-
+    Setup → Defaults → Browser lists only the installed browsers from the built-in list, none of them checked; the actual xdg-settings default browser has no row, so the menu never shows it as the default and offers no way to pick it back.
+
+    Trigger: The xdg-settings default-web-browser is a browser that is not one of the menu's built-in browser rows, then the user opens Defaults → Browser.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc Browser rows (fixed rows gated on omarchy-cmd-present; each `checked` compares omarchy-default-browser output to a short name, while omarchy-default-browser returns a raw desktop id for an unlisted browser)
+
+    Reported upstream in omacom/omarchy#8903 (https://github.com/omacom/omarchy/issues/8903). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260922-47T8
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8903
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1281#defaults-browser-unlisted-default'
+    reproducer_sketch: 'Install chromium and librewolf (the report also names vivaldi, waterfox; a commenter names helium); xdg-settings set default-web-browser librewolf.desktop; open Omarchy menu → Setup → Defaults → Browser. Expected: LibreWolf listed and checked. Actual: only "Chromium", unchecked; LibreWolf absent.'

@@ -1,0 +1,27 @@
+id: KI-261016-NV0T
+title: Lock display blanking makes a KVM abandon the session and disconnect its input devices
+description: |-
+    The KVM switches away from the locked machine after its video signal disappears, disconnecting its USB hub; the monitor shows source search and the keyboard and mouse cannot become usable for unlock.
+
+    Trigger: Switch a signal-sensing KVM to a locked Omarchy session and let the lock's display-blank countdown expire while its peripherals are connecting.
+
+    Where: lock: shell/plugins/lock/Service.qml idleBlankTimer and runBlank dispatching omarchy-brightness-display off.
+
+    Reported upstream in omacom/omarchy#14392 (https://github.com/omacom/omarchy/issues/14392). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14392
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5185#lock-blank-kvm-input-loss'
+    reproducer_sketch: 'Switch a KVM carrying video and USB to the locked machine. The lock screen appears, then the five-second blank disables DPMS; the KVM scans to another input and disconnects USB before keyboard/mouse become usable. Expected a usable unlock session. The reported workaround repeatedly re-enables DPMS after monitoradded so the KVM stays selected long enough to enumerate USB and unlock.'

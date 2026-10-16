@@ -1,0 +1,26 @@
+id: KI-261016-BWBN
+title: After a failed password attempt the lock screen shows only the failure message in place of the empty password field, with no visible input prompt
+description: |-
+    After a wrong password, the empty password field renders only the red 'Authentication failed (n)' text: no placeholder, no visible field or cursor, nothing inviting input, so the lock screen looks unusable; input is in fact still focused and the field reappears on the first keystroke.
+
+    Trigger: Submit a wrong password on the lock screen (password-only lock, any number of failures) and leave the field empty.
+
+    Where: lock: shell/plugins/lock/LockView.qml placeholder Text over the password TextInput, which shows root.failureMessage instead of the placeholder while the field is empty; the message clears only via onTextChanged on the first keystroke
+
+    Reported upstream in omacom/omarchy#14125 (https://github.com/omacom/omarchy/issues/14125). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14125
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-2205#lock-failure-message-hides-prompt'
+    reproducer_sketch: 'Lock the session (omarchy system lock or idle lock), type a wrong password and submit. Expected: the failure is reported and the field still visibly invites input (placeholder or visible field next to the message). Actual: only the red ''Authentication failed (1)'' shows; clicking changes nothing; typing makes the dot field reappear and the next correct password unlocks. Reported on Omarchy 4.0.4-1, quickshell 0.3.1-1.'

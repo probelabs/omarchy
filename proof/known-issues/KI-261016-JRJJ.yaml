@@ -1,0 +1,27 @@
+id: KI-261016-JRJJ
+title: Action-route shortcuts re-open their picker on a second press instead of closing it
+description: |-
+    A shortcut whose menu route resolves to an action (e.g. Background Switcher, Theme Switcher) opens its picker on every press; pressing the same shortcut again re-runs the action and re-opens the picker instead of closing it, so the shortcut never toggles.
+
+    Trigger: Press an action-route menu shortcut, then press the same shortcut again while the spawned picker is still open.
+
+    Where: menu: action-route handling in openRoute (shell/plugins/menu/Menu.qml) runs the route's action and closes the menu at once, so the next toggle sees the menu closed and runs the action again
+
+    Reported upstream in omacom/omarchy#7389 (https://github.com/omacom/omarchy/issues/7389). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-N3RM
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7389
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1681#menu-toggle-action-route-reopens'
+    reproducer_sketch: 'Press Super+Ctrl+Space (background switcher) or Super+Shift+Ctrl+Space (theme switcher) twice: expected the picker opens, then closes; actual the picker opens again on the second press. The upstream thread notes the Set reminder shortcut (another action route) behaves the same; pr/7445 is an in-flight fix for the image-picker switchers.'

@@ -1,0 +1,26 @@
+id: KI-261016-Z78Z
+title: Session-lock client is killed with SIGKILL on wake from suspend and Hyprland flashes lockdead until the shell recovers
+description: |-
+    On resume from suspend while the session is locked, the shell (the session-lock client) exits with status 137 (SIGKILL). Hyprland shows its lockdead screen for a few seconds, then the relaunched shell restores the password prompt and the session stays locked. The journal in the report has no fatal Wayland error and no FALLBACK monitor removal.
+
+    Trigger: Resume from suspend while the lock screen is active.
+
+    Where: lock: the session-lock client dying across suspend-resume, then shell/plugins/lock stranded-lock recovery
+
+    Reported upstream in omacom/omarchy#14136 (https://github.com/omacom/omarchy/issues/14136). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14136
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-2209#lock-shell-sigkill-wake-flash'
+    reproducer_sketch: 'Suspend with the lock screen active and resume by opening the lid. Expected the lock screen to stay up. Actual the journal shows Omarchy shell exited with status 137 and relaunching, Hyprland''s lockdead.png appears for a few seconds, then lock-stranded recovery restores the password prompt.'

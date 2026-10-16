@@ -1,0 +1,26 @@
+id: KI-261016-8FM3
+title: Omarchy menu filter types no numpad digits when NumLock is on but keypad keys arrive as navigation keysyms
+description: |-
+    With NumLock on (compositor reports Mod2 locked), pressing a numpad digit in the Omarchy menu inserts nothing into the search/filter box, or moves the selection cursor instead; the number row and other apps type digits normally.
+
+    Trigger: Typing on the numeric keypad while the menu is open and the keypad keys resolve to the NumLock-off navigation keysyms (KP_End, KP_Down, KP_Left, ...) with Qt.KeypadModifier and empty event.text, i.e. the Hyprland/Qt NumLock keysym desync.
+
+    Where: menu: shell/plugins/menu/Menu.qml Keys.onPressed, whose Left/Right/Up/Down/PageUp/PageDown navigation branches consume the keypad keys before the text-filter branch
+
+    Reported upstream in omacom/omarchy#8176 (https://github.com/omacom/omarchy/issues/8176). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8176
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1481#menu-keypad-digits-numlock-desync'
+    reproducer_sketch: 'With NumLock on and keypad keys reporting KP_End/KP_Down etc. in wev, run omarchy menu and press numpad 1: expected ''1'' in the filter; actual nothing is typed or the cursor moves.'

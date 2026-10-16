@@ -1,0 +1,27 @@
+id: KI-261016-X40K
+title: Lock display blanking loses the requested panel brightness on wake
+description: |-
+    The panel returns brighter than the user-selected level while requested brightness remains unchanged; the next brightness adjustment jumps abruptly from that stale requested level.
+
+    Trigger: The lock's idle blank powers the display down and its backlight controller resets the actual level; waking the panel does not reapply the requested level.
+
+    Where: lock: shell/plugins/lock/Service.qml idle blank and wake sequence, through omarchy-brightness-display off and omarchy-system-wake
+
+    Reported upstream in omacom/omarchy#13890 (https://github.com/omacom/omarchy/issues/13890). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13890
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-2130#lock-blank-panel-brightness-reset'
+    reproducer_sketch: 'As reported on a T2 Mac with gmux_backlight, set brightness to 5%, suspend and resume, leave the lock until it blanks, then press a key. Expected the selected 5%; actual panel 80% while requested brightness stays 5%. Brightness-down abruptly sets 4%. Reapplying requested brightness after display-on restores the chosen level.'

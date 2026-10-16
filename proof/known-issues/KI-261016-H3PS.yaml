@@ -1,0 +1,26 @@
+id: KI-261016-H3PS
+title: Menu Ollama install never selects the ROCm package on a stock AMD install
+description: |-
+    An AMD GPU owner who installs Ollama from the menu never gets the ROCm package; with no nvidia-smi on PATH they get the CPU-only package.
+
+    Trigger: A stock install has mesa and vulkan-radeon but not the rocminfo binary, and the user runs Menu → Install → AI → Ollama without nvidia-smi on PATH.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc entry install.ai.ollama, the branch that sets ollama-rocm only when omarchy-cmd-present rocminfo succeeds
+
+    Reported upstream in omacom/omarchy#10380 (https://github.com/omacom/omarchy/issues/10380). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/10380
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-920#ollama-install-rocm-unreachable'
+    reproducer_sketch: 'On an AMD GPU machine with neither rocminfo nor nvidia-smi installed, open Menu → Install → AI → Ollama. Expected the ROCm Ollama package. Actual the CPU-only package.'

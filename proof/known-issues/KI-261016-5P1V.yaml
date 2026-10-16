@@ -1,0 +1,26 @@
+id: KI-261016-5P1V
+title: Menu app launches do not preserve the invoking workspace
+description: |-
+    An app launched from one workspace opens on the workspace focused when its window appears instead of the workspace where the launch was initiated.
+
+    Trigger: Launch an app from the menu and switch to another workspace before the application's window appears.
+
+    Where: menu: application activation in shell/plugins/menu/Menu.qml
+
+    Reported upstream in omacom/omarchy#13130 (https://github.com/omacom/omarchy/issues/13130). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13130
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-139#menu-launch-workspace-not-preserved'
+    reproducer_sketch: 'On workspace 2 launch an app from the menu, then switch to workspace 1 before it finishes opening. Expected: its window opens on workspace 2. Actual: its window opens on workspace 1. The brightmeows comment reports menu launches still follow focus independently of initial_workspace_tracking.'

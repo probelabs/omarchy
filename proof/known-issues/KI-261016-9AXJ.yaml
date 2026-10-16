@@ -1,0 +1,26 @@
+id: KI-261016-9AXJ
+title: Menu's exclusive keyboard focus routes on-screen-keyboard taps to its dismiss scrim, closing the menu before search input
+description: |-
+    While the Omarchy menu is open on a touchscreen with a layer-shell on-screen keyboard, tapping OSK keys closes the menu on the first tap and no keystrokes reach the menu's search field; the on-screen keyboard works normally in ordinary windows before and after.
+
+    Trigger: Open the Omarchy menu on a touchscreen device with a layer-shell on-screen keyboard visible, then tap OSK keys.
+
+    Where: menu: shell/plugins/menu/Menu.qml full-screen layer surface and dismiss scrim (WlrLayershell.keyboardFocus Exclusive, ExclusionMode.Ignore)
+
+    Reported upstream in omacom/omarchy#9029 (https://github.com/omacom/omarchy/issues/9029). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:43Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9029
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1241#menu-osk-tap-dismissal'
+    reproducer_sketch: 'Show a layer-shell OSK (e.g. wvkbd), open the Omarchy menu with Super+Space (or omarchy menu summon / the bar icon), and tap OSK keys. Expected the menu stays open and OSK keystrokes type into the search filter like a physical keyboard; actual the first tap dismisses the menu and no text is entered. The report''s validated local fix (keyboardFocus OnDemand, ExclusionMode.Auto in Menu.qml) restores OSK typing.'

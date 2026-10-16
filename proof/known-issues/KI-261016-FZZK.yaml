@@ -1,0 +1,26 @@
+id: KI-261016-FZZK
+title: Keybindings cache key includes volatile 'active keymap' device lines and each refresh deletes the other caches, so menu opens keep paying a cold rebuild
+description: |-
+    The keybindings menu misses its cache on nearly every open: the computed cache key alternates between values and each successful refresh deletes the cache stored under the other key, so consecutive opens repeatedly pay the full cold rebuild instead of a warm read and the menu opens slowly.
+
+    Trigger: Open the keybindings menu (Super+K) at successive moments when the 'active keymap:' lines reported by hyprctl devices differ (as reported: an Omarchy menu or popup holding exclusive keyboard focus at one press and not at the next), so the key flips and each rebuild deletes the other key's cache.
+
+    Where: menu: bin/omarchy-menu-keybindings - keybindings_cache_key hashes the 'active keymap:' lines of hyprctl devices together with hyprctl binds; refresh_keybindings_cache deletes every keybindings-*.records file stored under another key
+
+    Reported upstream in omacom/omarchy#8140 (https://github.com/omacom/omarchy/issues/8140). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:44Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/8140
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1487#keybindings-cache-keymap-thrash'
+    reproducer_sketch: 'Time Super+K with no menu open, then while the root menu (Super+Space) holds keyboard focus, then again with none open; diff `hyprctl devices | grep ''active keymap:''` between the states and watch ~/.cache/omarchy for keybindings-*.records being rewritten and deleted. Reporter (Hyprland 0.56.2): ~540ms cold rebuilds against ~21-26ms warm reads, the hash alternating with menu focus. The project bot''s comment could not reproduce the menu-focus difference but reproduced the same key flip when a virtual keyboard (`active keymap: none`, e.g. wtype) attaches and detaches.'

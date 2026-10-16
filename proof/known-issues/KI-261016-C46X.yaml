@@ -1,0 +1,27 @@
+id: KI-261016-C46X
+title: Idle-triggered system-lock exits successfully without requesting session lock
+description: |-
+    The desktop stays unlocked and accessible after idle.lock expires, although the spawned lock command exits 0 and no lock-requested or secure transition is logged.
+
+    Trigger: Allow the configured idle.lock timeout to elapse without user input; manual locking and suspend locking still work.
+
+    Where: Idle invocation of bin/omarchy-system-lock and its omarchy-shell lock lock IPC call
+
+    Reported upstream in omacom/omarchy#9480 (https://github.com/omacom/omarchy/issues/9480). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260912-T0XP
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9480
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1140#idle-lock-silent-noop'
+    reproducer_sketch: 'Set a short idle.lock, leave the machine untouched until the timeout and inspect lock status. Expected secured session or visible failure; actual successful child-process exit with locked/requested/secure false and unchanged prior lock event. Compare manual omarchy system lock, which succeeds.'

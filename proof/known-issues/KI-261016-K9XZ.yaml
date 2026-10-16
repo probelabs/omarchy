@@ -1,0 +1,26 @@
+id: KI-261016-K9XZ
+title: Install menu offers entries whose packages cannot be installed on the running architecture
+description: |-
+    On a non-x86_64 install (aarch64) the Install menu shows entries whose packages do not exist for that architecture; selecting one never installs anything, and because the entry's guard only checks that the package is absent, the same entry is offered again every time.
+
+    Trigger: Open the Install menu on an architecture for which an entry's package is unavailable in the configured repositories (e.g. Install > Service > Spotify or Dropbox on aarch64) and select it.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc install entries (e.g. install.service.spotify, the Dropbox service entry) whose when-guards test only package presence (! omarchy-pkg-present …), with no architecture or installability check
+
+    Reported upstream in omacom/omarchy#11591 (https://github.com/omacom/omarchy/issues/11591). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:41Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/11591
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-623#menu-arm-uninstallable-services'
+    reproducer_sketch: 'On aarch64: Super+Space, Install > Service > Spotify, enter the sudo password; pacman -Q spotify still reports the package missing and the entry is offered again. Expected: the entry is hidden or disabled where the package cannot be installed. The report lists spotify and dropbox as unavailable on aarch64; signal, tailscale, nordvpn and once are available.'

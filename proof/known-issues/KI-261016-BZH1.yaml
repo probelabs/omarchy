@@ -1,0 +1,27 @@
+id: KI-261016-BZH1
+title: Under Qt 6.12 the shell's Color palette singleton resolves to undefined, so the Omarchy menu opens as a fully black screen
+description: |-
+    Opening the Omarchy menu (Super+Space or omarchy-menu toggle) shows a fully black screen instead of the menu UI while hyprctl layers shows the omarchy-menu layer at full size; the shell log reports TypeError 'Cannot read property background of undefined' and 'scrim of undefined' in plugins/menu/Menu.qml and 'menu.border-alpha of undefined' in Commons/Border.qml from shell startup.
+
+    Trigger: Run the Omarchy shell on Qt 6.12 (qt6-base/qt6-declarative/qt6-wayland 6.12.0), then open the menu; the shell's unqualified Color palette references then evaluate to undefined.
+
+    Where: menu: the Color palette lookups in shell/plugins/menu/Menu.qml (Color.menu.background / scrim, lines 87/91) and shell/Commons/Border.qml (menu.border-alpha), which reference the shell's Color singleton unqualified
+
+    Reported upstream in omacom/omarchy#14635 (https://github.com/omacom/omarchy/issues/14635). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - STK-REQ-260922-XTNR
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14635
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5254#qt612-color-singleton-shadow'
+    reproducer_sketch: 'Update qt6-base/qt6-declarative/qt6-wayland to 6.12.0 (the quickshell build, 0.3.1 or 0.3.2, does not matter per a second reporter), restart the shell and press Super+Space. Expected the themed menu UI; actual a fully black screen with the omarchy-menu layer mapped and the Menu.qml/Border.qml undefined-property errors in `qs log`. A commenter''s pass/fail: `journalctl -b -t omarchy-shell | grep -c ''WARN scene''` is 0 on Qt 6.11.2 and 233 on 6.12.0. The reporter suspected a pragma Singleton change; merged PR #14553 instead names a new QtQuick Color type shadowing the unqualified singleton and qualifies the references as Commons.Color.'

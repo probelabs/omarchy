@@ -1,0 +1,27 @@
+id: KI-261016-9B0Z
+title: Open menu Apps list rebuilds continuously and the selection moves with no input when user desktop files override system ids
+description: |-
+    With the menu open and no input, the Apps list flickers as rows are rebuilt several times a second and the selection is dragged to the first or last row.
+
+    Trigger: Desktop files in the user applications directory share ids with system desktop files, so DesktopEntries keeps emitting valuesChanged and the open menu re-merges app rows on each emission.
+
+    Where: menu: shell/plugins/menu/Menu.qml onAppsChanged calls mergeAppRows and rebuildDisplay; delegate swaps under a stationary pointer pass the pointer-move gate and rewrite the selection
+
+    Reported upstream in omacom/omarchy#7083 (https://github.com/omacom/omarchy/issues/7083). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260929-T378
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7083
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1796#menu-apps-rebuild-loop-selection-drift'
+    reproducer_sketch: 'Copy a few system .desktop files such as imv, mpv and btop into the user applications directory, restart the shell, open the menu and enter Apps without moving the pointer. Expected a stable list and selection. Actual continuous flicker and the selection jumping.'

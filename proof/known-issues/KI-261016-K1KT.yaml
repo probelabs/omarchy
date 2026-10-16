@@ -1,0 +1,27 @@
+id: KI-261016-K1KT
+title: Lock display blanking leaves the video link unusable until a power cycle
+description: |-
+    After the lock blanks the display, input does not restore the picture; the video link remains unusable until the display or computer is power-cycled.
+
+    Trigger: The lock's five-second idle blank dispatches display DPMS disable on an external display connection.
+
+    Where: lock: shell/plugins/lock/Service.qml idleBlankTimer and blankProcess invoke omarchy-brightness-display off without a safe blanking path for a display link that fails to recover.
+
+    Reported upstream in omacom/omarchy#12518 (https://github.com/omacom/omarchy/issues/12518). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:39Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12518
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-323#lock-blank-video-link-no-recovery'
+    reproducer_sketch: 'Reported on an Apple Studio Display over USB4, amdgpu Radeon 780M, Omarchy 4.0.4-1. Lock with Super+Ctrl+L, wait about ten seconds, then press a key or move the mouse. The panel stays black and amdgpu reports DPIA AUX failed; power-cycling the display or PC restores the picture.'

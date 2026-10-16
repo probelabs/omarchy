@@ -1,0 +1,26 @@
+id: KI-261016-6C49
+title: Menu user-password action leaves the root password unchanged
+description: |-
+    After the user changes their password from the menu's user-password action, the new password works for the login user, but the root password created at install still authenticates a root login and su.
+
+    Trigger: Update the password through the menu's user-password entry after install has set a root password.
+
+    Where: menu: the user-password action runs passwd for the login user and does not change root (default/omarchy/omarchy-menu.jsonc update.password.user).
+
+    Reported upstream in omacom/omarchy#7539 (https://github.com/omacom/omarchy/issues/7539). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7539
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1644#menu-user-passwd-leaves-root'
+    reproducer_sketch: 'On an install where root has a password, run the menu''s user-password action (it invokes passwd) and set a new user password. Expected: root no longer accepts the install-time password. Actual: su and a root TTY still accept the old root password, while the login user uses the new one.'

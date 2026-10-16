@@ -1,0 +1,27 @@
+id: KI-261016-N0BM
+title: Menu row guards compare the row's own label literal, so a translated or reworded label breaks the guard
+description: |-
+    A guarded menu row misreports its state when its label is translated or reworded: the guard expression compares a shell literal equal to the row's label, the comparison silently fails, and e.g. the DNS menu shows nothing selected on a machine whose DNS is fine. Eight rows are affected (low, mid, high, DHCP, Cloudflare, Google, Custom, omp); Custom translated in a live Russian pack was hit in the field.
+
+    Trigger: Translate or reword the label of a menu row whose checked/when/disabled guard compares that label as a shell literal.
+
+    Where: menu: default/omarchy/omarchy-menu.jsonc guard expressions (checked/when/disabled) comparing the row's own label literal, evaluated by the bin/omarchy-menu* readers
+
+    Reported upstream in omacom/omarchy#12345 (https://github.com/omacom/omarchy/issues/12345). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-JRW1
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12345
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-385#menu-guard-label-literal'
+    reproducer_sketch: 'Translate a guarded label (Custom to Пользовательский) via a user override and open the DNS submenu: the guard still compares the English literal, finds no match, and the row shows nothing selected although the setting is active. The report states the predicate (8 rows where guard literal equals label) and the field-hit translated Custom row.'

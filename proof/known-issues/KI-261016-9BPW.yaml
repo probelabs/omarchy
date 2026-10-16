@@ -1,0 +1,27 @@
+id: KI-261016-9BPW
+title: Model-delivered menu manifest loses its app-library capability and leaves Apps empty
+description: |-
+    A cloned (non-first-party) menu has a live scoped shell but its appLibrary is null, so mergeAppRows returns early and the Apps submenu lists no applications although desktop entries exist; the stock menu still lists them.
+
+    Trigger: A cloned or third-party menu plugin is loaded through the panel Instantiator, whose modelData carries the manifest's kinds as a QVariantList that Array.isArray rejects, so the menu kind check fails.
+
+    Where: menu: Menu.qml mergeAppRows of a cloned menu, fed by the shell.qml manifestHasKind capability check that builds the scoped plugin shell without appLibrary.
+
+    Reported upstream in omacom/omarchy#14462 (https://github.com/omacom/omarchy/issues/14462). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261003-C9GM
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14462
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5209#cloned-menu-manifest-kind-library-denied'
+    reproducer_sketch: 'Clone omarchy.menu (kinds menu + bar-widget), use the clone in the bar with stock disabled, open Apps. Expected installed application rows; actual empty submenu, shell log hasShell=true shellAppLib=false and mergeAppRows aborts with no appLibrary. Reported on Omarchy 4.0.4-1; a commenter says #13439 on quattro removes it.'

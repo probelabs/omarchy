@@ -1,0 +1,27 @@
+id: KI-261016-QKX8
+title: Lock screen discards fingerprint PAM guidance messages instead of showing them
+description: |-
+    Info and error text the fingerprint PAM module sends during a lock-screen verify (such as a prompt to remove the finger and try the sensor again) is relayed to the shell and then discarded. The lock screen shows no message, so a bad press, an unusable image and a timeout look the same.
+
+    Trigger: A fingerprint verify on the lock screen produces a PAM info or error message, including a prompt to remove the finger and try the sensor again.
+
+    Where: lock: shell/plugins/lock/Service.qml fingerprint PamContext message handling (the message text is never stored) and shell/plugins/lock/LockView.qml, which has no element that shows fingerprint PAM text
+
+    Reported upstream in omacom/omarchy#13954 (https://github.com/omacom/omarchy/issues/13954). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-41VV
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13954
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-2145#lock-fingerprint-pam-messages-dropped'
+    reproducer_sketch: 'Enroll a fingerprint, lock the screen, and press so the module asks the user to remove the finger and try again. Expected that guidance on the lock screen. Actual the journal relays the message and the lock screen shows nothing. The report also says fprintd returns an auth error for verify-remove-and-retry; that daemon behavior is a separate failure and is not this defect.'

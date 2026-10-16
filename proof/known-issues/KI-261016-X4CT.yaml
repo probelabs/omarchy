@@ -1,0 +1,26 @@
+id: KI-261016-X4CT
+title: Theme remover reads --help as a theme name instead of printing help
+description: |-
+    Invoking the theme remover binary with --help prints a theme-not-found error instead of the command's help; the flag is consumed as the theme identity.
+
+    Trigger: Run the direct binary with the --help flag (omarchy-theme-remove --help); the routed form's --help is intercepted by the dispatcher before exec.
+
+    Where: bin/omarchy-theme-remove CLI argument handling takes $1 as the theme name with no flag parsing.
+
+    Reported upstream in omacom/omarchy#9305 (https://github.com/omacom/omarchy/issues/9305). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9305
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1184#theme-remove-help-read-as-name'
+    reproducer_sketch: 'Run `omarchy-theme-remove --help` on a stock install: expected the command''s help as the routed `omarchy theme remove --help` prints, actual `Error: Theme ''--help'' not found.` The same shape appears on the other identity-first binaries the report spot-checked.'

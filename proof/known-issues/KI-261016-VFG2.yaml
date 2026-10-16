@@ -1,0 +1,27 @@
+id: KI-261016-VFG2
+title: Lock display blanking flips logind's Docked false, so a docked closed-lid laptop suspends after every lock
+description: |-
+    A laptop docked to external displays with the lid closed suspends shortly after the session lock blanks its displays, and again shortly after every resume, cycling suspend/resume instead of staying awake while locked: logind reports Docked=false the moment the displays blank although the connectors remain connected.
+
+    Trigger: Locking the session (or the idle lock firing) while the laptop is docked to external displays with the lid closed: the lock service's idle blank timer turns the displays off shortly after lock (and again after the post-resume run-up), and the DPMS-off connectors make logind report the machine undocked, so lid-switch handling suspends.
+
+    Where: lock: shell/plugins/lock/Service.qml idleBlankTimer dispatches omarchy-brightness-display off; the DPMS-off outputs flip logind's Docked property while the session is locked and the lid is closed
+
+    Reported upstream in omacom/omarchy#15207 (https://github.com/omacom/omarchy/issues/15207). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260912-ND55
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:47Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/15207
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-5367#lock-blank-docked-suspend'
+    reproducer_sketch: 'Dock the laptop to external display(s), close the lid, lock (or let the idle lock fire), wait about 35 s. Expected: the docked closed-lid machine stays awake with the displays blanked. Actual: logind''s Docked property goes true -> false on DPMS off (busctl get-property org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.login1.Manager Docked) while /sys/class/drm/*/status stays connected; HandleLidSwitch=suspend suspends at the holdoff, and the cycle repeats after every resume (journal: resume -> ''display sleep detected'' at +6 s -> systemd-logind: Suspending... at +29 s).'

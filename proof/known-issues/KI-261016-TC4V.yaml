@@ -1,0 +1,27 @@
+id: KI-261016-TC4V
+title: Image picker thumbnails untrusted images through content-sniffed vipsthumbnail with no format allowlist or resource cap
+description: |-
+    omarchy-menu-images hands still images it thumbnails (theme previews and wallpapers, including files of web origin) to vipsthumbnail, which chooses its loader from the file content rather than the extension (an SVG named .jpg is loaded via rsvg), with no format allowlist and no memory or resource cap, so every loader libvips has compiled in parses the untrusted bytes.
+
+    Trigger: The image picker generates a thumbnail for an image file whose content is untrusted, e.g. a theme preview or wallpaper imported from the web into a picker directory.
+
+    Where: menu: bin/omarchy-menu-images generate_thumbnail() still-image lane -> vipsthumbnail (content-sniffed loaders such as svgload/rsvg, jp2kload, gifload); thumbnails cached in ~/.cache/omarchy/image-selector/
+
+    Reported upstream in omacom/omarchy#14167 (https://github.com/omacom/omarchy/issues/14167). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260929-THMB
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14167
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-2221#menu-images-untrusted-decode'
+    reproducer_sketch: 'Write an SVG document to a file named fake.jpg and run vipsthumbnail on it: a PNG is produced (loader chosen by content). Place such a file, or a large-dimension image, as a theme preview (the report plants it via aether --handle-url ''aether://apply?wallpaper=<url>&silent=true'' on 4.0.4-1) and run omarchy-menu-images --lazy-thumbnails on that theme directory: strace shows openat() on the planted preview and a thumbnail written to ~/.cache/omarchy/image-selector/. Expected: decode restricted to expected formats and resource-capped; actual: uncapped content-sniffed decode. The report''s 566MB / 4.75s figure was measured on ImageMagick in omarchy-bar-text-color, not on vipsthumbnail.'

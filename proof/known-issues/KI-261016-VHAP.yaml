@@ -1,0 +1,26 @@
+id: KI-261016-VHAP
+title: First menu row stays clipped above the list on initial open
+description: |-
+    On a scrollable menu list the first row (index 0) is scrolled above the top of the list and stays clipped, so the list looks like it starts at the second row.
+
+    Trigger: Open a menu list with more rows than fit the initial view while the selection is on the first row; revealCursor runs before the list height has settled and its downward adjustment is never undone at index 0.
+
+    Where: menu: shell/plugins/menu/Menu.qml revealCursor()
+
+    Reported upstream in omacom/omarchy#14176 (https://github.com/omacom/omarchy/issues/14176). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14176
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-2226#menu-first-row-clipped-open'
+    reproducer_sketch: 'Press SUPER+K, or run omarchy-menu-select "Test" with 15 options. Expected: the first entry is fully visible at the top. Actual: the first entry is scrolled above the list border and clipped (Option 1 has its top half cut off).'

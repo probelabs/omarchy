@@ -1,0 +1,27 @@
+id: KI-261016-M65W
+title: Suspend interrupting the lock's fingerprint verification leaves the reader claimed, so fingerprint unlock keeps failing after resume
+description: |-
+    After resume from suspend the lock screen does not accept the fingerprint: every verification attempt fails at once (PAM 'Authentication service cannot retrieve authentication info', code 9) and only the password unlocks.
+
+    Trigger: The system suspends while the lock screen has a pam_fprintd verification in flight; fprintd reports 'Cannot run while suspended' and the PAM ReleaseDevice fails because the device is still busy, so the interrupted claim survives the resume.
+
+    Where: lock: shell/plugins/lock/Service.qml fingerprint PAM lifecycle across suspend/resume (the in-flight omarchy-lock-fingerprint verification is neither aborted before sleep nor restarted against a reset reader after resume).
+
+    Reported upstream in omacom/omarchy#14089 (https://github.com/omacom/omarchy/issues/14089). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-261004-296X
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14089
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-2197#fingerprint-suspend-busy-retry'
+    reproducer_sketch: 'Enroll a fingerprint, lock, let the lock start fingerprint verification, suspend (reporter: s2idle, FocalTech 2808:a97a, libfprint-git 1.94.100, fprintd 1.94.5), resume and present the finger. Expected: fingerprint unlock works shortly after resume. Actual: ''Cannot run while suspended'' / ''ReleaseDevice failed ... still busy'' before sleep, then every attempt fails with code 9 (one case ~55 attempts over ~15 s) until password unlock. Reporter''s workaround: a system-sleep hook stopping fprintd before sleep and restarting it after resume; then only the first attempt fails.'

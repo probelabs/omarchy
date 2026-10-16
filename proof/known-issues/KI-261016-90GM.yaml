@@ -1,0 +1,26 @@
+id: KI-261016-90GM
+title: Lock screen persistently renders without the configured wallpaper
+description: |-
+    The lock view shows a bare password field on a blank background instead of the configured wallpaper. The reporter says input does not restore the wallpaper and the failure persists across a shell restart.
+
+    Trigger: Lock the session in the affected configuration, either manually or across suspend/resume.
+
+    Where: lock: shell/plugins/lock/LockView.qml wallpaper presentation; the image-loading failure mechanism is not established.
+
+    Reported upstream in omacom/omarchy#7416 (https://github.com/omacom/omarchy/issues/7416). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:45Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7416
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1675#lock-wallpaper-never-renders'
+    reproducer_sketch: 'In the affected configuration, lock manually with omarchy system lock and observe the bare password field without the wallpaper. Repeat after omarchy restart shell and after suspend/resume. The reporter says the background stays missing and input does not restore it. Record the background path, file format and QML image status to distinguish a missing codec, unavailable file or another rendering failure; those diagnostics are not supplied.'

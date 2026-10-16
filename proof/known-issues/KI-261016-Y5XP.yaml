@@ -1,0 +1,26 @@
+id: KI-261016-Y5XP
+title: Interrupted keybindings cache refresh leaves its temporary file behind
+description: |-
+    Temporary keybindings.XXXXXX files accumulate in the Omarchy cache directory after cache refreshes hang or are terminated before completion.
+
+    Trigger: A keybindings cache refresh creates its temporary output file, then hangs or is terminated before the ordinary success or error cleanup path runs.
+
+    Where: bin/omarchy-menu-keybindings refresh_keybindings_cache: tmp_file is moved on success or removed on returned failure, without an EXIT/INT/TERM cleanup trap
+
+    Reported upstream in omacom/omarchy#14243 (https://github.com/omacom/omarchy/issues/14243). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/14243
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-5137#keybindings-cache-temp-cleanup'
+    reproducer_sketch: 'Add `for _ in ipairs(hl.get_monitors()) do end` to the user Hyprland Lua configuration, run omarchy-menu-keybindings --print to start a cold refresh, terminate the hung run and inspect the Omarchy cache directory. Repeat; unfinished keybindings.XXXXXX files remain.'

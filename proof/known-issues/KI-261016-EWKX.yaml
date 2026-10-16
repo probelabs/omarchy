@@ -1,0 +1,26 @@
+id: KI-261016-EWKX
+title: Lock password field swallows every keystroke while the session input method is wedged after resume
+description: |-
+    After resume from suspend the lock screen is shown and the compositor stays responsive, but nothing typed reaches the lock password field, so the user cannot unlock and it presents as a system freeze; input returns as soon as the session input-method service (fcitx5) is restarted, without any click or refocus.
+
+    Trigger: The session input method (fcitx5, selected for Qt session-wide by QT_IM_MODULE=fcitx) stops serving its clients across a suspend/resume while the session is locked, so the password field's input-method path never delivers the keys.
+
+    Where: lock: shell/plugins/lock/LockView.qml password TextInput (no input-method bypass), whose key input is routed through the session input method
+
+    Reported upstream in omacom/omarchy#9325 (https://github.com/omacom/omarchy/issues/9325). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:42Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/9325
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-1177#lock-password-im-wedge-swallows-input'
+    reproducer_sketch: 'Default install with omarchy-fcitx5.service enabled; lock the session, suspend (lid close), leave suspended a while, resume and type at the lock prompt. Expected: the password is accepted. Actual (reporter: 3 of 5 cycles on an ASUS ROG Strix G18, NVIDIA, s2idle): every keystroke vanishes while hyprctl stays responsive; ''systemctl --user restart omarchy-fcitx5.service'' restores input instantly, and a resume-restart workaround eliminated recurrences. Not a confirmed reproducer.'

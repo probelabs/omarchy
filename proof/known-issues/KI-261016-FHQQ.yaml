@@ -1,0 +1,26 @@
+id: KI-261016-FHQQ
+title: Lock screen reports a correct password as incorrect during a silent pam_faillock lockout, with no lockout indication
+description: |-
+    While the account is locked by pam_faillock, the lock screen says the password is incorrect even though the correct password is typed (unix_chkpwd succeeds, the shell's PAM still logs 'Failed to authenticate'). Nothing says the account is locked or how long remains.
+
+    Trigger: The account reaches the pam_faillock deny limit (e.g. 10 failed sudo attempts), then the user types the correct password at the lock screen within unlock_time.
+
+    Where: lock: the omarchy-lock-password PAM stack written by bin/omarchy-apply-lock carries 'pam_faillock.so preauth silent', and the lock view's failed-authentication message does not check or show the faillock state
+
+    Reported upstream in omacom/omarchy#13185 (https://github.com/omacom/omarchy/issues/13185). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:38Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/13185
+    reported_at: ""
+    reported_by: ""
+affected_requirements: []
+candidate:
+    draft_ref: 'R-116#lock-silent-faillock-incorrect'
+    reproducer_sketch: 'Fail sudo 10 times, lock the session, type the correct password at the lock screen within 120 s: expected an ''account locked, try again in N seconds'' message, actual ''incorrect password'' and no unlock.'

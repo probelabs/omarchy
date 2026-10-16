@@ -1,0 +1,27 @@
+id: KI-261016-BYKK
+title: Menu opening and action dispatch repeatedly pay login-shell startup overhead
+description: |-
+    Opening the menu from its bar button and dispatching menu actions are perceptibly delayed by repeated login-shell startup before the requested operation.
+
+    Trigger: Activate the menu bar button or a menu row whose dispatch goes through a fresh login shell and sources profile files on each invocation.
+
+    Where: menu: shell/plugins/menu/BarWidget.qml onPressed and shell/plugins/menu/Menu.qml runAction calling the shell-command dispatch path
+
+    Reported upstream in omacom/omarchy#7093 (https://github.com/omacom/omarchy/issues/7093). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260928-8VJQ
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:46Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/7093
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-1792#menu-dispatch-login-shell-latency'
+    reproducer_sketch: 'On the reported session, compare clicking the menu button with SUPER+SPACE, and run menu actions with costly profile startup. Expected responsive dispatch; actual repeatable delay. The reporter''s 2026-08-16 comment says calling root.bar.shell.toggle directly removes the button delay; the 2026-08-17 commenter measures repeated login-profile cost for menu actions. No reproducer was executed in this triage.'

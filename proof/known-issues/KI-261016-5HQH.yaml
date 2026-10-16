@@ -1,0 +1,27 @@
+id: KI-261016-5HQH
+title: Keybindings cheatsheet cache key omits the locale, so a locale switch serves the previous order
+description: |-
+    The keybindings cheatsheet cache hash does not include the active locale: measured identical SHA-256 across three locales while a description change moves it. After a locale switch the warm cache keeps serving rows collated under the previous locale (cheatsheet row order depends on LC_COLLATE), until some other hashed input changes.
+
+    Trigger: Switch the active locale/collation while a warm keybindings cheatsheet cache whose rendered order depends on it exists.
+
+    Where: menu: bin/omarchy-menu-keybindings keybindings_cache_key (locale/collation absent from the hashed inputs)
+
+    Reported upstream in omacom/omarchy#12345 (https://github.com/omacom/omarchy/issues/12345). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SW-REQ-260922-0W96
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12345
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-385#cheatsheet-cache-locale-blind'
+    reproducer_sketch: 'Hash the keybindings cache key under three locales (the report measures the same SHA-256 08eb0572… each time), switch locale and reopen the cheatsheet: the cache is not invalidated and the previous collation order is served. The report''s stated fix is adding the active locale to the key (#12362).'

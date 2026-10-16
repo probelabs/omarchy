@@ -1,0 +1,27 @@
+id: KI-261016-N2MH
+title: Emoji insertion sends a synthetic paste shortcut that browser fields do not accept
+description: |-
+    Selecting an emoji with Enter leaves Chromium or Zen/Firefox text fields unchanged, while the same flow inserts successfully in terminals; the emoji can briefly be on the clipboard.
+
+    Trigger: Focus a native Wayland browser field, open the emoji overlay with Super+Ctrl+E and select an emoji using Enter.
+
+    Where: bin/omarchy-menu-emoji-insert unconditionally sends wtype Shift+Insert
+
+    Reported upstream in omacom/omarchy#12376 (https://github.com/omacom/omarchy/issues/12376). This is a candidate: the defect is reported but not yet reproduced. No reproducer has been written or run for it yet.
+affected_requirements:
+    - SYS-REQ-260922-6642
+disclosure: public
+status: candidate
+history:
+    - at: "2026-10-16T12:36:40Z"
+      by: agent:claude-code
+      action: created
+upstream_report:
+    vendor: ""
+    channel: ""
+    reference: https://github.com/omacom/omarchy/issues/12376
+    reported_at: ""
+    reported_by: ""
+candidate:
+    draft_ref: 'R-371#emoji-browser-synthetic-paste-ignored'
+    reproducer_sketch: 'Focus a Chromium or Zen text field, open the emoji picker and press Enter on an emoji. Expected insertion into the previously focused field; actual no emoji. Repeat in a terminal as the successful control; compare the application-appropriate paste shortcut.'
