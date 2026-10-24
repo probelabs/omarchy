@@ -20,14 +20,14 @@ traces:
     satisfies:
         - SYS-REQ-260922-R8DQ
         - SYS-REQ-260927-WC89
-    reviewed_at: "2026-10-02T16:54:43.512614Z"
+    reviewed_at: "2026-10-02T17:00:00.870145Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:1f01f67a677cd4d9834c8c88f18e095978d92260f96d5dd8571a4d72fe3811e8
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:applySelected: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:openRoute: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:runAction: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:applySelected: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:openRoute: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:runAction: file1:3f0f23426e45d77accc5bea5e92f84c8
         satisfies:
             SYS-REQ-260922-R8DQ: req1:983122f0147d3c92675f6bbd4b3f603a
             SYS-REQ-260927-WC89: req1:1097be1582629ad11983dc1d40590f83
@@ -60,29 +60,29 @@ traces:
             - test/shell.d/menu-test.sh:342
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:37.365632Z"
+        - reviewed_at: "2026-10-02T11:53:12.39789Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in open(), which now runs cancelDelete() when an uninstall confirmation is pending (3 lines) and names SW-REQ-261002-VJR1 in its Implements line; every other function is byte-identical and only shifted by 3 lines, so this requirement''s implementation and its annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:146
+            - shell/plugins/menu/Menu.qml:886
+            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
+            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:340
+            - test/shell.d/menu-test.sh:26
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:00.870145Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:883
-            - shell/plugins/menu/Menu.qml:960
-            - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
-            - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:43.512614Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:143
-            - shell/plugins/menu/Menu.qml:883
-            - shell/plugins/menu/Menu.qml:961
+            - shell/plugins/menu/Menu.qml:146
+            - shell/plugins/menu/Menu.qml:886
+            - shell/plugins/menu/Menu.qml:964
             - specs/system/requirements/SYS-REQ-260922-R8DQ.req.yaml
             - specs/system/requirements/SYS-REQ-260927-WC89.req.yaml
             - test/node/menumodel-replay.test.mjs:1

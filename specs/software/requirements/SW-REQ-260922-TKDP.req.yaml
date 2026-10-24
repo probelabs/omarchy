@@ -19,13 +19,13 @@ variables: []
 traces:
     satisfies:
         - SYS-REQ-260922-V7W6
-    reviewed_at: "2026-10-02T16:54:45.246961Z"
+    reviewed_at: "2026-10-02T17:00:02.205755Z"
     reviewed_by: agent:claude-quattro-proof
     reviewed_fingerprint: sha256:84eefcb4a44826305f9f35bc6cb83516b2e86e1218fe80c10933546b2779a014
     reviewed_targets:
         implemented_by:
-            shell/plugins/menu/Menu.qml:isDescendantOf: file1:bddf782ed3ac81606c0c53a1106414c4
-            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:bddf782ed3ac81606c0c53a1106414c4
+            shell/plugins/menu/Menu.qml:isDescendantOf: file1:3f0f23426e45d77accc5bea5e92f84c8
+            shell/plugins/menu/Menu.qml:rebuildDisplay: file1:3f0f23426e45d77accc5bea5e92f84c8
         satisfies:
             SYS-REQ-260922-V7W6: req1:7d2b136d40b5785cb68fd9c2d1b8e8c3
     review_history:
@@ -52,26 +52,27 @@ traces:
             - test/shell.d/menu-test.sh:33
             - test/shell.d/menu-test.sh:40
             - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:44:38.688535Z"
+        - reviewed_at: "2026-10-02T11:53:13.625818Z"
+          reviewed_by: agent:claude-pr-A
+          method: inspection
+          rationale: 'pr-A review on quattro-proof 5d4fb9a8: shell/plugins/menu/Menu.qml changed only in open(), which now runs cancelDelete() when an uninstall confirmation is pending (3 lines) and names SW-REQ-261002-VJR1 in its Implements line; every other function is byte-identical and only shifted by 3 lines, so this requirement''s implementation and its annotations are unchanged'
+          source: proof trace review --citation
+          citations:
+            - shell/plugins/menu/Menu.qml:496
+            - shell/plugins/menu/Menu.qml:658
+            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
+            - test/node/menumodel-replay.test.mjs:1
+            - test/node/menumodel-replay.test.mjs:319
+            - test/shell.d/menu-test.sh:33
+            - test/shell.d/menu-test.sh:5
+        - reviewed_at: "2026-10-02T17:00:02.205755Z"
           reviewed_by: agent:claude-quattro-proof
           method: inspection
           rationale: 'Engine ae2f80e5 (#1432/#1433) binds each QML annotation to the declaration it sits on. Every changed target was checked in the source: the annotation line is directly above (or inside) the named function or handler, so the link now points at the right code.'
           source: proof trace review --citation
           citations:
-            - shell/plugins/menu/Menu.qml:493
-            - shell/plugins/menu/Menu.qml:655
-            - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
-            - test/node/menumodel-replay.test.mjs:1
-            - test/shell.d/menu-test.sh:40
-            - test/shell.d/menu-test.sh:5
-        - reviewed_at: "2026-10-02T16:54:45.246961Z"
-          reviewed_by: agent:claude-quattro-proof
-          method: inspection
-          rationale: 'Menu.qml gained one annotation line above resolveRoute (it delegates to MenuModel.resolveRoute: exact id, alias, literal fallback), so every Menu.qml-linked review was re-checked against the source; each cited annotation still sits on the function or handler it names.'
-          source: proof trace review --citation
-          citations:
-            - shell/plugins/menu/Menu.qml:493
-            - shell/plugins/menu/Menu.qml:655
+            - shell/plugins/menu/Menu.qml:496
+            - shell/plugins/menu/Menu.qml:658
             - specs/system/requirements/SYS-REQ-260922-V7W6.req.yaml
             - test/node/menumodel-replay.test.mjs:1
             - test/shell.d/menu-test.sh:40

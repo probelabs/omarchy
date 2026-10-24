@@ -432,6 +432,14 @@ variables:
       type: bool
       direction: output
       description: A confirmation dialog opens; confirm removes the app through the app library, cancel restores focus without removing.
+    - name: summon_over_pending_uninstall
+      type: bool
+      direction: input
+      description: A summon reaches the menu (a route, or a select or input prompt) while the uninstall confirmation is open.
+    - name: pending_uninstall_dismissed
+      type: bool
+      direction: output
+      description: The uninstall confirmation is closed without removing anything before the summoned rows take the next key.
     - name: action_is_bare_summon
       type: bool
       direction: input
